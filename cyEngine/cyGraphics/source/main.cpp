@@ -145,49 +145,21 @@ main(int argc, char** argv) {
 }
 
 void
-printProgramLog(GLuint program) {
-  //Make sure name is shader
-  if (glIsProgram(program)) {
-    //Program log length
-    int infoLogLength = 0;
-    int maxLength = infoLogLength;
-
-    //Get info string length
-    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-    // Allocate string
-    char* infoLog = new char[maxLength];
-
-    //Get info log
-    glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
-    if (infoLogLength > 0) {
-      printf("%s\n", infoLog);
-    }
-
-    // Deallocate string
-    delete[] infoLog;
-  }
-  else {
-    printf("Name %d is not a program\n", program);
-  }
-}
-
-void
-printShaderLog(GLuint shader) {
+printProgramLog(GLuint name) {
   // Make sure name is shader
-  if (glIsShader(shader)) {
-    // Shader log length
+  if (glIsProgram(name)) {
+    // Program log length
     int infoLogLength = 0;
     int maxLength = infoLogLength;
 
     // Get info string length
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+    glGetProgramiv(name, GL_INFO_LOG_LENGTH, &maxLength);
 
     // Allocate string
     char* infoLog = new char[maxLength];
 
     // Get info log
-    glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
+    glGetProgramInfoLog(name, maxLength, &infoLogLength, infoLog);
     if (infoLogLength > 0) {
       printf("%s\n", infoLog);
     }
@@ -196,7 +168,35 @@ printShaderLog(GLuint shader) {
     delete[] infoLog;
   }
   else {
-    printf("Name %d is not a shader\n", shader);
+    printf("Name %d is not a program\n", name);
+  }
+}
+
+void
+printShaderLog(GLuint name) {
+  // Make sure name is shader
+  if (glIsShader(name)) {
+    // Shader log length
+    int infoLogLength = 0;
+    int maxLength = infoLogLength;
+
+    // Get info string length
+    glGetShaderiv(name, GL_INFO_LOG_LENGTH, &maxLength);
+
+    // Allocate string
+    char* infoLog = new char[maxLength];
+
+    // Get info log
+    glGetShaderInfoLog(name, maxLength, &infoLogLength, infoLog);
+    if (infoLogLength > 0) {
+      printf("%s\n", infoLog);
+    }
+
+    // Deallocate string
+    delete[] infoLog;
+  }
+  else {
+    printf("Name %d is not a shader\n", name);
   }
 }
 
@@ -244,7 +244,7 @@ init(int clientWidth,
   }
 
   // Initialize GLEW
-  glewExperimental = GL_TRUE;
+  //glewExperimental = GL_TRUE;
   GLenum glewError = glewInit();
   if (glewError != GLEW_OK) {
     printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
@@ -423,14 +423,14 @@ main() { \n\
     }
   }
 
-  // VBO data
-  GLfloat vertexData[] = {
+  // VBO (position) data
+  GLfloat positionData[] = {
     -0.5f, -0.5f,
      0.0f,  0.5f,
      0.5f, -0.5f
   };
 
-  // Color data
+  // VBO (color) data
   GLfloat colorData[] = {
     0.0f, 1.0f, 1.0f,
     1.0f, 0.0f, 1.0f,
@@ -442,12 +442,12 @@ main() { \n\
 
   unsigned long long vertices = 3;
 
-  // Create VBO
+  // Create VBO (Position)
   glGenBuffers(1, &gVBO[0]);
   glBindBuffer(GL_ARRAY_BUFFER, gVBO[0]);
-  glBufferData(GL_ARRAY_BUFFER, 2 * vertices * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, 2 * vertices * sizeof(GLfloat), positionData, GL_STATIC_DRAW);
 
-  // Create Color Buffer Object
+  // Create VBO (Color)
   glGenBuffers(1, &gVBO[1]);
   glBindBuffer(GL_ARRAY_BUFFER, gVBO[1]);
   glBufferData(GL_ARRAY_BUFFER, 3 * vertices * sizeof(GLfloat), colorData, GL_STATIC_DRAW);
