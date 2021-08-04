@@ -35,10 +35,6 @@ namespace CYLLENE_SDK
   {
   public:
 
-    static File open(std::string str)
-    {
-      File f = cppfs::fs::open(str);
-    }
   };
 
 }
