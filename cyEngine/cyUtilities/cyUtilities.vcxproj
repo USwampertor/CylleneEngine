@@ -157,6 +157,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyPlatformDefines.h" />
+    <ClInclude Include="include\cyPlatformTypes.h" />
+    <ClInclude Include="include\cyStdHeaders.h" />
+    <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
