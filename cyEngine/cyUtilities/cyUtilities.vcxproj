@@ -171,6 +171,14 @@
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)cppfs/lib/$(PlatformTarget)/$(Configuration)/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\cyMemoryAllocator.h" />
+    <ClInclude Include="include\cyModule.h" />
+    <ClInclude Include="include\cyPlatformDefines.h" />
+    <ClInclude Include="include\cyPlatformTypes.h" />
+    <ClInclude Include="include\cyStdHeaders.h" />
+    <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
