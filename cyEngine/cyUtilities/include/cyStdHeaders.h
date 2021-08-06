@@ -13,14 +13,18 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
-
-#include <memory>
-#include <mutex>
-
-#include <sstream>
+#include <ctime>
+#include <chrono>
+#include <enum.h>
 #include <fstream>
 #include <iostream>
+#include <limits>
+#include <memory>
+#include <mutex>
+#include <sstream>
 #include <type_traits>
+
+
 //#define USING_EASTL
 
 #ifndef  USING_EASTL
@@ -65,6 +69,22 @@ namespace CYLLENE_SDK {
 
   template<typename T>
   using Limits = std::numeric_limits<T>;
+
+  using HighClock   = std::chrono::high_resolution_clock;
+
+  using SteadyClock = std::chrono::steady_clock;
+
+  using SystemClock = std::chrono::system_clock;
+
+  using TimeType = std::time_t;
+
+  using TimeStruct = std::tm;
+
+  template<typename T>
+  using TimePoint = std::chrono::time_point<T>;
+
+  template<typename T>
+  using NumericLimits = std::numeric_limits<T>;
 
 }
 

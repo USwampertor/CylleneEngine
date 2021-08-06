@@ -30,15 +30,27 @@
     <ClInclude Include="include\cyModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyLogger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\cyMemoryAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyLogger.h">
+    <ClInclude Include="include\cyUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyCrashHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyDate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyMemoryAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
