@@ -134,7 +134,6 @@ main(int argc, char** argv) {
 
   printf("FreeImage version: %s\n", FreeImage_GetVersion());
   std::string textureName = currentDirectory + "../../Checker.webp";
-  FIBITMAP* dib1 = NULL;
   FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(textureName.c_str());
 
   FIBITMAP* pImage = FreeImage_Load(fif, textureName.c_str(), 0);
@@ -181,8 +180,6 @@ main(int argc, char** argv) {
   /***************************************************************************/
 
   printf("\n");
-
-  HWND winHwnd = GetActiveWindow();
 
   SDL_SysWMinfo wmInfo;
   SDL_VERSION(&wmInfo.version);
