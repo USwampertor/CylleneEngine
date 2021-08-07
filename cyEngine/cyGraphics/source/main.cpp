@@ -9,6 +9,10 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_syswm.h>
 
+#include <IL/il.h>
+#include <IL/ilu.h>
+#include <IL/ilut.h>
+
 void
 printProgramLog(GLuint program);
 
@@ -48,7 +52,6 @@ enum Button
   ButtonConfirm
 };
 
-
 int
 main(int argc, char** argv) {
   int clientWidth = 1280, clientHeight = 720;
@@ -72,6 +75,29 @@ main(int argc, char** argv) {
 
   printf("\n");
   printf("Starting app with resolution %dx%d.\n", clientWidth, clientHeight);
+
+  /***************************************************************************/
+  ilInit();
+  iluInit();
+  ilutRenderer(ILUT_OPENGL);
+  
+  ILuint imgID = 0;
+  ilGenImages(1, &imgID);
+  ilBindImage(imgID);
+
+  if (ilLoadImage(L"RGBAText.png")) {
+    size_t imgWidth  = ilGetInteger(IL_IMAGE_WIDTH);
+    size_t imgHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+    size_t imgDepth  = ilGetInteger(IL_IMAGE_DEPTH);
+
+    unsigned char* imageData = new unsigned char[imgWidth * imgHeight * 4];
+    ILuint asdf = ilCopyPixels(0, 0, 0, imgWidth, imgHeight, imgDepth, IL_RGBA, IL_UNSIGNED_BYTE, imageData);
+    if (asdf == IL_FALSE) {
+      printf("Error copying pixels");
+    }
+    delete[] imageData;
+  }
+  /***************************************************************************/
 
   //The window we'll be rendering to
   SDL_Window* window = nullptr;
