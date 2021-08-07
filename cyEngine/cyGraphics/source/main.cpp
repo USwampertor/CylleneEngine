@@ -1,6 +1,7 @@
 #include <chrono>
 #include <stdio.h>
 #include <string>
+#include <Windows.h>
 
 #include <GLEW/glew.h>
 #include <gl/GLU.h>
@@ -40,6 +41,13 @@ render(GLuint& gProgramID,
        GLuint& gIBO,
        GLint& gVertexPosition2D,
        GLint& gVertexColor);
+
+// Define your user buttons somewhere global
+enum Button
+{
+  ButtonConfirm
+};
+
 
 int
 main(int argc, char** argv) {
@@ -97,6 +105,8 @@ main(int argc, char** argv) {
   // get version info
   printf("Renderer: %s\n", glGetString(GL_RENDERER));
   printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
+
+  HWND winHwnd = GetActiveWindow();
 
   SDL_SysWMinfo wmInfo;
   SDL_VERSION(&wmInfo.version);
