@@ -15,7 +15,6 @@
 #include <cstring>
 #include <ctime>
 #include <chrono>
-#include <enum.h>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -60,31 +59,41 @@
 #endif
 
 namespace CYLLENE_SDK {
-  using Stream = std::stringstream;
+  using StringStream  = std::stringstream;
 
   template<typename T>
-  using Sptr = std::shared_ptr<T>;
+  using SharedPointer = std::shared_ptr<T>;
 
-  using Mutex = std::mutex;
+  using Mutex         = std::mutex;
 
-  template<typename T>
-  using Limits = std::numeric_limits<T>;
+  using HighClock     = std::chrono::high_resolution_clock;
 
-  using HighClock   = std::chrono::high_resolution_clock;
+  using SteadyClock   = std::chrono::steady_clock;
 
-  using SteadyClock = std::chrono::steady_clock;
+  using SystemClock   = std::chrono::system_clock;
 
-  using SystemClock = std::chrono::system_clock;
+  using TimeType      = std::time_t;
 
-  using TimeType = std::time_t;
-
-  using TimeStruct = std::tm;
+  using TM            = std::tm;
 
   template<typename T>
-  using TimePoint = std::chrono::time_point<T>;
+  using TimePoint     = std::chrono::time_point<T>;
+
+  using Nanoseconds   = std::chrono::nanoseconds;
+
+  using Miliseconds   = std::chrono::milliseconds;
+
+  using Microseconds  = std::chrono::microseconds;
+
+  using Seconds       = std::chrono::seconds;
+
+  using Minutes       = std::chrono::minutes;
+
+  using Hours         = std::chrono::hours;
 
   template<typename T>
   using NumericLimits = std::numeric_limits<T>;
+
 
 }
 

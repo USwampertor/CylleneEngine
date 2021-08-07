@@ -31,7 +31,7 @@ namespace CYLLENE_SDK {
   Log::ToString() {
     String toReturn = "";
     TimeType tt = SystemClock::to_time_t(m_time);
-    TimeStruct localTime = *localtime(&tt);
+    TM localTime = *localtime(&tt);
     
     toReturn += Utilities::format("[%s] [%s %s] %s",  
                                   Utilities::timeFormat(localTime, "%H:%M:%S").c_str(),

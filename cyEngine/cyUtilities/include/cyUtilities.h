@@ -33,7 +33,7 @@ namespace CYLLENE_SDK {
     }
 
 
-    static String timeFormat(const TimeStruct& toformat, const String& format)
+    static String timeFormat(const TM& toformat, const String& format)
     {
       char buffer[128];
       std::strftime(buffer, sizeof(buffer), format.c_str(), &toformat);
