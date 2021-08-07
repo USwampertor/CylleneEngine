@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include <Windows.h>
+#include <iostream>
 
 #include <GLEW/glew.h>
 #include <gl/GLU.h>
@@ -9,9 +10,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_syswm.h>
 
-#include <IL/il.h>
-#include <IL/ilu.h>
-#include <IL/ilut.h>
+#include <FreeImage/FreeImage.h>
 
 void
 printProgramLog(GLuint program);
@@ -29,6 +28,7 @@ init(int clientWidth,
      GLuint* gVBO,
      GLuint& gIBO,
      GLint& gVertexPosition2D,
+     GLint& gUV,
      GLint& gVertexColor);
 
 //Initializes matrices and clear color
@@ -37,6 +37,7 @@ initGL(GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
        GLint& gVertexPosition2D,
+       GLint& gUV,
        GLint& gVertexColor);
 
 void
@@ -44,7 +45,9 @@ render(GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
        GLint& gVertexPosition2D,
-       GLint& gVertexColor);
+       GLint& gUV,
+       GLint& gVertexColor,
+       unsigned int texture);
 
 // Define your user buttons somewhere global
 enum Button
@@ -74,30 +77,14 @@ main(int argc, char** argv) {
   }
 
   printf("\n");
+
+  std::string currentDirectory(argv[0]);
+  currentDirectory = currentDirectory.substr(0, currentDirectory.find_last_of('\\') + 1);
+  printf("Current path: %s\n", currentDirectory.c_str());
+
+  printf("\n");
   printf("Starting app with resolution %dx%d.\n", clientWidth, clientHeight);
-
-  /***************************************************************************/
-  ilInit();
-  iluInit();
-  ilutRenderer(ILUT_OPENGL);
-  
-  ILuint imgID = 0;
-  ilGenImages(1, &imgID);
-  ilBindImage(imgID);
-
-  if (ilLoadImage(L"RGBAText.png")) {
-    size_t imgWidth  = ilGetInteger(IL_IMAGE_WIDTH);
-    size_t imgHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-    size_t imgDepth  = ilGetInteger(IL_IMAGE_DEPTH);
-
-    unsigned char* imageData = new unsigned char[imgWidth * imgHeight * 4];
-    ILuint asdf = ilCopyPixels(0, 0, 0, imgWidth, imgHeight, imgDepth, IL_RGBA, IL_UNSIGNED_BYTE, imageData);
-    if (asdf == IL_FALSE) {
-      printf("Error copying pixels");
-    }
-    delete[] imageData;
-  }
-  /***************************************************************************/
+  printf("\n");
 
   //The window we'll be rendering to
   SDL_Window* window = nullptr;
@@ -109,10 +96,12 @@ main(int argc, char** argv) {
   GLuint gProgramID = 0;
   // Vertex Atributtes Position
   GLint gVertexPosition2D = -1;
+  // Vertex Atributtes UV
+  GLint gUV = -1;
   // Vertex Atributtes Color
   GLint gVertexColor = -1;
   // OpenGL Vertex Buffer Object
-  GLuint gVBO[2] = { 0, 0 };
+  GLuint gVBO[3] = { 0, 0, 0 };
   // OpenGL Index Buffer Object
   GLuint gIBO = 0;
 
@@ -124,6 +113,7 @@ main(int argc, char** argv) {
             gVBO,
             gIBO,
             gVertexPosition2D,
+            gUV,
             gVertexColor)) {
     return -1;
   }
@@ -131,6 +121,66 @@ main(int argc, char** argv) {
   // get version info
   printf("Renderer: %s\n", glGetString(GL_RENDERER));
   printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
+
+  printf("\n");
+
+  unsigned int texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  // set the texture wrapping/filtering options (on the currently bound texture object)
+
+  /***************************************************************************/
+  FreeImage_Initialise();
+
+  printf("FreeImage version: %s\n", FreeImage_GetVersion());
+  std::string textureName = currentDirectory + "../../Checker.webp";
+  FIBITMAP* dib1 = NULL;
+  FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(textureName.c_str());
+
+  FIBITMAP* pImage = FreeImage_Load(fif, textureName.c_str(), 0);
+  if (pImage) {
+    int nWidth = FreeImage_GetWidth(pImage);
+    int nHeight = FreeImage_GetHeight(pImage);
+    FREE_IMAGE_COLOR_TYPE fict = FreeImage_GetColorType(pImage);
+
+    BITMAPINFO* imageInfo = FreeImage_GetInfo(pImage);
+    printf("Format: %i\n", fif);
+    printf("Width: %i\n", nWidth);
+    printf("Height: %i\n", nHeight);
+    printf("Bit count: %i\n", imageInfo->bmiHeader.biBitCount);
+    printf("Size: %i\n", imageInfo->bmiHeader.biSize);
+    printf("Image size: %i\n", imageInfo->bmiHeader.biSizeImage);
+    printf("Color type: %i", fict);
+
+    BYTE* imageBytes = FreeImage_GetBits(pImage);
+
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 nWidth,
+                 nHeight,
+                 0,
+                 GL_BGR,
+                 GL_UNSIGNED_BYTE,
+                 reinterpret_cast<void*>(imageBytes));
+
+    FreeImage_Unload(pImage);
+  }
+  else {
+    printf("Error while loading image\n");
+  }
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_POINT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_POINT);
+
+  // Generamos los mapas MIP, claro está.
+  glGenerateMipmap(GL_TEXTURE_2D);
+
+  FreeImage_DeInitialise();
+  /***************************************************************************/
+
+  printf("\n");
 
   HWND winHwnd = GetActiveWindow();
 
@@ -162,7 +212,7 @@ main(int argc, char** argv) {
     SDL_UpdateWindowSurface(window);
     */
 
-    render(gProgramID, gVBO, gIBO, gVertexPosition2D, gVertexColor);
+    render(gProgramID, gVBO, gIBO, gVertexPosition2D, gUV, gVertexColor, texture);
 
     SDL_GL_SwapWindow(window);
 
@@ -245,6 +295,7 @@ init(int clientWidth,
      GLuint* gVBO,
      GLuint& gIBO,
      GLint& gVertexPosition2D,
+     GLint& gUV,
      GLint& gVertexColor) {
   //Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
@@ -296,6 +347,7 @@ init(int clientWidth,
               gVBO,
               gIBO,
               gVertexPosition2D,
+              gUV,
               gVertexColor)) {
     printf("Unable to initialize OpenGL!\n");
     return false;
@@ -309,6 +361,7 @@ initGL(GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
        GLint& gVertexPosition2D,
+       GLint& gUV,
        GLint& gVertexColor) {
   // Generate program
   gProgramID = glCreateProgram();
@@ -349,14 +402,19 @@ initGL(GLuint& gProgramID,
     const GLchar* vertexShaderSource[] =
     {
 "\
-#version 140 \n\
-in vec2 LVertexPos2D; \n\
+#version 330 core\n\
+in vec3 LVertexPos; \n\
+in vec2 LVertexUV; \n\
 in vec3 LVertexColor; \n\
+\n\
+out vec2 vUVOut; \n\
 out vec3 vColorOut; \n\
+\n\
 void \n\
 main() { \n\
+  vUVOut = LVertexUV; \n\
   vColorOut = LVertexColor; \n\
-  gl_Position = vec4(LVertexPos2D.x, LVertexPos2D.y, 0, 1); \n\
+  gl_Position = vec4(LVertexPos.x, LVertexPos.y, 0, 1); \n\
 }"
     };
 
@@ -388,12 +446,21 @@ main() { \n\
     const GLchar* fragmentShaderSource[] =
     {
 "\
-#version 140 \n\
-out vec4 LFragment; \n\
+#version 330 core\n\
+in vec2 vUVOut; \n\
 in vec3 vColorOut; \n\
+ \n\
+uniform sampler2D ourTexture; \n\
+\n\
+out vec4 LFragment; \n\
+\n\
 void \n\
 main() { \n\
-  LFragment = vec4(vColorOut, 1.0); \n\
+  //LFragment = vec4(vUVOut.xy, 0.0, 1.0); \n\
+  //LFragment = vec4(vColorOut, 1.0); \n\
+  //LFragment = vec4(vUVOut.xy, min(0.0, vColorOut.x), 1.0); \n\
+  LFragment = vec4(texture(ourTexture, vUVOut).rgb, 1.0f) * vec4(vColorOut, 1.0f); \n\
+  //LFragment = vec4(texture(ourTexture, vUVOut).rgb, 1.0f); \n\
 }"
     };
 
@@ -432,9 +499,18 @@ main() { \n\
 
   // Get vertex position attribute location
   {
-    gVertexPosition2D = glGetAttribLocation(gProgramID, "LVertexPos2D");
+    gVertexPosition2D = glGetAttribLocation(gProgramID, "LVertexPos");
     if (gVertexPosition2D == -1) {
-      printf("LVertexPos2D is not a valid glsl program variable!\n");
+      printf("LVertexPos is not a valid glsl program variable!\n");
+      return false;
+    }
+  }
+
+  // Get vertex texcoord attribute location
+  {
+    gUV = glGetAttribLocation(gProgramID, "LVertexUV");
+    if (gUV == -1) {
+      printf("LVertexUV is not a valid glsl program variable!\n");
       return false;
     }
   }
@@ -461,31 +537,55 @@ main() { \n\
 
   // VBO (position) data
   GLfloat positionData[] = {
-    -0.5f, -0.5f,
-     0.0f,  0.5f,
-     0.5f, -0.5f
+    -0.5f, -0.5f, 0.0f,
+    -0.5f,  0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+
+    -0.5f,  0.5f, 0.0f,
+     0.5f,  0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f
+  };
+
+  // VBO (uv) data
+  GLfloat uvData[] = {
+    0.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 0.0f,
+
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 0.0f
   };
 
   // VBO (color) data
   GLfloat colorData[] = {
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,
+
     0.0f, 1.0f, 1.0f,
     1.0f, 0.0f, 1.0f,
     1.0f, 1.0f, 0.0f
   };
 
   // IBO data
-  GLuint indexData[] = { 0, 1, 2 };
+  GLuint indexData[] = { 0, 1, 2, 3, 4, 5 };
 
-  unsigned long long vertices = 3;
+  unsigned long long vertices = 6;
 
   // Create VBO (Position)
   glGenBuffers(1, &gVBO[0]);
   glBindBuffer(GL_ARRAY_BUFFER, gVBO[0]);
-  glBufferData(GL_ARRAY_BUFFER, 2 * vertices * sizeof(GLfloat), positionData, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, 3 * vertices * sizeof(GLfloat), positionData, GL_STATIC_DRAW);
 
-  // Create VBO (Color)
+  // Create VBO (uv)
   glGenBuffers(1, &gVBO[1]);
   glBindBuffer(GL_ARRAY_BUFFER, gVBO[1]);
+  glBufferData(GL_ARRAY_BUFFER, 2 * vertices * sizeof(GLfloat), uvData, GL_STATIC_DRAW);
+
+  // Create VBO (Color)
+  glGenBuffers(1, &gVBO[2]);
+  glBindBuffer(GL_ARRAY_BUFFER, gVBO[2]);
   glBufferData(GL_ARRAY_BUFFER, 3 * vertices * sizeof(GLfloat), colorData, GL_STATIC_DRAW);
 
   // Create IBO
@@ -501,7 +601,9 @@ render(GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
        GLint& gVertexPosition2D,
-       GLint& gVertexColor) {
+       GLint& gUV,
+       GLint& gVertexColor,
+       unsigned int texture) {
   // Clear color buffer
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -510,19 +612,26 @@ render(GLuint& gProgramID,
 
   // Enable vertex position
   glEnableVertexAttribArray(gVertexPosition2D);
+  glEnableVertexAttribArray(gUV);
   glEnableVertexAttribArray(gVertexColor);
 
   // Set vertex data
   glBindBuffer(GL_ARRAY_BUFFER, gVBO[0]);
-  glVertexAttribPointer(gVertexPosition2D, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+  glVertexAttribPointer(gVertexPosition2D, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), NULL);
 
   glBindBuffer(GL_ARRAY_BUFFER, gVBO[1]);
+  glVertexAttribPointer(gUV, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+
+  glBindBuffer(GL_ARRAY_BUFFER, gVBO[2]);
   glVertexAttribPointer(gVertexColor, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), NULL);
 
   // Set index data and render
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
 
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
   //Disable vertex position
   glDisableVertexAttribArray(gVertexPosition2D);
