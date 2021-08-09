@@ -1,7 +1,7 @@
 #pragma once
-#include "keyboard.h"
+#include "cyKeyboard.h"
 
-namespace CY_ENGINE
+namespace CYLLENE_SDK
 {
 
 /**

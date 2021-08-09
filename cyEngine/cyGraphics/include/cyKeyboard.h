@@ -1,12 +1,21 @@
 #pragma once
 
-namespace CY_ENGINE
+namespace CYLLENE_SDK
 {
 
+/**
+*
+*/
 class Keyboard {
  public:
+  /**
+  *
+  */
   Keyboard();
   
+  /**
+  *
+  */
   ~Keyboard();
 };
 
