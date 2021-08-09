@@ -12,7 +12,6 @@ main() {
   Logger::startUp();
   CrashHandler::startUp();
 
-
   try
   {
     // Start engine
@@ -20,8 +19,7 @@ main() {
   }
   catch (const std::exception& e)
   {
-    Logger::instance().logError(Utilities::format(" We found an error at: %s ", e.what()));
-    CrashHandler::instance().createReport();
+
   }
 
 }

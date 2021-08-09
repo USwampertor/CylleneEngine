@@ -15,7 +15,7 @@
 
 namespace CYLLENE_SDK
 {
-  class CrashHandler : public Module<CrashHandler>
+  class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
   {
   public:
     
