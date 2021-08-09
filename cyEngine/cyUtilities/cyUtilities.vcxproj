@@ -99,7 +99,7 @@
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include/;$(CYLLENE_DEPENDENCIES)better-enums/;$(CYLLENE_DEPENDENCIES)cppfs/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -109,7 +109,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfsd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)cppfs\lib\$(PlatformTarget)/$(Configuration)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -122,7 +122,7 @@
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include/;$(CYLLENE_DEPENDENCIES)better-enums/;$(CYLLENE_DEPENDENCIES)cppfs/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -134,7 +134,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfs.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)cppfs\lib\$(PlatformTarget)/$(Configuration)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -145,7 +145,7 @@
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include/;$(CYLLENE_DEPENDENCIES)better-enums/;$(CYLLENE_DEPENDENCIES)cppfs/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -155,7 +155,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfsd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)cppfs\lib\$(PlatformTarget)/$(Configuration)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -168,7 +168,7 @@
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include/;$(CYLLENE_DEPENDENCIES)better-enums/;$(CYLLENE_DEPENDENCIES)cppfs/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -180,7 +180,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfs.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)cppfs\lib\$(PlatformTarget)/$(Configuration)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>

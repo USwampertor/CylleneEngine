@@ -18,11 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\cyFileSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\cyStdHeaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -65,11 +60,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\cyFileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
