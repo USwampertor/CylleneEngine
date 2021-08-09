@@ -19,6 +19,7 @@
 
 #include "cyPlatformTypes.h"
 #include "cyPlatformDefines.h"
+#include "cyStdHeaders.h"
 
 #include <new>
 #include <atomic>
@@ -479,7 +480,7 @@ namespace CYLLENE_SDK {
         return nullptr;
       }
 
-      if (num > std::numeric_limits<SIZE_T >::max() / sizeof(T)) {
+      if (num > NumericLimits<SIZE_T>::max() / sizeof(T)) {
         throw nullptr;
       }
 
@@ -501,7 +502,7 @@ namespace CYLLENE_SDK {
 
     static constexpr SIZE_T
       max_size() {
-      return std::numeric_limits<SIZE_T >::max() / sizeof(T);
+      return NumericLimits<SIZE_T>::max() / sizeof(T);
     }
 
     static constexpr void

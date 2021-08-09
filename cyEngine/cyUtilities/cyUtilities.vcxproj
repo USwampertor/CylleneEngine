@@ -18,9 +18,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\cyFileSystem.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -99,17 +96,21 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile />
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfsd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -118,11 +119,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile />
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,24 +134,29 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfs.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile />
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfsd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,11 +165,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile />
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,19 +180,27 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cppfs.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyCrashHandler.h" />
+    <ClInclude Include="include\cyTime.h" />
+    <ClInclude Include="include\cyLogger.h" />
     <ClInclude Include="include\cyMemoryAllocator.h" />
     <ClInclude Include="include\cyModule.h" />
     <ClInclude Include="include\cyPlatformDefines.h" />
     <ClInclude Include="include\cyPlatformTypes.h" />
     <ClInclude Include="include\cyStdHeaders.h" />
     <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
+    <ClInclude Include="include\cyUtilities.h" />
+    <ClInclude Include="include\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\cyFileSystem.cpp" />
+    <ClCompile Include="src\cyLogger.cpp" />
+    <ClCompile Include="src\cyMemoryAllocator.cpp" />
+    <ClCompile Include="src\cyTime.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

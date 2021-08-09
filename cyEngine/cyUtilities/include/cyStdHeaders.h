@@ -13,14 +13,17 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
-
-#include <memory>
-#include <mutex>
-
-#include <sstream>
+#include <ctime>
+#include <chrono>
 #include <fstream>
 #include <iostream>
+#include <limits>
+#include <memory>
+#include <mutex>
+#include <sstream>
 #include <type_traits>
+
+
 //#define USING_EASTL
 
 #ifndef  USING_EASTL
@@ -56,15 +59,41 @@
 #endif
 
 namespace CYLLENE_SDK {
-  using Stream = std::stringstream;
+  using StringStream  = std::stringstream;
 
   template<typename T>
-  using Sptr = std::shared_ptr<T>;
+  using SharedPointer = std::shared_ptr<T>;
 
-  using Mutex = std::mutex;
+  using Mutex         = std::mutex;
+
+  using HighClock     = std::chrono::high_resolution_clock;
+
+  using SteadyClock   = std::chrono::steady_clock;
+
+  using SystemClock   = std::chrono::system_clock;
+
+  using TimeType      = std::time_t;
+
+  using TM            = std::tm;
 
   template<typename T>
-  using Limits = std::numeric_limits<T>;
+  using TimePoint     = std::chrono::time_point<T>;
+
+  using Nanoseconds   = std::chrono::nanoseconds;
+
+  using Miliseconds   = std::chrono::milliseconds;
+
+  using Microseconds  = std::chrono::microseconds;
+
+  using Seconds       = std::chrono::seconds;
+
+  using Minutes       = std::chrono::minutes;
+
+  using Hours         = std::chrono::hours;
+
+  template<typename T>
+  using NumericLimits = std::numeric_limits<T>;
+
 
 }
 

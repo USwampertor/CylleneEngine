@@ -14,3 +14,5 @@
 #include "cyPlatformTypes.h"
 #include "cyStdHeaders.h"
 #include "cyMemoryAllocator.h"
+
+#include <enum.h>

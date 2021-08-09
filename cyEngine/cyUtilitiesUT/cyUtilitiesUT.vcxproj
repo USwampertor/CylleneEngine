@@ -18,9 +18,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\main.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -99,15 +96,20 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp14</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <AdditionalDependencies>cyUtilitiesd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -117,33 +119,43 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp14</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitieslib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cyUtilities.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp14</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <AdditionalDependencies>cyUtilitiesd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -153,20 +165,28 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)/include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp14</LanguageStandard>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitieslib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cyUtilities.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
