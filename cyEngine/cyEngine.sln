@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilitiesUT", "cyUtilitie
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyGraphics", "cyGraphics\cyGraphics.vcxproj", "{0F4EF905-BDF6-4071-B29E-6F05861FD2E3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Inputs", "Inputs\Inputs.vcxproj", "{881064EA-F23C-47CD-B47C-0AC57B8BB96A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{0F4EF905-BDF6-4071-B29E-6F05861FD2E3}.Release|x64.Build.0 = Release|x64
 		{0F4EF905-BDF6-4071-B29E-6F05861FD2E3}.Release|x86.ActiveCfg = Release|Win32
 		{0F4EF905-BDF6-4071-B29E-6F05861FD2E3}.Release|x86.Build.0 = Release|Win32
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Debug|x64.ActiveCfg = Debug|x64
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Debug|x64.Build.0 = Debug|x64
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Debug|x86.ActiveCfg = Debug|Win32
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Debug|x86.Build.0 = Debug|Win32
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Release|x64.ActiveCfg = Release|x64
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Release|x64.Build.0 = Release|x64
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Release|x86.ActiveCfg = Release|Win32
+		{881064EA-F23C-47CD-B47C-0AC57B8BB96A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
