@@ -18,6 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -99,7 +102,7 @@
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -122,7 +125,7 @@
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -145,7 +148,7 @@
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -168,7 +171,7 @@
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -184,9 +187,6 @@
       <AdditionalDependencies>cyUtilities.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

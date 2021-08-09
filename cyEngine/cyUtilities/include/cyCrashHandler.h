@@ -9,11 +9,13 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
 
+#include "cyModule.h"
 #include "cyUtilitiesPrerequisites.h"
+
 
 namespace CYLLENE_SDK
 {
-  class CrashHandler
+  class CrashHandler : public Module<CrashHandler>
   {
   public:
     
@@ -23,7 +25,5 @@ namespace CYLLENE_SDK
     void 
     createReport();
     
-
-
   };
 }

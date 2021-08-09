@@ -198,6 +198,7 @@
     <ClInclude Include="include\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\CrashHandler.cpp" />
     <ClCompile Include="src\cyLogger.cpp" />
     <ClCompile Include="src\cyMemoryAllocator.cpp" />
     <ClCompile Include="src\cyTime.cpp" />
