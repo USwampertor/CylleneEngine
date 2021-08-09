@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilities", "cyUtilities\cyUtilities.vcxproj", "{07A0942F-CFCB-427F-9C1B-401A59829E25}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilitiesUT", "cyUtilitiesUT\cyUtilitiesUT.vcxproj", "{1FBF3CA3-1012-4326-96AD-0CEAC9A28235}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyGraphics", "cyGraphics\cyGraphics.vcxproj", "{89FF3D27-C927-41B4-953F-21D9D5234FFB}"
 EndProject
