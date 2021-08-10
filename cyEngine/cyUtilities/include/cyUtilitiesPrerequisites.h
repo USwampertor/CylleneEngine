@@ -15,4 +15,4 @@
 #include "cyStdHeaders.h"
 #include "cyMemoryAllocator.h"
 
-#include <enum.h>
+#include <better-enums/enum.h>
