@@ -9,20 +9,16 @@
 
 #pragma once
 
-#define USING_CPPFS
 
-#ifdef USING_CPPFS
 
 #include <cppfs/FileHandle.h>
 #include <cppfs/FileIterator.h>
 #include <cppfs/FilePath.h>
 #include <cppfs/LoginCredentials.h>
 #include <cppfs/fs.h>
-#endif // USING_CPPFS
 
 namespace CYLLENE_SDK
 {
-#ifdef USING_CPPFS
 
   using File          = cppfs::FileHandle;
   using Path          = cppfs::FilePath;
@@ -62,6 +58,5 @@ namespace CYLLENE_SDK
   };
 
 
-#endif // USING_CPPFS
 
 }

@@ -17,7 +17,7 @@ main() {
 
   try
   {
-    std::cout << PlatformMath::abs(2);
+    std::cout << FileSystem::fromBase64("Hello");
     // File f = FileSystem::open("../resources/NICE COCK.png");
     // if (f.exists())
     // {
