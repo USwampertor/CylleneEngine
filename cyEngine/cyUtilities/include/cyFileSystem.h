@@ -31,10 +31,4 @@ namespace CYLLENE_SDK
 
 #endif // USING_CPPFS
 
-  class FileSystem
-  {
-  public:
-
-  };
-
 }

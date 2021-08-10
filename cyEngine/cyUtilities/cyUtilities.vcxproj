@@ -186,6 +186,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\cyCrashHandler.h" />
+    <ClInclude Include="include\cyDLLLoader.h" />
+    <ClInclude Include="include\cyMath.h" />
+    <ClInclude Include="include\cyPlatformMath.h" />
     <ClInclude Include="include\cyTime.h" />
     <ClInclude Include="include\cyLogger.h" />
     <ClInclude Include="include\cyMemoryAllocator.h" />
@@ -195,13 +198,16 @@
     <ClInclude Include="include\cyStdHeaders.h" />
     <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
     <ClInclude Include="include\cyUtilities.h" />
+    <ClInclude Include="include\cyWindowsMath.h" />
     <ClInclude Include="include\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CrashHandler.cpp" />
+    <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyFileSystem.cpp" />
     <ClCompile Include="source\cyLogger.cpp" />
     <ClCompile Include="source\cyMemoryAllocator.cpp" />
+    <ClCompile Include="source\cyPlatformMath.cpp" />
     <ClCompile Include="source\cyTime.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

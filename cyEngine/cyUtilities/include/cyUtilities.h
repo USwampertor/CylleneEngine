@@ -40,5 +40,10 @@ namespace CYLLENE_SDK {
       return String(buffer);
     }
 
+    template<typename T>
+    static String NumberToString(const T& number) {
+      return std::to_string(number);
+    }
+
   };
 }
