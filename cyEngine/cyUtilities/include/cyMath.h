@@ -8,7 +8,7 @@
 #endif
 
 namespace CYLLENE_SDK {
-#if NAU_PLATFORM == NAU_PLATFORM_WIN32
+#if CY_PLATFORM == CY_PLATFORM_WIN32
   using Math = WindowsMath;
 #else
   using Math = PlatformMath;

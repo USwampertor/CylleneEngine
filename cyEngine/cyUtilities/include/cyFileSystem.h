@@ -32,6 +32,7 @@ namespace CYLLENE_SDK
 
   struct CY_UTILITY_EXPORT FileSystem
   {
+  public:
     static File
     open(const String& fileName) {
       return cppfs::fs::open(fileName);
@@ -57,10 +58,6 @@ namespace CYLLENE_SDK
       return cppfs::fs::sha1(fileName);
     }
 
-    static bool
-    diff() {
-      retur
-    }
 
   };
 

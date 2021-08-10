@@ -13,6 +13,7 @@ namespace CYLLENE_SDK {
 
 
   struct CY_UTILITY_EXPORT PlatformMath {
+  public:
     /**
      * Transformation functions
      */
@@ -65,7 +66,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      cos(T rad) {
+    cos(T rad) {
       return static_cast<T>(std::cos(rad));
     }
 
@@ -768,7 +769,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fastcosh(T rad) {
+    fastcosh(T rad) {
       return (1 +
         (pow(rad, 2) / 2) +
         (pow(rad, 4) / 24) +
@@ -784,7 +785,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fastsinh(T rad) {
+    fastsinh(T rad) {
       return (rad +
         ((rad * rad * rad) / 6) +
         ((rad * rad * rad * rad * rad) / 120) +
