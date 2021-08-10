@@ -10,9 +10,9 @@
 
 #pragma once
 
+#include <better-enums/enum.h>
+
 #include "cyPlatformDefines.h"
 #include "cyPlatformTypes.h"
 #include "cyStdHeaders.h"
 #include "cyMemoryAllocator.h"
-
-#include <better-enums/enum.h>

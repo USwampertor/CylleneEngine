@@ -48,9 +48,6 @@
     <ClInclude Include="include\cyTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FileSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyPlatformMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>

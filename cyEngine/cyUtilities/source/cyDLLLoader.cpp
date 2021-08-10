@@ -1,5 +1,7 @@
 #include "cyDLLLoader.h"
 
+#include "cyFileSystem.h"
+
 namespace CYLLENE_SDK {
 
   typedef void* (*PLUGIN_FUNCTION)();
@@ -12,8 +14,8 @@ namespace CYLLENE_SDK {
     GetCurrentDirectory(MAX_PATH, dirPath);
     String folderPath(dirPath);
     folderPath = folderPath.append("\\").append(path);
-
-    HINSTANCE myDll = LoadLibrary(folderPath.c_str());
+    Path p(folderPath);
+    HINSTANCE myDll = LoadLibrary(p.fullPath().c_str());
     if (!myDll) {
       DWORD err = GetLastError();
       std::cout << "Could not find dll at given path: " << path << std::endl;

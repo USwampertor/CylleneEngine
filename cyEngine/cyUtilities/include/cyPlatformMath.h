@@ -54,7 +54,7 @@ namespace CYLLENE_SDK {
       */
     template<typename T>
     static T
-      sin(T rad) {
+    sin(T rad) {
       return static_cast<T>(std::sin(rad));
     }
 

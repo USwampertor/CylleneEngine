@@ -9,13 +9,13 @@
 
 #pragma once
 
-
-
 #include <cppfs/FileHandle.h>
 #include <cppfs/FileIterator.h>
 #include <cppfs/FilePath.h>
 #include <cppfs/LoginCredentials.h>
 #include <cppfs/fs.h>
+
+#include "cyUtilitiesPrerequisites.h"
 
 namespace CYLLENE_SDK
 {
