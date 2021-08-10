@@ -28,6 +28,42 @@ namespace CYLLENE_SDK
   using Path          = cppfs::FilePath;
   using FileIterator  = cppfs::FileIterator;
   using Credentials   = cppfs::LoginCredentials;
+  using FileEvent     = cppfs::FileEvent;
+
+  struct CY_UTILITY_EXPORT FileSystem
+  {
+    static File
+    open(const String& fileName) {
+      return cppfs::fs::open(fileName);
+    }
+
+    static String
+    toBase64(const String& fileName) {
+      return cppfs::fs::base64(fileName);
+    }
+
+    static String
+    fromBase64(const String& fileName) {
+      return cppfs::fs::fromBase64(fileName);
+    }
+
+    static String
+    hashToString(const unsigned char* fileName) {
+      return cppfs::fs::hashToString(fileName);
+    }
+
+    static String
+    stringToHash(const String& fileName) {
+      return cppfs::fs::sha1(fileName);
+    }
+
+    static bool
+    diff() {
+      retur
+    }
+
+  };
+
 
 #endif // USING_CPPFS
 

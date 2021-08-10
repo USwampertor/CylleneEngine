@@ -15,10 +15,11 @@ main() {
 
   try
   {
-    Path p("../");
-
-    // Start engine
-    std::cout << p.fullPath();
+    File f = FileSystem::open("../resources/NICE COCK.png");
+    if (f.exists())
+    {
+      std::cout << f.fileName();
+    }
 
   }
   catch (const std::exception& e)
