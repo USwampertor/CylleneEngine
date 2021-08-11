@@ -7,13 +7,21 @@
 
 namespace CYLLENE_SDK {
 
-  Vector2f::Vector2f(float nx, float ny) : m_x(nx), m_y(ny) {}
+  Vector2f::Vector2f(float nx, float ny) 
+    : m_x(nx),
+      m_y(ny) {}
 
-  Vector2f::Vector2f(float values) : m_x(values), m_y(values) {}
+  Vector2f::Vector2f(float values) 
+    : m_x(values), 
+      m_y(values) {}
 
-  Vector2f::Vector2f(const Vector2i& other) : m_x(other[0]), m_y(other[1]) {}
+  Vector2f::Vector2f(const Vector2i& other) 
+    : m_x(static_cast<float>(other[0])), 
+      m_y(static_cast<float>(other[1])) {}
 
-  Vector2f::Vector2f(const Vector2f& other) : m_x(other[0]), m_y(other[1]) {}
+  Vector2f::Vector2f(const Vector2f& other) 
+    : m_x(other[0]), 
+      m_y(other[1]) {}
 
   float&
   Vector2f::operator()(uint32& index) {
@@ -230,10 +238,10 @@ namespace CYLLENE_SDK {
   Vector2f::normalized() const {
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-      Math::pow(static_cast<float>(m_y), 2.0f);
+                Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-      "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());
 
@@ -245,10 +253,10 @@ namespace CYLLENE_SDK {
   Vector2f::qNormalized() const {
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-      Math::pow(static_cast<float>(m_y), 2.0f);
+                Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-      "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());
 
@@ -260,10 +268,10 @@ namespace CYLLENE_SDK {
   Vector2f::normalize() {
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-      Math::pow(static_cast<float>(m_y), 2.0f);
+                Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-      "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());
 
@@ -276,10 +284,10 @@ namespace CYLLENE_SDK {
   Vector2f::qNormalize() {
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-      Math::pow(static_cast<float>(m_y), 2.0f);
+                Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-      "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());
 
@@ -317,15 +325,15 @@ namespace CYLLENE_SDK {
     return output;
   }
 
-  const Vector2f Vector2f::ZERO = Vector2f(0, 0);
+  const Vector2f Vector2f::ZERO   = Vector2f(0, 0);
 
-  const Vector2f Vector2f::ONE = Vector2f(1, 1);
+  const Vector2f Vector2f::ONE    = Vector2f(1, 1);
 
-  const Vector2f Vector2f::ONEX = Vector2f(1, 0);
+  const Vector2f Vector2f::ONEX   = Vector2f(1, 0);
 
-  const Vector2f Vector2f::ONEY = Vector2f(0, 1);
+  const Vector2f Vector2f::ONEY   = Vector2f(0, 1);
 
-  const Vector2f Vector2f::UP = Vector2f(0, 1);
+  const Vector2f Vector2f::UP     = Vector2f(0, 1);
 
-  const Vector2f Vector2f::RIGHT = Vector2f(1, 0);
+  const Vector2f Vector2f::RIGHT  = Vector2f(1, 0);
 }

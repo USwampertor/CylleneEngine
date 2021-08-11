@@ -14,9 +14,9 @@ namespace CYLLENE_SDK {
 
     ~Vector2i() = default;
 
-    Vector2i(int32 nx, int32 ny);
+    Vector2i(const int32& nx, const int32& ny);
 
-    Vector2i(int32 values);
+    Vector2i(const int32& values);
 
     Vector2i(const Vector2f& other);
 
@@ -29,7 +29,7 @@ namespace CYLLENE_SDK {
      *
      */
     const int32&
-    operator()(uint32& index) const;
+    operator()(const int32& index) const;
     
     /**
      * @brief () operator overload
@@ -38,7 +38,7 @@ namespace CYLLENE_SDK {
      *
      */
     int32&
-    operator()(uint32& index);
+    operator()(const int32& index);
     
     /**
      * @brief [] operator overload
@@ -47,7 +47,7 @@ namespace CYLLENE_SDK {
      *
      */
     const int32
-    operator[](uint32 index) const;
+    operator[](const int32& index) const;
 
     /**
      * @brief [] operator overload
@@ -56,7 +56,7 @@ namespace CYLLENE_SDK {
      *
      */
     int32&
-    operator[](uint32 index);
+    operator[](const int32& index);
 
     /**
      * @brief + operator overload
@@ -101,7 +101,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2i
-    operator+(int32 plus) const;
+    operator+(const int32& plus) const;
 
     /**
      * @brief - operator overload
@@ -110,7 +110,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2i
-    operator-(int32 minus) const;
+    operator-(const int32& minus) const;
 
     /**
      * @brief * operator overload
@@ -119,7 +119,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2i
-    operator*(int32 times) const;
+    operator*(const int32& times) const;
 
     /**
      * @brief / operator overload
@@ -128,7 +128,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2i
-    operator/(int32 under) const;
+    operator/(const int32& under) const;
 
     /**
      * @brief | operator overload for dot product
@@ -137,7 +137,7 @@ namespace CYLLENE_SDK {
      *
      */
     int32
-    operator|(const Vector2i v) const;
+    operator|(const Vector2i& v) const;
 
     /**
      * @brief ^ operator overload for cross product
@@ -146,7 +146,7 @@ namespace CYLLENE_SDK {
      *
      */
     int32
-    operator^(const Vector2i v) const;
+    operator^(const Vector2i& v) const;
 
     /**
      * @brief == operator overload
@@ -254,7 +254,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2i&
-    operator*=(int32 scale);
+    operator*=(const int32& scale);
 
     /**
      * @brief /= operator overload
@@ -263,7 +263,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2i&
-    operator/=(int32 scale);
+    operator/=(const int32& scale);
 
     /**
      * @brief the dot product

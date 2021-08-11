@@ -14,13 +14,7 @@
 namespace CYLLENE_SDK {
   struct CY_UTILITY_EXPORT Utils {
   public:
-    
-    /**
-     * @brief 
-     * @param 
-     * @return 
-     *
-     */
+
     template<typename ... Args>
     static String format(const String& format, Args ... args)
     {

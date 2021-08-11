@@ -7,31 +7,39 @@
 
 namespace CYLLENE_SDK {
 
-  Vector2i::Vector2i(int32 nx, int32 ny) : m_x(nx), m_y(ny) {}
+  Vector2i::Vector2i(const int32& nx, const int32& ny)
+    : m_x(nx),
+      m_y(ny) {}
 
-  Vector2i::Vector2i(int32 values) : m_x(values), m_y(values) {}
+  Vector2i::Vector2i(const int32& values)
+    : m_x(values), 
+      m_y(values) {}
 
-  Vector2i::Vector2i(const Vector2f& other) : m_x(other[0]), m_y(other[1]) {}
+  Vector2i::Vector2i(const Vector2f& other) 
+    : m_x(static_cast<int>(other[0])), 
+      m_y(static_cast<int>(other[1])) {}
 
-  Vector2i::Vector2i(const Vector2i& other) : m_x(other[0]), m_y(other[1]) {}
+  Vector2i::Vector2i(const Vector2i& other) 
+    : m_x(other[0]), 
+      m_y(other[1]) {}
 
   int32&
-  Vector2i::operator()(uint32& index) {
+  Vector2i::operator()(const int32& index) {
     return (&m_x)[index];
   }
 
   const int32&
-  Vector2i::operator()(uint32& index) const {
+  Vector2i::operator()(const int32& index) const {
     return (&m_x)[index];
   }
 
   int32&
-  Vector2i::operator[](uint32 index) {
+  Vector2i::operator[](const int32& index) {
     return (&m_x)[index];
   }
   
   const int32
-  Vector2i::operator[](uint32 index) const {
+  Vector2i::operator[](const int32& index) const {
     return (&m_x)[index];
   }
 
@@ -57,32 +65,32 @@ namespace CYLLENE_SDK {
   }
 
   Vector2i
-  Vector2i::operator+(int32 plus) const {
+  Vector2i::operator+(const int32& plus) const {
     return Vector2i(m_x + plus, m_y + plus);
   }
 
   Vector2i
-  Vector2i::operator-(int32 minus) const {
+  Vector2i::operator-(const int32& minus) const {
     return Vector2i(m_x - minus, m_y - minus);
   }
 
   Vector2i
-  Vector2i::operator*(int32 times) const {
+  Vector2i::operator*(const int32& times) const {
     return Vector2i(m_x * times, m_y * times);
   }
 
   Vector2i
-  Vector2i::operator/(int32 under) const {
+  Vector2i::operator/(const int32& under) const {
     return Vector2i(m_x / under, m_y / under);
   }
 
   int32
-  Vector2i::operator|(const Vector2i v) const {
+  Vector2i::operator|(const Vector2i& v) const {
     return m_x * v.m_x + m_y * v.m_y;
   }
 
   int32
-  Vector2i::operator^(const Vector2i v) const {
+  Vector2i::operator^(const Vector2i& v) const {
     return m_x * v.m_x - m_y * v.m_y;
   }
 
@@ -150,14 +158,14 @@ namespace CYLLENE_SDK {
   }
 
   Vector2i&
-  Vector2i::operator*=(int32 scale) {
+  Vector2i::operator*=(const int32& scale) {
     m_x *= scale;
     m_y *= scale;
     return *this;
   }
 
   Vector2i&
-  Vector2i::operator/=(int32 scale) {
+  Vector2i::operator/=(const int32& scale) {
     m_x /= scale;
     m_y /= scale;
     return *this;
@@ -233,7 +241,7 @@ namespace CYLLENE_SDK {
                 Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-               "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
     
     CY_DEBUG_ONLY(sqrMagnitude());
     
@@ -248,7 +256,7 @@ namespace CYLLENE_SDK {
                 Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-               "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
     
     CY_DEBUG_ONLY(sqrMagnitude());
     
@@ -263,7 +271,7 @@ namespace CYLLENE_SDK {
                 Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-               "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());
 
@@ -279,7 +287,7 @@ namespace CYLLENE_SDK {
                 Math::pow(static_cast<float>(m_y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
-               "Square is less than epsilon and that shit is wack");
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());
 
@@ -317,15 +325,15 @@ namespace CYLLENE_SDK {
     return output;
   }
 
-  const Vector2i Vector2i::ZERO = Vector2i(0, 0);
+  const Vector2i Vector2i::ZERO   = Vector2i(0, 0);
 
-  const Vector2i Vector2i::ONE  = Vector2i(1, 1);
+  const Vector2i Vector2i::ONE    = Vector2i(1, 1);
 
-  const Vector2i Vector2i::ONEX = Vector2i(1, 0);
+  const Vector2i Vector2i::ONEX   = Vector2i(1, 0);
 
-  const Vector2i Vector2i::ONEY = Vector2i(0, 1);
+  const Vector2i Vector2i::ONEY   = Vector2i(0, 1);
 
-  const Vector2i Vector2i::UP = Vector2i(0, 1);
+  const Vector2i Vector2i::UP     = Vector2i(0, 1);
   
-  const Vector2i Vector2i::RIGHT = Vector2i(1, 0);
+  const Vector2i Vector2i::RIGHT  = Vector2i(1, 0);
 }
