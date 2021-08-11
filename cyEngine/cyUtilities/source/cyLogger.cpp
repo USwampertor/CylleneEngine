@@ -10,6 +10,8 @@
 
 #include "cyLogger.h"
 #include "cyUtilities.h"
+#include "cyTime.h"
+
 
 namespace CYLLENE_SDK {
   const String&
@@ -30,11 +32,10 @@ namespace CYLLENE_SDK {
   const String
   Log::ToString() {
     String toReturn = "";
-    TimeType tt = SystemClock::to_time_t(m_time);
-    TM localTime = *localtime(&tt);
+    Date localTime = Time::scToDate(m_time);
     
-    toReturn += Utilities::format("[%s] [%s %s] %s",  
-                                  Utilities::timeFormat(localTime, "%H:%M:%S").c_str(),
+    toReturn += Utils::format("[%s] [%s %s] %s",  
+                                  Utils::timeFormat(localTime, "%H:%M:%S").c_str(),
                                   m_type._to_string(),
                                   m_channel._to_string(),
                                   m_message.c_str());

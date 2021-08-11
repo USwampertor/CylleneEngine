@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -198,6 +198,8 @@
     <ClInclude Include="include\cyStdHeaders.h" />
     <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
     <ClInclude Include="include\cyUtilities.h" />
+    <ClInclude Include="include\cyVector2f.h" />
+    <ClInclude Include="include\cyVector2i.h" />
     <ClInclude Include="include\cyWindowsMath.h" />
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +210,9 @@
     <ClCompile Include="source\cyMemoryAllocator.cpp" />
     <ClCompile Include="source\cyPlatformMath.cpp" />
     <ClCompile Include="source\cyTime.cpp" />
+    <ClCompile Include="source\cyUtilities.cpp" />
+    <ClCompile Include="source\cyVector2f.cpp" />
+    <ClCompile Include="source\cyVector2i.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

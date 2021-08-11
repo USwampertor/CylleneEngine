@@ -26,7 +26,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      degToRad(T degree) {
+    degToRad(T degree) {
       return (degree * RADIAN);
     }
 
@@ -38,7 +38,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      radToDeg(T rad) {
+    radToDeg(T rad) {
       return (rad * DEGREE);
     }
 
@@ -78,7 +78,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      tan(T rad) {
+    tan(T rad) {
       return std::tan(rad);
     }
 
@@ -90,7 +90,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      asin(T rad) {
+    asin(T rad) {
       return std::asin(rad);
     }
 
@@ -102,7 +102,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      acos(T rad) {
+    acos(T rad) {
       return std::acos(rad);
     }
 
@@ -114,7 +114,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      atan(T rad) {
+    atan(T rad) {
       return std::atan(rad);
     }
 
@@ -126,7 +126,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      atan2(T t1, T t2) {
+    atan2(T t1, T t2) {
       return std::atan2(t1, t2);
     }
 
@@ -138,7 +138,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      sinh(T rad) {
+    sinh(T rad) {
       return std::sinh(rad);
     }
 
@@ -150,7 +150,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      cosh(T rad) {
+    cosh(T rad) {
       return std::cosh(rad);
     }
 
@@ -162,7 +162,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      tanh(T rad) {
+    tanh(T rad) {
       return std::tanh(rad);
     }
 
@@ -174,7 +174,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      asinh(T rad) {
+    asinh(T rad) {
       return std::asinh(rad);
     }
 
@@ -186,7 +186,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      acosh(T rad) {
+    acosh(T rad) {
       return std::acosh(rad);
     }
 
@@ -198,7 +198,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      atanh(T rad) {
+    atanh(T rad) {
       return std::atanh(rad);
     }
 
@@ -215,7 +215,7 @@ namespace CYLLENE_SDK {
       */
     template<typename T>
     static T
-      exp(T power) {
+    exp(T power) {
       return std::exp(power);
     }
 
@@ -227,7 +227,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      pow(T value, T power) {
+    pow(T value, T power) {
       return static_cast<T>(std::pow(value, power));
     }
 
@@ -239,7 +239,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      powf(T value, float power) {
+    powf(T value, float power) {
       return static_cast<float>(std::pow(value, power));
     }
 
@@ -251,7 +251,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      abs(T value) {
+    abs(T value) {
       return std::abs(value);
     }
 
@@ -263,7 +263,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      sqr(T value) {
+    sqr(T value) {
       return value * value;
     }
 
@@ -275,7 +275,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      cbc(T value) {
+    cbc(T value) {
       return value * value * value;
     }
 
@@ -287,7 +287,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      sqrt(T value) {
+    sqrt(T value) {
       return static_cast<T>(std::sqrt(value));
     }
 
@@ -299,7 +299,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      invSqrt(T value) {
+    invSqrt(T value) {
       return 1.0f / std::sqrt(value);
     }
 
@@ -312,7 +312,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      qInvSqrt(T value) {
+    qInvSqrt(T value) {
       long i;
       float x2, y;
       const float threehalfs = 1.5F;
@@ -336,7 +336,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      cbrt(T value) {
+    cbrt(T value) {
       return std::cbrt(value);
     }
 
@@ -349,7 +349,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      hypot(T co, T ca) {
+    hypot(T co, T ca) {
       return std::hypot(co, ca);
     }
 
@@ -362,8 +362,8 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      copySign(T a, T b) {
-      return std::copysignf(a, b);
+    copySign(T a, T b) {
+      return std::copysign(a, b);
     }
 
     /**
@@ -376,7 +376,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static bool
-      isNearSame(T a, T b, T threshold = SMALLNUMBER) {
+    isNearSame(T a, T b, T threshold = SMALLNUMBER) {
       return abs(a - b) <= threshold;
     }
 
@@ -389,7 +389,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      mod(T number, T denom) {
+    mod(T number, T denom) {
       return number % denom;
     }
 
@@ -402,7 +402,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fmod(T number, T denom) {
+    fmod(T number, T denom) {
       return std::fmod(number, denom);
     }
 
@@ -414,7 +414,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      floor(T a) {
+    floor(T a) {
       return std::floor(a);
     }
 
@@ -427,7 +427,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      floorp(T a, uint32 position = 0) {
+    floorp(T a, uint32 position = 0) {
       T b = a * (10 ^ position);
       return std::floor(b) / (10 ^ position);
     }
@@ -440,7 +440,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      ceil(T a) {
+    ceil(T a) {
       return std::ceil(a);
     }
 
@@ -453,7 +453,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      ceilp(T a, uint32 position = 0) {
+    ceilp(T a, uint32 position = 0) {
       T b = a * (10 ^ position);
       return std::ceil(b) / (10 ^ position);
     }
@@ -466,7 +466,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      roundHalf(T a) {
+    roundHalf(T a) {
       return std::round(a * 2.0f) / 2.0f;
     }
 
@@ -478,7 +478,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      round(T a) {
+    round(T a) {
       return std::round(a);
     }
 
@@ -491,7 +491,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      roundp(T a, uint32 position = 0) {
+    roundp(T a, uint32 position = 0) {
       T b = a * (10 ^ position);
       return std::round(b) / (10 ^ position);
     }
@@ -504,7 +504,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      max(T a, T b) {
+    max(T a, T b) {
       return (a < b) ? a : b;
 
       //return std::max(a, b);
@@ -518,7 +518,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      min(T a, T b) {
+    min(T a, T b) {
 
       return (a > b) ? a : b;
 
@@ -533,7 +533,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      max3(T a, T b, T c) {
+    max3(T a, T b, T c) {
       return max(max(a, b), c);
     }
 
@@ -545,7 +545,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      min3(T a, T b, T c) {
+    min3(T a, T b, T c) {
       return min(min(a, b), c);
     }
 
@@ -558,7 +558,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      frac(T fracpart, T* intpart) {
+    frac(T fracpart, T* intpart) {
       return std::modf(fracpart, intpart);
     }
 
@@ -570,7 +570,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      clamp(T number, T bot, T top) {
+    clamp(T number, T bot, T top) {
       return min(max(number, bot), top);
     }
 
@@ -587,7 +587,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      log10(T value) {
+    log10(T value) {
       return std::log10(value);
     }
 
@@ -599,7 +599,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      log2(T value) {
+    log2(T value) {
       return std::log2(value);
     }
 
@@ -611,7 +611,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      logN(T value) {
+    logN(T value) {
       return std::log(value);
     }
 
@@ -623,7 +623,7 @@ namespace CYLLENE_SDK {
      */
     template <typename T>
     static T
-      logX(T base, T value) {
+    logX(T base, T value) {
       return std::log(value) / std::log(base);
     }
 
@@ -636,7 +636,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      lerp(T a, T b, float scale) {
+    lerp(T a, T b, float scale) {
       return static_cast<T>(static_cast<float>(a) +
         (static_cast<float>(b) - static_cast<float>(a))
         * scale);
@@ -650,7 +650,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      factorial(T top) {
+    factorial(T top) {
       return top == 0 ? 1 : (top * factorial(top - 1));
     }
 
@@ -662,7 +662,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fastcos(T rad) {
+    fastcos(T rad) {
       return (1 -
         (pow(rad, 2) / 2) +
         (pow(rad, 4) / 24) -
@@ -678,7 +678,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fastsin(T rad) {
+    fastsin(T rad) {
       return (rad -
         (pow(rad, 3) / 6) +
         (pow(rad, 5) / 120) -
@@ -694,7 +694,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fasttan(T rad) {
+    fasttan(T rad) {
       return (rad -
         (pow(rad, 3) * 2 / 6) +
         (pow(rad, 5) * 16 / 120) -
@@ -710,7 +710,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fastacos(T rad) {
+    fastacos(T rad) {
       float root = sqrt(abs(1.0f - rad));
       float result = -0.0187293f;
       result *= rad;
@@ -731,7 +731,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fastasin(T rad) {
+    fastasin(T rad) {
       float root = sqrt(abs(1.0f - rad));
       float result = -0.0187293f;
       result *= rad;
@@ -752,7 +752,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fastatan(T rad) {
+    fastatan(T rad) {
       return (
         rad -
         (pow(rad, 3) / 3) +
@@ -801,7 +801,7 @@ namespace CYLLENE_SDK {
      */
     template<typename T>
     static T
-      fasttanh(T rad) {
+    fasttanh(T rad) {
       return (rad *
         (135135.0f + Math::sqr(rad) *
           (17325.0f + Math::sqr(rad) *
@@ -810,6 +810,19 @@ namespace CYLLENE_SDK {
         Math::sqr(rad) *
         (62370.0f + Math::sqr(rad) * (3150.0f + Math::sqr(rad) * 28.0f));
     }
+
+    template<typename T>
+    static bool
+    isNaN(T value) {
+      return std::isnan(value);
+    }
+
+    template<typename T>
+    static bool
+    isInfinite(T value) {
+      return std::isinf(value);
+    }
+
 
     /**
      * Constants

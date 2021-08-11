@@ -12,7 +12,7 @@
 #include "cyUtilitiesPrerequisites.h"
 
 namespace CYLLENE_SDK {
-  struct CY_UTILITY_EXPORT Utilities {
+  struct CY_UTILITY_EXPORT Utils {
   public:
     
     /**
@@ -41,8 +41,14 @@ namespace CYLLENE_SDK {
     }
 
     template<typename T>
-    static String NumberToString(const T& number) {
+    static 
+    String toString(const T& number) {
       return std::to_string(number);
+    }
+
+    static 
+    void ThrowException(const String& message) {
+      throw::std::exception(message.c_str());
     }
 
   };
