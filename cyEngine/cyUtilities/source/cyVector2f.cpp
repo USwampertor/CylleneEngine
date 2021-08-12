@@ -7,11 +7,11 @@
 
 namespace CYLLENE_SDK {
 
-  Vector2f::Vector2f(float nx, float ny) 
+  Vector2f::Vector2f(const float& nx, const float& ny)
     : m_x(nx),
       m_y(ny) {}
 
-  Vector2f::Vector2f(float values) 
+  Vector2f::Vector2f(const float& values)
     : m_x(values), 
       m_y(values) {}
 
@@ -24,22 +24,22 @@ namespace CYLLENE_SDK {
       m_y(other[1]) {}
 
   float&
-  Vector2f::operator()(uint32& index) {
+  Vector2f::operator()(const uint32& index) {
     return (&m_x)[index];
   }
 
   const float&
-  Vector2f::operator()(uint32& index) const {
+  Vector2f::operator()(const uint32& index) const {
     return (&m_x)[index];
   }
 
   float&
-  Vector2f::operator[](uint32 index) {
+  Vector2f::operator[](const uint32& index) {
     return (&m_x)[index];
   }
 
   const float
-  Vector2f::operator[](uint32 index) const {
+  Vector2f::operator[](const uint32& index) const {
     return (&m_x)[index];
   }
 
@@ -65,32 +65,32 @@ namespace CYLLENE_SDK {
   }
 
   Vector2f
-  Vector2f::operator+(float plus) const {
+  Vector2f::operator+(const float& plus) const {
     return Vector2f(m_x + plus, m_y + plus);
   }
 
   Vector2f
-  Vector2f::operator-(float minus) const {
+  Vector2f::operator-(const float& minus) const {
     return Vector2f(m_x - minus, m_y - minus);
   }
 
   Vector2f
-  Vector2f::operator*(float times) const {
+  Vector2f::operator*(const float& times) const {
     return Vector2f(m_x * times, m_y * times);
   }
 
   Vector2f
-  Vector2f::operator/(float under) const {
+  Vector2f::operator/(const float& under) const {
     return Vector2f(m_x / under, m_y / under);
   }
 
   float
-  Vector2f::operator|(const Vector2f v) const {
+  Vector2f::operator|(const Vector2f& v) const {
     return m_x * v.m_x + m_y * v.m_y;
   }
 
   float
-  Vector2f::operator^(const Vector2f v) const {
+  Vector2f::operator^(const Vector2f& v) const {
     return m_x * v.m_x - m_y * v.m_y;
   }
 
@@ -158,14 +158,14 @@ namespace CYLLENE_SDK {
   }
 
   Vector2f&
-  Vector2f::operator*=(float scale) {
+  Vector2f::operator*=(const float& scale) {
     m_x *= scale;
     m_y *= scale;
     return *this;
   }
 
   Vector2f&
-  Vector2f::operator/=(float scale) {
+  Vector2f::operator/=(const float& scale) {
     m_x /= scale;
     m_y /= scale;
     return *this;
@@ -197,7 +197,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Vector2f::setValues(float newX, float newY) {
+  Vector2f::setValues(const float& newX, const float& newY) {
     m_x = newX;
     m_y = newY;
   }

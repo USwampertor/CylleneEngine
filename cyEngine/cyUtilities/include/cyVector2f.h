@@ -6,21 +6,35 @@ namespace CYLLENE_SDK {
 
   class Vector2i;
 
+  class Vector3i;
+  class Vector3f;
+
+  class Vector4f;
+  class Vector4i;
+
   class CY_UTILITY_EXPORT Vector2f
   {
   public:
 
     Vector2f() = default;
 
-    ~Vector2f() = default;
+    Vector2f(const float& nx, const float& ny);
 
-    Vector2f(float nx, float ny);
-
-    Vector2f(float values);
+    Vector2f(const float& values);
 
     Vector2f(const Vector2i& other);
 
     Vector2f(const Vector2f& other);
+
+    Vector2f(const Vector3i& other);
+
+    Vector2f(const Vector3f& other);
+
+    Vector2f(const Vector4i& other);
+
+    Vector2f(const Vector4f& other);
+
+    ~Vector2f() = default;
 
     /**
      * @brief () operator overload
@@ -29,7 +43,7 @@ namespace CYLLENE_SDK {
      *
      */
     const float&
-    operator()(uint32& index) const;
+    operator()(const uint32& index) const;
 
     /**
      * @brief () operator overload
@@ -38,7 +52,7 @@ namespace CYLLENE_SDK {
      *
      */
     float&
-    operator()(uint32& index);
+    operator()(const uint32& index);
 
     /**
      * @brief [] operator overload
@@ -47,7 +61,7 @@ namespace CYLLENE_SDK {
      *
      */
     const float
-    operator[](uint32 index) const;
+    operator[](const uint32& index) const;
 
     /**
      * @brief [] operator overload
@@ -56,7 +70,7 @@ namespace CYLLENE_SDK {
      *
      */
     float&
-    operator[](uint32 index);
+    operator[](const uint32& index);
 
     /**
      * @brief + operator overload
@@ -101,7 +115,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2f
-    operator+(float plus) const;
+    operator+(const float& plus) const;
 
     /**
      * @brief - operator overload
@@ -110,7 +124,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2f
-    operator-(float minus) const;
+    operator-(const float& minus) const;
 
     /**
      * @brief * operator overload
@@ -119,7 +133,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2f
-    operator*(float times) const;
+    operator*(const float& times) const;
 
     /**
      * @brief / operator overload
@@ -128,7 +142,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2f
-    operator/(float under) const;
+    operator/(const float& under) const;
 
     /**
      * @brief | operator overload for dot product
@@ -137,7 +151,7 @@ namespace CYLLENE_SDK {
      *
      */
     float
-    operator|(const Vector2f v) const;
+    operator|(const Vector2f& v) const;
 
     /**
      * @brief ^ operator overload for cross product
@@ -146,7 +160,7 @@ namespace CYLLENE_SDK {
      *
      */
     float
-    operator^(const Vector2f v) const;
+    operator^(const Vector2f& v) const;
 
     /**
      * @brief == operator overload
@@ -254,7 +268,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2f&
-    operator*=(float scale);
+    operator*=(const float& scale);
 
     /**
      * @brief /= operator overload
@@ -263,7 +277,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector2f&
-    operator/=(float scale);
+    operator/=(const float& scale);
 
     /**
      * @brief the dot product
@@ -318,7 +332,7 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    setValues(float newX, float newY);
+    setValues(const float& newX, const float& newY);
 
     /**
      * @brief gets the min between two vectors

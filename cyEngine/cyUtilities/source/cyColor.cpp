@@ -35,22 +35,25 @@ namespace CYLLENE_SDK {
 
   Color
   Color::operator*(const Color& other) {
-
+    return Color(this->m_r * other.m_r,
+                 this->m_g * other.m_g,
+                 this->m_b * other.m_b,
+                 this->m_a * other.m_a);
   }
 
-  const Color Color::Azure    = Color(240,255,255);
-  const Color Color::Black    = Color(0);
-  const Color Color::Blue     = Color(0,0,255);
-  const Color Color::Clear    = Color(0,0,0,127);
-  const Color Color::Cyan     = Color(0,255,255);
-  const Color Color::Gray     = Color(128,128,128);
-  const Color Color::Green    = Color(0,255,0);
-  const Color Color::Grey     = Color(100,100,100);
-  const Color Color::Magenta  = Color(255,0,255);
-  const Color Color::Red      = Color(255,0,0);
-  const Color Color::Orange   = Color(255,100,0);
-  const Color Color::Violet   = Color(140,0,210);
-  const Color Color::White    = Color(255,255,255);
-  const Color Color::Yellow   = Color(255,255,0);
+  const Color Color::AZURE    = Color(240,255,255);
+  const Color Color::BLACK    = Color(0);
+  const Color Color::BLUE     = Color(0,0,255);
+  const Color Color::CLEAR    = Color(0,0,0,127);
+  const Color Color::CYAN     = Color(0,255,255);
+  const Color Color::GRAY     = Color(128,128,128);
+  const Color Color::GREEN    = Color(0,255,0);
+  const Color Color::GREY     = Color(100,100,100);
+  const Color Color::MAGENTA  = Color(255,0,255);
+  const Color Color::RED      = Color(255,0,0);
+  const Color Color::ORANGE   = Color(255,100,0);
+  const Color Color::VIOLET   = Color(140,0,210);
+  const Color Color::WHITE    = Color(255,255,255);
+  const Color Color::YELLOW   = Color(255,255,0);
 
 }

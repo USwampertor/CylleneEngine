@@ -28,5 +28,5 @@ namespace CYLLENE_SDK {
 
   const float PlatformMath::EPSILONF = std::numeric_limits<float>::epsilon();
 
-  const float PlatformMath::EPSILOND = std::numeric_limits<double>::epsilon();
+  const float PlatformMath::EPSILOND = static_cast<float>(std::numeric_limits<double>::epsilon());
 }

@@ -9,13 +9,13 @@
 
 #pragma once
 
+#include "cyUtilitiesPrerequisites.h"
+
 #include <cppfs/FileHandle.h>
 #include <cppfs/FileIterator.h>
 #include <cppfs/FilePath.h>
 #include <cppfs/LoginCredentials.h>
 #include <cppfs/fs.h>
-
-#include "cyUtilitiesPrerequisites.h"
 
 namespace CYLLENE_SDK
 {
@@ -29,6 +29,7 @@ namespace CYLLENE_SDK
   struct CY_UTILITY_EXPORT FileSystem
   {
   public:
+
     static File
     open(const String& fileName) {
       return cppfs::fs::open(fileName);

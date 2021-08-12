@@ -6,13 +6,14 @@ namespace CYLLENE_SDK {
 
   class Vector2f;
 
+  class Vector3f;
+  class Vector3i;
+
   class CY_UTILITY_EXPORT Vector2i
   {
   public:
 
     Vector2i() = default;
-
-    ~Vector2i() = default;
 
     Vector2i(const int32& nx, const int32& ny);
 
@@ -21,6 +22,12 @@ namespace CYLLENE_SDK {
     Vector2i(const Vector2f& other);
 
     Vector2i(const Vector2i& other);
+
+    Vector2i(const Vector3f& other);
+
+    Vector2i(const Vector3i& other);
+
+    ~Vector2i() = default;
 
     /**
      * @brief () operator overload
@@ -318,7 +325,7 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    setValues(int32 newX, int32 newY);
+    setValues(const int32& newX, const int32& newY);
 
     /**
      * @brief gets the min between two vectors

@@ -197,7 +197,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Vector2i::setValues(int32 newX, int32 newY) {
+  Vector2i::setValues(const int32& newX, const int32& newY) {
     m_x = newX;
     m_y = newY;
   }

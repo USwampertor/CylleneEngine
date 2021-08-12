@@ -15,7 +15,9 @@ namespace CYLLENE_SDK {
 
   class Vector2f;
   class Vector2i;
+
   class Vector3i;
+  
   class Vector4f;
   class Vector4i;
 
@@ -33,6 +35,8 @@ namespace CYLLENE_SDK {
     Vector3f(const Vector4i& other);
  
     Vector3f(const float& nx, const float& ny, const float& nz);
+
+    ~Vector3f() = default;
 
     /**
      * @brief () operator overload

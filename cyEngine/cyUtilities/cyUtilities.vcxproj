@@ -188,6 +188,7 @@
     <ClInclude Include="include\cyColor.h" />
     <ClInclude Include="include\cyCrashHandler.h" />
     <ClInclude Include="include\cyDLLLoader.h" />
+    <ClInclude Include="include\cyFileSystem.h" />
     <ClInclude Include="include\cyMath.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
     <ClInclude Include="include\cyTime.h" />
