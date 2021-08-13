@@ -8,6 +8,8 @@
 
 #include "cyVector4f.h"
 
+#include "cyMath.h"
+
 namespace CYLLENE_SDK {
 
   Vector2f::Vector2f(const float& nx, const float& ny)
@@ -342,7 +344,7 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector2f::isNearlySame(const Vector2f& a, const Vector2f& b, const float& error) {
+  Vector2f::isNearlySame(const Vector2f& a, const Vector2f& b, const float& error = Math::SMALLNUMBER) {
     return Math::abs(a.m_x - b.m_x) <= error &&
            Math::abs(a.m_y - b.m_y) <= error ;
   }

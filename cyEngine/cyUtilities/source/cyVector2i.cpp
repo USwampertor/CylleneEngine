@@ -8,6 +8,8 @@
 
 #include "cyVector4f.h"
 
+#include "cyMath.h"
+
 namespace CYLLENE_SDK {
 
   Vector2i::Vector2i(const int32& nx, const int32& ny)
@@ -248,10 +250,10 @@ namespace CYLLENE_SDK {
   Vector2i
   Vector2i::normalized() const {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
+              !Math::isNaN(static_cast<float>(m_y)) &&
+              !Math::isInfinite(static_cast<float>(m_x)) &&
+              !Math::isInfinite(static_cast<float>(m_y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) + 
@@ -269,10 +271,10 @@ namespace CYLLENE_SDK {
   Vector2i
   Vector2i::qNormalized() const {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
+              !Math::isNaN(static_cast<float>(m_y)) &&
+              !Math::isInfinite(static_cast<float>(m_x)) &&
+              !Math::isInfinite(static_cast<float>(m_y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) + 
@@ -290,10 +292,10 @@ namespace CYLLENE_SDK {
   void
   Vector2i::normalize() {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
+              !Math::isNaN(static_cast<float>(m_y)) &&
+              !Math::isInfinite(static_cast<float>(m_x)) &&
+              !Math::isInfinite(static_cast<float>(m_y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
    
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
@@ -312,10 +314,10 @@ namespace CYLLENE_SDK {
   void
   Vector2i::qNormalize() {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
+              !Math::isNaN(static_cast<float>(m_y)) &&
+              !Math::isInfinite(static_cast<float>(m_x)) &&
+              !Math::isInfinite(static_cast<float>(m_y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
    
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
@@ -342,7 +344,7 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector2i::areNearlySame(const Vector2i& a, const Vector2i& b, const int32& error) {
+  Vector2i::areNearlySame(const Vector2i& a, const Vector2i& b, const int32& error = 1) {
     return Math::abs(a.m_x - b.m_x) <= error &&
            Math::abs(a.m_y - b.m_y) <= error ;
   }

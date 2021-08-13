@@ -8,6 +8,8 @@
 
 #undef min
 #undef max
+#undef isinf
+#undef isnan
 
 namespace CYLLENE_SDK {
 
