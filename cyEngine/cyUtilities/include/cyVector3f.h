@@ -479,7 +479,7 @@ namespace CYLLENE_SDK {
      *
      */
     static bool
-    isNearlySame(const Vector3f& a, const Vector3f& b, float error = Math::SMALLNUMBER);
+    isNearlySame(const Vector3f& a, const Vector3f& b, const float& error = Math::SMALLNUMBER);
 
     /**
      * @brief Returns the vector as a printable string

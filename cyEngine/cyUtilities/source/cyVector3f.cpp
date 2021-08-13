@@ -6,6 +6,8 @@
 
 #include "cyVector3f.h"
 
+#include "cyVector4f.h"
+
 namespace CYLLENE_SDK {
   
   
@@ -393,7 +395,7 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector3f::isNearlySame(const Vector3f& a, const Vector3f& b, float error) {
+  Vector3f::isNearlySame(const Vector3f& a, const Vector3f& b, const float& error) {
     return Math::abs(a.m_x - b.m_x) <= error &&
            Math::abs(a.m_y - b.m_y) <= error &&
            Math::abs(a.m_z - b.m_z) <= error;

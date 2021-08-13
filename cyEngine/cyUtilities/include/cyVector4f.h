@@ -19,7 +19,7 @@ namespace CYLLENE_SDK {
 
   class Vector3f;
 
-  class Vector4f {
+  class CY_UTILITY_EXPORT Vector4f {
   public:
 
     Vector4f() = default;
@@ -28,7 +28,7 @@ namespace CYLLENE_SDK {
 
     Vector4f(const Vector4f& other);
  
-    Vector4f(const float& nx, const float& ny = 0, const float& nz = 0, const float& nw = 1);
+    Vector4f(const float& nx, const float& ny, const float& nz, const float& nw);
 
     ~Vector4f() = default;
 
@@ -330,7 +330,7 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    setValues(const float& newX, const float& newY, const float& newZ);
+    setValues(const float& newX, const float& newY, const float& newZ, const float& newW);
 
     /**
      * @brief gets the min between two vectors
@@ -474,7 +474,7 @@ namespace CYLLENE_SDK {
      *
      */
     static bool
-    isNearlySame(const Vector4f& a, const Vector4f& b, float error = Math::SMALLNUMBER);
+    isNearlySame(const Vector4f& a, const Vector4f& b, const float& error = Math::SMALLNUMBER);
 
     /**
      * @brief Returns the vector as a printable string

@@ -205,6 +205,7 @@
     <ClInclude Include="include\cyVector3f.h" />
     <ClInclude Include="include\cyVector4f.h" />
     <ClInclude Include="include\cyWindowsMath.h" />
+    <ClInclude Include="include\cyMatrix2x2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp" />

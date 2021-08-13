@@ -96,7 +96,8 @@ namespace CYLLENE_SDK {
   Vector4f::operator^(const Vector4f& v) const {
     return Vector4f((m_y * v.m_z) - (m_z * v.m_y),
                     (m_z * v.m_x) - (m_x * v.m_z),
-                    (m_x * v.m_y) - (m_y * v.m_x));
+                    (m_x * v.m_y) - (m_y * v.m_x),
+                    0);
   }
 
   bool
@@ -207,7 +208,8 @@ namespace CYLLENE_SDK {
   Vector4f::sqrDistance(const Vector4f& a, const Vector4f& b) {
     return Math::sqr(a.m_x - b.m_x) +
            Math::sqr(a.m_y - b.m_y) +
-           Math::sqr(a.m_z - b.m_z);
+           Math::sqr(a.m_z - b.m_z) +
+           Math::sqr(a.m_w - b.m_w);
   }
 
   float
@@ -215,11 +217,12 @@ namespace CYLLENE_SDK {
     return 
       Math::sqrt(Math::sqr(a.m_x - b.m_x) +
                  Math::sqr(a.m_y - b.m_y) +
-                 Math::sqr(a.m_z - b.m_z));
+                 Math::sqr(a.m_z - b.m_z) +
+                 Math::sqr(a.m_w - b.m_w));
   }
 
   void
-  Vector4f::setValues(const float& newX, const float& newY, const float& newZ) {
+  Vector4f::setValues(const float& newX, const float& newY, const float& newZ, const float& newW) {
     m_x = newX;
     m_y = newY;
     m_z = newZ;
@@ -230,6 +233,7 @@ namespace CYLLENE_SDK {
     if (v.m_x < m_x) m_x = v.m_x;
     if (v.m_y < m_y) m_y = v.m_y;
     if (v.m_z < m_z) m_z = v.m_z;
+    if (v.m_w < m_w) m_w = v.m_w;
   }
 
   void
@@ -237,6 +241,7 @@ namespace CYLLENE_SDK {
     if (v.m_x > m_x) m_x = v.m_x;
     if (v.m_y > m_y) m_y = v.m_y;
     if (v.m_z > m_z) m_z = v.m_z;
+    if (v.m_w > m_w) m_w = v.m_w;
   }
 
   void
@@ -244,6 +249,7 @@ namespace CYLLENE_SDK {
     m_x = Math::floor(m_x);
     m_y = Math::floor(m_y);
     m_z = Math::floor(m_z);
+    m_w = Math::floor(m_w);
   }
 
   void
@@ -251,6 +257,7 @@ namespace CYLLENE_SDK {
     m_x = Math::ceil(m_x);
     m_y = Math::ceil(m_y);
     m_z = Math::ceil(m_z);
+    m_w = Math::ceil(m_w);
   }
 
   void
@@ -258,6 +265,7 @@ namespace CYLLENE_SDK {
     m_x = Math::round(m_x);
     m_y = Math::round(m_y);
     m_z = Math::round(m_z);
+    m_w = Math::round(m_w);
   }
 
   void
@@ -265,26 +273,27 @@ namespace CYLLENE_SDK {
     m_x = Math::roundHalf(m_x);
     m_y = Math::roundHalf(m_y);
     m_z = Math::roundHalf(m_z);
+    m_w = Math::roundHalf(m_w);
   }
 
   float
   Vector4f::getHighest() const {
-    return Math::max3(m_x, m_y, m_z);
+    return Math::max3(m_x, m_y, Math::max(m_z, m_w));
   }
 
   float
   Vector4f::getLowest() const {
-    return Math::min3(m_x, m_y, m_z);
+    return Math::min3(m_x, m_y, Math::min(m_z, m_w));
   }
 
   float
   Vector4f::magnitude() const {
-    return Math::sqrt(m_x * m_x + m_y * m_y + m_z * m_z);
+    return Math::sqrt(m_x * m_x + m_y * m_y + m_z * m_z + m_w * m_w);
   }
 
   float
   Vector4f::sqrMagnitude() const {
-    return (m_x * m_x + m_y * m_y + m_z * m_z);
+    return (m_x * m_x + m_y * m_y + m_z * m_z + m_w * m_w);
   }
 
   Vector4f
@@ -293,12 +302,14 @@ namespace CYLLENE_SDK {
     CY_ASSERT(!Math::isNaN(m_x) &&
               !Math::isNaN(m_y) &&
               !Math::isNaN(m_z) &&
+              !Math::isNaN(m_w) &&
               !Math::isInfinite(m_x) &&
               !Math::isInfinite(m_y) &&
               !Math::isInfinite(m_z) &&
+              !Math::isInfinite(m_w) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f) + Math::pow(m_w, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
       Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -307,7 +318,7 @@ namespace CYLLENE_SDK {
 
     float unit = Math::invSqrt(sqr);
 
-    return Vector4f((m_x * unit), (m_y * unit), (m_z * unit));
+    return Vector4f((m_x * unit), (m_y * unit), (m_z * unit), (m_w * unit));
   }
 
   Vector4f
@@ -316,12 +327,14 @@ namespace CYLLENE_SDK {
     CY_ASSERT(!Math::isNaN(m_x) &&
               !Math::isNaN(m_y) &&
               !Math::isNaN(m_z) &&
+              !Math::isNaN(m_w) &&
               !Math::isInfinite(m_x) &&
               !Math::isInfinite(m_y) &&
               !Math::isInfinite(m_z) &&
+              !Math::isInfinite(m_w) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f) + Math::pow(m_w, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
       Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -330,7 +343,7 @@ namespace CYLLENE_SDK {
 
     float unit = Math::qInvSqrt(sqr);
 
-    return Vector4f((m_x * unit), (m_y * unit), (m_z * unit));
+    return Vector4f((m_x * unit), (m_y * unit), (m_z * unit), (m_w * unit));
   }
 
   void
@@ -339,12 +352,14 @@ namespace CYLLENE_SDK {
     CY_ASSERT(!Math::isNaN(m_x) &&
               !Math::isNaN(m_y) &&
               !Math::isNaN(m_z) &&
+              !Math::isNaN(m_w) &&
               !Math::isInfinite(m_x) &&
               !Math::isInfinite(m_y) &&
               !Math::isInfinite(m_z) &&
+              !Math::isInfinite(m_w) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f) + Math::pow(m_w, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -356,6 +371,7 @@ namespace CYLLENE_SDK {
     m_x *= unit;
     m_y *= unit; 
     m_z *= unit;
+    m_w *= unit;
   }
 
   void
@@ -364,12 +380,14 @@ namespace CYLLENE_SDK {
     CY_ASSERT(!Math::isNaN(m_x) &&
               !Math::isNaN(m_y) &&
               !Math::isNaN(m_z) &&
+              !Math::isNaN(m_w) &&
               !Math::isInfinite(m_x) &&
               !Math::isInfinite(m_y) &&
               !Math::isInfinite(m_z) &&
+              !Math::isInfinite(m_w) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f) + Math::pow(m_w, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -381,6 +399,7 @@ namespace CYLLENE_SDK {
     m_x *= unit;
     m_y *= unit; 
     m_z *= unit;
+    m_w *= unit;
 
   }
 
@@ -390,7 +409,7 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector4f::isNearlySame(const Vector4f& a, const Vector4f& b, float error) {
+  Vector4f::isNearlySame(const Vector4f& a, const Vector4f& b, const float& error) {
     return Math::abs(a.m_x - b.m_x) <= error &&
            Math::abs(a.m_y - b.m_y) <= error &&
            Math::abs(a.m_z - b.m_z) <= error &&

@@ -78,6 +78,9 @@
     <ClInclude Include="include\cyVector4f.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyMatrix2x2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">

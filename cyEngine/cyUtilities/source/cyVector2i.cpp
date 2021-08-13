@@ -1,5 +1,4 @@
 
-#include "cyMath.h"
 #include "cyUtilities.h"
 
 #include "cyVector2i.h"
@@ -343,9 +342,9 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector2i::areNearlySame(const Vector2i& a, const Vector2i& b, const int32& threshold) {
-    return Math::abs(a.m_x - b.m_x) <= threshold &&
-           Math::abs(a.m_y - b.m_y) <= threshold ;
+  Vector2i::areNearlySame(const Vector2i& a, const Vector2i& b, const int32& error) {
+    return Math::abs(a.m_x - b.m_x) <= error &&
+           Math::abs(a.m_y - b.m_y) <= error ;
   }
 
   String
