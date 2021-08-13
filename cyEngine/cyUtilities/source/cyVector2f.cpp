@@ -5,6 +5,10 @@
 #include "cyVector2i.h"
 #include "cyVector2f.h"
 
+#include "cyVector3f.h"
+
+#include "cyVector4f.h"
+
 namespace CYLLENE_SDK {
 
   Vector2f::Vector2f(const float& nx, const float& ny)
@@ -20,6 +24,14 @@ namespace CYLLENE_SDK {
       m_y(static_cast<float>(other[1])) {}
 
   Vector2f::Vector2f(const Vector2f& other) 
+    : m_x(other[0]), 
+      m_y(other[1]) {}
+
+  Vector2f::Vector2f(const Vector3f& other) 
+    : m_x(other[0]),
+      m_y(other[1]) {}
+
+  Vector2f::Vector2f(const Vector4f& other) 
     : m_x(other[0]), 
       m_y(other[1]) {}
 
@@ -237,6 +249,12 @@ namespace CYLLENE_SDK {
   Vector2f
   Vector2f::normalized() const {
 
+    CY_ASSERT(!Math::isNaN(m_x) &&
+              !Math::isNaN(m_y) &&
+              !Math::isInfinite(m_x) &&
+              !Math::isInfinite(m_y) &&
+               Utils::format("Value X or Y are either infinite or NAN").c_str());
+
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
                 Math::pow(static_cast<float>(m_y), 2.0f);
 
@@ -251,6 +269,12 @@ namespace CYLLENE_SDK {
 
   Vector2f
   Vector2f::qNormalized() const {
+
+    CY_ASSERT(!Math::isNaN(m_x) &&
+              !Math::isNaN(m_y) &&
+              !Math::isInfinite(m_x) &&
+              !Math::isInfinite(m_y) &&
+               Utils::format("Value X or Y are either infinite or NAN").c_str());
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
                 Math::pow(static_cast<float>(m_y), 2.0f);
@@ -267,6 +291,12 @@ namespace CYLLENE_SDK {
   void
   Vector2f::normalize() {
 
+    CY_ASSERT(!Math::isNaN(m_x) &&
+              !Math::isNaN(m_y) &&
+              !Math::isInfinite(m_x) &&
+              !Math::isInfinite(m_y) &&
+               Utils::format("Value X or Y are either infinite or NAN").c_str());
+
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
                 Math::pow(static_cast<float>(m_y), 2.0f);
 
@@ -282,6 +312,12 @@ namespace CYLLENE_SDK {
 
   void
   Vector2f::qNormalize() {
+
+    CY_ASSERT(!Math::isNaN(m_x) &&
+              !Math::isNaN(m_y) &&
+              !Math::isInfinite(m_x) &&
+              !Math::isInfinite(m_y) &&
+               Utils::format("Value X or Y are either infinite or NAN").c_str());
 
     float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
                 Math::pow(static_cast<float>(m_y), 2.0f);
@@ -308,7 +344,8 @@ namespace CYLLENE_SDK {
 
   bool
   Vector2f::isNearlySame(const Vector2f& a, const Vector2f& b, const float& threshold) {
-    return Math::abs(a.magnitude() - b.magnitude()) <= threshold;
+    return Math::abs(a.m_x - b.m_x) <= threshold &&
+           Math::abs(a.m_y - b.m_y) <= threshold ;
   }
 
   String
@@ -317,9 +354,9 @@ namespace CYLLENE_SDK {
     String output;
 
     output += "( ";
-    output += Utils::toString(m_x);
+    output += Utils::format("%2.2f", m_x);
     output += ", ";
-    output += Utils::toString(m_y);
+    output += Utils::format("%2.2f", m_y);
     output += " )";
 
     return output;

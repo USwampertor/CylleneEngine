@@ -7,7 +7,8 @@ namespace CYLLENE_SDK {
   class Vector2f;
 
   class Vector3f;
-  class Vector3i;
+
+  class Vector4f;
 
   class CY_UTILITY_EXPORT Vector2i
   {
@@ -15,7 +16,7 @@ namespace CYLLENE_SDK {
 
     Vector2i() = default;
 
-    Vector2i(const int32& nx, const int32& ny);
+    Vector2i(const int32& nx, const int32& ny = 0);
 
     Vector2i(const int32& values);
 
@@ -25,7 +26,7 @@ namespace CYLLENE_SDK {
 
     Vector2i(const Vector3f& other);
 
-    Vector2i(const Vector3i& other);
+    Vector2i(const Vector4f& other);
 
     ~Vector2i() = default;
 

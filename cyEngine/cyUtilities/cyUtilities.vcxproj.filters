@@ -69,10 +69,13 @@
     <ClInclude Include="include\cyColor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyVector3f.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyFileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyVector3f.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyVector4f.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -108,6 +111,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyColor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyVector3f.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyVector4f.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

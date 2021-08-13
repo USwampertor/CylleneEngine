@@ -1,34 +1,36 @@
+/*********************************************/
+/*
+ * @file 	cyVector4f
+ * @author	Marco "Swampertor" Millan
+ * @date	12/08/2021
+ * @brief	
+ *
+ */
+/******************************************** */
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
+#include "cyMath.h"
 
 namespace CYLLENE_SDK {
 
+  class Vector2f;
   class Vector2i;
 
   class Vector3f;
 
-  class Vector4f;
-
-  class CY_UTILITY_EXPORT Vector2f
-  {
+  class Vector4f {
   public:
 
-    Vector2f() = default;
+    Vector4f() = default;
 
-    Vector2f(const float& nx, const float& ny = 0);
+    Vector4f(const Vector3f& other);
 
-    Vector2f(const float& values);
+    Vector4f(const Vector4f& other);
+ 
+    Vector4f(const float& nx, const float& ny = 0, const float& nz = 0, const float& nw = 1);
 
-    Vector2f(const Vector2i& other);
-
-    Vector2f(const Vector2f& other);
-
-    Vector2f(const Vector3f& other);
-
-    Vector2f(const Vector4f& other);
-
-    ~Vector2f() = default;
+    ~Vector4f() = default;
 
     /**
      * @brief () operator overload
@@ -38,7 +40,7 @@ namespace CYLLENE_SDK {
      */
     const float&
     operator()(const uint32& index) const;
-
+    
     /**
      * @brief () operator overload
      * @param index of the object we wanna get
@@ -47,7 +49,7 @@ namespace CYLLENE_SDK {
      */
     float&
     operator()(const uint32& index);
-
+    
     /**
      * @brief [] operator overload
      * @param index of the object we wanna get
@@ -72,8 +74,8 @@ namespace CYLLENE_SDK {
      * @return a vector sum of *this and v
      *
      */
-    Vector2f
-    operator+(const Vector2f& v) const;
+    Vector4f
+    operator+(const Vector4f& v) const;
 
     /**
      * @brief - operator overload
@@ -81,8 +83,8 @@ namespace CYLLENE_SDK {
      * @return a vector difference of *this and v
      *
      */
-    Vector2f
-    operator-(const Vector2f& v) const;
+    Vector4f
+    operator-(const Vector4f& v) const;
 
     /**
      * @brief * operator overload
@@ -90,8 +92,8 @@ namespace CYLLENE_SDK {
      * @return a vector multiplication of *this times v
      *
      */
-    Vector2f
-    operator*(const Vector2f& v) const;
+    Vector4f
+    operator*(const Vector4f& v) const;
 
     /**
      * @brief / operator overload
@@ -99,8 +101,8 @@ namespace CYLLENE_SDK {
      * @return a vector division of *this divided by v
      *
      */
-    Vector2f
-    operator/(const Vector2f& v) const;
+    Vector4f
+    operator/(const Vector4f& v) const;
 
     /**
      * @brief + operator overload
@@ -108,7 +110,7 @@ namespace CYLLENE_SDK {
      * @return a vector sum of *this + plus
      *
      */
-    Vector2f
+    Vector4f
     operator+(const float& plus) const;
 
     /**
@@ -117,7 +119,7 @@ namespace CYLLENE_SDK {
      * @return a vector difference of *this - minus
      *
      */
-    Vector2f
+    Vector4f
     operator-(const float& minus) const;
 
     /**
@@ -126,7 +128,7 @@ namespace CYLLENE_SDK {
      * @return a vector multiplication of *this times times
      *
      */
-    Vector2f
+    Vector4f
     operator*(const float& times) const;
 
     /**
@@ -135,7 +137,7 @@ namespace CYLLENE_SDK {
      * @return a vector divided of *this divided by times
      *
      */
-    Vector2f
+    Vector4f
     operator/(const float& under) const;
 
     /**
@@ -145,7 +147,7 @@ namespace CYLLENE_SDK {
      *
      */
     float
-    operator|(const Vector2f& v) const;
+    operator|(const Vector4f& v) const;
 
     /**
      * @brief ^ operator overload for cross product
@@ -153,8 +155,8 @@ namespace CYLLENE_SDK {
      * @return cross product
      *
      */
-    float
-    operator^(const Vector2f& v) const;
+    Vector4f
+    operator^(const Vector4f& v) const;
 
     /**
      * @brief == operator overload
@@ -163,7 +165,7 @@ namespace CYLLENE_SDK {
      *
      */
     bool
-    operator==(const Vector2f& v) const;
+    operator==(const Vector4f& v) const;
 
     /**
      * @brief != operator overload
@@ -172,7 +174,7 @@ namespace CYLLENE_SDK {
      *
      */
     bool
-    operator!=(const Vector2f& v) const;
+    operator!=(const Vector4f& v) const;
 
     /**
      * @brief < operator overload
@@ -181,7 +183,7 @@ namespace CYLLENE_SDK {
      *
      */
     bool
-    operator<(const Vector2f& v) const;
+    operator<(const Vector4f& v) const;
 
     /**
      * @brief > operator overload
@@ -190,7 +192,7 @@ namespace CYLLENE_SDK {
      *
      */
     bool
-    operator>(const Vector2f& v) const;
+    operator>(const Vector4f& v) const;
 
     /**
      * @brief <= operator overload
@@ -199,7 +201,7 @@ namespace CYLLENE_SDK {
      *
      */
     bool
-    operator<=(const Vector2f& v) const;
+    operator<=(const Vector4f& v) const;
 
     /**
      * @brief >= operator overload
@@ -208,7 +210,7 @@ namespace CYLLENE_SDK {
      *
      */
     bool
-    operator>=(const Vector2f& v) const;
+    operator>=(const Vector4f& v) const;
 
     /**
      * @brief - operator overload
@@ -216,7 +218,7 @@ namespace CYLLENE_SDK {
      * @return the negative of the vector
      *
      */
-    Vector2f
+    Vector4f
     operator-() const;
 
     /**
@@ -225,8 +227,8 @@ namespace CYLLENE_SDK {
      * @return *this + v components
      *
      */
-    Vector2f&
-    operator+=(const Vector2f& v);
+    Vector4f&
+    operator+=(const Vector4f& v);
 
     /**
      * @brief -= operator overload
@@ -234,8 +236,8 @@ namespace CYLLENE_SDK {
      * @return *this - v components
      *
      */
-    Vector2f&
-    operator-=(const Vector2f& v);
+    Vector4f&
+    operator-=(const Vector4f& v);
 
     /**
      * @brief *= operator overload
@@ -243,8 +245,8 @@ namespace CYLLENE_SDK {
      * @return *this * v components
      *
      */
-    Vector2f&
-    operator*=(const Vector2f& v);
+    Vector4f&
+    operator*=(const Vector4f& v);
 
     /**
      * @brief /= operator overload
@@ -252,8 +254,8 @@ namespace CYLLENE_SDK {
      * @return *this / v components
      *
      */
-    Vector2f&
-    operator/=(const Vector2f& v);
+    Vector4f&
+    operator/=(const Vector4f& v);
 
     /**
      * @brief *= operator overload
@@ -261,7 +263,7 @@ namespace CYLLENE_SDK {
      * @return *this * float
      *
      */
-    Vector2f&
+    Vector4f&
     operator*=(const float& scale);
 
     /**
@@ -270,63 +272,65 @@ namespace CYLLENE_SDK {
      * @return *this / float
      *
      */
-    Vector2f&
+    Vector4f&
     operator/=(const float& scale);
 
     /**
      * @brief the dot product
-     * @param a nauVector2 and b nauVector2
+     * @param a Vector3 and b Vector3
      * @return the dot product between a and b
      *
      */
     static float
-    dot(const Vector2f& a, const Vector2f& b);
+    dot(const Vector4f& a, const Vector4f& b);
 
     /**
      * @brief the cross product
-     * @param a nauVector2 and b nauVector2
+     * @param a Vector3 and b Vector3
      * @return the cross product between a and b
      *
      */
-    static float
-    cross(const Vector2f& a, const Vector2f& b);
+    static Vector4f
+    cross(const Vector4f& a, const Vector4f& b);
 
     /**
-     * @brief the scale of b over a
-     * @param Vector2 that is the reflection and b
-     * @param Vector2 that reflects over
+     * @brief the projection of b over a
+     * @param Vector3 a the one used as scale
+     * @param Vector3 b the one projecting on a
      * @return scale of b in a
      *
      */
     static float
-    projection(const Vector2f& a, const Vector2f& b);
+    projection(const Vector4f& a, const Vector4f& b);
 
     /**
      * @brief the square distance
-     * @param a nauVector2 and b nauVector2
-     * @return the square distance bewteen the two points
+     * @param a Vector3 and b Vector3
+     * @return the square distance between the two points
      *
      */
     static float
-    sqrDistance(const Vector2f& a, const Vector2f& b);
+    sqrDistance(const Vector4f& a, const Vector4f& b);
 
     /**
      * @brief the distance between two points in 2d space
-     * @param a nauVector2 and b nauVector2
-     * @return the distance bewteen the two points
+     * @param a Vector3 and b Vector3
+     * @return the distance between the two points
      *
      */
     static float
-    distance(const Vector2f& a, const Vector2f& b);
+    distance(const Vector4f& a, const Vector4f& b);
 
     /**
-     * @brief sets the value of a nauVector2
-     * @param float x and y
+     * @brief sets the value of a Vector3
+     * @param float x
+     * @param float y
+     * @param float z
      * @return
      *
      */
     void
-    setValues(const float& newX, const float& newY);
+    setValues(const float& newX, const float& newY, const float& newZ);
 
     /**
      * @brief gets the min between two vectors
@@ -335,7 +339,7 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    min(const Vector2f& v);
+    min(const Vector4f& v);
 
     /**
      * @brief gets the max between two vectors
@@ -344,7 +348,43 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    max(const Vector2f& v);
+    max(const Vector4f& v);
+
+    /**
+     * @brief floors the components
+     * @param
+     * @return
+     *
+     */
+    void
+    floor();
+
+    /**
+     * @brief ceils the components
+     * @param
+     * @return
+     *
+     */
+    void
+    ceiling();
+
+    /**
+     * @brief rounds the components x.0 <- -> y.0
+     * @param
+     * @return
+     *
+     */
+    void
+    round();
+
+    /**
+     * @brief rounds components taking in account also x.0 - x.5 - y.0
+     * @param
+     * @return
+     *
+     */
+    void
+    roundHalf();
 
     /**
      * @brief gets the highest value of the vector
@@ -388,17 +428,16 @@ namespace CYLLENE_SDK {
      * @return the normalized vector
      *
      */
-    Vector2f
+    Vector4f
     normalized() const;
 
     /**
-     * @brief gets the QUICK normalized version of the vector using the Carmack Equation
-     * Use this if you don't have problems having a small error difference from the real value
+     * @brief gets the normalized version of the vector
      * @param
      * @return the normalized vector
      *
      */
-    Vector2f
+    Vector4f
     qNormalized() const;
 
     /**
@@ -411,8 +450,7 @@ namespace CYLLENE_SDK {
     normalize();
 
     /**
-     * @brief QUICK normalizes the vector using the Carmack Equation
-     * Use this if you don't have problems having a small error difference from the real value
+     * @brief normalizes the vector
      * @param
      * @return
      *
@@ -430,87 +468,75 @@ namespace CYLLENE_SDK {
     isZero() const;
 
     /**
-     * @brief Checks if one vector is the same as another vector
-     * @param Vector first Vector to compare
-     * @param Vector second Vector to compare
-     * @return true if based on the error is the same
-     *
-     */
-    static bool
-    isSame(const Vector2f& a, const Vector2f& b);
-
-    /**
      * @brief Checks if one vector is near the same as another vector based in an error
-     * @param const Vector2f& first Vector to compare
-     * @param const Vector2f& second Vector to compare
-     * @param const float& threshold between the magnitude of both vectors
+     * @param Vector other, error (default is LITTLENUMBER)
      * @return true if based on the error is the same
      *
      */
     static bool
-    isNearlySame(const Vector2f& a, const Vector2f& b, const float& threshold);
+    isNearlySame(const Vector4f& a, const Vector4f& b, float error = Math::SMALLNUMBER);
 
     /**
      * @brief Returns the vector as a printable string
-     * @param
-     * @return
+     * @param 
+     * @return String with the values of the vector
      *
      */
     String
     toString();
 
-    /**
-     * static const
-     */
-
-  public:
+    Vector3f
+    toVector3f() const;
 
     /**
-     * vauVector2 with all values 0
+     * nauVector4 that has all values at 0
      */
-    static const Vector2f ZERO;
+    static const Vector4f ZERO;
 
     /**
-     * vauVector2 with all values 1
+     * nauVector4 that has all values at 1
      */
-    static const Vector2f ONE;
+    static const Vector4f ONE;
 
     /**
-     * vauVector2 with x value 1
+     * nauVector4 that has x value at 1
      */
-    static const Vector2f ONEX;
+    static const Vector4f ONEX;
 
     /**
-     * vauVector2 with y value 1
+     * nauVector4 that has y value at 1
      */
-    static const Vector2f ONEY;
+    static const Vector4f ONEY;
 
     /**
-     * vauVector2 with y value 1. This is our right in our world
+     * nauVector4 that has z value at 1
      */
-    static const Vector2f UP;
+    static const Vector4f ONEZ;
 
     /**
-     * vauVector2 with x value 1. This is our up in our world
+     * nauVector4 that has w value at 1
      */
-    static const Vector2f RIGHT;
+    static const Vector4f ONEW;
 
     /**
-     * Member declaration
+     * Vector4 that has x value 1
      */
+    static const Vector4f RIGHT;
+
+    /**
+     * Vector4 with y value 1
+     */
+    static const Vector4f UP;
+
+    /**
+     * Vector4 with z value 1
+     */
+    static const Vector4f FRONT;
 
   private:
-
-    /**
-     * x component
-     */
     float m_x;
-
-    /**
-     * y component
-     */
     float m_y;
-
+    float m_z;
+    float m_w;
   };
-
 }

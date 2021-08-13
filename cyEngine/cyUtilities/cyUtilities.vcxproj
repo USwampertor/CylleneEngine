@@ -203,6 +203,7 @@
     <ClInclude Include="include\cyVector2f.h" />
     <ClInclude Include="include\cyVector2i.h" />
     <ClInclude Include="include\cyVector3f.h" />
+    <ClInclude Include="include\cyVector4f.h" />
     <ClInclude Include="include\cyWindowsMath.h" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +218,8 @@
     <ClCompile Include="source\cyUtilities.cpp" />
     <ClCompile Include="source\cyVector2f.cpp" />
     <ClCompile Include="source\cyVector2i.cpp" />
+    <ClCompile Include="source\cyVector3f.cpp" />
+    <ClCompile Include="source\cyVector4f.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
