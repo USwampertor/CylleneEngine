@@ -206,6 +206,7 @@
     <ClInclude Include="include\cyVector4f.h" />
     <ClInclude Include="include\cyWindowsMath.h" />
     <ClInclude Include="include\cyMatrix2x2.h" />
+    <ClInclude Include="include\cyMatrix3x3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp" />
@@ -213,6 +214,8 @@
     <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyFileSystem.cpp" />
     <ClCompile Include="source\cyLogger.cpp" />
+    <ClCompile Include="source\cyMatrix2x2.cpp" />
+    <ClCompile Include="source\cyMatrix3x3.cpp" />
     <ClCompile Include="source\cyMemoryAllocator.cpp" />
     <ClCompile Include="source\cyPlatformMath.cpp" />
     <ClCompile Include="source\cyTime.cpp" />

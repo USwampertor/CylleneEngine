@@ -19,11 +19,24 @@ namespace CYLLENE_SDK
   {
   public:
     
+    CrashHandler() = default;
+
+    ~CrashHandler() = default;
+
     void
     init();
 
     void 
     createReport();
     
+    void
+    CreateMiniDump();
+
+    void
+    OpenCrashHandler();
+
+    void
+    shutdown();
+
   };
 }
