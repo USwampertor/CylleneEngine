@@ -27,13 +27,13 @@ namespace CYLLENE_SDK
     init();
 
     void 
-    createReport();
+    createReport(Exception exception);
     
     void
-    CreateMiniDump();
+    createMiniDump();
 
     void
-    OpenCrashHandler();
+    openCrashHandler();
 
     void
     shutdown();

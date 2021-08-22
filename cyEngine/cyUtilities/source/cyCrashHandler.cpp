@@ -26,7 +26,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::createReport() {
+  CrashHandler::createReport(Exception exception) {
 
     // WINDOWS OS SPECIFIC CALL FUNCTIONS
 #if CY_PLATFORM == CY_PLATFORM_WIN32
@@ -36,6 +36,26 @@ namespace CYLLENE_SDK {
 #elif CY_PLATFORM == CY_PLATFORM_LINUX
 
 #endif
+
+    createMiniDump();
+  }
+
+  void
+  CrashHandler::createMiniDump() {
+    File dump = FileSystem::open("./dump.txt");
+    String output = "Cyllene Engine has failed";
+    dump.writeFile(output);
+    std::cout << "Finished Writing";
+  }
+
+  void
+  CrashHandler::openCrashHandler() {
+
+  }
+
+  void
+  CrashHandler::shutdown() {
+
   }
 
 }

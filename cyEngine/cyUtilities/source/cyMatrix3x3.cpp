@@ -140,12 +140,12 @@ namespace CYLLENE_SDK {
 
   void
   Matrix3x3::identity() {
-    *this = Matrix3x3::IDENTITY;
+    *this = IDENTITY;
   }
 
   void
   Matrix3x3::zero() {
-    *this = Matrix3x3::ZERO;
+    *this = ZERO;
   }
 
   Matrix3x3

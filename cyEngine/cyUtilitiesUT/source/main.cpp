@@ -7,11 +7,14 @@
 #include <cyUtilities.h>
 #include <cyMatrix2x2.h>
 #include <cyMatrix3x3.h>
+#include <cyCrashHandler.h>
 
 using namespace CYLLENE_SDK;
 
 int
 main() {
+  CrashHandler::startUp();
+
   Matrix2x2 test1(1, 2, 3, 4);
   Matrix2x2 test2(5, 6, 7, 8);
   Matrix3x3 test3(331, 34, 1, 357, 7, 13, 2, -38, 63);
@@ -30,10 +33,12 @@ main() {
     // std::cout << (test1 * test2).toString();
     std::cout << test3.inversed().toString() << std::endl;
     std::cout << (test3.inversed() * test3).toString()  << std::endl;
+    Utils::ThrowException("Test Error");
   }
   catch (const std::exception& e)
   {
     std::cout << e.what();
+    CrashHandler::instance().createReport(e);
   }
   std::cout << "End of test..." << std::endl;
   return 0;
