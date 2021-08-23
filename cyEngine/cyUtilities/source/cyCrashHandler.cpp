@@ -45,7 +45,6 @@ namespace CYLLENE_SDK {
     File dump = FileSystem::open("./dump.txt");
     String output = "Cyllene Engine has failed";
     dump.writeFile(output);
-    std::cout << "Finished Writing";
   }
 
   void

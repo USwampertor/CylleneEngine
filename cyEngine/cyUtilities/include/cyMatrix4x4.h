@@ -6,7 +6,7 @@
 namespace CYLLENE_SDK {
   class CY_UTILITY_EXPORT Matrix4x4
   {
-    
+  public:
     Matrix4x4() = default;
 
     ~Matrix4x4() = default;
