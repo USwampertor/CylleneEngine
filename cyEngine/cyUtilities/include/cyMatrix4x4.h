@@ -1,28 +1,24 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
-
-#include "cyVector2f.h"
+#include "cyVector4f.h"
 
 namespace CYLLENE_SDK {
-
-  class Matrix3x3;
-  class Matrix4x4;
-
-  class CY_UTILITY_EXPORT Matrix2x2
+  class CY_UTILITY_EXPORT Matrix4x4
   {
-  public:
+    
+    Matrix4x4() = default;
 
-    Matrix2x2() = default;
+    ~Matrix4x4() = default;
 
-    ~Matrix2x2() = default;
+    Matrix4x4(const float& value);
 
-    Matrix2x2(const float& value);
+    Matrix4x4(const Matrix4x4& other);
 
-    Matrix2x2(const Matrix2x2& other);
-
-    Matrix2x2(const float& v00, const float& v01,
-              const float& v10, const float& v11);
+    Matrix4x4(const float& v00, const float& v01, const float& v02, const float v03,
+              const float& v10, const float& v11, const float& v12, const float v13,
+              const float& v20, const float& v21, const float& v22, const float v23,
+              const float& v30, const float& v31, const float& v32, const float v33);
 
     /**
      * @brief + operator overload
@@ -30,8 +26,8 @@ namespace CYLLENE_SDK {
      * @return the sum of *this and b
      *
      */
-    Matrix2x2
-    operator+(const Matrix2x2& b);
+    Matrix4x4
+    operator+(const Matrix4x4& b);
 
     /**
      * @brief - operator overload
@@ -39,8 +35,8 @@ namespace CYLLENE_SDK {
      * @return the difference of *this and b
      *
      */
-    Matrix2x2
-    operator-(const Matrix2x2& b);
+    Matrix4x4
+    operator-(const Matrix4x4& b);
 
     /**
      * @brief * operator overload
@@ -48,8 +44,8 @@ namespace CYLLENE_SDK {
      * @return the multiplication of *this and b
      *
      */
-    Matrix2x2
-    operator*(const Matrix2x2& b);
+    Matrix4x4
+    operator*(const Matrix4x4& b);
 
     /**
      * @brief += operator overload
@@ -57,8 +53,8 @@ namespace CYLLENE_SDK {
      * @return *this summed b
      *
      */
-    Matrix2x2&
-    operator+=(const Matrix2x2& b);
+    Matrix4x4&
+    operator+=(const Matrix4x4& b);
 
     /**
      * @brief -= operator overload
@@ -66,8 +62,8 @@ namespace CYLLENE_SDK {
      * @return *this minus b
      *
      */
-    Matrix2x2&
-    operator-=(const Matrix2x2& b);
+    Matrix4x4&
+    operator-=(const Matrix4x4& b);
 
     /**
      * @brief *= operator overload
@@ -75,8 +71,8 @@ namespace CYLLENE_SDK {
      * @return *this summed b
      *
      */
-    Matrix2x2&
-    operator*=(const Matrix2x2& b);
+    Matrix4x4&
+    operator*=(const Matrix4x4& b);
 
     /**
      * @brief += operator overload
@@ -84,7 +80,7 @@ namespace CYLLENE_SDK {
      * @return naumatrix equal to *this summed value
      *
      */
-    Matrix2x2&
+    Matrix4x4&
     operator+=(const float& value);
 
     /**
@@ -93,7 +89,7 @@ namespace CYLLENE_SDK {
      * @return naumatrix equal to *this minus value
      *
      */
-    Matrix2x2&
+    Matrix4x4&
     operator-=(const float& value);
 
     /**
@@ -102,7 +98,7 @@ namespace CYLLENE_SDK {
      * @return naumatrix equal to *this times value
      *
      */
-    Matrix2x2&
+    Matrix4x4&
     operator*=(const float& value);
 
     /**
@@ -111,7 +107,7 @@ namespace CYLLENE_SDK {
      * @return naumatrix equal to *this folded value
      *
      */
-    Matrix2x2&
+    Matrix4x4&
     operator/=(const float& value);
 
     /**
@@ -121,7 +117,7 @@ namespace CYLLENE_SDK {
      *
      */
     bool
-    operator==(const Matrix2x2& b);
+    operator==(const Matrix4x4& b);
 
     void
     identity();
@@ -129,7 +125,7 @@ namespace CYLLENE_SDK {
     void
     zero();
 
-    Matrix2x2
+    Matrix4x4
     transposed() const;
 
     void
@@ -139,10 +135,12 @@ namespace CYLLENE_SDK {
     setValues(const float& value);
 
     void
-    setValues(const float& v00, const float& v01,
-              const float& v10, const float& v11);
+    setValues(const float& v00, const float& v01, const float& v02, const float v03,
+              const float& v10, const float& v11, const float& v12, const float v13,
+              const float& v20, const float& v21, const float& v22, const float v23,
+              const float& v30, const float& v31, const float& v32, const float v33);
 
-    Matrix2x2
+    Matrix4x4
     inversed();
 
     void
@@ -157,12 +155,12 @@ namespace CYLLENE_SDK {
     /**
      * ZERO filled Matrix
      */
-    static const Matrix2x2 ZERO;
+    static const Matrix4x4 ZERO;
 
     /**
      * IDENTITY matrix
      */
-    static const Matrix2x2 IDENTITY;
+    static const Matrix4x4 IDENTITY;
 
   public:
 
@@ -171,16 +169,17 @@ namespace CYLLENE_SDK {
        * Row major based matrix struct
        */
       struct {
-        float m00, m01;
-        float m10, m11;
+        float m00, m01, m02, m03;
+        float m10, m11, m12, m13;
+        float m20, m21, m22, m23;
+        float m30, m31, m32, m33;
       }_m;
-      float m[2][2];
-      Vector2f vec[2];
-      float fVec[4];
+      float m[4][4];
+      Vector4f vec[4];
+      float fVec[16];
     };
 
 
-
+  
   };
-
 }
