@@ -31,7 +31,8 @@ main() {
     std::cout << Utils::toString(test6.determinant()) << std::endl;
     std::cout << test6.inversed().toString() << std::endl;
     std::cout << Utils::format("%.5f", test6.inversed().m[0][0]) << std::endl;
-    std::cout << (test6 * test5).toString()  << std::endl;
+    std::cout << (test6 * test5).toString() << std::endl;
+    std::cout << (test6 * test6.inversed()).toString()  << std::endl;
     Utils::ThrowException("Test Error");
   }
   catch (const std::exception& e)
