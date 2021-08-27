@@ -2,7 +2,7 @@
 #include "cyUtilities.h"
 
 #include "cyMatrix3x3.h"
-#include "cyPlatformMath.h"
+#include "cyMath.h"
 
 namespace CYLLENE_SDK {
   Matrix4x4::Matrix4x4(const float& value) {
@@ -162,37 +162,11 @@ namespace CYLLENE_SDK {
 
   void
   Matrix4x4::transpose() {
-    *this = Matrix4x4(m[0][0], m[1][0], m[2][0], m[3][0],
-                      m[0][1], m[1][1], m[2][1], m[3][1],
-                      m[0][2], m[1][2], m[2][2], m[3][2],
-                      m[0][3], m[1][3], m[2][3], m[3][3]);
-  }
-
-  void
-  Matrix4x4::setValues(const float& value) {
-    m[0][0] = m[0][1] = m[0][2] = m[0][3] = 
-    m[1][0] = m[1][1] = m[1][2] = m[1][3] =
-    m[2][0] = m[2][1] = m[2][2] = m[2][3] =
-    m[3][0] = m[3][1] = m[3][2] = m[3][3] = value;
-  }
-
-  void
-  Matrix4x4::setValues(const float& v00, const float& v01, const float& v02, const float v03,
-                       const float& v10, const float& v11, const float& v12, const float v13,
-                       const float& v20, const float& v21, const float& v22, const float v23,
-                       const float& v30, const float& v31, const float& v32, const float v33) {
-    _m.m00 = v00; _m.m01 = v01; _m.m02 = v02; _m.m03 = v03;
-    _m.m10 = v10; _m.m11 = v11; _m.m12 = v12; _m.m13 = v13;
-    _m.m20 = v20; _m.m21 = v21; _m.m22 = v22; _m.m23 = v23;
-    _m.m30 = v30; _m.m31 = v31; _m.m32 = v32; _m.m33 = v33;
+    *this = this->transposed();
   }
 
   Matrix4x4
-  Matrix4x4::inversed() {
-    float det = this->determinant();
-    CY_ASSERT(det != 0.0f &&
-              Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
-    
+  Matrix4x4::cofactored() const {
     Matrix4x4 temp;
 
     temp.m[0][0] = m[1][1]*m[2][2]*m[3][3] + m[1][2]*m[2][3]*m[3][1] +
@@ -243,102 +217,186 @@ namespace CYLLENE_SDK {
     temp.m[3][3] = m[0][0]*m[1][1]*m[2][2] + m[0][1]*m[1][2]*m[2][0] +
                    m[0][2]*m[1][0]*m[2][1] - m[0][0]*m[1][2]*m[2][1] -
                    m[0][1]*m[1][0]*m[2][2] - m[0][2]*m[1][1]*m[2][0];
-    
-    temp.transpose();
-
-    temp *= PlatformMath::pow(det, -1.0f);
     return temp;
   }
 
   void
-  Matrix4x4::inverse() {
-    CY_ASSERT(this->determinant() != 0.0f &&
+  Matrix4x4::cofactor() {
+    *this = this->cofactored();
+  }
+
+  void
+  Matrix4x4::setValues(const float& value) {
+    m[0][0] = m[0][1] = m[0][2] = m[0][3] = 
+    m[1][0] = m[1][1] = m[1][2] = m[1][3] =
+    m[2][0] = m[2][1] = m[2][2] = m[2][3] =
+    m[3][0] = m[3][1] = m[3][2] = m[3][3] = value;
+  }
+
+  void
+  Matrix4x4::setValues(const float& v00, const float& v01, const float& v02, const float v03,
+                       const float& v10, const float& v11, const float& v12, const float v13,
+                       const float& v20, const float& v21, const float& v22, const float v23,
+                       const float& v30, const float& v31, const float& v32, const float v33) {
+    _m.m00 = v00; _m.m01 = v01; _m.m02 = v02; _m.m03 = v03;
+    _m.m10 = v10; _m.m11 = v11; _m.m12 = v12; _m.m13 = v13;
+    _m.m20 = v20; _m.m21 = v21; _m.m22 = v22; _m.m23 = v23;
+    _m.m30 = v30; _m.m31 = v31; _m.m32 = v32; _m.m33 = v33;
+  }
+
+  Matrix4x4
+  Matrix4x4::inversed() {
+    float det = this->determinant();
+    CY_ASSERT(det != 0.0f &&
               Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
-    Matrix3x3 temp(0);
-    Matrix4x4 tmp2 = *this;
+    
+    Matrix4x4 temp = *this;
+    temp.cofactor();
+    temp.transpose();
 
-    temp.m[0][0] = m[1][1]; temp.m[0][1] = m[1][2]; temp.m[0][2] = m[1][3];
-    temp.m[1][0] = m[2][1]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
-    temp.m[2][0] = m[3][1]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
-    tmp2.m[0][0] = temp.determinant();
+    temp *= Math::pow(this->determinant(), -1.0f);
+    return temp;
+    // temp.m[0][0] = m[1][1]*m[2][2]*m[3][3] + m[1][2]*m[2][3]*m[3][1] +
+    //                m[1][3]*m[2][1]*m[3][2] - m[1][1]*m[2][3]*m[3][2] -
+    //                m[1][2]*m[2][1]*m[3][3] - m[1][3]*m[2][2]*m[3][1];
+    // temp.m[1][0] = m[0][1]*m[2][3]*m[3][2] + m[0][2]*m[2][1]*m[3][3] +
+    //                m[0][3]*m[2][2]*m[3][1] - m[0][1]*m[2][2]*m[3][3] -
+    //                m[0][2]*m[2][3]*m[3][1] - m[0][3]*m[2][1]*m[3][2];
+    // temp.m[2][0] = m[0][1]*m[1][2]*m[3][3] + m[0][2]*m[1][3]*m[3][1] +
+    //                m[0][3]*m[1][1]*m[3][2] - m[0][1]*m[1][3]*m[3][2] -
+    //                m[0][2]*m[1][1]*m[3][3] - m[0][3]*m[1][2]*m[3][1];
+    // temp.m[3][0] = m[0][1]*m[1][3]*m[2][2] + m[0][2]*m[1][1]*m[2][3] +
+    //                m[0][3]*m[1][2]*m[2][1] - m[0][1]*m[1][2]*m[2][3] -
+    //                m[0][2]*m[1][3]*m[2][1] - m[0][3]*m[1][1]*m[2][2];
+    // temp.m[0][1] = m[1][0]*m[2][3]*m[3][2] + m[1][2]*m[2][0]*m[3][3] +
+    //                m[1][3]*m[2][2]*m[3][0] - m[1][0]*m[2][2]*m[3][3] -
+    //                m[1][2]*m[2][3]*m[3][0] - m[1][3]*m[2][0]*m[3][2];
+    // temp.m[1][1] = m[0][0]*m[2][2]*m[3][3] + m[0][2]*m[2][3]*m[3][0] +
+    //                m[0][3]*m[2][0]*m[3][2] - m[0][0]*m[2][3]*m[3][2] -
+    //                m[0][2]*m[2][0]*m[3][3] - m[0][3]*m[2][2]*m[3][0];
+    // temp.m[2][1] = m[0][0]*m[1][3]*m[3][2] + m[0][2]*m[1][0]*m[3][3] +
+    //                m[0][3]*m[1][2]*m[3][0] - m[0][0]*m[1][2]*m[3][3] -
+    //                m[0][2]*m[1][3]*m[3][0] - m[0][3]*m[1][0]*m[3][2];
+    // temp.m[3][1] = m[0][0]*m[1][2]*m[2][3] + m[0][2]*m[1][3]*m[2][0] +
+    //                m[0][3]*m[1][0]*m[2][2] - m[0][0]*m[1][3]*m[2][2] -
+    //                m[0][2]*m[1][0]*m[2][3] - m[0][3]*m[1][2]*m[2][0];
+    // temp.m[0][2] = m[1][0]*m[2][1]*m[3][3] + m[1][1]*m[2][3]*m[3][0] +
+    //                m[1][3]*m[2][0]*m[3][1] - m[1][0]*m[2][3]*m[3][1] -
+    //                m[1][1]*m[2][0]*m[3][3] - m[1][3]*m[2][1]*m[3][0];
+    // temp.m[1][2] = m[0][0]*m[2][3]*m[3][1] + m[0][1]*m[2][0]*m[3][3] +
+    //                m[0][3]*m[2][1]*m[3][0] - m[0][0]*m[2][1]*m[3][3] -
+    //                m[0][1]*m[2][3]*m[3][0] - m[0][3]*m[2][0]*m[3][1];
+    // temp.m[2][2] = m[0][0]*m[1][1]*m[3][3] + m[0][1]*m[1][3]*m[3][0] +
+    //                m[0][3]*m[1][0]*m[3][1] - m[0][0]*m[1][3]*m[3][1] -
+    //                m[0][1]*m[1][0]*m[3][3] - m[0][3]*m[1][1]*m[3][0];
+    // temp.m[3][2] = m[0][0]*m[1][3]*m[2][1] + m[0][1]*m[1][0]*m[2][3] +
+    //                m[0][3]*m[1][1]*m[2][0] - m[0][0]*m[1][1]*m[2][3] -
+    //                m[0][1]*m[1][3]*m[2][0] - m[0][3]*m[1][0]*m[2][1];
+    // temp.m[0][3] = m[1][0]*m[2][2]*m[3][1] + m[1][1]*m[2][0]*m[3][2] +
+    //                m[1][2]*m[2][1]*m[3][0] - m[1][0]*m[2][1]*m[3][2] -
+    //                m[1][1]*m[2][2]*m[3][0] - m[1][2]*m[2][0]*m[3][1];
+    // temp.m[1][3] = m[0][0]*m[2][1]*m[3][2] + m[0][1]*m[2][2]*m[3][0] +
+    //                m[0][2]*m[2][0]*m[3][1] - m[0][0]*m[2][2]*m[3][1] -
+    //                m[0][1]*m[2][0]*m[3][2] - m[0][2]*m[2][1]*m[3][0];
+    // temp.m[2][3] = m[0][0]*m[1][2]*m[3][1] + m[0][1]*m[1][0]*m[3][2] +
+    //                m[0][2]*m[1][1]*m[3][0] - m[0][0]*m[1][1]*m[3][2] -
+    //                m[0][1]*m[1][2]*m[3][0] - m[0][2]*m[1][0]*m[3][1];
+    // temp.m[3][3] = m[0][0]*m[1][1]*m[2][2] + m[0][1]*m[1][2]*m[2][0] +
+    //                m[0][2]*m[1][0]*m[2][1] - m[0][0]*m[1][2]*m[2][1] -
+    //                m[0][1]*m[1][0]*m[2][2] - m[0][2]*m[1][1]*m[2][0];
 
-    temp.m[0][0] = m[1][0]; temp.m[0][1] = m[1][2]; temp.m[0][2] = m[1][3];
-    temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
-    tmp2.m[1][0] = temp.determinant();
+  }
 
-    temp.m[0][0] = m[1][0]; temp.m[0][1] = m[1][1]; temp.m[0][2] = m[1][3];
-    temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][3];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][3];
-    tmp2.m[2][0] = temp.determinant();
-
-    temp.m[0][0] = m[1][0]; temp.m[0][1] = m[1][1]; temp.m[0][2] = m[1][2];
-    temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][2];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][2];
-    tmp2.m[3][0] = temp.determinant();
-
-    temp.m[0][0] = m[0][1]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[2][1]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
-    temp.m[2][0] = m[3][1]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
-    tmp2.m[0][1] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
-    tmp2.m[1][1] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][3];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][3];
-    tmp2.m[2][1] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][2];
-    temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][2];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][2];
-    tmp2.m[3][1] = temp.determinant();
-
-    temp.m[0][0] = m[0][1]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[1][1]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
-    temp.m[2][0] = m[3][1]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
-    tmp2.m[0][2] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
-    tmp2.m[1][2] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][3];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][3];
-    tmp2.m[2][2] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][2];
-    temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][2];
-    temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][2];
-    tmp2.m[3][2] = temp.determinant();
-
-    temp.m[0][0] = m[0][1]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[1][1]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
-    temp.m[2][0] = m[2][1]; temp.m[2][1] = m[2][2]; temp.m[2][2] = m[2][3];
-    tmp2.m[0][3] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
-    temp.m[2][0] = m[2][0]; temp.m[2][1] = m[2][2]; temp.m[2][2] = m[2][3];
-    tmp2.m[1][3] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][3];
-    temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][3];
-    temp.m[2][0] = m[2][0]; temp.m[2][1] = m[2][1]; temp.m[2][2] = m[2][3];
-    tmp2.m[2][3] = temp.determinant();
-
-    temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][2];
-    temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][2];
-    temp.m[2][0] = m[2][0]; temp.m[2][1] = m[2][1]; temp.m[2][2] = m[2][2];
-    tmp2.m[3][3] = temp.determinant();
-
-    *this = tmp2;
-    *this *= (1 / this->determinant());
+  void
+  Matrix4x4::inverse() {
+    *this = this->inversed();
+    // CY_ASSERT(this->determinant() != 0.0f &&
+    //           Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
+    // Matrix3x3 temp(0);
+    // Matrix4x4 tmp2 = *this;
+    // 
+    // temp.m[0][0] = m[1][1]; temp.m[0][1] = m[1][2]; temp.m[0][2] = m[1][3];
+    // temp.m[1][0] = m[2][1]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
+    // temp.m[2][0] = m[3][1]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
+    // tmp2.m[0][0] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[1][0]; temp.m[0][1] = m[1][2]; temp.m[0][2] = m[1][3];
+    // temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
+    // tmp2.m[1][0] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[1][0]; temp.m[0][1] = m[1][1]; temp.m[0][2] = m[1][3];
+    // temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][3];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][3];
+    // tmp2.m[2][0] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[1][0]; temp.m[0][1] = m[1][1]; temp.m[0][2] = m[1][2];
+    // temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][2];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][2];
+    // tmp2.m[3][0] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][1]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[2][1]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
+    // temp.m[2][0] = m[3][1]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
+    // tmp2.m[0][1] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][2]; temp.m[1][2] = m[2][3];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
+    // tmp2.m[1][1] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][3];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][3];
+    // tmp2.m[2][1] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][2];
+    // temp.m[1][0] = m[2][0]; temp.m[1][1] = m[2][1]; temp.m[1][2] = m[2][2];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][2];
+    // tmp2.m[3][1] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][1]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[1][1]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
+    // temp.m[2][0] = m[3][1]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
+    // tmp2.m[0][2] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][2]; temp.m[2][2] = m[3][3];
+    // tmp2.m[1][2] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][3];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][3];
+    // tmp2.m[2][2] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][2];
+    // temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][2];
+    // temp.m[2][0] = m[3][0]; temp.m[2][1] = m[3][1]; temp.m[2][2] = m[3][2];
+    // tmp2.m[3][2] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][1]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[1][1]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
+    // temp.m[2][0] = m[2][1]; temp.m[2][1] = m[2][2]; temp.m[2][2] = m[2][3];
+    // tmp2.m[0][3] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][2]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][2]; temp.m[1][2] = m[1][3];
+    // temp.m[2][0] = m[2][0]; temp.m[2][1] = m[2][2]; temp.m[2][2] = m[2][3];
+    // tmp2.m[1][3] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][3];
+    // temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][3];
+    // temp.m[2][0] = m[2][0]; temp.m[2][1] = m[2][1]; temp.m[2][2] = m[2][3];
+    // tmp2.m[2][3] = temp.determinant();
+    // 
+    // temp.m[0][0] = m[0][0]; temp.m[0][1] = m[0][1]; temp.m[0][2] = m[0][2];
+    // temp.m[1][0] = m[1][0]; temp.m[1][1] = m[1][1]; temp.m[1][2] = m[1][2];
+    // temp.m[2][0] = m[2][0]; temp.m[2][1] = m[2][1]; temp.m[2][2] = m[2][2];
+    // tmp2.m[3][3] = temp.determinant();
+    // 
+    // *this = tmp2;
+    // *this *= (1 / this->determinant());
   }
 
   const float

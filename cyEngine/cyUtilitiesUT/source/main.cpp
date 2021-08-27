@@ -25,15 +25,26 @@ main() {
   
   try
   {
-    auto res = test6.inversed();
+    std::cout << test1.toString() << std::endl;
+    std::cout << test1.determinant() << std::endl;
+    std::cout << test1.cofactored().toString() << std::endl;
+    std::cout << test1.transposed().toString() << std::endl;
+    std::cout << test1.inversed().toString() << std::endl;
+    std::cout << (test1.inversed() * test1).toString() << std::endl;
 
-    std::cout << test6.toString() << std::endl;
-    std::cout << Utils::toString(test6.determinant()) << std::endl;
-    std::cout << test6.inversed().toString() << std::endl;
-    std::cout << Utils::format("%.5f", test6.inversed().m[0][0]) << std::endl;
-    std::cout << (test6 * test5).toString() << std::endl;
-    std::cout << (test6 * test6.inversed()).toString()  << std::endl;
-    Utils::ThrowException("Test Error");
+    std::cout << test3.toString() << std::endl;
+    std::cout << test3.determinant() << std::endl;
+    std::cout << test3.cofactored().toString() << std::endl;
+    std::cout << test3.transposed().toString() << std::endl;
+    std::cout << test3.inversed().toString() << std::endl;
+    std::cout << (test3.inversed() * test3).toString() << std::endl;
+
+    std::cout << test5.toString() << std::endl;
+    std::cout << test5.determinant() << std::endl;
+    std::cout << test5.cofactored().toString() << std::endl;
+    std::cout << test5.transposed().toString() << std::endl;
+    std::cout << test5.inversed().toString() << std::endl;
+    std::cout << (test5.inversed() * test5).toString() << std::endl;
   }
   catch (const std::exception& e)
   {

@@ -131,6 +131,12 @@ namespace CYLLENE_SDK {
     void
     transpose();
 
+    Matrix4x4
+    cofactored() const;
+
+    void
+    cofactor();
+
     void
     setValues(const float& value);
 

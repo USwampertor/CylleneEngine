@@ -1,6 +1,6 @@
 #include "cyMatrix2x2.h"
 #include "cyUtilities.h"
-
+#include "cyMath.h"
 namespace CYLLENE_SDK {
   Matrix2x2::Matrix2x2(const float& value) {
     memset(this, static_cast<int>(value), sizeof(Matrix2x2));
@@ -155,8 +155,18 @@ namespace CYLLENE_SDK {
 
   void
   Matrix2x2::transpose() {
-    *this = Matrix2x2(m[0][0], m[1][0],
-                      m[0][1], m[1][1]);
+    *this = this->transposed();
+  }
+
+  Matrix2x2
+  Matrix2x2::cofactored() const {
+    return Matrix2x2(m[1][1], -m[1][0],
+                     -m[0][1], m[0][0]);
+  }
+
+  void
+  Matrix2x2::cofactor() {
+    *this = this->cofactored();
   }
 
   void
@@ -177,19 +187,25 @@ namespace CYLLENE_SDK {
     CY_ASSERT(this->determinant() != 0.0f &&
               Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
     Matrix2x2 temp = ZERO;
-    temp.m[0][0] = m[1][1]; temp.m[0][1] *= -1.0f;
-    temp.m[1][0] *= -1.0f; temp.m[1][1] = m[0][0];
-    temp /= this->determinant();
+    temp = this->cofactored();
+    temp.transpose();
+    // temp.m[0][0] = m[1][1]; temp.m[0][1] *= -1.0f;
+    // temp.m[1][0] *= -1.0f; temp.m[1][1] = m[0][0];
+    temp *= Math::pow(this->determinant(), -1.0f);
+
     return temp;
   }
 
   void
   Matrix2x2::inverse() {
-    CY_ASSERT(this->determinant() != 0.0f &&
-              Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
-    m[0][0] = m[1][1]; m[0][1] *= -1.0f;
-    m[1][0] *= -1.0f; m[1][1] = m[0][0];
-    *this /= this->determinant();
+    *this = this->inversed();
+    // CY_ASSERT(this->determinant() != 0.0f &&
+    //           Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
+    // // m[0][0] = m[1][1]; m[0][1] *= -1.0f;
+    // // m[1][0] *= -1.0f; m[1][1] = m[0][0];
+    // this->cofactor();
+    // this->transpose();
+    // *this /= this->determinant();
   }
 
   const float
