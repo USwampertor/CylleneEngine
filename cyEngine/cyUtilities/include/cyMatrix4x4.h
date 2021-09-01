@@ -4,6 +4,9 @@
 #include "cyVector4f.h"
 
 namespace CYLLENE_SDK {
+
+  class Matrix3x3;
+
   class CY_UTILITY_EXPORT Matrix4x4
   {
   public:
@@ -154,6 +157,15 @@ namespace CYLLENE_SDK {
 
     const float
     determinant() const;
+
+    void
+    OrtographicView();
+
+    void
+    ProjectionView();
+
+    Matrix3x3
+    subMatrix();
 
     String
     toString();
