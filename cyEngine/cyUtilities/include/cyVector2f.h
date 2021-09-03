@@ -326,7 +326,7 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    setValues(const float& newX, const float& newY);
+    setValues(const float& nx, const float& ny);
 
     /**
      * @brief gets the min between two vectors
@@ -499,17 +499,17 @@ namespace CYLLENE_SDK {
      * Member declaration
      */
 
-  private:
+  public:
 
     /**
      * x component
      */
-    float m_x;
+    float x;
 
     /**
      * y component
      */
-    float m_y;
+    float y;
 
   };
 

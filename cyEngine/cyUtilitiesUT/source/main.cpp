@@ -4,15 +4,17 @@
 
 #include <conio.h>
 
-#include <cyUtilities.h>
+#include <cyCrashHandler.h>
 #include <cyMatrix2x2.h>
 #include <cyMatrix3x3.h>
 #include <cyMatrix4x4.h>
-#include <cyCrashHandler.h>
+#include <cyUtilities.h>
+#include <cyVector2f.h>
+#include <cyVector2i.h>
 
 using namespace CYLLENE_SDK;
 
-int
+int32
 main() {
   CrashHandler::startUp();
 
@@ -25,26 +27,7 @@ main() {
   
   try
   {
-    std::cout << test1.toString() << std::endl;
-    std::cout << test1.determinant() << std::endl;
-    std::cout << test1.cofactored().toString() << std::endl;
-    std::cout << test1.transposed().toString() << std::endl;
-    std::cout << test1.inversed().toString() << std::endl;
-    std::cout << (test1.inversed() * test1).toString() << std::endl;
 
-    std::cout << test3.toString() << std::endl;
-    std::cout << test3.determinant() << std::endl;
-    std::cout << test3.cofactored().toString() << std::endl;
-    std::cout << test3.transposed().toString() << std::endl;
-    std::cout << test3.inversed().toString() << std::endl;
-    std::cout << (test3.inversed() * test3).toString() << std::endl;
-
-    std::cout << test5.toString() << std::endl;
-    std::cout << test5.determinant() << std::endl;
-    std::cout << test5.cofactored().toString() << std::endl;
-    std::cout << test5.transposed().toString() << std::endl;
-    std::cout << test5.inversed().toString() << std::endl;
-    std::cout << (test5.inversed() * test5).toString() << std::endl;
   }
   catch (const std::exception& e)
   {

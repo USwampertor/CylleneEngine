@@ -14,184 +14,184 @@ namespace CYLLENE_SDK {
   
   
   Vector3f::Vector3f(const Vector3f& other)
-    : m_x(other.m_x),
-      m_y(other.m_y),
-      m_z(other.m_z) {}
+    : x(other.x),
+      y(other.y),
+      z(other.z) {}
 
   Vector3f::Vector3f(const Vector2f& other)
-    : m_x(other[0]),
-      m_y(other[1]),
-      m_z(0.0f) {}
+    : x(other[0]),
+      y(other[1]),
+      z(0.0f) {}
 
   Vector3f::Vector3f(const Vector2i& other)
-    : m_x(static_cast<float>(other[0])),
-      m_y(static_cast<float>(other[1])),
-      m_z(0.0f) {}
+    : x(static_cast<float>(other[0])),
+      y(static_cast<float>(other[1])),
+      z(0.0f) {}
 
   Vector3f::Vector3f(const Vector4f& other)
-    : m_x(other[0]),
-      m_y(other[1]),
-      m_z(other[2]) {}
+    : x(other[0]),
+      y(other[1]),
+      z(other[2]) {}
 
 
   Vector3f::Vector3f(const float& nx, const float& ny, const float& nz) 
-    : m_x(nx),
-      m_y(ny),
-      m_z(nz) {}
+    : x(nx),
+      y(ny),
+      z(nz) {}
 
   float&
   Vector3f::operator()(const uint32& index) {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   const float&
   Vector3f::operator()(const uint32& index) const {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   float&
   Vector3f::operator[](const uint32& index) {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   const float
   Vector3f::operator[](const uint32& index) const {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
 
   Vector3f
   Vector3f::operator+(const Vector3f& v) const {
-    return Vector3f(m_x + v.m_x, m_y + v.m_y, m_z + v.m_z);
+    return Vector3f(x + v.x, y + v.y, z + v.z);
   }
 
   Vector3f
   Vector3f::operator-(const Vector3f& v) const {
-    return Vector3f(m_x - v.m_x, m_y - v.m_y, m_z - v.m_z);
+    return Vector3f(x - v.x, y - v.y, z - v.z);
   }
 
   Vector3f
   Vector3f::operator*(const Vector3f& v) const {
-    return Vector3f(m_x * v.m_x, m_y * v.m_y, m_z * v.m_z);
+    return Vector3f(x * v.x, y * v.y, z * v.z);
   }
 
   Vector3f
   Vector3f::operator/(const Vector3f& v) const {
-    return Vector3f(m_x / v.m_x, m_y / v.m_y, m_z / v.m_z);
+    return Vector3f(x / v.x, y / v.y, z / v.z);
   }
 
   Vector3f
   Vector3f::operator+(const float& plus) const {
-    return Vector3f(m_x + plus, m_y + plus, m_z + plus);
+    return Vector3f(x + plus, y + plus, z + plus);
   }
 
   Vector3f
   Vector3f::operator-(const float& minus) const {
-    return Vector3f(m_x - minus, m_y - minus, m_z - minus);
+    return Vector3f(x - minus, y - minus, z - minus);
   }
 
   Vector3f
   Vector3f::operator*(const float& times) const {
-    return Vector3f(m_x * times, m_y * times, m_z * times);
+    return Vector3f(x * times, y * times, z * times);
   }
 
   Vector3f
   Vector3f::operator/(const float& under) const {
-    return Vector3f(m_x / under, m_y / under, m_z / under);
+    return Vector3f(x / under, y / under, z / under);
   }
 
   float
   Vector3f::operator|(const Vector3f& v) const {
-    return m_x * v.m_x + m_y * v.m_y + m_z * v.m_z;
+    return x * v.x + y * v.y + z * v.z;
   }
 
   Vector3f
   Vector3f::operator^(const Vector3f& v) const {
-    return Vector3f((m_y * v.m_z) - (m_z * v.m_y),
-                    (m_z * v.m_x) - (m_x * v.m_z),
-                    (m_x * v.m_y) - (m_y * v.m_x));
+    return Vector3f((y * v.z) - (z * v.y),
+                    (z * v.x) - (x * v.z),
+                    (x * v.y) - (y * v.x));
   }
 
   bool
   Vector3f::operator==(const Vector3f& v) const {
-    return m_x == v.m_x && m_y == v.m_y && m_z == v.m_z;
+    return x == v.x && y == v.y && z == v.z;
   }
 
   bool
   Vector3f::operator!=(const Vector3f& v) const {
-    return m_x != v.m_x || m_y != v.m_y || m_z != v.m_z;
+    return x != v.x || y != v.y || z != v.z;
   }
 
   bool
   Vector3f::operator<(const Vector3f& v) const {
-    return m_x < v.m_x && m_y < v.m_y && m_z < v.m_z;
+    return x < v.x && y < v.y && z < v.z;
   }
 
   bool
   Vector3f::operator>(const Vector3f& v) const {
-    return m_x > v.m_x && m_y > v.m_y && m_z > v.m_z;
+    return x > v.x && y > v.y && z > v.z;
   }
 
   bool
   Vector3f::operator<=(const Vector3f& v) const {
-    return m_x <= v.m_x && m_y <= v.m_y && m_z <= v.m_z;
+    return x <= v.x && y <= v.y && z <= v.z;
   }
 
   bool
   Vector3f::operator>=(const Vector3f& v) const {
-    return m_x >= v.m_x && m_y >= v.m_y && m_z >= v.m_z;
+    return x >= v.x && y >= v.y && z >= v.z;
   }
 
   Vector3f
   Vector3f::operator-() const {
-    return Vector3f(-m_x, -m_y, -m_z);
+    return Vector3f(-x, -y, -z);
   }
 
   Vector3f&
   Vector3f::operator+=(const Vector3f& v) {
-    m_x += v.m_x;
-    m_y += v.m_y;
-    m_z += v.m_z;
+    x += v.x;
+    y += v.y;
+    z += v.z;
     return *this;
   }
 
   Vector3f&
   Vector3f::operator-=(const Vector3f& v) {
-    m_x -= v.m_x;
-    m_y -= v.m_y;
-    m_z -= v.m_z;
+    x -= v.x;
+    y -= v.y;
+    z -= v.z;
     return *this;
   }
 
   Vector3f&
   Vector3f::operator*=(const Vector3f& v) {
-    m_x *= v.m_x;
-    m_y *= v.m_y;
-    m_z *= v.m_z;
+    x *= v.x;
+    y *= v.y;
+    z *= v.z;
     return *this;
   }
 
   Vector3f&
   Vector3f::operator/=(const Vector3f& v) {
-    m_x /= v.m_x;
-    m_y /= v.m_y;
-    m_z /= v.m_z;
+    x /= v.x;
+    y /= v.y;
+    z /= v.z;
     return *this;
   }
 
   Vector3f&
   Vector3f::operator*=(const float& scale) {
-    m_x *= scale;
-    m_y *= scale;
-    m_z *= scale;
+    x *= scale;
+    y *= scale;
+    z *= scale;
     return *this;
   }
 
   Vector3f&
   Vector3f::operator/=(const float& scale) {
-    m_x /= scale;
-    m_y /= scale;
-    m_z /= scale;
+    x /= scale;
+    y /= scale;
+    z /= scale;
     return *this;
   }
 
@@ -212,100 +212,100 @@ namespace CYLLENE_SDK {
 
   float
   Vector3f::sqrDistance(const Vector3f& a, const Vector3f& b) {
-    return Math::sqr(a.m_x - b.m_x) +
-           Math::sqr(a.m_y - b.m_y) +
-           Math::sqr(a.m_z - b.m_z);
+    return Math::sqr(a.x - b.x) +
+           Math::sqr(a.y - b.y) +
+           Math::sqr(a.z - b.z);
   }
 
   float
   Vector3f::distance(const Vector3f& a, const Vector3f& b) {
     return 
-      Math::sqrt(Math::sqr(a.m_x - b.m_x) +
-                 Math::sqr(a.m_y - b.m_y) +
-                 Math::sqr(a.m_z - b.m_z));
+      Math::sqrt(Math::sqr(a.x - b.x) +
+                 Math::sqr(a.y - b.y) +
+                 Math::sqr(a.z - b.z));
   }
 
   void
   Vector3f::setValues(const float& newX, const float& newY, const float& newZ) {
-    m_x = newX;
-    m_y = newY;
-    m_z = newZ;
+    x = newX;
+    y = newY;
+    z = newZ;
   }
 
   void
   Vector3f::min(const Vector3f& v) {
-    if (v.m_x < m_x) m_x = v.m_x;
-    if (v.m_y < m_y) m_y = v.m_y;
-    if (v.m_z < m_z) m_z = v.m_z;
+    if (v.x < x) x = v.x;
+    if (v.y < y) y = v.y;
+    if (v.z < z) z = v.z;
   }
 
   void
   Vector3f::max(const Vector3f& v) {
-    if (v.m_x > m_x) m_x = v.m_x;
-    if (v.m_y > m_y) m_y = v.m_y;
-    if (v.m_z > m_z) m_z = v.m_z;
+    if (v.x > x) x = v.x;
+    if (v.y > y) y = v.y;
+    if (v.z > z) z = v.z;
   }
 
   void
   Vector3f::floor() {
-    m_x = Math::floor(m_x);
-    m_y = Math::floor(m_y);
-    m_z = Math::floor(m_z);
+    x = Math::floor(x);
+    y = Math::floor(y);
+    z = Math::floor(z);
   }
 
   void
   Vector3f::ceiling() {
-    m_x = Math::ceil(m_x);
-    m_y = Math::ceil(m_y);
-    m_z = Math::ceil(m_z);
+    x = Math::ceil(x);
+    y = Math::ceil(y);
+    z = Math::ceil(z);
   }
 
   void
   Vector3f::round() {
-    m_x = Math::round(m_x);
-    m_y = Math::round(m_y);
-    m_z = Math::round(m_z);
+    x = Math::round(x);
+    y = Math::round(y);
+    z = Math::round(z);
   }
 
   void
   Vector3f::roundHalf() {
-    m_x = Math::roundHalf(m_x);
-    m_y = Math::roundHalf(m_y);
-    m_z = Math::roundHalf(m_z);
+    x = Math::roundHalf(x);
+    y = Math::roundHalf(y);
+    z = Math::roundHalf(z);
   }
 
   float
   Vector3f::getHighest() const {
-    return Math::max3(m_x, m_y, m_z);
+    return Math::max3(x, y, z);
   }
 
   float
   Vector3f::getLowest() const {
-    return Math::min3(m_x, m_y, m_z);
+    return Math::min3(x, y, z);
   }
 
   float
   Vector3f::magnitude() const {
-    return Math::sqrt(m_x * m_x + m_y * m_y + m_z * m_z);
+    return Math::sqrt(x * x + y * y + z * z);
   }
 
   float
   Vector3f::sqrMagnitude() const {
-    return (m_x * m_x + m_y * m_y + m_z * m_z);
+    return (x * x + y * y + z * z);
   }
 
   Vector3f
   Vector3f::normalized() const {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isNaN(m_z) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
-              !Math::isInfinite(m_z) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isNaN(z) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
+              !Math::isInfinite(z) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
       Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -314,21 +314,21 @@ namespace CYLLENE_SDK {
 
     float unit = Math::invSqrt(sqr);
 
-    return Vector3f((m_x * unit), (m_y * unit), (m_z * unit));
+    return Vector3f((x * unit), (y * unit), (z * unit));
   }
 
   Vector3f
   Vector3f::qNormalized() const {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isNaN(m_z) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
-              !Math::isInfinite(m_z) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isNaN(z) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
+              !Math::isInfinite(z) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
       Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -337,21 +337,21 @@ namespace CYLLENE_SDK {
 
     float unit = Math::qInvSqrt(sqr);
 
-    return Vector3f((m_x * unit), (m_y * unit), (m_z * unit));
+    return Vector3f((x * unit), (y * unit), (z * unit));
   }
 
   void
   Vector3f::normalize() {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isNaN(m_z) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
-              !Math::isInfinite(m_z) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isNaN(z) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
+              !Math::isInfinite(z) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -360,23 +360,23 @@ namespace CYLLENE_SDK {
 
     float unit = Math::invSqrt(sqr);
 
-    m_x *= unit;
-    m_y *= unit; 
-    m_z *= unit;
+    x *= unit;
+    y *= unit; 
+    z *= unit;
   }
 
   void
   Vector3f::qNormalize() {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isNaN(m_z) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
-              !Math::isInfinite(m_z) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isNaN(z) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
+              !Math::isInfinite(z) &&
                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(m_x, 2.0f) + Math::pow(m_y, 2.0f) + Math::pow(m_z, 2.0f);
+    float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -385,22 +385,22 @@ namespace CYLLENE_SDK {
 
     float unit = Math::qInvSqrt(sqr);
 
-    m_x *= unit;
-    m_y *= unit; 
-    m_z *= unit;
+    x *= unit;
+    y *= unit; 
+    z *= unit;
 
   }
 
   bool
   Vector3f::isZero() const {
-    return 0.0f == m_x && 0.0f == m_y && 0.0f == m_z;
+    return 0.0f == x && 0.0f == y && 0.0f == z;
   }
 
   bool
   Vector3f::isNearlySame(const Vector3f& a, const Vector3f& b, const float& error = Math::SMALLNUMBER) {
-    return Math::abs(a.m_x - b.m_x) <= error &&
-           Math::abs(a.m_y - b.m_y) <= error &&
-           Math::abs(a.m_z - b.m_z) <= error;
+    return Math::abs(a.x - b.x) <= error &&
+           Math::abs(a.y - b.y) <= error &&
+           Math::abs(a.z - b.z) <= error;
   }
 
   String
@@ -409,11 +409,11 @@ namespace CYLLENE_SDK {
     String output;
 
     output += "( ";
-    output += Utils::format("%2.2f", m_x);
+    output += Utils::format("%2.2f", x);
     output += ", ";
-    output += Utils::format("%2.2f", m_y);
+    output += Utils::format("%2.2f", y);
     output += ", ";
-    output += Utils::format("%2.2f", m_z);
+    output += Utils::format("%2.2f", z);
     output += " )";
 
     return output;

@@ -5,7 +5,7 @@
 
 namespace CYLLENE_SDK {
   Matrix3x3::Matrix3x3(const float& value) {
-    memset(this, static_cast<float>(value), sizeof(Matrix3x3));
+    memset(this, value, sizeof(Matrix3x3));
   }
 
   Matrix3x3::Matrix3x3(const Matrix3x3& other)

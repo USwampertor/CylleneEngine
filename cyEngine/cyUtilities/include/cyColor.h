@@ -43,6 +43,15 @@ namespace CYLLENE_SDK {
     ~Color() = default;
 
     /**
+     * @brief Constructor with a RGBA color based on float from 0.0f to 1.0f
+     * @param float R red color from 0.0f to 1.0f
+     * @param float G green color from 0.0f to 1.0f
+     * @param float B blue color from 0.0f to 1.0f
+     * @param float A alpha channel from 0.0f to 1.0f
+     */
+    Color(float nr, float ng = 0, float nb = 0, float na = 1.0f);
+
+    /**
      * Constructor with a copy of a color
      */
     Color(const Color& copy);
@@ -56,15 +65,6 @@ namespace CYLLENE_SDK {
      * Constructor with a Vector 3
      */
     Color(const Vector3f& vector);
-
-    /**
-     * @brief Constructor with a RGBA color based on float from 0.0f to 1.0f
-     * @param float R red color from 0.0f to 1.0f
-     * @param float G green color from 0.0f to 1.0f
-     * @param float B blue color from 0.0f to 1.0f
-     * @param float A alpha channel from 0.0f to 1.0f
-     */
-    Color(float nr, float ng = 0, float nb = 0, float na = 1.0f);
 
     /**
      * @brief () operator overload

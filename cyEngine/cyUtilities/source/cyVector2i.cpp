@@ -13,174 +13,174 @@
 namespace CYLLENE_SDK {
 
   Vector2i::Vector2i(const int32& nx, const int32& ny)
-    : m_x(nx),
-      m_y(ny) {}
+    : x(nx),
+      y(ny) {}
 
   Vector2i::Vector2i(const int32& values)
-    : m_x(values), 
-      m_y(values) {}
+    : x(values), 
+      y(values) {}
 
   Vector2i::Vector2i(const Vector2f& other) 
-    : m_x(static_cast<int>(other[0])), 
-      m_y(static_cast<int>(other[1])) {}
+    : x(static_cast<int32>(other[0])), 
+      y(static_cast<int32>(other[1])) {}
 
   Vector2i::Vector2i(const Vector2i& other) 
-    : m_x(static_cast<int>(other[0])),
-      m_y(static_cast<int>(other[1])) {}
+    : x(static_cast<int32>(other[0])),
+      y(static_cast<int32>(other[1])) {}
 
   Vector2i::Vector2i(const Vector3f& other) 
-    : m_x(static_cast<int>(other[0])),
-      m_y(static_cast<int>(other[1])) {}
+    : x(static_cast<int32>(other[0])),
+      y(static_cast<int32>(other[1])) {}
 
   Vector2i::Vector2i(const Vector4f& other) 
-    : m_x(static_cast<int>(other[0])),
-      m_y(static_cast<int>(other[1])) {}
+    : x(static_cast<int32>(other[0])),
+      y(static_cast<int32>(other[1])) {}
 
   int32&
   Vector2i::operator()(const int32& index) {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   const int32&
   Vector2i::operator()(const int32& index) const {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   int32&
   Vector2i::operator[](const int32& index) {
-    return (&m_x)[index];
+    return (&x)[index];
   }
   
   const int32
   Vector2i::operator[](const int32& index) const {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
 
   Vector2i
   Vector2i::operator+(const Vector2i& v) const {
-    return Vector2i(m_x + v.m_x, m_y + v.m_y);
+    return Vector2i(x + v.x, y + v.y);
   }
 
   Vector2i
   Vector2i::operator-(const Vector2i& v) const {
-    return Vector2i(m_x - v.m_x, m_y - v.m_y);
+    return Vector2i(x - v.x, y - v.y);
   }
 
   Vector2i
   Vector2i::operator*(const Vector2i& v) const {
-    return Vector2i(m_x * v.m_x, m_y * v.m_y);
+    return Vector2i(x * v.x, y * v.y);
   }
 
   Vector2i
   Vector2i::operator/(const Vector2i& v) const {
-    return Vector2i(m_x / v.m_x, m_y / v.m_y);
+    return Vector2i(x / v.x, y / v.y);
   }
 
   Vector2i
   Vector2i::operator+(const int32& plus) const {
-    return Vector2i(m_x + plus, m_y + plus);
+    return Vector2i(x + plus, y + plus);
   }
 
   Vector2i
   Vector2i::operator-(const int32& minus) const {
-    return Vector2i(m_x - minus, m_y - minus);
+    return Vector2i(x - minus, y - minus);
   }
 
   Vector2i
   Vector2i::operator*(const int32& times) const {
-    return Vector2i(m_x * times, m_y * times);
+    return Vector2i(x * times, y * times);
   }
 
   Vector2i
   Vector2i::operator/(const int32& under) const {
-    return Vector2i(m_x / under, m_y / under);
+    return Vector2i(x / under, y / under);
   }
 
   int32
   Vector2i::operator|(const Vector2i& v) const {
-    return m_x * v.m_x + m_y * v.m_y;
+    return x * v.x + y * v.y;
   }
 
   int32
   Vector2i::operator^(const Vector2i& v) const {
-    return m_x * v.m_x - m_y * v.m_y;
+    return x * v.x - y * v.y;
   }
 
   bool
   Vector2i::operator==(const Vector2i& v) const {
-    return m_x == v.m_x && m_y == v.m_y;
+    return x == v.x && y == v.y;
   }
 
   bool
   Vector2i::operator!=(const Vector2i& v) const {
-    return m_x != v.m_x || m_y != v.m_y;
+    return x != v.x || y != v.y;
   }
 
   bool
   Vector2i::operator<(const Vector2i& v) const {
-    return m_x < v.m_x && m_y < v.m_y;
+    return x < v.x && y < v.y;
   }
 
   bool
   Vector2i::operator>(const Vector2i& v) const {
-    return m_x > v.m_x && m_y > v.m_y;
+    return x > v.x && y > v.y;
   }
 
   bool
   Vector2i::operator<=(const Vector2i& v) const {
-    return m_x <= v.m_x && m_y <= v.m_y;
+    return x <= v.x && y <= v.y;
   }
 
   bool
   Vector2i::operator>=(const Vector2i& v) const {
-    return m_x >= v.m_x && m_y >= v.m_y;
+    return x >= v.x && y >= v.y;
   }
 
   Vector2i
   Vector2i::operator-() const {
-    return Vector2i(-m_x, -m_y);
+    return Vector2i(-x, -y);
   }
 
   Vector2i&
   Vector2i::operator+=(const Vector2i& v) {
-    m_x += v.m_x;
-    m_y += v.m_y;
+    x += v.x;
+    y += v.y;
     return *this;
   }
 
   Vector2i&
   Vector2i::operator-=(const Vector2i& v) {
-    m_x -= v.m_x;
-    m_y -= v.m_y;
+    x -= v.x;
+    y -= v.y;
     return *this;
   }
 
   Vector2i&
   Vector2i::operator*=(const Vector2i& v) {
-    m_x *= v.m_x;
-    m_y *= v.m_y;
+    x *= v.x;
+    y *= v.y;
     return *this;
   }
 
   Vector2i&
   Vector2i::operator/=(const Vector2i& v) {
-    m_x /= v.m_x;
-    m_y /= v.m_y;
+    x /= v.x;
+    y /= v.y;
     return *this;
   }
 
   Vector2i&
   Vector2i::operator*=(const int32& scale) {
-    m_x *= scale;
-    m_y *= scale;
+    x *= scale;
+    y *= scale;
     return *this;
   }
 
   Vector2i&
   Vector2i::operator/=(const int32& scale) {
-    m_x /= scale;
-    m_y /= scale;
+    x /= scale;
+    y /= scale;
     return *this;
   }
 
@@ -201,63 +201,63 @@ namespace CYLLENE_SDK {
 
   int32
   Vector2i::sqrDistance(const Vector2i& a, const Vector2i& b) {
-    return Math::pow(a.m_x - b.m_x, 2) + Math::pow(a.m_y - b.m_y, 2);
+    return Math::pow(a.x - b.x, 2) + Math::pow(a.y - b.y, 2);
   }
 
   int32
   Vector2i::distance(const Vector2i& a, const Vector2i& b) {
-    return Math::sqrt(Math::sqr(a.m_x + b.m_x) + Math::sqr(a.m_y + b.m_y));
+    return Math::sqrt(Math::sqr(a.x + b.x) + Math::sqr(a.y + b.y));
   }
 
   void
   Vector2i::setValues(const int32& newX, const int32& newY) {
-    m_x = newX;
-    m_y = newY;
+    x = newX;
+    y = newY;
   }
 
   void
   Vector2i::min(const Vector2i& v) {
-    if (v.m_x < m_x) { m_x = v.m_x; }
-    if (v.m_y < m_y) { m_y = v.m_y; }
+    if (v.x < x) { x = v.x; }
+    if (v.y < y) { y = v.y; }
   }
 
   void
   Vector2i::max(const Vector2i& v) {
-    if (v.m_x > m_x) { m_x = v.m_x; }
-    if (v.m_y > m_y) { m_y = v.m_y; }
+    if (v.x > x) { x = v.x; }
+    if (v.y > y) { y = v.y; }
   }
 
   int32
   Vector2i::getHighest() const {
-    return Math::max(m_x, m_y);
+    return Math::max(x, y);
   }
 
   int32
   Vector2i::getLowest() const {
-    return Math::min(m_x, m_y);
+    return Math::min(x, y);
   }
 
   int32
   Vector2i::magnitude() const {
-    return Math::sqrt(m_x * m_x + m_y * m_y);
+    return Math::sqrt(x * x + y * y);
   }
 
   int32
   Vector2i::sqrMagnitude() const {
-    return (m_x * m_x + m_y * m_y);
+    return (x * x + y * y);
   }
 
   Vector2i
   Vector2i::normalized() const {
 
-    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
-              !Math::isNaN(static_cast<float>(m_y)) &&
-              !Math::isInfinite(static_cast<float>(m_x)) &&
-              !Math::isInfinite(static_cast<float>(m_y)) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
+              !Math::isNaN(static_cast<float>(y)) &&
+              !Math::isInfinite(static_cast<float>(x)) &&
+              !Math::isInfinite(static_cast<float>(y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) + 
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) + 
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -265,20 +265,20 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
     
     float unit = Math::invSqrt(sqr);
-    return Vector2i((m_x * static_cast<int32>(unit)), (m_y * static_cast<int32>(unit)));
+    return Vector2i((x * static_cast<int32>(unit)), (y * static_cast<int32>(unit)));
   }
 
   Vector2i
   Vector2i::qNormalized() const {
 
-    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
-              !Math::isNaN(static_cast<float>(m_y)) &&
-              !Math::isInfinite(static_cast<float>(m_x)) &&
-              !Math::isInfinite(static_cast<float>(m_y)) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
+              !Math::isNaN(static_cast<float>(y)) &&
+              !Math::isInfinite(static_cast<float>(x)) &&
+              !Math::isInfinite(static_cast<float>(y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) + 
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) + 
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -286,20 +286,20 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
     
     float unit = Math::qInvSqrt(sqr);
-    return Vector2i((m_x * static_cast<int32>(unit)), (m_y * static_cast<int32>(unit)));
+    return Vector2i((x * static_cast<int32>(unit)), (y * static_cast<int32>(unit)));
   }
 
   void
   Vector2i::normalize() {
 
-    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
-              !Math::isNaN(static_cast<float>(m_y)) &&
-              !Math::isInfinite(static_cast<float>(m_x)) &&
-              !Math::isInfinite(static_cast<float>(m_y)) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
+              !Math::isNaN(static_cast<float>(y)) &&
+              !Math::isInfinite(static_cast<float>(x)) &&
+              !Math::isInfinite(static_cast<float>(y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
    
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -307,21 +307,21 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
 
     float unit = Math::invSqrt(sqr);
-    m_x *= static_cast<int32>(unit);
-    m_y *= static_cast<int32>(unit);
+    x *= static_cast<int32>(unit);
+    y *= static_cast<int32>(unit);
   }
 
   void
   Vector2i::qNormalize() {
 
-    CY_ASSERT(!Math::isNaN(static_cast<float>(m_x)) &&
-              !Math::isNaN(static_cast<float>(m_y)) &&
-              !Math::isInfinite(static_cast<float>(m_x)) &&
-              !Math::isInfinite(static_cast<float>(m_y)) &&
+    CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
+              !Math::isNaN(static_cast<float>(y)) &&
+              !Math::isInfinite(static_cast<float>(x)) &&
+              !Math::isInfinite(static_cast<float>(y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
    
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -329,13 +329,13 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
 
     float unit = Math::qInvSqrt(sqr);
-    m_x *= static_cast<int32>(unit);
-    m_y *= static_cast<int32>(unit);
+    x *= static_cast<int32>(unit);
+    y *= static_cast<int32>(unit);
   }
 
   bool
   Vector2i::isZero() const {
-    return 0 == m_x && 0 == m_y;
+    return 0 == x && 0 == y;
   }
 
   bool
@@ -345,8 +345,8 @@ namespace CYLLENE_SDK {
 
   bool
   Vector2i::areNearlySame(const Vector2i& a, const Vector2i& b, const int32& error = 1) {
-    return Math::abs(a.m_x - b.m_x) <= error &&
-           Math::abs(a.m_y - b.m_y) <= error ;
+    return Math::abs(a.x - b.x) <= error &&
+           Math::abs(a.y - b.y) <= error ;
   }
 
   String
@@ -355,9 +355,9 @@ namespace CYLLENE_SDK {
     String output;
 
     output += "( ";
-    output += Utils::format("%2d", m_x);
+    output += Utils::format("%2d", x);
     output += ", ";
-    output += Utils::format("%2d", m_y);
+    output += Utils::format("%2d", y);
     output += " )";
 
     return output;

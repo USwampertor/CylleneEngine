@@ -533,17 +533,17 @@ namespace CYLLENE_SDK {
     /**
      * @brief X value of the vector
      */
-    float m_x;
+    float x;
 
     /**
      * @brief Y value of the vector
      */
-    float m_y;
+    float y;
 
     /**
      * @brief Z value of the vector
      */
-    float m_z;
+    float z;
 
   };
 }

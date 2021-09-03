@@ -13,174 +13,174 @@
 namespace CYLLENE_SDK {
 
   Vector2f::Vector2f(const float& nx, const float& ny)
-    : m_x(nx),
-      m_y(ny) {}
+    : x(nx),
+      y(ny) {}
 
   Vector2f::Vector2f(const float& values)
-    : m_x(values), 
-      m_y(values) {}
+    : x(values), 
+      y(values) {}
 
   Vector2f::Vector2f(const Vector2i& other) 
-    : m_x(static_cast<float>(other[0])), 
-      m_y(static_cast<float>(other[1])) {}
+    : x(static_cast<float>(other[0])), 
+      y(static_cast<float>(other[1])) {}
 
   Vector2f::Vector2f(const Vector2f& other) 
-    : m_x(other[0]), 
-      m_y(other[1]) {}
+    : x(other[0]), 
+      y(other[1]) {}
 
   Vector2f::Vector2f(const Vector3f& other) 
-    : m_x(other[0]),
-      m_y(other[1]) {}
+    : x(other[0]),
+      y(other[1]) {}
 
   Vector2f::Vector2f(const Vector4f& other) 
-    : m_x(other[0]), 
-      m_y(other[1]) {}
+    : x(other[0]), 
+      y(other[1]) {}
 
   float&
   Vector2f::operator()(const uint32& index) {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   const float&
   Vector2f::operator()(const uint32& index) const {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   float&
   Vector2f::operator[](const uint32& index) {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
   const float
   Vector2f::operator[](const uint32& index) const {
-    return (&m_x)[index];
+    return (&x)[index];
   }
 
 
   Vector2f
   Vector2f::operator+(const Vector2f& v) const {
-    return Vector2f(m_x + v.m_x, m_y + v.m_y);
+    return Vector2f(x + v.x, y + v.y);
   }
 
   Vector2f
   Vector2f::operator-(const Vector2f& v) const {
-    return Vector2f(m_x - v.m_x, m_y - v.m_y);
+    return Vector2f(x - v.x, y - v.y);
   }
 
   Vector2f
   Vector2f::operator*(const Vector2f& v) const {
-    return Vector2f(m_x * v.m_x, m_y * v.m_y);
+    return Vector2f(x * v.x, y * v.y);
   }
 
   Vector2f
   Vector2f::operator/(const Vector2f& v) const {
-    return Vector2f(m_x / v.m_x, m_y / v.m_y);
+    return Vector2f(x / v.x, y / v.y);
   }
 
   Vector2f
   Vector2f::operator+(const float& plus) const {
-    return Vector2f(m_x + plus, m_y + plus);
+    return Vector2f(x + plus, y + plus);
   }
 
   Vector2f
   Vector2f::operator-(const float& minus) const {
-    return Vector2f(m_x - minus, m_y - minus);
+    return Vector2f(x - minus, y - minus);
   }
 
   Vector2f
   Vector2f::operator*(const float& times) const {
-    return Vector2f(m_x * times, m_y * times);
+    return Vector2f(x * times, y * times);
   }
 
   Vector2f
   Vector2f::operator/(const float& under) const {
-    return Vector2f(m_x / under, m_y / under);
+    return Vector2f(x / under, y / under);
   }
 
   float
   Vector2f::operator|(const Vector2f& v) const {
-    return m_x * v.m_x + m_y * v.m_y;
+    return x * v.x + y * v.y;
   }
 
   float
   Vector2f::operator^(const Vector2f& v) const {
-    return m_x * v.m_x - m_y * v.m_y;
+    return x * v.x - y * v.y;
   }
 
   bool
   Vector2f::operator==(const Vector2f& v) const {
-    return m_x == v.m_x && m_y == v.m_y;
+    return x == v.x && y == v.y;
   }
 
   bool
   Vector2f::operator!=(const Vector2f& v) const {
-    return m_x != v.m_x || m_y != v.m_y;
+    return x != v.x || y != v.y;
   }
 
   bool
   Vector2f::operator<(const Vector2f& v) const {
-    return m_x < v.m_x&& m_y < v.m_y;
+    return x < v.x&& y < v.y;
   }
 
   bool
   Vector2f::operator>(const Vector2f& v) const {
-    return m_x > v.m_x && m_y > v.m_y;
+    return x > v.x && y > v.y;
   }
 
   bool
   Vector2f::operator<=(const Vector2f& v) const {
-    return m_x <= v.m_x && m_y <= v.m_y;
+    return x <= v.x && y <= v.y;
   }
 
   bool
   Vector2f::operator>=(const Vector2f& v) const {
-    return m_x >= v.m_x && m_y >= v.m_y;
+    return x >= v.x && y >= v.y;
   }
 
   Vector2f
   Vector2f::operator-() const {
-    return Vector2f(-m_x, -m_y);
+    return Vector2f(-x, -y);
   }
 
   Vector2f&
   Vector2f::operator+=(const Vector2f& v) {
-    m_x += v.m_x;
-    m_y += v.m_y;
+    x += v.x;
+    y += v.y;
     return *this;
   }
 
   Vector2f&
   Vector2f::operator-=(const Vector2f& v) {
-    m_x -= v.m_x;
-    m_y -= v.m_y;
+    x -= v.x;
+    y -= v.y;
     return *this;
   }
 
   Vector2f&
   Vector2f::operator*=(const Vector2f& v) {
-    m_x *= v.m_x;
-    m_y *= v.m_y;
+    x *= v.x;
+    y *= v.y;
     return *this;
   }
 
   Vector2f&
   Vector2f::operator/=(const Vector2f& v) {
-    m_x /= v.m_x;
-    m_y /= v.m_y;
+    x /= v.x;
+    y /= v.y;
     return *this;
   }
 
   Vector2f&
   Vector2f::operator*=(const float& scale) {
-    m_x *= scale;
-    m_y *= scale;
+    x *= scale;
+    y *= scale;
     return *this;
   }
 
   Vector2f&
   Vector2f::operator/=(const float& scale) {
-    m_x /= scale;
-    m_y /= scale;
+    x /= scale;
+    y /= scale;
     return *this;
   }
 
@@ -201,63 +201,63 @@ namespace CYLLENE_SDK {
 
   float
   Vector2f::sqrDistance(const Vector2f& a, const Vector2f& b) {
-    return Math::pow(a.m_x - b.m_x, 2.0f) + Math::pow(a.m_y - b.m_y, 2.0f);
+    return Math::pow(a.x - b.x, 2.0f) + Math::pow(a.y - b.y, 2.0f);
   }
 
   float
   Vector2f::distance(const Vector2f& a, const Vector2f& b) {
-    return Math::sqrt(Math::sqr(a.m_x + b.m_x) + Math::sqr(a.m_y + b.m_y));
+    return Math::sqrt(Math::sqr(a.x + b.x) + Math::sqr(a.y + b.y));
   }
 
   void
   Vector2f::setValues(const float& newX, const float& newY) {
-    m_x = newX;
-    m_y = newY;
+    x = newX;
+    y = newY;
   }
 
   void
   Vector2f::min(const Vector2f& v) {
-    if (v.m_x < m_x) { m_x = v.m_x; }
-    if (v.m_y < m_y) { m_y = v.m_y; }
+    if (v.x < x) { x = v.x; }
+    if (v.y < y) { y = v.y; }
   }
 
   void
   Vector2f::max(const Vector2f& v) {
-    if (v.m_x > m_x) { m_x = v.m_x; }
-    if (v.m_y > m_y) { m_y = v.m_y; }
+    if (v.x > x) { x = v.x; }
+    if (v.y > y) { y = v.y; }
   }
 
   float
   Vector2f::getHighest() const {
-    return Math::max(m_x, m_y);
+    return Math::max(x, y);
   }
 
   float
   Vector2f::getLowest() const {
-    return Math::min(m_x, m_y);
+    return Math::min(x, y);
   }
 
   float
   Vector2f::magnitude() const {
-    return Math::sqrt(m_x * m_x + m_y * m_y);
+    return Math::sqrt(x * x + y * y);
   }
 
   float
   Vector2f::sqrMagnitude() const {
-    return (m_x * m_x + m_y * m_y);
+    return (x * x + y * y);
   }
 
   Vector2f
   Vector2f::normalized() const {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -265,20 +265,20 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
 
     float unit = Math::invSqrt(sqr);
-    return Vector2f((m_x * static_cast<float>(unit)), (m_y * static_cast<float>(unit)));
+    return Vector2f((x * static_cast<float>(unit)), (y * static_cast<float>(unit)));
   }
 
   Vector2f
   Vector2f::qNormalized() const {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -286,20 +286,20 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
 
     float unit = Math::qInvSqrt(sqr);
-    return Vector2f((m_x * static_cast<float>(unit)), (m_y * static_cast<float>(unit)));
+    return Vector2f((x * static_cast<float>(unit)), (y * static_cast<float>(unit)));
   }
 
   void
   Vector2f::normalize() {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -307,21 +307,21 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
 
     float unit = Math::invSqrt(sqr);
-    m_x *= static_cast<float>(unit);
-    m_y *= static_cast<float>(unit);
+    x *= static_cast<float>(unit);
+    y *= static_cast<float>(unit);
   }
 
   void
   Vector2f::qNormalize() {
 
-    CY_ASSERT(!Math::isNaN(m_x) &&
-              !Math::isNaN(m_y) &&
-              !Math::isInfinite(m_x) &&
-              !Math::isInfinite(m_y) &&
+    CY_ASSERT(!Math::isNaN(x) &&
+              !Math::isNaN(y) &&
+              !Math::isInfinite(x) &&
+              !Math::isInfinite(y) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(m_x), 2.0f) +
-                Math::pow(static_cast<float>(m_y), 2.0f);
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+                Math::pow(static_cast<float>(y), 2.0f);
 
     CY_ASSERT(sqr <= Math::EPSILONF &&
               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
@@ -329,13 +329,13 @@ namespace CYLLENE_SDK {
     CY_DEBUG_ONLY(sqrMagnitude());
 
     float unit = Math::qInvSqrt(sqr);
-    m_x *= static_cast<float>(unit);
-    m_y *= static_cast<float>(unit);
+    x *= static_cast<float>(unit);
+    y *= static_cast<float>(unit);
   }
 
   bool
   Vector2f::isZero() const {
-    return 0 == m_x && 0 == m_y;
+    return 0 == x && 0 == y;
   }
 
   bool
@@ -345,8 +345,8 @@ namespace CYLLENE_SDK {
 
   bool
   Vector2f::isNearlySame(const Vector2f& a, const Vector2f& b, const float& error = Math::SMALLNUMBER) {
-    return Math::abs(a.m_x - b.m_x) <= error &&
-           Math::abs(a.m_y - b.m_y) <= error ;
+    return Math::abs(a.x - b.x) <= error &&
+           Math::abs(a.y - b.y) <= error ;
   }
 
   String
@@ -355,9 +355,9 @@ namespace CYLLENE_SDK {
     String output;
 
     output += "( ";
-    output += Utils::format("%2.2f", m_x);
+    output += Utils::format("%2.2f", x);
     output += ", ";
-    output += Utils::format("%2.2f", m_y);
+    output += Utils::format("%2.2f", y);
     output += " )";
 
     return output;

@@ -501,12 +501,12 @@ namespace CYLLENE_SDK {
     /**
      * x component
      */
-    int32 m_x;
+    int32 x;
 
     /**
      * y component
      */
-    int32 m_y;
+    int32 y;
 
   };
 

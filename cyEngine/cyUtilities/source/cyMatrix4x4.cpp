@@ -6,7 +6,7 @@
 
 namespace CYLLENE_SDK {
   Matrix4x4::Matrix4x4(const float& value) {
-    memset(this, static_cast<float>(value), sizeof(Matrix4x4));
+    memset(this, value, sizeof(Matrix4x4));
   }
 
   Matrix4x4::Matrix4x4(const Matrix4x4& other)
