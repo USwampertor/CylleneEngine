@@ -106,11 +106,11 @@ namespace CYLLENE_SDK {
 
     void
     logError(const String& message, const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::DEFAULT);
-
-    Vector<Log> m_logStack;
-
     void
     dump();
+
+  private:
+    Vector<Log> m_logStack;
 
   };
 }

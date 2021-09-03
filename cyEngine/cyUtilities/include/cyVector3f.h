@@ -528,7 +528,7 @@ namespace CYLLENE_SDK {
      */
     static const Vector3f FRONT;
 
-  private:
+  public:
 
     /**
      * @brief X value of the vector

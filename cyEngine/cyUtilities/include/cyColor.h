@@ -4,9 +4,29 @@
 
 namespace CYLLENE_SDK {
   class Vector3f;
-  class Vector3i;
   class Vector4f;
-  class Vector4i;
+
+  struct CY_UTILITY_EXPORT HSV
+  {
+    HSV(const Vector3f& other);
+    HSV(const HSV& other);
+  public:
+    float h;
+    float s;
+    float v;
+  };
+
+  struct CY_UTILITY_EXPORT sRGBA
+  {
+    sRGBA(const Vector4f& other);
+    sRGBA(const sRGBA& other);
+  };
+
+  struct CY_UTILITY_EXPORT RGBA
+  {
+    RGBA(const Vector4f& other);
+    RGBA(const RGBA& other);
+  };
   
   class CY_UTILITY_EXPORT Color
   {
@@ -30,21 +50,21 @@ namespace CYLLENE_SDK {
     /**
      * Constructor with a Vector 4
      */
-    Color(Vector4f vector);
+    Color(const Vector4f& vector);
 
     /**
      * Constructor with a Vector 3
      */
-    Color(Vector3f vector);
+    Color(const Vector3f& vector);
 
     /**
-     * @brief Constructor with a RGBA color based on uint32 from 0 to 255
-     * @param uint32 R red color from 0 to 255
-     * @param uint32 G green color from 0 to 255
-     * @param uint32 B blue color from 0 to 255
-     * @param uint32 A alpha channel from 0 to 255
+     * @brief Constructor with a RGBA color based on float from 0.0f to 1.0f
+     * @param float R red color from 0.0f to 1.0f
+     * @param float G green color from 0.0f to 1.0f
+     * @param float B blue color from 0.0f to 1.0f
+     * @param float A alpha channel from 0.0f to 1.0f
      */
-    Color(uint32 R, uint32 G = 0, uint32 B = 0, uint32 A = 255);
+    Color(float nr, float ng = 0, float nb = 0, float na = 1.0f);
 
     /**
      * @brief () operator overload
@@ -52,7 +72,7 @@ namespace CYLLENE_SDK {
      * @return value at index
      *
      */
-    const uint32&
+    const float&
     operator()(const uint32& index) const;
     
     /**
@@ -61,7 +81,7 @@ namespace CYLLENE_SDK {
      * @return value at index
      *
      */
-    uint32&
+    float&
     operator()(const uint32& index);
     
     /**
@@ -70,7 +90,7 @@ namespace CYLLENE_SDK {
      * @return value at index
      *
      */
-    const uint32
+    const float
     operator[](const uint32& index) const;
 
     /**
@@ -79,7 +99,7 @@ namespace CYLLENE_SDK {
      * @return value at index
      *
      */
-    uint32&
+    float&
     operator[](const uint32& index);
 
     /**
@@ -116,20 +136,7 @@ namespace CYLLENE_SDK {
      *
      */
     Color
-    operator/(const uint32& other);
-
-    const uint32&
-    r();
-
-    const uint32&
-    g();
-
-    const uint32&
-    b();
-
-    const uint32&
-    a();
-
+    operator/(const float& other);
 
     /**
      * @brief
@@ -138,7 +145,7 @@ namespace CYLLENE_SDK {
      *
      */
     static void
-    HSVToRGB(Vector3f hsv);
+    HSVToRGBA(const Color& hsv);
 
     /**
      * @brief
@@ -147,7 +154,7 @@ namespace CYLLENE_SDK {
      *
      */
     static void
-    RGBToHSV(Vector3f hsv);
+    RGBAToHSV(const Color& hsv);
 
     /**
      * @brief Blends two colors
@@ -172,7 +179,7 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    setLinear(float nr, float ng, float nb, float na = 1.0f);
+    setColorLinear(float nr, float ng, float nb, float na = 1.0f);
 
     /**
      * @brief Sets a color based in (R, G, B, A)
@@ -196,7 +203,19 @@ namespace CYLLENE_SDK {
      *
      */
     void
-    setColor(Vector3f);
+    setColorVector(Vector3f);
+
+    /**
+     * @brief Sets a color based in (R, G, B, A)
+     * @param uint32 R
+     * @param uint32 G
+     * @param uint32 B
+     * @param uint32 A
+     * @return
+     *
+     */
+    void
+    setColorVector(Vector4f);
 
     /**
      * @brief Returns the color as a vector3 in RGB format
@@ -223,7 +242,7 @@ namespace CYLLENE_SDK {
      *
      */
     Vector4f
-    linear();
+    toVectorLinear();
 
     /**
      * @brief Returns a string with the information of the color
@@ -250,27 +269,27 @@ namespace CYLLENE_SDK {
     static const Color WHITE;
     static const Color YELLOW;
 
-  private:
+  public:
 
     /**
      * Red channel of the color
      */
-    uint32 m_r;
+    float r;
 
     /**
      * Green channel of the color
      */
-    uint32 m_g;
+    float g;
 
     /**
      * Blue channel of the color
      */
-    uint32 m_b;
+    float b;
 
     /**
      * Alpha channel of the color
      */
-    uint32 m_a;
+    float a;
 
 
   };

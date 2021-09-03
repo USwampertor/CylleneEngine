@@ -1,59 +1,60 @@
 #include "cyColor.h"
 
+#include "cyVector3f.h"
+
 namespace CYLLENE_SDK {
   Color::Color(const Color& copy)
-    : m_r(copy.m_r),
-      m_g(copy.m_g),
-      m_b(copy.m_b),
-      m_a(copy.m_a) {}
+    : r(copy.r),
+      g(copy.g),
+      b(copy.b),
+      a(copy.a) {}
 
-  Color::Color(uint32 R, uint32 G, uint32 B, uint32 A)
-    : m_r(R),
-      m_g(G),
-      m_b(B),
-      m_a(A) {}
+  Color::Color(const Vector3f& vector)
+    : r(vector.m_x),
+      g(vector.m_y),
+      b(vector.m_z) {}
 
-  uint32&
+  float&
   Color::operator()(const uint32& index) {
-    return (&m_r)[index];
+    return (&r)[index];
   }
 
-  const uint32&
+  const float&
   Color::operator()(const uint32& index) const {
-    return (&m_r)[index];
+    return (&r)[index];
   }
 
-  uint32&
+  float&
   Color::operator[](const uint32& index) {
-    return (&m_r)[index];
+    return (&r)[index];
   }
 
-  const uint32
+  const float
   Color::operator[](const uint32& index) const {
-    return (&m_r)[index];
+    return (&r)[index];
   }
 
   Color
   Color::operator*(const Color& other) {
-    return Color(this->m_r * other.m_r,
-                 this->m_g * other.m_g,
-                 this->m_b * other.m_b,
-                 this->m_a * other.m_a);
+    return Color(this->r * other.r,
+                 this->g * other.g,
+                 this->b * other.b,
+                 this->a * other.a);
   }
 
-  const Color Color::AZURE    = Color(240,255,255);
-  const Color Color::BLACK    = Color(0);
-  const Color Color::BLUE     = Color(0,0,255);
-  const Color Color::CLEAR    = Color(0,0,0,127);
-  const Color Color::CYAN     = Color(0,255,255);
-  const Color Color::GRAY     = Color(128,128,128);
-  const Color Color::GREEN    = Color(0,255,0);
-  const Color Color::GREY     = Color(100,100,100);
-  const Color Color::MAGENTA  = Color(255,0,255);
-  const Color Color::RED      = Color(255,0,0);
-  const Color Color::ORANGE   = Color(255,100,0);
-  const Color Color::VIOLET   = Color(140,0,210);
-  const Color Color::WHITE    = Color(255,255,255);
-  const Color Color::YELLOW   = Color(255,255,0);
+  const Color Color::AZURE    = Color(240.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
+  const Color Color::BLACK    = Color(0.0f);
+  const Color Color::BLUE     = Color(0.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
+  const Color Color::CLEAR    = Color(0.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f, 127.0f / 255.0f);
+  const Color Color::CYAN     = Color(0.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
+  const Color Color::GRAY     = Color(128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f);
+  const Color Color::GREEN    = Color(0.0f / 255.0f, 255.0f / 255.0f, 0.0f / 255.0f);
+  const Color Color::GREY     = Color(100.0f / 255.0f, 100.0f / 255.0f, 100.0f / 255.0f);
+  const Color Color::MAGENTA  = Color(255.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
+  const Color Color::RED      = Color(255.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f);
+  const Color Color::ORANGE   = Color(255.0f / 255.0f, 100.0f / 255.0f, 0.0f / 255.0f);
+  const Color Color::VIOLET   = Color(140.0f / 255.0f, 0.0f / 255.0f, 210.0f / 255.0f);
+  const Color Color::WHITE    = Color(255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
+  const Color Color::YELLOW   = Color(255.0f / 255.0f, 255.0f / 255.0f, 0.0f / 255.0f);
 
 }
