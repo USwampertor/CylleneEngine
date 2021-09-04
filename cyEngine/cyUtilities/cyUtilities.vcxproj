@@ -192,6 +192,7 @@
     <ClInclude Include="include\cyMath.h" />
     <ClInclude Include="include\cyMatrix4x4.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
+    <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyTime.h" />
     <ClInclude Include="include\cyLogger.h" />
     <ClInclude Include="include\cyMemoryAllocator.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="include\cyWindowsMath.h" />
     <ClInclude Include="include\cyMatrix2x2.h" />
     <ClInclude Include="include\cyMatrix3x3.h" />
+    <ClInclude Include="include\cyZiggurat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp" />
