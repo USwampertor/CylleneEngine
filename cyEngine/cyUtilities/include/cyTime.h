@@ -50,9 +50,8 @@ namespace CYLLENE_SDK {
     String 
     toString(const String& format)
     {
-      char buffer[128];
-      std::strftime(buffer, sizeof(buffer), format.c_str(), this);
-      return String(buffer);
+      return Utils::timeFormat(*this, format);
+      // return "";
     }
   };
 
@@ -66,6 +65,9 @@ namespace CYLLENE_SDK {
 
     void 
     init();
+
+    static Date
+    scToDate(TimePoint<SystemClock> timePoint);
 
     static Date 
     now();

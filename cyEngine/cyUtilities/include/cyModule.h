@@ -10,6 +10,7 @@
 
 #pragma once
 #include "cyUtilitiesPrerequisites.h"
+#include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
 
@@ -32,11 +33,11 @@ namespace CYLLENE_SDK {
     static T&
       instance() {
       if (!isStartedUp()) {
-        throw::std::exception("Trying to access a module but it hasn't been started.");
+        Utils::ThrowException("Trying to access a module but it hasn't been started.");
       }
 
       if (isDestroyed()) {
-        throw::std::exception("Trying to access a destroyed module.");
+        Utils::ThrowException("Trying to access a destroyed module.");
       }
 
       return *_instance();
@@ -48,11 +49,11 @@ namespace CYLLENE_SDK {
     static T*
       instancePtr() {
       if (!isStartedUp()) {
-        throw::std::exception("Trying to access a module but it hasn't been started.");
+        Utils::ThrowException("Trying to access a module but it hasn't been started.");
       }
 
       if (isDestroyed()) {
-        throw::std::exception("Trying to access a destroyed module.");
+        Utils::ThrowException("Trying to access a destroyed module.");
       }
 
       return _instance();
@@ -63,7 +64,7 @@ namespace CYLLENE_SDK {
     static void
       startUp(Args&& ...args) {
       if (isStartedUp()) {
-        throw::std::exception("Trying to start an already started module.");
+        Utils::ThrowException("Trying to start an already started module.");
       }
 
       _instance() = cy_new<T>(std::forward<Args>(args)...);
@@ -79,12 +80,12 @@ namespace CYLLENE_SDK {
         "Provided type isn't derived from type the Module is initialized with.");
 
       if (isStartedUp()) {
-        throw::std::exception("Trying to start an already started module.");
+        Utils::ThrowException("Trying to start an already started module.");
       }
 
       _instance() = cy_new<SubType>(std::forward<Args>(args)...);
       if (nullptr == _instance()) {
-        throw::std::exception("Instance failed to initialize");
+        Utils::ThrowException("Instance failed to initialize");
       }
       isStartedUp() = true;
 
@@ -94,11 +95,11 @@ namespace CYLLENE_SDK {
     static void
       shutDown() {
       if (isDestroyed()) {
-        throw::std::exception("Trying to shut down an already shut down module.");
+        Utils::ThrowException("Trying to shut down an already shut down module.");
       }
 
       if (!isStartedUp()) {
-        throw::std::exception("Trying to shut down a module which was never started.");
+        Utils::ThrowException("Trying to shut down a module which was never started.");
       }
 
       static_cast<Module*>(_instance())->onShutDown();
@@ -116,7 +117,7 @@ namespace CYLLENE_SDK {
       setModule(T* obj) {
       _instance() = obj;
       if (nullptr == _instance()) {
-        throw::std::exception("Instance failed to be set");
+        Utils::ThrowException("Instance failed to be set");
       }
       isStartedUp() = true;
     }

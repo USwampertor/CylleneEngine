@@ -17,6 +17,12 @@ namespace CYLLENE_SDK
     m_timer = HighClock::now();
   }
 
+  Date
+  Time::scToDate(TimePoint<SystemClock> timePoint) {
+    TimeType tt = SystemClock::to_time_t(timePoint);
+    return Date(*localtime(&tt));
+  }
+
   Date 
   Time::now() {
     TimeType tt = SystemClock::to_time_t(SystemClock::now());
