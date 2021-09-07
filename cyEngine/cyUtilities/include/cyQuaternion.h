@@ -16,8 +16,10 @@
 
 namespace CYLLENE_SDK {
 
-  class Vector4;
-  class Vector3;
+  class Vector4f;
+  class Vector3f;
+  class Matrix3x3;
+  class Matrix4x4;
 
   class CY_UTILITY_EXPORT Quaternion {
     
@@ -30,6 +32,33 @@ namespace CYLLENE_SDK {
         y(ny),
         z(nz),
         w(nw) {}
+
+    Quaternion(const Vector3f& other);
+
+    Quaternion(const Vector3f& other, const float& nw);
+
+    Quaternion(const Vector4f other);
+
+    Quaternion
+    operator*(const Quaternion& other) const;
+
+    Vector4f 
+    toVector4();
+
+    const Vector3f&
+    getVectorPart() const;
+
+    const float&
+    getScalarPart() const;
+
+    const Matrix3x3&
+    getRotationMatrix() const;
+
+    static const Vector3f
+    transform(const Vector3f& vector, const Quaternion& quaternion);
+
+    void
+    setRotationMatrix(const Matrix3x3& m);
 
   public:
 

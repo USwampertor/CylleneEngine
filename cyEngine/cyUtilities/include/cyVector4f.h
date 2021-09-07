@@ -21,8 +21,14 @@ namespace CYLLENE_SDK {
   class CY_UTILITY_EXPORT Vector4f {
   public:
 
+    /**
+     * Default constructor
+     */
     Vector4f() = default;
 
+    /**
+     * COnstructor taking a Vector3 as argument (you take x y z)
+     */
     Vector4f(const Vector3f& other);
 
     Vector4f(const Vector4f& other);

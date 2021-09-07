@@ -223,6 +223,7 @@
     <ClCompile Include="source\cyMatrix4x4.cpp" />
     <ClCompile Include="source\cyMemoryAllocator.cpp" />
     <ClCompile Include="source\cyPlatformMath.cpp" />
+    <ClCompile Include="source\cyQuaternion.cpp" />
     <ClCompile Include="source\cyTime.cpp" />
     <ClCompile Include="source\cyUtilities.cpp" />
     <ClCompile Include="source\cyVector2f.cpp" />
