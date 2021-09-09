@@ -26,7 +26,11 @@ namespace CYLLENE_SDK {
 
     Euler() = default;
 
+    ~Euler() = default;
+
     Euler(const float& nx, const float& ny, const float& nz);
+
+    Euler(const float& nx, const float& ny, const float& nz, const int32& norder);
 
     Euler(const Vector3f& vector);
 
@@ -36,6 +40,8 @@ namespace CYLLENE_SDK {
     float x;
     float y;
     float z;
+
+    int32 order;
   };
 
 
@@ -293,31 +299,17 @@ namespace CYLLENE_SDK {
     float
     operator|(const Quaternion& v) const;
 
-    const Vector3f&
-    getVectorPart() const;
-
-    const float&
-    getScalarPart() const;
-    const Matrix3x3&
-    getRotationMatrix() const;
-
-    Vector4f 
-    toVector4() const;
-
     static const Vector3f
     transform(const Vector3f& vector, const Quaternion& quaternion);
 
-    void
-    setRotationMatrix(const Matrix3x3& m);
+    static const Quaternion
+    slerp(const Quaternion& q1, const Quaternion& q2, float t);
 
     void
-    fromEuler(const Euler&, int32 order);
+    fromEuler(const Euler& euler, int32 order);
 
     void
-    fromEuler(const Vector3f&, int32 order);
-
-    const Euler
-    toEuler();
+    fromEuler(const Vector3f& vector, int32 order);
 
     void
     setValues(const float& nx, const float& ny, const float& nz, const float& nw);
@@ -325,17 +317,29 @@ namespace CYLLENE_SDK {
     void 
     setValues(const Vector3f& vector, const float& scalar);
 
-    float
-    magnitude() const;
+    void
+    setRotationMatrix(const Matrix3x3& m);
+
+    const Vector3f&
+    getVectorPart() const;
+
+    const float&
+    getScalarPart() const;
+
+    const Matrix3x3&
+    getRotationMatrix() const;
 
     float 
     norm() const;
 
+    float
+    magnitude() const;
+
     Quaternion
-    scaled(const float& scale) const;
+    scaled(const float& s) const;
 
     void 
-    scale(const float& scale);
+    scale(const float& s);
 
     Quaternion
     conjugated() const;
@@ -350,7 +354,7 @@ namespace CYLLENE_SDK {
     inverse();
 
     Quaternion
-    united() const;
+    unitQuaternion() const;
 
     void
     unit();
@@ -361,9 +365,14 @@ namespace CYLLENE_SDK {
     bool
     isReal() const;
 
+    Euler
+    toEuler(const int32& order) const;
 
-    static const Quaternion
-    slerp(const Quaternion& q1, const Quaternion& q2, float t);
+    Vector3f
+    toVector3() const;
+
+    Vector4f 
+    toVector4() const;
 
     String
     toString();

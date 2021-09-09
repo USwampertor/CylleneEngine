@@ -20,17 +20,26 @@ namespace CYLLENE_SDK {
   Euler::Euler(const float& nx, const float& ny, const float& nz)
     : x(nx),
       y(ny),
-      z(nz) {}
+      z(nz),
+      order(0) {}
+
+  Euler::Euler(const float& nx, const float& ny, const float& nz, const int32& norder)
+    : x(nx),
+      y(ny),
+      z(nz),
+      order(norder) {}
+
+  Euler::Euler(const Vector3f& vector)
+    : x(vector.x),
+      y(vector.y),
+      z(vector.z),
+      order(0) {}
 
   Euler::Euler(const Vector4f& vector)
     : x(vector.x),
       y(vector.y),
-      z(vector.z) {}
-
-  Euler::Euler(const Vector4f& vector)
-    : x(vector.x),
-      y(vector.y),
-      z(vector.z) {}
+      z(vector.z),
+      order(static_cast<int32>(vector.w)) {}
 
   Quaternion::Quaternion(const Vector3f& other) 
   : x(other.x),
@@ -248,9 +257,35 @@ namespace CYLLENE_SDK {
             Vector3f::cross(tmp, vector) * (quaternion.w * 2.0f));
   }
 
-  Vector4f 
-  Quaternion::toVector4() const {
-    return Vector4f(x, y, z, w);
+  const Quaternion
+  Quaternion::slerp(const Quaternion& q1, const Quaternion& q2, float t) {
+  
+  }
+
+  void
+  Quaternion::fromEuler(const Euler& euler, int32 order) {
+
+  }
+
+  void 
+  Quaternion::fromEuler(const Vector3f& vector, int32 order) {
+
+  }
+
+  void
+  Quaternion::setValues(const float& nx, const float& ny, const float& nz, const float& nw) {
+
+  }
+
+  void
+  Quaternion::setValues(const Vector3f& vector, const float& scalar) {
+
+  }
+
+  void
+  Quaternion::setRotationMatrix(const Matrix3x3& m) {
+    float sum = m._m.m00 + m._m.m11 + m._m.m22;
+
   }
 
   const Vector3f&
@@ -282,12 +317,6 @@ namespace CYLLENE_SDK {
     
   }
 
-  void
-  Quaternion::setRotationMatrix(const Matrix3x3& m) {
-    float sum = m._m.m00 + m._m.m11 + m._m.m22;
-
-  }
-
   float
   Quaternion::norm() const {
     return Math::sqr(x) + Math::sqr(y) + Math::sqr(z) + Math::sqr(w);
@@ -299,23 +328,13 @@ namespace CYLLENE_SDK {
   }
 
   Quaternion
-  Quaternion::scaled(const float& scale) const {
-    return Quaternion(x * scale, y * scale, z * scale, w * scale);
+  Quaternion::scaled(const float& s) const {
+    return Quaternion(x * s, y * s, z * s, w * s);
   }
 
   void
-  Quaternion::scale(const float& scale) {
-    *this = scaled(scale);
-  }
-
-  Quaternion
-  Quaternion::inversed() const {
-    return conjugated().scaled(1/norm());
-  }
-
-  void
-  Quaternion::inverse() {
-    *this = inversed();
+  Quaternion::scale(const float& s) {
+    *this = scaled(s);
   }
 
   Quaternion
@@ -329,13 +348,67 @@ namespace CYLLENE_SDK {
   }
 
   Quaternion
-  Quaternion::united() const {
+  Quaternion::inversed() const {
+    return conjugated().scaled(1/norm());
+  }
+
+  void
+  Quaternion::inverse() {
+    *this = inversed();
+  }
+  Quaternion
+  Quaternion::unitQuaternion() const {
     return scaled(Math::invSqrt(norm()));
   }
 
   void
   Quaternion::unit() {
-    *this = united();
+    *this = unitQuaternion();
   }
+
+  Quaternion 
+  Quaternion::rotated(const Vector3f& v) {
+
+  }
+
+  void
+  Quaternion::rotate(const Vector3f& v) {
+
+  }
+
+  bool
+  Quaternion::isPure() const {
+
+  }
+
+  bool
+  Quaternion::isReal() const {
+
+  }
+
+  Euler
+  Quaternion::toEuler(const int32& order) const {
+    Quat q;
+
+    q.x = x;
+    q.y = y;
+    q.z = z;
+    q.w = w;
+
+    EulerAngles ea = Eul_FromQuat(q, order);
+
+    return Euler(ea.x, ea.y, ea.z, ea.w);
+  }
+
+  Vector4f 
+  Quaternion::toVector4() const {
+    return Vector4f(x, y, z, w);
+  }
+
+  String
+  Quaternion::toString() {
+
+  }
+
 
 }
