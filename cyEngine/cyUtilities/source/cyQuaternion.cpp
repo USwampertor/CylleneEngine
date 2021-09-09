@@ -292,39 +292,42 @@ namespace CYLLENE_SDK {
 
   void
   Quaternion::setRotationMatrix(const Matrix3x3& m) {
-    float sum = m._m.m00 + m._m.m11 + m._m.m22;
+
+    Matrix3x3 tmp = m.transposed();
+
+    float sum = tmp._m.m00 + tmp._m.m11 + tmp._m.m22;
 
     if (sum > 0.0f)
     {
       w = sqrt(sum + 1.0f) * 0.5f;
       float f = 0.25f / w;
-      x = (m.m[2][1] - m.m[1][2]) * f;
-      y = (m.m[0][2] - m.m[2][0]) * f;
-      z = (m.m[1][0] - m.m[0][1]) * f;
+      x = (tmp.m[2][1] - tmp.m[1][2]) * f;
+      y = (tmp.m[0][2] - tmp.m[2][0]) * f;
+      z = (tmp.m[1][0] - tmp.m[0][1]) * f;
     }
-    else if ((m._m.m00 > m._m.m11) && (m._m.m00 > m._m.m22))
+    else if ((tmp._m.m00 > tmp._m.m11) && (tmp._m.m00 > tmp._m.m22))
     {
-      x = sqrt(m._m.m00 - m._m.m11 - m._m.m22 + 1.0f) * 0.5f;
+      x = sqrt(tmp._m.m00 - tmp._m.m11 - tmp._m.m22 + 1.0f) * 0.5f;
       float f = 0.25f / x;
-      y = (m.m[1][0] + m.m[0][1]) * f;
-      z = (m.m[0][2] + m.m[2][0]) * f;
-      w = (m.m[2][1] - m.m[1][2]) * f;
+      y = (tmp.m[1][0] + tmp.m[0][1]) * f;
+      z = (tmp.m[0][2] + tmp.m[2][0]) * f;
+      w = (tmp.m[2][1] - tmp.m[1][2]) * f;
     }
-    else if (m._m.m11 > m._m.m22)
+    else if (tmp._m.m11 > tmp._m.m22)
     {
-      y = sqrt(m._m.m11 - m._m.m00 - m._m.m22 + 1.0f) * 0.5f;
+      y = sqrt(tmp._m.m11 - tmp._m.m00 - tmp._m.m22 + 1.0f) * 0.5f;
       float f = 0.25f / y;
-      x = (m.m[1][0] + m.m[0][1]) * f;
-      z = (m.m[2][1] + m.m[1][2]) * f;
-      w = (m.m[0][2] - m.m[2][0]) * f;
+      x = (tmp.m[1][0] + tmp.m[0][1]) * f;
+      z = (tmp.m[2][1] + tmp.m[1][2]) * f;
+      w = (tmp.m[0][2] - tmp.m[2][0]) * f;
     }
     else
     {
-      z = sqrt(m._m.m22 - m._m.m00 - m._m.m11 + 1.0f) * 0.5f;
+      z = sqrt(tmp._m.m22 - tmp._m.m00 - tmp._m.m11 + 1.0f) * 0.5f;
       float f = 0.25f / z;
-      x = (m.m[0][2] + m.m[2][0]) * f;
-      y = (m.m[2][1] + m.m[1][2]) * f;
-      w = (m.m[1][0] - m.m[0][1]) * f;
+      x = (tmp.m[0][2] + tmp.m[2][0]) * f;
+      y = (tmp.m[2][1] + tmp.m[1][2]) * f;
+      w = (tmp.m[1][0] - tmp.m[0][1]) * f;
     }
   }
 
@@ -351,9 +354,10 @@ namespace CYLLENE_SDK {
     float wz = w * z;
 
     // Don't know if this is row major or column major
+    // With the transposed, it should be row.
     return Matrix3x3(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz), 2.0f * (xz + wy),
                      2.0f * (xy + wz), 1.0f - 2.0f * (x2 + z2), 2.0f * (yz - wx),
-                     2.0f * (xz - wy), 2.0f * (yz + wx), 1.0f - 2.0f * (x2 + y2));
+                     2.0f * (xz - wy), 2.0f * (yz + wx), 1.0f - 2.0f * (x2 + y2)).transposed();
     
   }
 
