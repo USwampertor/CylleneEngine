@@ -254,33 +254,78 @@ namespace CYLLENE_SDK {
 
   const Quaternion
   Quaternion::slerp(const Quaternion& q1, const Quaternion& q2, float t) {
-  
+    
   }
 
   void
   Quaternion::fromEuler(const Euler& euler, int32 order) {
+    EulerAngles ea;
 
-  }
+    ea.x = euler.x;
+    ea.y = euler.y;
+    ea.z = euler.z;
+    ea.w = order;
 
-  void 
-  Quaternion::fromEuler(const Vector3f& vector, int32 order) {
+    Quat q = Eul_ToQuat(ea);
 
+    x = q.x;
+    y = q.y;
+    z = q.z;
+    w = q.w;
   }
 
   void
   Quaternion::setValues(const float& nx, const float& ny, const float& nz, const float& nw) {
-
+    x = nx;
+    y = ny;
+    z = nz;
+    w = nw;
   }
 
   void
   Quaternion::setValues(const Vector3f& vector, const float& scalar) {
-
+    x = vector.x;
+    y = vector.y;
+    z = vector.z;
+    w = scalar;
   }
 
   void
   Quaternion::setRotationMatrix(const Matrix3x3& m) {
     float sum = m._m.m00 + m._m.m11 + m._m.m22;
 
+    if (sum > 0.0f)
+    {
+      w = sqrt(sum + 1.0f) * 0.5f;
+      float f = 0.25f / w;
+      x = (m.m[2][1] - m.m[1][2]) * f;
+      y = (m.m[0][2] - m.m[2][0]) * f;
+      z = (m.m[1][0] - m.m[0][1]) * f;
+    }
+    else if ((m._m.m00 > m._m.m11) && (m._m.m00 > m._m.m22))
+    {
+      x = sqrt(m._m.m00 - m._m.m11 - m._m.m22 + 1.0f) * 0.5f;
+      float f = 0.25f / x;
+      y = (m.m[1][0] + m.m[0][1]) * f;
+      z = (m.m[0][2] + m.m[2][0]) * f;
+      w = (m.m[2][1] - m.m[1][2]) * f;
+    }
+    else if (m._m.m11 > m._m.m22)
+    {
+      y = sqrt(m._m.m11 - m._m.m00 - m._m.m22 + 1.0f) * 0.5f;
+      float f = 0.25f / y;
+      x = (m.m[1][0] + m.m[0][1]) * f;
+      z = (m.m[2][1] + m.m[1][2]) * f;
+      w = (m.m[0][2] - m.m[2][0]) * f;
+    }
+    else
+    {
+      z = sqrt(m._m.m22 - m._m.m00 - m._m.m11 + 1.0f) * 0.5f;
+      float f = 0.25f / z;
+      x = (m.m[0][2] + m.m[2][0]) * f;
+      y = (m.m[2][1] + m.m[1][2]) * f;
+      w = (m.m[1][0] - m.m[0][1]) * f;
+    }
   }
 
   const Vector3f&

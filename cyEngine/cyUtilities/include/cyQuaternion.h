@@ -301,9 +301,6 @@ namespace CYLLENE_SDK {
     fromEuler(const Euler& euler, int32 order);
 
     void
-    fromEuler(const Vector3f& vector, int32 order);
-
-    void
     setValues(const float& nx, const float& ny, const float& nz, const float& nw);
 
     void 
