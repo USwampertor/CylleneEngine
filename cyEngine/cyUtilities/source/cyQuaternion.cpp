@@ -14,6 +14,7 @@
 #include "cyVector4f.h"
 #include "cyMatrix3x3.h"
 #include "cyMath.h"
+#include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
 
@@ -46,12 +47,6 @@ namespace CYLLENE_SDK {
     y(other.y),
     z(other.z),
     w(0.0f) {}
-
-  Quaternion::Quaternion(const Vector3f& other, const float& nw)
-    : x(other.x),
-      y(other.y),
-      z(other.z),
-      w(nw) {}
 
   Quaternion::Quaternion(const Vector4f other)
     : x(other.x),
@@ -366,24 +361,21 @@ namespace CYLLENE_SDK {
     *this = unitQuaternion();
   }
 
-  Quaternion 
-  Quaternion::rotated(const Vector3f& v) {
-
-  }
-
-  void
-  Quaternion::rotate(const Vector3f& v) {
-
+  Vector3f 
+  Quaternion::rotate(const Vector3f& v) const {
+    Quaternion q(v);
+    Quaternion r = *this * q * this->inversed();
+    return Vector3f(r.x, r.y, r.z);
   }
 
   bool
   Quaternion::isPure() const {
-
+    return w == 0;
   }
 
   bool
   Quaternion::isReal() const {
-
+    return x == 0 && y == 0 && z == 0;
   }
 
   Euler
@@ -407,7 +399,7 @@ namespace CYLLENE_SDK {
 
   String
   Quaternion::toString() {
-
+    String toReturn = Utils::format("(%2.2f, %2.2f, %2.2f, %2.2f)", x, y, z, w);
   }
 
 

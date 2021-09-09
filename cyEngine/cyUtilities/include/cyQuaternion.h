@@ -77,14 +77,6 @@ namespace CYLLENE_SDK {
 
     /**
      * @brief Constructs without any transformation, passing values as is
-     * @param Vector3f vector to add
-     * @param float the w part of the quaternion
-     *
-     */
-    Quaternion(const Vector3f& other, const float& nw);
-
-    /**
-     * @brief Constructs without any transformation, passing values as is
      * @param Vector4f The x y z w components
      *
      */
@@ -358,6 +350,9 @@ namespace CYLLENE_SDK {
 
     void
     unit();
+
+    Vector3f
+    rotate(const Vector3f& v) const;
 
     bool
     isPure() const;
