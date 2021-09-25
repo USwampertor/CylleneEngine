@@ -18,6 +18,7 @@
 #include "cyVector3f.h"
 #include "cyFileSystem.h"
 #include "cyMatrix4x4.h"
+#include "cyQuaternion.h"
 
 struct Mesh
 {
@@ -229,6 +230,8 @@ main(int argc, char** argv) {
   ms.height = clientHeight;
 
   CYLLENE_SDK::Vector4f CamPosition(0, 0, -10, 1);
+  CYLLENE_SDK::Vector3f CamRight(1, 0, 0);
+  CYLLENE_SDK::Vector3f CamForward(0, 0, 1);
 
   bool open = true;
   double deltaTime = 0.0;
@@ -262,16 +265,26 @@ main(int argc, char** argv) {
     float mouseDeltaX = m_Mouse->getMouseState().X.rel * deltaTime;
     float mouseDeltaY = m_Mouse->getMouseState().Y.rel * deltaTime;
 
-    if (keyboardW) CamPosition.z += 10.0f * deltaTime;
-    if (keyboardS) CamPosition.z -= 10.0f * deltaTime;
-    if (keyboardA) CamPosition.x -= 10.0f * deltaTime;
-    if (keyboardD) CamPosition.x += 10.0f * deltaTime;
+    if (keyboardW) CamPosition += CamForward * 10.0f * deltaTime;
+    if (keyboardS) CamPosition -= CamForward * 10.0f * deltaTime;
+    if (keyboardA) CamPosition -= CamRight * 10.0f * deltaTime;
+    if (keyboardD) CamPosition += CamRight * 10.0f * deltaTime;
     if (keyboardQ) CamPosition.y += 10.0f * deltaTime;
     if (keyboardE) CamPosition.y -= 10.0f * deltaTime;
+    
+    CYLLENE_SDK::Quaternion rotY;
+    rotY.fromEuler(CYLLENE_SDK::Vector3f(0.0f, 0.1f * mouseDeltaX, 0.0f), 0);
+
+    CamRight = rotY.rotate(CamRight);
+
+    CYLLENE_SDK::Quaternion rotX;
+    rotX.fromEuler(CamRight * 0.1f * mouseDeltaY, 0);
+
+    CamForward = rotX.rotate(rotY.rotate(CamForward));
 
     CYLLENE_SDK::Matrix4x4 View;
     View.View(CamPosition,
-              CYLLENE_SDK::Vector4f(0, 0, 0, 0),
+              CamPosition + CamForward,
               CYLLENE_SDK::Vector4f(0, 1, 0, 0));
 
     CYLLENE_SDK::Matrix4x4 Projection;

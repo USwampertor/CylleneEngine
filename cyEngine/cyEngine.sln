@@ -11,6 +11,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilitiesUT", "cyUtilitie
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyGraphics", "cyGraphics\cyGraphics.vcxproj", "{89FF3D27-C927-41B4-953F-21D9D5234FFB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

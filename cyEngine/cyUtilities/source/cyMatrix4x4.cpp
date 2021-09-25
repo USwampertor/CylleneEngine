@@ -436,8 +436,8 @@ namespace CYLLENE_SDK {
     Vector3f look = (Eye - Target).normalized();
 #endif
 
-    Vector3f right = Vector3f::cross(WorldUp, look);
-    Vector3f up = Vector3f::cross(look, right);
+    Vector3f right = Vector3f::cross(WorldUp, look).normalized();
+    Vector3f up = Vector3f::cross(look, right).normalized();
 
 #if HandSystem == LH
     float A = -Vector3f::dot(right, Eye);
@@ -456,7 +456,7 @@ namespace CYLLENE_SDK {
 
     return *this;
   }
-
+  
   Matrix4x4&
   Matrix4x4::Orthogonal(const float Width,
                         const float Height,
@@ -464,28 +464,29 @@ namespace CYLLENE_SDK {
                         const float ZFar) {
     (*this) = Matrix4x4::ZERO;
 
-#if GraphicsAPI == OpenGL
     (*this).m[0][0] = 2.0f / Width;
     (*this).m[1][1] = 2.0f / Height;
-#if HandSystem == LH
+
+#if GraphicsAPI == OpenGL
+  #if HandSystem == LH
     (*this).m[2][2] = -2.0f / (ZFar - ZNear);
-#elif HandSystem == RH
+  #elif HandSystem == RH
     (*this).m[2][2] = -2.0f / (ZNear - ZFar);
-#endif
+  #endif
+
     (*this).m[3][2] = -(ZFar + ZNear) / (ZFar - ZNear);
-    (*this).m[3][3] = 1.0f;
 
 #elif GraphicsAPI == DirectX
-    (*this).m[0][0] = 2.0f / Width;
-    (*this).m[1][1] = 2.0f / Height;
   #if HandSystem == LH
     (*this).m[2][2] = 1.0f / (ZFar - ZNear);
   #elif HandSystem == RH
     (*this).m[2][2] = 1.0f / (ZNear - ZFar);
   #endif
+
     (*this).m[3][2] = ZNear / (ZNear - ZFar);
-    (*this).m[3][3] = 1.0f;
 #endif
+
+    (*this).m[3][3] = 1.0f;
 
     return *this;
   }
