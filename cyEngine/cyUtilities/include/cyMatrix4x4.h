@@ -158,11 +158,23 @@ namespace CYLLENE_SDK {
     const float
     determinant() const;
 
-    void
-    OrtographicView();
+    Matrix4x4&
+    View(const Vector4f& Eye,
+         const Vector4f& Target,
+         const Vector4f& Up);
 
-    void
-    ProjectionView();
+    Matrix4x4&
+    Orthogonal(const float Width,
+               const float Height,
+               const float ZNear,
+               const float ZFar);
+
+    Matrix4x4&
+    Perspective(const float Width,
+                const float Height,
+                const float ZNear,
+                const float ZFar,
+                const float FOV);
 
     Matrix3x3
     subMatrix();

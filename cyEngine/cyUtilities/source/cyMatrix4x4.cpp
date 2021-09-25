@@ -4,6 +4,15 @@
 #include "cyMatrix3x3.h"
 #include "cyMath.h"
 
+#define LH 0
+#define RH 1
+
+#define OpenGL  0
+#define DirectX 1
+
+#define HandSystrem LH
+#define GraphicsAPI OpenGL
+
 namespace CYLLENE_SDK {
   Matrix4x4::Matrix4x4(const float& value) {
     memset(this, value, sizeof(Matrix4x4));
@@ -415,6 +424,120 @@ namespace CYLLENE_SDK {
         (m[0][2] * m[1][0] * m[2][1] * m[3][3]) - (m[0][0] * m[1][2] * m[2][1] * m[3][3]) -
         (m[0][1] * m[1][0] * m[2][2] * m[3][3]) + (m[0][0] * m[1][1] * m[2][2] * m[3][3]);
     return a;
+  }
+  
+  Matrix4x4&
+  Matrix4x4::View(const Vector4f& Eye,
+                  const Vector4f& Target,
+                  const Vector4f& WorldUp) {
+#if HandSystem == LH
+    Vector3f look = (Target - Eye).normalized();
+#elif HandSystem == RH
+    Vector3f look = (Eye - Target).normalized();
+#endif
+
+    Vector3f right = Vector3f::cross(WorldUp, look);
+    Vector3f up = Vector3f::cross(look, right);
+
+#if HandSystem == LH
+    float A = -Vector3f::dot(right, Eye);
+    float B = -Vector3f::dot(up, Eye);
+    float C = -Vector3f::dot(look, Eye);
+#elif HandSystem == RH
+    float A = Vector3f::dot(right, Eye);
+    float B = Vector3f::dot(up, Eye);
+    float C = Vector3f::dot(look, Eye);
+#endif
+
+    (*this).vec[0] = Vector4f(right.x, up.x, look.x, 0.0f);
+    (*this).vec[1] = Vector4f(right.y, up.y, look.y, 0.0f);
+    (*this).vec[2] = Vector4f(right.z, up.z, look.z, 0.0f);
+    (*this).vec[3] = Vector4f(A,       B,    C,      1.0f);
+
+    return *this;
+  }
+
+  Matrix4x4&
+  Matrix4x4::Orthogonal(const float Width,
+                        const float Height,
+                        const float ZNear,
+                        const float ZFar) {
+    (*this) = Matrix4x4::ZERO;
+
+#if GraphicsAPI == OpenGL
+    (*this).m[0][0] = 2.0f / Width;
+    (*this).m[1][1] = 2.0f / Height;
+#if HandSystem == LH
+    (*this).m[2][2] = -2.0f / (ZFar - ZNear);
+#elif HandSystem == RH
+    (*this).m[2][2] = -2.0f / (ZNear - ZFar);
+#endif
+    (*this).m[3][2] = -(ZFar + ZNear) / (ZFar - ZNear);
+    (*this).m[3][3] = 1.0f;
+
+#elif GraphicsAPI == DirectX
+    (*this).m[0][0] = 2.0f / Width;
+    (*this).m[1][1] = 2.0f / Height;
+  #if HandSystem == LH
+    (*this).m[2][2] = 1.0f / (ZFar - ZNear);
+  #elif HandSystem == RH
+    (*this).m[2][2] = 1.0f / (ZNear - ZFar);
+  #endif
+    (*this).m[3][2] = ZNear / (ZNear - ZFar);
+    (*this).m[3][3] = 1.0f;
+#endif
+
+    return *this;
+  }
+
+  Matrix4x4&
+  Matrix4x4::Perspective(const float Width,
+                         const float Height,
+                         const float ZNear,
+                         const float ZFar,
+                         const float FOV) {
+    float aspect = Height / Width;
+
+    float yScale = 1.0f / Math::tan(FOV * 0.5f);
+    float xScale = yScale * aspect;
+
+    float FarMNear = (ZFar - ZNear);
+
+    *this = Matrix4x4::ZERO;
+
+#if GraphicsAPI == OpenGL
+    (*this).m[0][0] = xScale;
+    (*this).m[1][1] = yScale;
+    (*this).m[2][2] = -(ZFar + ZNear) / FarMNear;
+  #if HandSystem == LH
+    (*this).m[2][3] = 1.0f;
+    (*this).m[3][2] = 2.0f * (ZFar * ZNear) / FarMNear;
+  #elif HandSystem == RH
+    (*this).m[2][3] = -1.0f;
+    (*this).m[3][2] = -2.0f * (ZFar * ZNear) / FarMNear;
+  #endif
+
+#elif GraphicsAPI == DirectX
+    (*this).m[0][0] = xScale;
+    (*this).m[1][1] = yScale;
+    (*this).m[2][2] = ZFar / FarMNear;
+  #if HandSystem == LH
+    (*this).m[3][2] = 1.0f;
+    (*this).m[2][3] = -(ZNear * ZFar) / FarMNear;
+  #elif HandSystem == RH
+    (*this).m[3][2] = -1.0f;
+    (*this).m[2][3] = (ZNear * ZFar) / FarMNear;
+  #endif
+#endif
+
+    return *this;
+  }
+
+  Matrix3x3
+  Matrix4x4::subMatrix() {
+    return Matrix3x3(m[0][0], m[0][1], m[0][2],
+                     m[1][0], m[1][1], m[1][2],
+                     m[2][0], m[2][1], m[2][2]);
   }
 
   String

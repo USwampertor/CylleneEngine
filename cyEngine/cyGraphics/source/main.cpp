@@ -4,13 +4,36 @@
 #include <Windows.h>
 #include <iostream>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <FreeImage/FreeImage.h>
 #include <GLEW/glew.h>
+#include <OIS/OIS.h>
 #include <gl/GLU.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_syswm.h>
 
-#include <FreeImage/FreeImage.h>
+#include "cyVector3f.h"
+#include "cyFileSystem.h"
+#include "cyMatrix4x4.h"
+
+struct Mesh
+{
+  CYLLENE_SDK::Vector3f* vertices;
+  CYLLENE_SDK::Vector3f* indices;
+  CYLLENE_SDK::int32 nVertices;
+  CYLLENE_SDK::int32 nIndices;
+};
+
+struct Model
+{
+  Mesh* meshes;
+};
+
+bool
+DoTheImportThing(const std::string& pFile);
 
 void
 printProgramLog(GLuint program);
@@ -20,7 +43,8 @@ printShaderLog(GLuint shader);
 
 //Starts up SDL, creates window, and initializes OpenGL
 bool
-init(int clientWidth,
+init(CYLLENE_SDK::String basepath,
+     int clientWidth,
      int clientHeight,
      SDL_Window** window,
      SDL_GLContext& glContext,
@@ -33,7 +57,8 @@ init(int clientWidth,
 
 //Initializes matrices and clear color
 bool
-initGL(GLuint& gProgramID,
+initGL(CYLLENE_SDK::String basepath,
+       GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
        GLint& gVertexPosition2D,
@@ -44,6 +69,8 @@ void
 render(GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
+       CYLLENE_SDK::Matrix4x4 View,
+       CYLLENE_SDK::Matrix4x4 Projection,
        GLint& gVertexPosition2D,
        GLint& gUV,
        GLint& gVertexColor,
@@ -105,7 +132,8 @@ main(int argc, char** argv) {
   // OpenGL Index Buffer Object
   GLuint gIBO = 0;
 
-  if (!init(clientWidth,
+  if (!init(currentDirectory,
+            clientWidth,
             clientHeight,
             &window,
             glContext,
@@ -185,7 +213,25 @@ main(int argc, char** argv) {
   SDL_VERSION(&wmInfo.version);
   SDL_GetWindowWMInfo(window, &wmInfo);
 
+  // Inputs
+  OIS::ParamList pl;
+  size_t windowHnd = reinterpret_cast<size_t>(wmInfo.info.win.window);
+  std::ostringstream windowHndStr;
+
+  windowHndStr << windowHnd;
+  pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+  OIS::InputManager* m_InputManager = OIS::InputManager::createInputSystem(pl);
+  OIS::Mouse* m_Mouse = static_cast<OIS::Mouse*>(m_InputManager->createInputObject(OIS::OISMouse, false));
+  OIS::Keyboard* m_Keyboard = static_cast<OIS::Keyboard*>(m_InputManager->createInputObject(OIS::OISKeyboard, false));
+
+  const OIS::MouseState& ms = m_Mouse->getMouseState();
+  ms.width = clientWidth;
+  ms.height = clientHeight;
+
+  CYLLENE_SDK::Vector4f CamPosition(0, 0, -10, 1);
+
   bool open = true;
+  double deltaTime = 0.0;
   while (open) {
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -201,15 +247,37 @@ main(int argc, char** argv) {
       }
     }
 
-    /*
-    windowSurface = SDL_GetWindowSurface(window);
+    m_Keyboard->capture();
+    m_Mouse->capture();
 
-    SDL_FillRect(windowSurface, NULL, SDL_MapRGB(windowSurface->format, 0xFF, 0xFF, 0xFF));
+    if (m_Keyboard->isKeyDown(OIS::KC_ESCAPE)) { open = false; }
 
-    SDL_UpdateWindowSurface(window);
-    */
+    bool keyboardW = m_Keyboard->isKeyDown(OIS::KC_W);
+    bool keyboardA = m_Keyboard->isKeyDown(OIS::KC_A);
+    bool keyboardS = m_Keyboard->isKeyDown(OIS::KC_S);
+    bool keyboardD = m_Keyboard->isKeyDown(OIS::KC_D);
+    bool keyboardQ = m_Keyboard->isKeyDown(OIS::KC_Q);
+    bool keyboardE = m_Keyboard->isKeyDown(OIS::KC_E);
 
-    render(gProgramID, gVBO, gIBO, gVertexPosition2D, gUV, gVertexColor, texture);
+    float mouseDeltaX = m_Mouse->getMouseState().X.rel * deltaTime;
+    float mouseDeltaY = m_Mouse->getMouseState().Y.rel * deltaTime;
+
+    if (keyboardW) CamPosition.z += 10.0f * deltaTime;
+    if (keyboardS) CamPosition.z -= 10.0f * deltaTime;
+    if (keyboardA) CamPosition.x -= 10.0f * deltaTime;
+    if (keyboardD) CamPosition.x += 10.0f * deltaTime;
+    if (keyboardQ) CamPosition.y += 10.0f * deltaTime;
+    if (keyboardE) CamPosition.y -= 10.0f * deltaTime;
+
+    CYLLENE_SDK::Matrix4x4 View;
+    View.View(CamPosition,
+              CYLLENE_SDK::Vector4f(0, 0, 0, 0),
+              CYLLENE_SDK::Vector4f(0, 1, 0, 0));
+
+    CYLLENE_SDK::Matrix4x4 Projection;
+    Projection.Perspective(1920.0f, 1080.0f, 0.3f, 1000.0f, 60.0f * 0.0174533f);
+
+    render(gProgramID, gVBO, gIBO, View, Projection, gVertexPosition2D, gUV, gVertexColor, texture);
 
     SDL_GL_SwapWindow(window);
 
@@ -217,7 +285,8 @@ main(int argc, char** argv) {
 
     long long elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
     Uint32 delay = (Uint32)(elapsedTime < 16 ? 16 - elapsedTime : 0);
-    SDL_Delay(delay);
+    deltaTime = elapsedTime / 1000.0;
+    //SDL_Delay(delay);
   }
 
   SDL_DestroyWindow(window);
@@ -225,6 +294,45 @@ main(int argc, char** argv) {
   SDL_Quit();
 
   return 0;
+}
+
+bool
+DoTheImportThing(const std::string& pFile) {
+  // Create an instance of the Importer class
+  Assimp::Importer importer;
+  
+  // And have it read the given file with some example postprocessing
+  // Usually - if speed is not the most important aspect for you - you'll
+  // probably to request more postprocessing than we do in this example.
+  const aiScene* scene = importer.ReadFile(pFile,
+                                           aiProcess_CalcTangentSpace |
+                                           aiProcess_Triangulate |
+                                           aiProcess_JoinIdenticalVertices |
+                                           aiProcess_SortByPType);
+
+  // If the import failed, report it
+  if (!scene) {
+    printf("Assimp scene import error: %s", importer.GetErrorString());
+    return false;
+  }
+
+  // Now we can access the file's contents.
+  //DoTheSceneProcessing(scene);
+
+  if (!scene->HasMeshes()) {
+    printf("Assimp trying to import empty model: %s", importer.GetErrorString());
+    return false;
+  }
+
+  int totalMeshes = scene->mNumMeshes;
+  for (int meshIndex = 0; meshIndex < totalMeshes; meshIndex++) {
+    aiMesh* pMesh = scene->mMeshes[meshIndex];
+    aiFace* triangle = &pMesh->mFaces[0];
+    triangle->mIndices[0];
+  }
+
+  // We're done. Everything will be cleaned up by the importer destructor
+  return true;
 }
 
 void
@@ -284,7 +392,8 @@ printShaderLog(GLuint name) {
 }
 
 bool
-init(int clientWidth,
+init(CYLLENE_SDK::String basepath,
+     int clientWidth,
      int clientHeight,
      SDL_Window** window,
      SDL_GLContext& glContext,
@@ -340,7 +449,8 @@ init(int clientWidth,
   }
 
   //Initialize OpenGL
-  if (!initGL(gProgramID,
+  if (!initGL(basepath,
+              gProgramID,
               gVBO,
               gIBO,
               gVertexPosition2D,
@@ -354,7 +464,8 @@ init(int clientWidth,
 }
 
 bool
-initGL(GLuint& gProgramID,
+initGL(CYLLENE_SDK::String basepath,
+       GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
        GLint& gVertexPosition2D,
@@ -364,6 +475,10 @@ initGL(GLuint& gProgramID,
   gProgramID = glCreateProgram();
   
   GLenum error = GL_NO_ERROR;
+
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glFrontFace(GL_CW);
 
   // Initialize Projection Matrix
   {
@@ -396,27 +511,13 @@ initGL(GLuint& gProgramID,
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
     // Get vertex source
-    const GLchar* vertexShaderSource[] =
-    {
-"\
-#version 330 core\n\
-in vec3 LVertexPos; \n\
-in vec2 LVertexUV; \n\
-in vec3 LVertexColor; \n\
-\n\
-out vec2 vUVOut; \n\
-out vec3 vColorOut; \n\
-\n\
-void \n\
-main() { \n\
-  vUVOut = LVertexUV; \n\
-  vColorOut = LVertexColor; \n\
-  gl_Position = vec4(LVertexPos.x, LVertexPos.y, 0, 1); \n\
-}"
-    };
+    CYLLENE_SDK::File VSFile = CYLLENE_SDK::FileSystem::open(basepath + "Shaders/Vertex.glsl");
+    CYLLENE_SDK::String VSString = VSFile.readFile();
+
+    const GLchar* vertexShaderSource = VSString.c_str();
 
     // Set vertex source
-    glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 
     // Compile vertex source
     glCompileShader(vertexShader);
@@ -439,30 +540,14 @@ main() { \n\
   {
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
+    CYLLENE_SDK::File PSFile = CYLLENE_SDK::FileSystem::open(basepath + "Shaders/Fragment.glsl");
+    CYLLENE_SDK::String PSString = PSFile.readFile();
+
     // Get fragment source
-    const GLchar* fragmentShaderSource[] =
-    {
-"\
-#version 330 core\n\
-in vec2 vUVOut; \n\
-in vec3 vColorOut; \n\
- \n\
-uniform sampler2D ourTexture; \n\
-\n\
-out vec4 LFragment; \n\
-\n\
-void \n\
-main() { \n\
-  //LFragment = vec4(vUVOut.xy, 0.0, 1.0); \n\
-  //LFragment = vec4(vColorOut, 1.0); \n\
-  //LFragment = vec4(vUVOut.xy, min(0.0, vColorOut.x), 1.0); \n\
-  LFragment = vec4(texture(ourTexture, vUVOut).rgb, 1.0f) * vec4(vColorOut, 1.0f); \n\
-  //LFragment = vec4(texture(ourTexture, vUVOut).rgb, 1.0f); \n\
-}"
-    };
+    const GLchar* fragmentShaderSource = PSString.c_str();
 
     // Set fragment source
-    glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 
     // Compile fragment source
     glCompileShader(fragmentShader);
@@ -597,6 +682,8 @@ void
 render(GLuint& gProgramID,
        GLuint* gVBO,
        GLuint& gIBO,
+       CYLLENE_SDK::Matrix4x4 View,
+       CYLLENE_SDK::Matrix4x4 Projection,
        GLint& gVertexPosition2D,
        GLint& gUV,
        GLint& gVertexColor,
@@ -606,6 +693,14 @@ render(GLuint& gProgramID,
 
   // Bind program
   glUseProgram(gProgramID);
+
+  // Bind View matrix to uniforms
+  int viewMatLocation = glGetUniformLocation(gProgramID, "View");
+  glUniformMatrix4fv(viewMatLocation, 1, FALSE, &View.m[0][0]);
+
+  // Bind Projection matrix to uniforms
+  int projMatLocation = glGetUniformLocation(gProgramID, "Projection");
+  glUniformMatrix4fv(projMatLocation, 1, FALSE, &Projection.m[0][0]);
 
   // Enable vertex position
   glEnableVertexAttribArray(gVertexPosition2D);
