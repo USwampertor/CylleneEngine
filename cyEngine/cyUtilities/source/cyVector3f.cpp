@@ -307,7 +307,7 @@ namespace CYLLENE_SDK {
 
     float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
 
-    CY_ASSERT(sqr <= Math::EPSILONF &&
+    CY_ASSERT(sqr > Math::EPSILONF &&
       Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());

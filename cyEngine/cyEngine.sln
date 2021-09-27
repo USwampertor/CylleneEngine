@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilitiesUT", "cyUtilitie
 		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyGraphics", "cyGraphics\cyGraphics.vcxproj", "{89FF3D27-C927-41B4-953F-21D9D5234FFB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +39,14 @@ Global
 		{1FBF3CA3-1012-4326-96AD-0CEAC9A28235}.Release|x64.Build.0 = Release|x64
 		{1FBF3CA3-1012-4326-96AD-0CEAC9A28235}.Release|x86.ActiveCfg = Release|Win32
 		{1FBF3CA3-1012-4326-96AD-0CEAC9A28235}.Release|x86.Build.0 = Release|Win32
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Debug|x64.ActiveCfg = Debug|x64
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Debug|x64.Build.0 = Debug|x64
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Debug|x86.ActiveCfg = Debug|Win32
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Debug|x86.Build.0 = Debug|Win32
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Release|x64.ActiveCfg = Release|x64
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Release|x64.Build.0 = Release|x64
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Release|x86.ActiveCfg = Release|Win32
+		{89FF3D27-C927-41B4-953F-21D9D5234FFB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

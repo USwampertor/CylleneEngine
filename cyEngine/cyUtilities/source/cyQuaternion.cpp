@@ -254,7 +254,8 @@ namespace CYLLENE_SDK {
 
   const Quaternion
   Quaternion::slerp(const Quaternion& q1, const Quaternion& q2, float t) {
-    
+    // TODO: implement SLERP
+    return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
   }
 
   void
@@ -448,7 +449,7 @@ namespace CYLLENE_SDK {
 
   String
   Quaternion::toString() {
-    String toReturn = Utils::format("(%2.2f, %2.2f, %2.2f, %2.2f)", x, y, z, w);
+    return Utils::format("(%2.2f, %2.2f, %2.2f, %2.2f)", x, y, z, w);
   }
 
 

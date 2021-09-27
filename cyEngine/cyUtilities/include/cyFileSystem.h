@@ -20,7 +20,6 @@
 
 namespace CYLLENE_SDK
 {
-
   using File          = cppfs::FileHandle;
   using Path          = cppfs::FilePath;
   using FileIterator  = cppfs::FileIterator;
@@ -29,8 +28,7 @@ namespace CYLLENE_SDK
 
   struct CY_UTILITY_EXPORT FileSystem : public Module<FileSystem>
   {
-  public:
-
+   public:
     static File
     open(const String& fileName) {
       return cppfs::fs::open(fileName);
@@ -55,10 +53,5 @@ namespace CYLLENE_SDK
     stringToHash(const String& fileName) {
       return cppfs::fs::sha1(fileName);
     }
-
-
   };
-
-
-
 }
