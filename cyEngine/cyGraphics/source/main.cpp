@@ -15,10 +15,17 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_syswm.h>
 
+#include "cyTime.h"
 #include "cyVector3f.h"
 #include "cyFileSystem.h"
 #include "cyMatrix4x4.h"
 #include "cyQuaternion.h"
+
+#define durationCast std::chrono::duration_cast
+
+using nanosecs = std::chrono::nanoseconds;
+using millisecs = std::chrono::milliseconds;
+using steady_clock = std::chrono::steady_clock;
 
 struct Mesh
 {
@@ -233,11 +240,14 @@ main(int argc, char** argv) {
   CYLLENE_SDK::Vector3f CamRight(1, 0, 0);
   CYLLENE_SDK::Vector3f CamForward(0, 0, 1);
 
+  CYLLENE_SDK::Matrix4x4 Projection;
+  Projection.Perspective(1920.0f, 1080.0f, 0.01f, 1000.0f, 60.0f * 0.0174533f);
+
   bool open = true;
   double deltaTime = 0.0;
-  while (open) {
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+  steady_clock::time_point lastFrame = steady_clock::now();
 
+  while (open) {
     SDL_Event event;
     if (SDL_PollEvent(&event) > 0) {
       switch (event.type)
@@ -269,8 +279,8 @@ main(int argc, char** argv) {
     if (keyboardS) CamPosition -= CamForward * 10.0f * deltaTime;
     if (keyboardA) CamPosition -= CamRight * 10.0f * deltaTime;
     if (keyboardD) CamPosition += CamRight * 10.0f * deltaTime;
-    if (keyboardQ) CamPosition.y += 10.0f * deltaTime;
-    if (keyboardE) CamPosition.y -= 10.0f * deltaTime;
+    if (keyboardE) CamPosition.y += 10.0f * deltaTime;
+    if (keyboardQ) CamPosition.y -= 10.0f * deltaTime;
     
     CYLLENE_SDK::Quaternion rotY;
     rotY.fromEuler(CYLLENE_SDK::Vector3f(0.0f, 0.1f * mouseDeltaX, 0.0f), 0);
@@ -287,19 +297,20 @@ main(int argc, char** argv) {
               CamPosition + CamForward,
               CYLLENE_SDK::Vector4f(0, 1, 0, 0));
 
-    CYLLENE_SDK::Matrix4x4 Projection;
-    Projection.Perspective(1920.0f, 1080.0f, 0.3f, 1000.0f, 60.0f * 0.0174533f);
-
     render(gProgramID, gVBO, gIBO, View, Projection, gVertexPosition2D, gUV, gVertexColor, texture);
 
     SDL_GL_SwapWindow(window);
 
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    steady_clock::time_point currentFrame = steady_clock::now();
+    nanosecs frameDiff = currentFrame - lastFrame;
+    long long elapsedTime = durationCast<millisecs>(frameDiff).count();
 
-    long long elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-    Uint32 delay = (Uint32)(elapsedTime < 16 ? 16 - elapsedTime : 0);
+    Uint32 delay = static_cast<Uint32>(elapsedTime < 16 ? 16 - elapsedTime : 0);
+    SDL_Delay(delay);
+
+    lastFrame = currentFrame;
+    
     deltaTime = elapsedTime / 1000.0;
-    //SDL_Delay(delay);
   }
 
   SDL_DestroyWindow(window);
@@ -654,13 +665,13 @@ initGL(CYLLENE_SDK::String basepath,
 
   // VBO (color) data
   GLfloat colorData[] = {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
 
-    0.0f, 1.0f, 1.0f,
-    1.0f, 0.0f, 1.0f,
-    1.0f, 1.0f, 0.0f
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f
   };
 
   // IBO data
@@ -740,6 +751,8 @@ render(GLuint& gProgramID,
 
   //Disable vertex position
   glDisableVertexAttribArray(gVertexPosition2D);
+  glDisableVertexAttribArray(gUV);
+  glDisableVertexAttribArray(gVertexColor);
 
   //Unbind program
   glUseProgram(NULL);
