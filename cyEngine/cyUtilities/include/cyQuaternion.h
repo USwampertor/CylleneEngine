@@ -331,6 +331,12 @@ namespace CYLLENE_SDK {
     scale(const float& s);
 
     Quaternion
+    normalized() const;
+
+    void
+    normalize();
+
+    Quaternion
     conjugated() const;
 
     void

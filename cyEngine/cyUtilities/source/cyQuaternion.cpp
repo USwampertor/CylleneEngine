@@ -254,8 +254,35 @@ namespace CYLLENE_SDK {
 
   const Quaternion
   Quaternion::slerp(const Quaternion& q1, const Quaternion& q2, float t) {
-    // TODO: implement SLERP
-    return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+    // TODO: Check if this shit is correctly implemented
+
+    Quaternion result;
+
+    float dotproduct = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+    float theta, st, sut, sout, coeff1, coeff2;
+
+    // algorithm adapted from Shoemake's paper
+    t = t / 2.0;
+
+    theta = (float)acos(dotproduct);
+    if (theta < 0.0) theta = -theta;
+
+    st = (float)sin(theta);
+    sut = (float)sin(t * theta);
+    sout = (float)sin((1 - t) * theta);
+    coeff1 = sout / st;
+    coeff2 = sut / st;
+
+    result.x = coeff1 * q1.x + coeff2 * q2.x;
+    result.y = coeff1 * q1.y + coeff2 * q2.y;
+    result.z = coeff1 * q1.z + coeff2 * q2.z;
+    result.w = coeff1 * q1.w + coeff2 * q2.w;
+
+    result.norm();
+
+
+
+    // return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
   }
 
   void
@@ -380,6 +407,16 @@ namespace CYLLENE_SDK {
   void
   Quaternion::scale(const float& s) {
     *this = scaled(s);
+  }
+
+  Quaternion
+  Quaternion::normalized() const {
+    return Quaternion(x / norm(), y / norm(), z / norm(), w / norm());
+  }
+
+  void
+  Quaternion::normalize() {
+    *this = normalized();
   }
 
   Quaternion
