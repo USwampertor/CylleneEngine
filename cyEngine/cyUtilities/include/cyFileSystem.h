@@ -10,6 +10,7 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
+#include "cyModule.h"
 
 #include <cppfs/FileHandle.h>
 #include <cppfs/FileIterator.h>
@@ -26,7 +27,7 @@ namespace CYLLENE_SDK
   using Credentials   = cppfs::LoginCredentials;
   using FileEvent     = cppfs::FileEvent;
 
-  struct CY_UTILITY_EXPORT FileSystem
+  struct CY_UTILITY_EXPORT FileSystem : public Module<FileSystem>
   {
   public:
 

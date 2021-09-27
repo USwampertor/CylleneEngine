@@ -44,6 +44,7 @@
 
 namespace CYLLENE_SDK
 {
+  
   namespace ZIGGURAT
   {
     // is_pow2m1 checks if num + 1 is a power of two.
@@ -54,34 +55,34 @@ namespace CYLLENE_SDK
     }
 
     // log2 computes the base-2 logarithm of num truncated to integer.
-    inline constexpr std::size_t log2(std::uint64_t num)
+    inline constexpr size_t log2(uint64 num)
     {
       return num / 2 ? 1 + log2(num / 2) : 0;
     }
 
     // generate_bits draws N random bits from given random number generator.
-    template<std::size_t N, typename URNG>
-    inline std::uint64_t generate_bits(URNG& random)
+    template<size_t N, typename URNG>
+    inline uint64 generate_bits(URNG& random)
     {
-      constexpr std::uint64_t mask = (std::uint64_t(1) << N) - 1;
+      constexpr uint64 mask = (uint64(1) << N) - 1;
 
       if (URNG::min() == 0 && URNG::max() >= mask && is_pow2m1(URNG::max())) {
-        return std::uint64_t(random()) & mask;
+        return uint64(random()) & mask;
       }
       else {
-        std::uniform_int_distribution<std::uint64_t> dist(0, mask);
+        std::uniform_int_distribution<uint64> dist(0, mask);
         return dist(random);
       }
     }
 
     // canonicalize transforms N bits into a floating-point number in [0, 1).
-    template<std::size_t N, typename T>
-    inline T canonicalize(std::uint64_t bits)
+    template<size_t N, typename T>
+    inline T canonicalize(uint64 bits)
     {
-      constexpr int real_bits = std::numeric_limits<T>::digits;
+      constexpr int real_bits = NumericLimits<T>::digits;
       constexpr int uint_bits = N;
       constexpr int data_bits = (real_bits < uint_bits ? real_bits : uint_bits);
-      constexpr T norm = 1 / T(std::int64_t(1) << data_bits);
+      constexpr T norm = 1 / T(int64(1) << data_bits);
       return norm * T(bits >> (uint_bits - data_bits));
     }
 
@@ -100,7 +101,7 @@ namespace CYLLENE_SDK
     };
   }
 
-  // ziggurat_normal_distribution generates normal random numbers using the fast
+  // Ziggurat generates normal random numbers using the fast
   // ziggurat algorithm.
   template<typename T>
   class Ziggurat
