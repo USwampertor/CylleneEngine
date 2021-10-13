@@ -469,9 +469,9 @@ namespace CYLLENE_SDK {
 
 #if GraphicsAPI == OpenGL
   #if HandSystem == LH
-    (*this).m[2][2] = -2.0f / (ZFar - ZNear);
+    (*this).m[2][2] = 2.0f / (ZFar - ZNear);
   #elif HandSystem == RH
-    (*this).m[2][2] = -2.0f / (ZNear - ZFar);
+    (*this).m[2][2] = -2.0f / (ZFar - ZNear);
   #endif
 
     (*this).m[3][2] = -(ZFar + ZNear) / (ZFar - ZNear);
@@ -480,7 +480,7 @@ namespace CYLLENE_SDK {
   #if HandSystem == LH
     (*this).m[2][2] = 1.0f / (ZFar - ZNear);
   #elif HandSystem == RH
-    (*this).m[2][2] = 1.0f / (ZNear - ZFar);
+    (*this).m[2][2] = -1.0f / (ZFar - ZNear);
   #endif
 
     (*this).m[3][2] = ZNear / (ZNear - ZFar);

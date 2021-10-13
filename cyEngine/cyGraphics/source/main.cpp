@@ -242,6 +242,7 @@ main(int argc, char** argv) {
 
   CYLLENE_SDK::Matrix4x4 Projection;
   Projection.Perspective(1920.0f, 1080.0f, 0.01f, 1000.0f, 60.0f * 0.0174533f);
+  //Projection.Orthogonal(19.2f, 10.8f, 0.01f, 1000.0);
 
   bool open = true;
   double deltaTime = 0.0;
@@ -651,6 +652,17 @@ initGL(CYLLENE_SDK::String basepath,
      0.5f,  0.5f, 0.0f,
      0.5f, -0.5f, 0.0f
   };
+  /*
+  GLfloat positionData[] = {
+    -10.0f, 0.0f, -10.0f,
+    -10.0f, 0.0f,  10.0f,
+     10.0f, 0.0f, -10.0f,
+
+    -10.0f, 0.0f,  10.0f,
+     10.0f, 0.0f,  10.0f,
+     10.0f, 0.0f, -10.0f
+  };
+  */
 
   // VBO (uv) data
   GLfloat uvData[] = {
