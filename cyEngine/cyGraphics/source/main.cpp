@@ -8,14 +8,17 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <FreeImage/FreeImage.h>
-#include <GLEW/glew.h>
+#include <d3d11.h>
+#include <dxgi.h>
+#include <dxgi1_2.h>
+#include <d3dcompiler.h>
 #include <OIS/OIS.h>
-#include <gl/GLU.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_syswm.h>
+#include <tchar.h>
 
 #include "cyTime.h"
+#include "cyVector2f.h"
 #include "cyVector3f.h"
 #include "cyFileSystem.h"
 #include "cyMatrix4x4.h"
@@ -26,13 +29,43 @@
 using nanosecs = std::chrono::nanoseconds;
 using millisecs = std::chrono::milliseconds;
 using steady_clock = std::chrono::steady_clock;
+using namespace CYLLENE_SDK;
+
+ID3D11Device* device;
+IDXGISwapChain1* swapchain;
+ID3D11DeviceContext* context;
+ID3D11Resource* backbuffer;
+ID3D11RenderTargetView* renderTargetView;
+D3D11_VIEWPORT viewport;
+ID3D11RasterizerState* rasterizer;
+ID3DBlob* vs_blob;
+ID3D11VertexShader* vsShader;
+ID3DBlob* fs_blob;
+ID3D11PixelShader* psShader;
+ID3D11InputLayout* inputLayout;
+ID3D11SamplerState* samplerState;
+ID3D11Buffer* constantbuffer;
+ID3D11Buffer* vertexbuffer;
+ID3D11Buffer* uvbuffer;
+ID3D11Buffer* colorbuffer;
+ID3D11Buffer* indexbuffer;
+ID3D11Texture2D* tex;
+ID3D11ShaderResourceView* checkerTexture;
+float g_aspectRatio;
+
+struct Vertex
+{
+  Vector3f position;
+  Vector2f uv;
+  Vector3f color;
+};
 
 struct Mesh
 {
-  CYLLENE_SDK::Vector3f* vertices;
-  CYLLENE_SDK::Vector3f* indices;
-  CYLLENE_SDK::int32 nVertices;
-  CYLLENE_SDK::int32 nIndices;
+  Vertex* vertices;
+  Vector3f* indices;
+  int32 nVertices;
+  int32 nIndices;
 };
 
 struct Model
@@ -40,48 +73,67 @@ struct Model
   Mesh* meshes;
 };
 
+void
+ErrorDescription(HRESULT hr) {
+  if (FACILITY_WINDOWS == HRESULT_FACILITY(hr))
+    hr = HRESULT_CODE(hr);
+  TCHAR* szErrMsg;
+
+  if (FormatMessage(
+    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+    NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+    (LPTSTR)&szErrMsg, 0, NULL) != 0)
+  {
+    _tprintf(TEXT("%s"), szErrMsg);
+    LocalFree(szErrMsg);
+  }
+  else
+    _tprintf(TEXT("[Could not find a description for error # %#x.]\n"), hr);
+}
+
 bool
 DoTheImportThing(const std::string& pFile);
+/*
+void
+printProgramLog(uint32 program);
 
 void
-printProgramLog(GLuint program);
-
-void
-printShaderLog(GLuint shader);
+printShaderLog(uint32 shader);
+*/
 
 //Starts up SDL, creates window, and initializes OpenGL
 bool
-init(CYLLENE_SDK::String basepath,
+init(String basepath,
      int clientWidth,
      int clientHeight,
      SDL_Window** window,
      SDL_GLContext& glContext,
-     GLuint& gProgramID,
-     GLuint* gVBO,
-     GLuint& gIBO,
-     GLint& gVertexPosition2D,
-     GLint& gUV,
-     GLint& gVertexColor);
+     uint32& gProgramID,
+     uint32* gVBO,
+     uint32& gIBO,
+     int32& gVertexPosition2D,
+     int32& gUV,
+     int32& gVertexColor);
 
 //Initializes matrices and clear color
 bool
-initGL(CYLLENE_SDK::String basepath,
-       GLuint& gProgramID,
-       GLuint* gVBO,
-       GLuint& gIBO,
-       GLint& gVertexPosition2D,
-       GLint& gUV,
-       GLint& gVertexColor);
+initDX11(String basepath,
+         uint32& gProgramID,
+         uint32* gVBO,
+         uint32& gIBO,
+         int32& gVertexPosition2D,
+         int32& gUV,
+         int32& gVertexColor);
 
 void
-render(GLuint& gProgramID,
-       GLuint* gVBO,
-       GLuint& gIBO,
-       CYLLENE_SDK::Matrix4x4 View,
-       CYLLENE_SDK::Matrix4x4 Projection,
-       GLint& gVertexPosition2D,
-       GLint& gUV,
-       GLint& gVertexColor,
+render(uint32& gProgramID,
+       uint32* gVBO,
+       uint32& gIBO,
+       Matrix4x4 View,
+       Matrix4x4 Projection,
+       int32& gVertexPosition2D,
+       int32& gUV,
+       int32& gVertexColor,
        unsigned int texture);
 
 // Define your user buttons somewhere global
@@ -128,17 +180,17 @@ main(int argc, char** argv) {
 
   /***************************************************************************/
   // OpenGL Shader ID
-  GLuint gProgramID = 0;
+  uint32 gProgramID = 0;
   // Vertex Atributtes Position
-  GLint gVertexPosition2D = -1;
+  int32 gVertexPosition2D = -1;
   // Vertex Atributtes UV
-  GLint gUV = -1;
+  int32 gUV = -1;
   // Vertex Atributtes Color
-  GLint gVertexColor = -1;
+  int32 gVertexColor = -1;
   // OpenGL Vertex Buffer Object
-  GLuint gVBO[3] = { 0, 0, 0 };
+  uint32 gVBO[3] = { 0, 0, 0 };
   // OpenGL Index Buffer Object
-  GLuint gIBO = 0;
+  uint32 gIBO = 0;
 
   if (!init(currentDirectory,
             clientWidth,
@@ -155,14 +207,14 @@ main(int argc, char** argv) {
   }
 
   // get version info
-  printf("Renderer: %s\n", glGetString(GL_RENDERER));
-  printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
+  //printf("Renderer: %s\n", glGetString(GL_RENDERER));
+  //printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
 
   printf("\n");
 
-  unsigned int texture;
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
+  //unsigned int texture;
+  //glGenTextures(1, &texture);
+  //glBindTexture(GL_TEXTURE_2D, texture);
   // set the texture wrapping/filtering options (on the currently bound texture object)
 
   /***************************************************************************/
@@ -174,43 +226,70 @@ main(int argc, char** argv) {
 
   FIBITMAP* pImage = FreeImage_Load(fif, textureName.c_str(), 0);
   if (pImage) {
-    int nWidth = FreeImage_GetWidth(pImage);
-    int nHeight = FreeImage_GetHeight(pImage);
-    FREE_IMAGE_COLOR_TYPE fict = FreeImage_GetColorType(pImage);
+    FIBITMAP* pImageRGBA = FreeImage_ConvertToRGBAF(pImage);
+    int nWidth = FreeImage_GetWidth(pImageRGBA);
+    int nHeight = FreeImage_GetHeight(pImageRGBA);
 
-    BITMAPINFO* imageInfo = FreeImage_GetInfo(pImage);
+    FREE_IMAGE_COLOR_TYPE fict = FreeImage_GetColorType(pImageRGBA);
+    uint32 pitch = FreeImage_GetPitch(pImageRGBA);
+    BITMAPINFO* imageInfo = FreeImage_GetInfo(pImageRGBA);
+
     printf("Format: %i\n", fif);
     printf("Width: %i\n", nWidth);
     printf("Height: %i\n", nHeight);
     printf("Bit count: %i\n", imageInfo->bmiHeader.biBitCount);
     printf("Size: %i\n", imageInfo->bmiHeader.biSize);
     printf("Image size: %i\n", imageInfo->bmiHeader.biSizeImage);
-    printf("Color type: %i", fict);
+    printf("Image byte pitch: %i\n", pitch);
+    printf("Color type: %i\n", fict);
 
-    BYTE* imageBytes = FreeImage_GetBits(pImage);
+    BYTE* imageBytes = FreeImage_GetBits(pImageRGBA);
+    
+    D3D11_SUBRESOURCE_DATA initData = { imageBytes, pitch, pitch * nHeight };
 
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGB,
-                 nWidth,
-                 nHeight,
-                 0,
-                 GL_BGR,
-                 GL_UNSIGNED_BYTE,
-                 reinterpret_cast<void*>(imageBytes));
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = nWidth;
+    desc.Height = nHeight;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = 0;
+
+    HRESULT HRTexture = device->CreateTexture2D(&desc, &initData, &tex);
+
+    if (FAILED(HRTexture)) {
+      printf("Texture couldn't be created: ");
+      ErrorDescription(HRTexture);
+      return -1;
+    }
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+    SRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    SRVDesc.Texture2D.MipLevels = 1;
+
+    HRTexture = device->CreateShaderResourceView(tex,
+                                                 &SRVDesc,
+                                                 &checkerTexture);
+
+    if (FAILED(HRTexture)) {
+      printf("Shader resource view couldn't be created: ");
+      ErrorDescription(HRTexture);
+      return -1;
+    }
 
     FreeImage_Unload(pImage);
+    FreeImage_Unload(pImageRGBA);
   }
   else {
     printf("Error while loading image\n");
   }
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_POINT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_POINT);
-
-  // Generamos los mapas MIP, claro está.
-  glGenerateMipmap(GL_TEXTURE_2D);
+  
 
   FreeImage_DeInitialise();
   /***************************************************************************/
@@ -236,11 +315,11 @@ main(int argc, char** argv) {
   ms.width = clientWidth;
   ms.height = clientHeight;
 
-  CYLLENE_SDK::Vector4f CamPosition(0, 0, -10, 1);
-  CYLLENE_SDK::Vector3f CamRight(1, 0, 0);
-  CYLLENE_SDK::Vector3f CamForward(0, 0, 1);
+  Vector4f CamPosition(0, 0, -10, 1);
+  Vector3f CamRight(1, 0, 0);
+  Vector3f CamForward(0, 0, 1);
 
-  CYLLENE_SDK::Matrix4x4 Projection;
+  Matrix4x4 Projection;
   Projection.Perspective(1920.0f, 1080.0f, 0.01f, 1000.0f, 60.0f * 0.0174533f);
   //Projection.Orthogonal(19.2f, 10.8f, 0.01f, 1000.0);
 
@@ -283,22 +362,22 @@ main(int argc, char** argv) {
     if (keyboardE) CamPosition.y += 10.0f * deltaTime;
     if (keyboardQ) CamPosition.y -= 10.0f * deltaTime;
     
-    CYLLENE_SDK::Quaternion rotY;
-    rotY.fromEuler(CYLLENE_SDK::Vector3f(0.0f, 0.1f * mouseDeltaX, 0.0f), 0);
+    Quaternion rotY;
+    rotY.fromEuler(Vector3f(0.0f, 0.1f * mouseDeltaX, 0.0f), 0);
 
     CamRight = rotY.rotate(CamRight);
 
-    CYLLENE_SDK::Quaternion rotX;
+    Quaternion rotX;
     rotX.fromEuler(CamRight * 0.1f * mouseDeltaY, 0);
 
     CamForward = rotX.rotate(rotY.rotate(CamForward));
 
-    CYLLENE_SDK::Matrix4x4 View;
+    Matrix4x4 View;
     View.View(CamPosition,
               CamPosition + CamForward,
-              CYLLENE_SDK::Vector4f(0, 1, 0, 0));
+              Vector4f(0, 1, 0, 0));
 
-    render(gProgramID, gVBO, gIBO, View, Projection, gVertexPosition2D, gUV, gVertexColor, texture);
+    render(gProgramID, gVBO, gIBO, View, Projection, gVertexPosition2D, gUV, gVertexColor, 0);
 
     SDL_GL_SwapWindow(window);
 
@@ -359,9 +438,9 @@ DoTheImportThing(const std::string& pFile) {
   // We're done. Everything will be cleaned up by the importer destructor
   return true;
 }
-
+/*
 void
-printProgramLog(GLuint name) {
+printProgramLog(uint32 name) {
   // Make sure name is shader
   if (glIsProgram(name)) {
     // Program log length
@@ -389,7 +468,7 @@ printProgramLog(GLuint name) {
 }
 
 void
-printShaderLog(GLuint name) {
+printShaderLog(uint32 name) {
   // Make sure name is shader
   if (glIsShader(name)) {
     // Shader log length
@@ -415,31 +494,25 @@ printShaderLog(GLuint name) {
     printf("Name %d is not a shader\n", name);
   }
 }
+*/
 
 bool
-init(CYLLENE_SDK::String basepath,
+init(String basepath,
      int clientWidth,
      int clientHeight,
      SDL_Window** window,
      SDL_GLContext& glContext,
-     GLuint& gProgramID,
-     GLuint* gVBO,
-     GLuint& gIBO,
-     GLint& gVertexPosition2D,
-     GLint& gUV,
-     GLint& gVertexColor) {
+     uint32& gProgramID,
+     uint32* gVBO,
+     uint32& gIBO,
+     int32& gVertexPosition2D,
+     int32& gUV,
+     int32& gVertexColor) {
   //Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
     printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
     return false;
   }
-
-  // Use OpenGL 3.1
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
-  // Remove old functionality
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
   // Create window
   *window = SDL_CreateWindow("SDL CylleneEngine",
@@ -447,41 +520,134 @@ init(CYLLENE_SDK::String basepath,
                              SDL_WINDOWPOS_UNDEFINED,
                              clientWidth,
                              clientHeight,
-                             SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+                             SDL_WINDOW_SHOWN);
 
   if (window == NULL) {
     printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
     return false;
   }
 
-  // Create context
-  glContext = SDL_GL_CreateContext(*window);
-  if (glContext == NULL) {
-    printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+  // Create factory
+  IDXGIFactory2* pFactory;
+  HRESULT HRFactory = CreateDXGIFactory(__uuidof(IDXGIFactory2),
+                                        (void**)(&pFactory));
+
+  if (FAILED(HRFactory)) {
+    printf("Factory couldn't be created: ");
+    ErrorDescription(HRFactory);
     return false;
   }
 
-  // Initialize GLEW
-  //glewExperimental = GL_TRUE;
-  GLenum glewError = glewInit();
-  if (glewError != GLEW_OK) {
-    printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
+  // Create device
+  UINT createDeviceFlags = 0;
+#if _DEBUG
+  createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+  Vector<D3D_FEATURE_LEVEL> featureLevels = {
+      D3D_FEATURE_LEVEL_11_0,
+      D3D_FEATURE_LEVEL_10_1,
+      D3D_FEATURE_LEVEL_10_0,
+  };
+
+  D3D_FEATURE_LEVEL featureLevel;
+  HRESULT HRDevice = D3D11CreateDevice(nullptr,
+                                       D3D_DRIVER_TYPE_HARDWARE,
+                                       nullptr,
+                                       createDeviceFlags,
+                                       featureLevels.data(),
+                                       featureLevels.size(),
+                                       D3D11_SDK_VERSION,
+                                       &device,
+                                       nullptr,
+                                       &context);
+
+  if (FAILED(HRDevice)) {
+    printf("Device couldn't be created: ");
+    ErrorDescription(HRDevice);
+    return false;
   }
 
-  // Use Vsync
-  if (SDL_GL_SetSwapInterval(1) < 0) {
-    printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+  uint32 FrameCount = 2;
+
+  // Create SwapChain
+  DXGI_SAMPLE_DESC SampleDesc;
+  SampleDesc.Count = 0;
+  SampleDesc.Quality = 0;
+
+  DXGI_SWAP_CHAIN_DESC1 sd;
+  sd.Width = clientWidth;
+  sd.Height = clientHeight;
+  sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+  sd.Stereo = false;
+  sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+  sd.BufferCount = FrameCount;
+  sd.Scaling = DXGI_SCALING_NONE;
+  sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+  sd.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+  sd.SampleDesc.Count = 1;
+  sd.SampleDesc.Quality = 0;
+  sd.Flags = 0;
+
+  DXGI_SWAP_CHAIN_FULLSCREEN_DESC sdf;
+  sdf.RefreshRate.Numerator = 60;
+  sdf.RefreshRate.Denominator = 1;
+  sdf.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+  sdf.Windowed = true;
+
+  SDL_SysWMinfo sysWMInfo;
+  SDL_VERSION(&sysWMInfo.version);
+  SDL_GetWindowWMInfo(*window, &sysWMInfo);
+
+  HWND win = sysWMInfo.info.win.window;
+
+  HRESULT HRSwapChain = pFactory->CreateSwapChainForHwnd(device,
+                                                         win,
+                                                         &sd,
+                                                         &sdf,
+                                                         nullptr,
+                                                         &swapchain);
+  if (FAILED(HRSwapChain)) {
+    printf("SwapChain couldn't be created: ");
+    ErrorDescription(HRSwapChain);
+    return false;
   }
 
-  //Initialize OpenGL
-  if (!initGL(basepath,
-              gProgramID,
-              gVBO,
-              gIBO,
-              gVertexPosition2D,
-              gUV,
-              gVertexColor)) {
-    printf("Unable to initialize OpenGL!\n");
+  pFactory->Release();
+
+  // Back buffer
+  swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backbuffer);
+
+  if (backbuffer == nullptr) {
+    printf("Backbuffer address is zero.");
+    return false;
+  }
+
+  HRESULT HRCreateRT = device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView);
+
+  if (FAILED(HRCreateRT)) {
+    printf("Backbuffer Rendertarget couldn't be created: ");
+    ErrorDescription(HRCreateRT);
+    return false;
+  }
+
+  // Viewport
+  viewport.Width = clientWidth;
+  viewport.Height = clientHeight;
+  viewport.TopLeftX = 0;
+  viewport.TopLeftY = 0;
+  viewport.MinDepth = 0;
+  viewport.MaxDepth = 1;
+
+  //Initialize DirectX 11
+  if (!initDX11(basepath,
+                gProgramID,
+                gVBO,
+                gIBO,
+                gVertexPosition2D,
+                gUV,
+                gVertexColor)) {
+    printf("Unable to initialize DirectX 11!\n");
     return false;
   }
 
@@ -489,283 +655,303 @@ init(CYLLENE_SDK::String basepath,
 }
 
 bool
-initGL(CYLLENE_SDK::String basepath,
-       GLuint& gProgramID,
-       GLuint* gVBO,
-       GLuint& gIBO,
-       GLint& gVertexPosition2D,
-       GLint& gUV,
-       GLint& gVertexColor) {
-  // Generate program
-  gProgramID = glCreateProgram();
-  
-  GLenum error = GL_NO_ERROR;
-
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glFrontFace(GL_CW);
-
-  // Initialize Projection Matrix
-  {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    // Check for error
-    error = glGetError();
-    if (error != GL_NO_ERROR) {
-      printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-      return false;
-    }
-  }
-
-  // Initialize Modelview Matrix
-  {
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // Check for error
-    error = glGetError();
-    if (error != GL_NO_ERROR) {
-      printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-      return false;
-    }
-  }
-
+initDX11(String basepath,
+         uint32& gProgramID,
+         uint32* gVBO,
+         uint32& gIBO,
+         int32& gVertexPosition2D,
+         int32& gUV,
+         int32& gVertexColor) {
   // Create vertex shader
   {
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    File VSFile = FileSystem::open(basepath + "Shaders/hlsl/Vertex.hlsl");
+    String VSString = VSFile.readFile();
 
-    // Get vertex source
-    CYLLENE_SDK::File VSFile = CYLLENE_SDK::FileSystem::open(basepath + "Shaders/Vertex.glsl");
-    CYLLENE_SDK::String VSString = VSFile.readFile();
+    ID3DBlob* errorBlob = nullptr;
 
-    const GLchar* vertexShaderSource = VSString.c_str();
+    uint32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if _DEBUG
+    flags |= D3DCOMPILE_DEBUG;
+#endif
 
-    // Set vertex source
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    HRESULT HRVertexShader = D3DCompile(VSString.c_str(),
+                                        VSString.size(),
+                                        0,
+                                        0,
+                                        0,
+                                        "main",
+                                        "vs_5_0",
+                                        flags,
+                                        0,
+                                        &vs_blob,
+                                        &errorBlob);
 
-    // Compile vertex source
-    glCompileShader(vertexShader);
-
-    // Check vertex shader for errors
-    GLint vShaderCompiled = GL_FALSE;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
-    if (vShaderCompiled != GL_TRUE) {
-      printf("Unable to compile vertex shader %d!\n", vertexShader);
-      printShaderLog(vertexShader);
-
+    if (FAILED(HRVertexShader)) {
+      printf("Vertex shader couldn't be compiled: ");
+      printf("%s\n", (char*)errorBlob->GetBufferPointer());
+      errorBlob->Release();
       return false;
     }
 
-    // Attach vertex shader to program
-    glAttachShader(gProgramID, vertexShader);
+    HRESULT HRCreateVS = device->CreateVertexShader(vs_blob->GetBufferPointer(),
+                                                    vs_blob->GetBufferSize(),
+                                                    nullptr,
+                                                    &vsShader);
+
+    if (FAILED(HRCreateVS)) {
+      printf("Vertex shader couldn't be created: ");
+      ErrorDescription(HRCreateVS);
+      return false;
+    }
+
   }
 
   // Create fragment shader
   {
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    File FSFile = FileSystem::open(basepath + "Shaders/hlsl/Fragment.hlsl");
+    String FSString = FSFile.readFile();
 
-    CYLLENE_SDK::File PSFile = CYLLENE_SDK::FileSystem::open(basepath + "Shaders/Fragment.glsl");
-    CYLLENE_SDK::String PSString = PSFile.readFile();
+    ID3DBlob* errorBlob = nullptr;
 
-    // Get fragment source
-    const GLchar* fragmentShaderSource = PSString.c_str();
+    uint32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if _DEBUG
+    flags |= D3DCOMPILE_DEBUG;
+#endif
 
-    // Set fragment source
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    HRESULT HRFragmentShader = D3DCompile(FSString.c_str(),
+                                          FSString.size(),
+                                          0,
+                                          0,
+                                          0,
+                                          "main",
+                                          "ps_5_0",
+                                          flags,
+                                          0,
+                                          &fs_blob,
+                                          &errorBlob);
 
-    // Compile fragment source
-    glCompileShader(fragmentShader);
-
-    // Check fragment shader for errors
-    GLint fShaderCompiled = GL_FALSE;
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
-    if (fShaderCompiled != GL_TRUE) {
-      printf("Unable to compile fragment shader %d!\n", fragmentShader);
-      printShaderLog(fragmentShader);
+    if (FAILED(HRFragmentShader)) {
+      printf("Fragment shader couldn't be compiled: ");
+      printf("%s\n", (char*)errorBlob->GetBufferPointer());
+      errorBlob->Release();
       return false;
     }
 
-    // Attach fragment shader to program
-    glAttachShader(gProgramID, fragmentShader);
+    HRESULT HRCreatePS = device->CreatePixelShader(fs_blob->GetBufferPointer(),
+                                                   fs_blob->GetBufferSize(),
+                                                   nullptr,
+                                                   &psShader);
+
+    if (FAILED(HRCreatePS)) {
+      printf("Pixel shader couldn't be created: ");
+      ErrorDescription(HRCreatePS);
+      return false;
+    }
+
   }
 
-  // Link program
+  // create the input layout
   {
-    glLinkProgram(gProgramID);
+    D3D11_INPUT_ELEMENT_DESC ied[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
 
-    // Check for errors
-    GLint programSuccess = GL_TRUE;
-    glGetProgramiv(gProgramID, GL_LINK_STATUS, &programSuccess);
-    if (programSuccess != GL_TRUE) {
-      printf("Error linking program %d!\n", gProgramID);
-      printProgramLog(gProgramID);
+    HRESULT HRInputLayout = device->CreateInputLayout(ied,
+                                                      ARRAYSIZE(ied),
+                                                      vs_blob->GetBufferPointer(),
+                                                      vs_blob->GetBufferSize(),
+                                                      &inputLayout);
+
+    if (FAILED(HRInputLayout)) {
+      printf("Pixel shader couldn't be created: ");
+      ErrorDescription(HRInputLayout);
       return false;
     }
   }
 
-  // Get vertex position attribute location
+  // create rasterizer
   {
-    gVertexPosition2D = glGetAttribLocation(gProgramID, "LVertexPos");
-    if (gVertexPosition2D == -1) {
-      printf("LVertexPos is not a valid glsl program variable!\n");
+    D3D11_RASTERIZER_DESC rasterDes;
+    rasterDes.FillMode = D3D11_FILL_SOLID;
+    rasterDes.CullMode = D3D11_CULL_BACK;
+    rasterDes.FrontCounterClockwise = false;
+    rasterDes.DepthBias = 0;
+    rasterDes.DepthBiasClamp = 0.0f;
+    rasterDes.SlopeScaledDepthBias = 0.0f;
+    rasterDes.DepthClipEnable = true;
+    rasterDes.ScissorEnable = false;
+    rasterDes.MultisampleEnable = false;
+    rasterDes.AntialiasedLineEnable = false;
+
+    HRESULT HRRasterizer = device->CreateRasterizerState(&rasterDes,
+                                                         &rasterizer);
+
+    if (FAILED(HRRasterizer)) {
+      printf("Rasterizer couldn't be created: ");
+      ErrorDescription(HRRasterizer);
       return false;
     }
   }
 
-  // Get vertex texcoord attribute location
+  // create sampler
   {
-    gUV = glGetAttribLocation(gProgramID, "LVertexUV");
-    if (gUV == -1) {
-      printf("LVertexUV is not a valid glsl program variable!\n");
+    D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    samplerDesc.MipLODBias = 0;
+
+    HRESULT HRSampler = device->CreateSamplerState(&samplerDesc, &samplerState);
+
+    if (FAILED(HRSampler)) {
+      printf("Sampler state couldn't be created: ");
+      ErrorDescription(HRSampler);
       return false;
     }
+
   }
 
-  // Get vertex color attribute location
+  // Create constant buffer
   {
-    gVertexColor = glGetAttribLocation(gProgramID, "LVertexColor");
-    if (gVertexColor == -1) {
-      printf("LVertexColor is not a valid glsl program variable!\n");
+    Matrix4x4 contantBuffer[] =
+    {
+      Matrix4x4::IDENTITY,
+      Matrix4x4::IDENTITY,
+    };
+
+    D3D11_BUFFER_DESC bd;
+    bd.ByteWidth = sizeof(Matrix4x4) * ARRAYSIZE(contantBuffer);
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+    bd.StructureByteStride = 0;
+
+    D3D11_SUBRESOURCE_DATA srd = { contantBuffer, 0, 0 };
+    HRESULT HRCB = device->CreateBuffer(&bd, &srd, &constantbuffer);
+
+    if (FAILED(HRCB)) {
+      printf("Constant buffer couldn't be created: ");
+      ErrorDescription(HRCB);
       return false;
     }
   }
 
-  // Initialize clear color
+  // Create vertex buffer
   {
-    glClearColor(0.f, 0.f, 0.f, 1.f);
-    // Check for error
-    error = glGetError();
-    if (error != GL_NO_ERROR) {
-      printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+    Vertex OurVertices[] =
+    {
+      { { -0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+      { { -0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } },
+      { {  0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+
+      { { -0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } },
+      { {  0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } },
+      { {  0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    };
+  
+    D3D11_BUFFER_DESC bd;
+    bd.ByteWidth = sizeof(Vertex) * ARRAYSIZE(OurVertices);
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+    bd.StructureByteStride = 0;
+  
+    D3D11_SUBRESOURCE_DATA srd = { OurVertices, 0, 0 };
+    HRESULT HRVertex = device->CreateBuffer(&bd, &srd, &vertexbuffer);
+
+    if (FAILED(HRVertex)) {
+      printf("Vertex buffer couldn't be created: ");
+      ErrorDescription(HRVertex);
       return false;
     }
   }
 
-  // VBO (position) data
-  GLfloat positionData[] = {
-    -0.5f, -0.5f, 0.0f,
-    -0.5f,  0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
+  // Create index buffer
+  {
+    uint32 indices[] =
+    {
+      0, 1, 2,
+      3, 4, 5,
+    };
 
-    -0.5f,  0.5f, 0.0f,
-     0.5f,  0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f
-  };
-  /*
-  GLfloat positionData[] = {
-    -10.0f, 0.0f, -10.0f,
-    -10.0f, 0.0f,  10.0f,
-     10.0f, 0.0f, -10.0f,
+    D3D11_BUFFER_DESC bd = { 0 };
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.ByteWidth = sizeof(uint32) * ARRAYSIZE(indices);
+    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
 
-    -10.0f, 0.0f,  10.0f,
-     10.0f, 0.0f,  10.0f,
-     10.0f, 0.0f, -10.0f
-  };
-  */
+    D3D11_SUBRESOURCE_DATA srd = { indices, 0, 0 };
+    HRESULT HRColor = device->CreateBuffer(&bd, &srd, &indexbuffer);
 
-  // VBO (uv) data
-  GLfloat uvData[] = {
-    0.0f, 0.0f,
-    0.0f, 1.0f,
-    1.0f, 0.0f,
-
-    0.0f, 1.0f,
-    1.0f, 1.0f,
-    1.0f, 0.0f
-  };
-
-  // VBO (color) data
-  GLfloat colorData[] = {
-    0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f,
-
-    0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f
-  };
-
-  // IBO data
-  GLuint indexData[] = { 0, 1, 2, 3, 4, 5 };
-
-  unsigned long long vertices = 6;
-
-  // Create VBO (Position)
-  glGenBuffers(1, &gVBO[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, gVBO[0]);
-  glBufferData(GL_ARRAY_BUFFER, 3 * vertices * sizeof(GLfloat), positionData, GL_STATIC_DRAW);
-
-  // Create VBO (uv)
-  glGenBuffers(1, &gVBO[1]);
-  glBindBuffer(GL_ARRAY_BUFFER, gVBO[1]);
-  glBufferData(GL_ARRAY_BUFFER, 2 * vertices * sizeof(GLfloat), uvData, GL_STATIC_DRAW);
-
-  // Create VBO (Color)
-  glGenBuffers(1, &gVBO[2]);
-  glBindBuffer(GL_ARRAY_BUFFER, gVBO[2]);
-  glBufferData(GL_ARRAY_BUFFER, 3 * vertices * sizeof(GLfloat), colorData, GL_STATIC_DRAW);
-
-  // Create IBO
-  glGenBuffers(1, &gIBO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices * sizeof(GLuint), indexData, GL_STATIC_DRAW);
+    if (FAILED(HRColor)) {
+      printf("Color buffer couldn't be created: ");
+      ErrorDescription(HRColor);
+      return false;
+    }
+  }
 
   return true;
 }
 
 void
-render(GLuint& gProgramID,
-       GLuint* gVBO,
-       GLuint& gIBO,
-       CYLLENE_SDK::Matrix4x4 View,
-       CYLLENE_SDK::Matrix4x4 Projection,
-       GLint& gVertexPosition2D,
-       GLint& gUV,
-       GLint& gVertexColor,
+render(uint32& gProgramID,
+       uint32* gVBO,
+       uint32& gIBO,
+       Matrix4x4 View,
+       Matrix4x4 Projection,
+       int32& gVertexPosition2D,
+       int32& gUV,
+       int32& gVertexColor,
        unsigned int texture) {
-  // Clear color buffer
-  glClear(GL_COLOR_BUFFER_BIT);
 
-  // Bind program
-  glUseProgram(gProgramID);
+  float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
 
-  // Bind View matrix to uniforms
-  int viewMatLocation = glGetUniformLocation(gProgramID, "View");
-  glUniformMatrix4fv(viewMatLocation, 1, FALSE, &View.m[0][0]);
+  context->RSSetViewports(1, &viewport);
 
-  // Bind Projection matrix to uniforms
-  int projMatLocation = glGetUniformLocation(gProgramID, "Projection");
-  glUniformMatrix4fv(projMatLocation, 1, FALSE, &Projection.m[0][0]);
+  context->RSSetState(rasterizer);
 
-  // Enable vertex position
-  glEnableVertexAttribArray(gVertexPosition2D);
-  glEnableVertexAttribArray(gUV);
-  glEnableVertexAttribArray(gVertexColor);
+  context->OMSetRenderTargets(1, &renderTargetView, nullptr);
+  context->ClearRenderTargetView(renderTargetView, color);
 
-  // Set vertex data
-  glBindBuffer(GL_ARRAY_BUFFER, gVBO[0]);
-  glVertexAttribPointer(gVertexPosition2D, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), NULL);
+  context->VSSetShader(vsShader, nullptr, 0);
+  context->PSSetShader(psShader, nullptr, 0);
 
-  glBindBuffer(GL_ARRAY_BUFFER, gVBO[1]);
-  glVertexAttribPointer(gUV, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+  Matrix4x4 matrices[2] = {
+    View,
+    Projection
+  };
 
-  glBindBuffer(GL_ARRAY_BUFFER, gVBO[2]);
-  glVertexAttribPointer(gVertexColor, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), NULL);
+  context->UpdateSubresource(constantbuffer, 0, nullptr, matrices, 0, 0);
 
-  // Set index data and render
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+  context->VSSetConstantBuffers(0, 1, &constantbuffer);
+  context->PSSetConstantBuffers(0, 1, &constantbuffer);
 
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture);
+  context->PSSetSamplers(0, 1, &samplerState);
 
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+  context->PSSetShaderResources(0, 1, &checkerTexture);
 
-  //Disable vertex position
-  glDisableVertexAttribArray(gVertexPosition2D);
-  glDisableVertexAttribArray(gUV);
-  glDisableVertexAttribArray(gVertexColor);
+  context->IASetInputLayout(inputLayout);
 
-  //Unbind program
-  glUseProgram(NULL);
+  context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+  uint32 stride = sizeof(Vertex);
+  uint32 offset = 0;
+  context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+
+  context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+
+  context->DrawIndexed(6, 0, 0);
+
+  swapchain->Present(1, 0);
 }

@@ -11,7 +11,7 @@
 #define DirectX 1
 
 #define HandSystrem LH
-#define GraphicsAPI OpenGL
+#define GraphicsAPI DirectX
 
 namespace CYLLENE_SDK {
   Matrix4x4::Matrix4x4(const float& value) {
@@ -523,11 +523,11 @@ namespace CYLLENE_SDK {
     (*this).m[1][1] = yScale;
     (*this).m[2][2] = ZFar / FarMNear;
   #if HandSystem == LH
-    (*this).m[3][2] = 1.0f;
-    (*this).m[2][3] = -(ZNear * ZFar) / FarMNear;
+    (*this).m[2][3] = 1.0f;
+    (*this).m[3][2] = -(ZNear * ZFar) / FarMNear;
   #elif HandSystem == RH
-    (*this).m[3][2] = -1.0f;
-    (*this).m[2][3] = (ZNear * ZFar) / FarMNear;
+    (*this).m[2][3] = -1.0f;
+    (*this).m[3][2] = (ZNear * ZFar) / FarMNear;
   #endif
 #endif
 
