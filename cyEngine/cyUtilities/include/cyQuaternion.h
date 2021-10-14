@@ -36,6 +36,9 @@ namespace CYLLENE_SDK {
 
     Euler(const Vector4f& vector);
 
+    String
+    toString();
+
   public:
     float x;
     float y;
@@ -373,7 +376,7 @@ namespace CYLLENE_SDK {
     toVector4() const;
 
     String
-    toString();
+    toString() const;
 
 
   public:

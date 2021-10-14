@@ -11,6 +11,7 @@
 #include <cyUtilities.h>
 #include <cyVector2f.h>
 #include <cyVector2i.h>
+#include <cyQuaternion.h>
 
 using namespace CYLLENE_SDK;
 
@@ -24,10 +25,13 @@ main() {
   Matrix3x3 test4(1.0f/7.0f, 4.0f /21.0f, -5.0f /21.0f, 5.0f /7.0f, -1.0f /21.0f, -4.0f /21.0f, -2.0f, 0.0f, 1.0f);
   Matrix4x4 test5(1.0f, 9.0f, 5.0f, 21.0f, 4.0f, 12.0f, 5.0f, 3.0f, 4.0f, 6.0f, 11.0f, 2.0f, 45.0f, 7.0f, 6.0f, 4.0f);
   Matrix4x4 test6(12.0f, 3.0f, 4.0f, 5.0f, 2.0f, 13.0f, 4.0f, 5.0f, 2.0f, 3.0f, 14.0f, 5.0f, 2.0f, 3.0f, 4.0f, 15.0f);
-  
+  Vector3f values(0, 90, 0);
+  Quaternion test7(values, 0);
+  values.setValues(0, 180, 0);
+  Quaternion test8(values, 0);
   try
   {
-
+    std::cout << (Quaternion::slerp(test7, test8, 0.5f)).toString() << std::endl;
   }
   catch (const std::exception& e)
   {
