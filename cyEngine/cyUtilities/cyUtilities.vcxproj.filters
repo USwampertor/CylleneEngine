@@ -69,9 +69,6 @@
     <ClInclude Include="include\cyColor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyFileSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyVector3f.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -97,6 +94,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyEulerHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyFileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
