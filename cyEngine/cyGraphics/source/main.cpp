@@ -38,12 +38,20 @@ ID3D11Resource* backbuffer;
 ID3D11RenderTargetView* renderTargetView;
 D3D11_VIEWPORT viewport;
 ID3D11RasterizerState* rasterizer;
+ID3D11DepthStencilState* DSState;
+ID3D11Texture2D* depthStencil;
+ID3D11DepthStencilView* DSV;
+ID3DBlob* cs_blob;
+ID3D11ComputeShader* csShader;
 ID3DBlob* vs_blob;
 ID3D11VertexShader* vsShader;
 ID3DBlob* fs_blob;
 ID3D11PixelShader* psShader;
 ID3D11InputLayout* inputLayout;
 ID3D11SamplerState* samplerState;
+ID3D11UnorderedAccessView* uavBuffer;
+ID3D11ShaderResourceView* srvuav;
+ID3D11Buffer* computebuffer;
 ID3D11Buffer* constantbuffer;
 ID3D11Buffer* vertexbuffer;
 ID3D11Buffer* uvbuffer;
@@ -124,6 +132,12 @@ initDX11(String basepath,
          int32& gVertexPosition2D,
          int32& gUV,
          int32& gVertexColor);
+
+void
+CreateComputeShader(String path);
+
+void
+CreateComputeBuffer();
 
 void
 render(uint32& gProgramID,
@@ -631,6 +645,82 @@ init(String basepath,
     return false;
   }
 
+  // Create Depth Stencil texture
+  {
+    D3D11_TEXTURE2D_DESC descDepth;
+    descDepth.Width = clientWidth;
+    descDepth.Height = clientHeight;
+    descDepth.MipLevels = 1;
+    descDepth.ArraySize = 1;
+    descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descDepth.SampleDesc.Count = 1;
+    descDepth.SampleDesc.Quality = 0;
+    descDepth.Usage = D3D11_USAGE_DEFAULT;
+    descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    descDepth.CPUAccessFlags = 0;
+    descDepth.MiscFlags = 0;
+
+    HRESULT HRDepthStencil = device->CreateTexture2D(&descDepth, NULL, &depthStencil);
+
+    if (FAILED(HRDepthStencil)) {
+      printf("Depth Stencil texture couldn't be created: ");
+      ErrorDescription(HRDepthStencil);
+      return false;
+    }
+  }
+
+  // Create Depth Stencil State
+  {
+    D3D11_DEPTH_STENCIL_DESC dsDesc;
+
+    // Depth test parameters
+    dsDesc.DepthEnable = true;
+    dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    //dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    //dsDesc.DepthFunc = D3D11_COMPARISON_GREATER;
+
+    // Stencil test parameters
+    dsDesc.StencilEnable = false;
+    dsDesc.StencilReadMask = 0xFF;
+    dsDesc.StencilWriteMask = 0xFF;
+
+    // Stencil operations if pixel is front-facing
+    dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+    dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NEVER;
+
+    // Stencil operations if pixel is back-facing
+    dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+    dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_NEVER;
+
+    // Create depth stencil state
+    device->CreateDepthStencilState(&dsDesc, &DSState);
+  }
+
+  // Create Depth Stencil view
+  {
+    D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+    descDSV.Flags = 0;
+    descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    descDSV.Texture2D.MipSlice = 0;
+
+    // Create the depth stencil view
+    HRESULT HRDepthStencilView = device->CreateDepthStencilView(depthStencil, // Depth stencil texture
+                                                                &descDSV, // Depth stencil desc
+                                                                &DSV);  // [out] Depth stencil view
+
+    if (FAILED(HRDepthStencilView)) {
+      printf("Depth Stencil View couldn't be created: ");
+      ErrorDescription(HRDepthStencilView);
+      return false;
+    }
+  }
+
   // Viewport
   viewport.Width = clientWidth;
   viewport.Height = clientHeight;
@@ -662,6 +752,8 @@ initDX11(String basepath,
          int32& gVertexPosition2D,
          int32& gUV,
          int32& gVertexColor) {
+  CreateComputeShader(basepath + "Shaders/hlsl/Compute.hlsl");
+
   // Create vertex shader
   {
     File VSFile = FileSystem::open(basepath + "Shaders/hlsl/Vertex.hlsl");
@@ -703,7 +795,6 @@ initDX11(String basepath,
       ErrorDescription(HRCreateVS);
       return false;
     }
-
   }
 
   // Create fragment shader
@@ -747,7 +838,6 @@ initDX11(String basepath,
       ErrorDescription(HRCreatePS);
       return false;
     }
-
   }
 
   // create the input layout
@@ -818,6 +908,8 @@ initDX11(String basepath,
     }
 
   }
+
+  CreateComputeBuffer();
 
   // Create constant buffer
   {
@@ -905,6 +997,101 @@ initDX11(String basepath,
 }
 
 void
+CreateComputeShader(String path) {
+  File CSFile = FileSystem::open(path);
+  String CSString = CSFile.readFile();
+
+  ID3DBlob* errorBlob = nullptr;
+
+  uint32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if _DEBUG
+  flags |= D3DCOMPILE_DEBUG;
+#endif
+
+  HRESULT HRCS = D3DCompile(CSString.c_str(),
+                            CSString.size(),
+                            0,
+                            0,
+                            0,
+                            "main",
+                            "cs_5_0",
+                            flags,
+                            0,
+                            &cs_blob,
+                            &errorBlob);
+
+  if (FAILED(HRCS)) {
+    printf("Compute shader couldn't be compiled: ");
+    printf("%s\n", (char*)errorBlob->GetBufferPointer());
+    errorBlob->Release();
+    return;
+  }
+
+  HRESULT HRCreateCS = device->CreateComputeShader(cs_blob->GetBufferPointer(),
+                                                   cs_blob->GetBufferSize(),
+                                                   nullptr,
+                                                   &csShader);
+
+  if (FAILED(HRCreateCS)) {
+    printf("Compute shader couldn't be created: ");
+    ErrorDescription(HRCreateCS);
+    return;
+  }
+}
+
+void
+CreateComputeBuffer() {
+  D3D11_BUFFER_DESC bd;
+  bd.ByteWidth = sizeof(float) * 1024;
+  bd.Usage = D3D11_USAGE_DEFAULT;
+  bd.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+  bd.CPUAccessFlags = 0;
+  bd.MiscFlags = 0;
+  bd.StructureByteStride = sizeof(float);
+
+  HRESULT HRCB = device->CreateBuffer(&bd, nullptr, &computebuffer);
+
+  if (FAILED(HRCB)) {
+    printf("Compute buffer couldn't be created: ");
+    ErrorDescription(HRCB);
+    return;
+  }
+
+  D3D11_BUFFER_UAV uavbDesc;
+  uavbDesc.Flags = 0;
+  uavbDesc.FirstElement = 0;
+  uavbDesc.NumElements = 1024;
+
+  D3D11_UNORDERED_ACCESS_VIEW_DESC UAV;
+  UAV.Format = DXGI_FORMAT_R32_FLOAT;
+  UAV.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+  UAV.Buffer = uavbDesc;
+
+  HRESULT HRUAV = device->CreateUnorderedAccessView(computebuffer, &UAV, &uavBuffer);
+
+  if (FAILED(HRUAV)) {
+    printf("UAV couldn't be created: ");
+    ErrorDescription(HRUAV);
+    return;
+  }
+
+  D3D11_BUFFER_SRV srvuavDesc;
+  srvuavDesc.FirstElement = 0;
+  srvuavDesc.ElementOffset = 0;
+  srvuavDesc.NumElements = 1;
+  srvuavDesc.ElementWidth = 1024;
+
+  D3D11_SHADER_RESOURCE_VIEW_DESC SRUAV;
+  SRUAV.Format = DXGI_FORMAT_R32_FLOAT;
+  SRUAV.ViewDimension = D3D_SRV_DIMENSION_BUFFER;
+  SRUAV.Buffer = srvuavDesc;
+
+  HRESULT HRUAVSV = device->CreateShaderResourceView(computebuffer,
+                                                     &SRUAV,
+                                                     &srvuav);
+}
+
+void
 render(uint32& gProgramID,
        uint32* gVBO,
        uint32& gIBO,
@@ -915,14 +1102,25 @@ render(uint32& gProgramID,
        int32& gVertexColor,
        unsigned int texture) {
 
+  context->CSSetUnorderedAccessViews(0, 1, &uavBuffer, nullptr);
+  context->CSSetShader(csShader, nullptr, 0);
+  context->Dispatch(4, 4, 1);
+
+  ID3D11UnorderedAccessView* UAV_NULL = nullptr;
+  context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, 0);
+
   float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
 
   context->RSSetViewports(1, &viewport);
 
   context->RSSetState(rasterizer);
+  
+  context->OMSetDepthStencilState(DSState, 1);
 
-  context->OMSetRenderTargets(1, &renderTargetView, nullptr);
+  context->OMSetRenderTargets(1, &renderTargetView, DSV);
+
   context->ClearRenderTargetView(renderTargetView, color);
+  context->ClearDepthStencilView(DSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
   context->VSSetShader(vsShader, nullptr, 0);
   context->PSSetShader(psShader, nullptr, 0);
@@ -934,6 +1132,7 @@ render(uint32& gProgramID,
 
   context->UpdateSubresource(constantbuffer, 0, nullptr, matrices, 0, 0);
 
+  context->VSSetShaderResources(0, 1, &srvuav);
   context->VSSetConstantBuffers(0, 1, &constantbuffer);
   context->PSSetConstantBuffers(0, 1, &constantbuffer);
 
@@ -951,7 +1150,11 @@ render(uint32& gProgramID,
 
   context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
 
-  context->DrawIndexed(6, 0, 0);
+  //context->DrawIndexed(6, 0, 0);
+  context->DrawIndexedInstanced(6, 1024, 0, 0, 0);
 
   swapchain->Present(1, 0);
+
+  ID3D11ShaderResourceView* SRV_NULL = nullptr;
+  context->VSSetShaderResources(0, 1, &SRV_NULL);
 }
