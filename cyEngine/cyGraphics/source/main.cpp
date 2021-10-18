@@ -321,9 +321,21 @@ main(int argc, char** argv) {
 
   windowHndStr << windowHnd;
   pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+#if defined OIS_WIN32_PLATFORM 
+  pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
+  pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
+  pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
+  pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
+#elif defined OIS_LINUX_PLATFORM 
+  pl.insert(std::make_pair(std::string("x11_mouse_grab"), std::string("false")));
+  pl.insert(std::make_pair(std::string("x11_mouse_hide"), std::string("false")));
+  pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
+  pl.insert(std::make_pair(std::string("XAutoRepeatOn"), std::string("true")));
+#endif 
+
   OIS::InputManager* m_InputManager = OIS::InputManager::createInputSystem(pl);
-  OIS::Mouse* m_Mouse = static_cast<OIS::Mouse*>(m_InputManager->createInputObject(OIS::OISMouse, false));
-  OIS::Keyboard* m_Keyboard = static_cast<OIS::Keyboard*>(m_InputManager->createInputObject(OIS::OISKeyboard, false));
+  OIS::Mouse* m_Mouse = static_cast<OIS::Mouse*>(m_InputManager->createInputObject(OIS::OISMouse, true));
+  OIS::Keyboard* m_Keyboard = static_cast<OIS::Keyboard*>(m_InputManager->createInputObject(OIS::OISKeyboard, true));
 
   const OIS::MouseState& ms = m_Mouse->getMouseState();
   ms.width = clientWidth;
@@ -366,8 +378,13 @@ main(int argc, char** argv) {
     bool keyboardQ = m_Keyboard->isKeyDown(OIS::KC_Q);
     bool keyboardE = m_Keyboard->isKeyDown(OIS::KC_E);
 
-    float mouseDeltaX = m_Mouse->getMouseState().X.rel * deltaTime;
-    float mouseDeltaY = m_Mouse->getMouseState().Y.rel * deltaTime;
+    float mouseDeltaX = 0.0f;
+    float mouseDeltaY = 0.0f;
+
+    if (m_Mouse->getMouseState().buttonDown(OIS::MB_Right)) {
+      mouseDeltaX = m_Mouse->getMouseState().X.rel * deltaTime;
+      mouseDeltaY = m_Mouse->getMouseState().Y.rel * deltaTime;
+    }
 
     if (keyboardW) CamPosition += CamForward * 10.0f * deltaTime;
     if (keyboardS) CamPosition -= CamForward * 10.0f * deltaTime;
@@ -375,7 +392,7 @@ main(int argc, char** argv) {
     if (keyboardD) CamPosition += CamRight * 10.0f * deltaTime;
     if (keyboardE) CamPosition.y += 10.0f * deltaTime;
     if (keyboardQ) CamPosition.y -= 10.0f * deltaTime;
-    
+
     Quaternion rotY;
     rotY.fromEuler(Vector3f(0.0f, 0.1f * mouseDeltaX, 0.0f), 0);
 
