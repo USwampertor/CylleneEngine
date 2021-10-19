@@ -1,0 +1,3 @@
+[submodule "cyEngine/CylleneDependencies"]
+	path = cyEngine/CylleneDependencies
+	url = https://github.com/USwampertor/CylleneDependencies.git

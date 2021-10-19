@@ -11,7 +11,6 @@
 #pragma once
 
 #include <better-enums/enum.h>
-
 #include "cyPlatformDefines.h"
 #include "cyPlatformTypes.h"
 #include "cyStdHeaders.h"
