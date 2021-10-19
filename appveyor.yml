@@ -1,5 +1,7 @@
 version: 1.0.{build}
 image: Visual Studio 2019
+environment:
+  CYLLENE_DEPENDENCIES: $(SolutionDir)CylleneDependencies/
 install:
   - git submodule update --init --recursive
 build:
