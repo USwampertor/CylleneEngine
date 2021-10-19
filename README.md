@@ -26,7 +26,7 @@ This should point to the CylleneDependencies folder, whether you use the submodu
 
 ## Collaborators
 
-|<img src="./docs/resources/swampertor.png" alt="Swampertor" width="200" height="200"/> | <img src="./docs/resources/yostarduck.png" alt="Yostarduck" width="200" height="200"/> |
+|<img src="./docs/resources/sw.png" alt="Swampertor" width="200" height="200"/> | <img src="./docs/resources/yostarduck.png" alt="Yostarduck" width="200" height="200"/> |
 | ---- | ---- |
 | [Swampertor](https://github.com/USwampertor) | [Yostarduck](https://github.com/Yostarduck) |
 
