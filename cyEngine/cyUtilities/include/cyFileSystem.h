@@ -10,7 +10,6 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
-#include "cyModule.h"
 
 #include <cppfs/FileHandle.h>
 #include <cppfs/FileIterator.h>
@@ -90,5 +89,29 @@ namespace CYLLENE_SDK
       return Path(cpplocate::documentDir());
     }
 
+    static Path
+    profileDir() {
+      return Path(cpplocate::profileDir());
+    }
+
+    static Path
+    tempDir() {
+      return Path(cpplocate::tempDir(getExecutablePath().baseName()));
+    }
+
+    static Path
+    configDir() {
+      return Path(cpplocate::configDir(getExecutablePath().baseName()));
+    }
+
+    static Path
+    localDir() {
+      return Path(cpplocate::localDir(getExecutablePath().baseName()));
+    }
+
+    static Path
+    roamingDir() {
+      return Path(cpplocate::roamingDir(getExecutablePath().baseName()));
+    }
   };
 }
