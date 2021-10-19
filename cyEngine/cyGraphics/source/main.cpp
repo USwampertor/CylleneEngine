@@ -32,21 +32,33 @@ using steady_clock = std::chrono::steady_clock;
 using namespace CYLLENE_SDK;
 
 ID3D11Device* device;
-IDXGISwapChain1* swapchain;
 ID3D11DeviceContext* context;
+
+IDXGISwapChain1* swapchain;
 ID3D11Resource* backbuffer;
 ID3D11RenderTargetView* renderTargetView;
+ID3D11UnorderedAccessView* unorderedAccessView;
+
 D3D11_VIEWPORT viewport;
+
 ID3D11RasterizerState* rasterizer;
-ID3D11DepthStencilState* DSState;
+
 ID3D11Texture2D* depthStencil;
+ID3D11DepthStencilState* DSState;
 ID3D11DepthStencilView* DSV;
+
 ID3DBlob* cs_blob;
 ID3D11ComputeShader* csShader;
-ID3DBlob* vs_blob;
-ID3D11VertexShader* vsShader;
-ID3DBlob* fs_blob;
-ID3D11PixelShader* psShader;
+
+ID3DBlob* gbuffer_vs_blob;
+ID3D11VertexShader* GBufferVSShader;
+
+ID3DBlob* gbuffer_fs_blob;
+ID3D11PixelShader* GBufferPSShader;
+
+ID3DBlob* image_cs_blob;
+ID3D11ComputeShader* ImageCSShader;
+
 ID3D11InputLayout* inputLayout;
 ID3D11SamplerState* samplerState;
 ID3D11UnorderedAccessView* uavBuffer;
@@ -57,8 +69,15 @@ ID3D11Buffer* vertexbuffer;
 ID3D11Buffer* uvbuffer;
 ID3D11Buffer* colorbuffer;
 ID3D11Buffer* indexbuffer;
-ID3D11Texture2D* tex;
-ID3D11ShaderResourceView* checkerTexture;
+
+ID3D11Texture2D* checkterTexture;
+ID3D11ShaderResourceView* checkerTextureSRV;
+
+ID3D11Texture2D* GBufferTexture;
+ID3D11RenderTargetView* GBufferRTV;
+ID3D11ShaderResourceView* GBufferSRV;
+ID3D11UnorderedAccessView* GBufferUAV;
+
 float g_aspectRatio;
 
 struct Vertex
@@ -123,7 +142,7 @@ init(String basepath,
      int32& gUV,
      int32& gVertexColor);
 
-//Initializes matrices and clear color
+// Initializes matrices and clear color
 bool
 initDX11(String basepath,
          uint32& gProgramID,
@@ -134,10 +153,32 @@ initDX11(String basepath,
          int32& gVertexColor);
 
 void
-CreateComputeShader(String path);
+CreateComputeShader(String path,
+                    ID3DBlob** csBlob,
+                    ID3D11ComputeShader** cs,
+                    String entryPoint = "main");
+
+void
+CreateVertexShader(String path,
+                   ID3DBlob** vsBlob,
+                   ID3D11VertexShader** vs,
+                   String entryPoint = "main");
+
+void
+CreateFragmentShader(String path,
+                     ID3DBlob** fsBlob,
+                     ID3D11PixelShader** ps,
+                     String entryPoint = "main");
 
 void
 CreateComputeBuffer();
+
+void
+CreateRenderTarget(uint32 width,
+                   uint32 height,
+                   ID3D11Texture2D** buffer,
+                   ID3D11RenderTargetView** rtv,
+                   ID3D11ShaderResourceView** srv);
 
 void
 render(uint32& gProgramID,
@@ -149,12 +190,6 @@ render(uint32& gProgramID,
        int32& gUV,
        int32& gVertexColor,
        unsigned int texture);
-
-// Define your user buttons somewhere global
-enum Button
-{
-  ButtonConfirm
-};
 
 int
 main(int argc, char** argv) {
@@ -274,7 +309,7 @@ main(int argc, char** argv) {
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
 
-    HRESULT HRTexture = device->CreateTexture2D(&desc, &initData, &tex);
+    HRESULT HRTexture = device->CreateTexture2D(&desc, &initData, &checkterTexture);
 
     if (FAILED(HRTexture)) {
       printf("Texture couldn't be created: ");
@@ -287,9 +322,9 @@ main(int argc, char** argv) {
     SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     SRVDesc.Texture2D.MipLevels = 1;
 
-    HRTexture = device->CreateShaderResourceView(tex,
+    HRTexture = device->CreateShaderResourceView(checkterTexture,
                                                  &SRVDesc,
-                                                 &checkerTexture);
+                                                 &checkerTextureSRV);
 
     if (FAILED(HRTexture)) {
       printf("Shader resource view couldn't be created: ");
@@ -611,7 +646,7 @@ init(String basepath,
   sd.Height = clientHeight;
   sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
   sd.Stereo = false;
-  sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+  sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_SHADER_INPUT;
   sd.BufferCount = FrameCount;
   sd.Scaling = DXGI_SCALING_NONE;
   sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -654,12 +689,26 @@ init(String basepath,
     return false;
   }
 
-  HRESULT HRCreateRT = device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView);
+  // Create swapchain back buffer RTV
+  {
+    HRESULT HRCreateRTV = device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView);
 
-  if (FAILED(HRCreateRT)) {
-    printf("Backbuffer Rendertarget couldn't be created: ");
-    ErrorDescription(HRCreateRT);
-    return false;
+    if (FAILED(HRCreateRTV)) {
+      printf("Backbuffer RTV couldn't be created: ");
+      ErrorDescription(HRCreateRTV);
+      return false;
+    }
+  }
+
+  // Create swapchain back buffer UAV
+  {
+    HRESULT HRCreateUAV = device->CreateUnorderedAccessView(backbuffer, nullptr, &unorderedAccessView);
+
+    if (FAILED(HRCreateUAV)) {
+      printf("Backbuffer UAV couldn't be created: ");
+      ErrorDescription(HRCreateUAV);
+      return false;
+    }
   }
 
   // Create Depth Stencil texture
@@ -769,93 +818,22 @@ initDX11(String basepath,
          int32& gVertexPosition2D,
          int32& gUV,
          int32& gVertexColor) {
-  CreateComputeShader(basepath + "Shaders/hlsl/Compute.hlsl");
+  CreateComputeShader(basepath + "Shaders/hlsl/ComputeBuffer.hlsl",
+                      &cs_blob,
+                      &csShader);
 
-  // Create vertex shader
-  {
-    File VSFile = FileSystem::open(basepath + "Shaders/hlsl/Vertex.hlsl");
-    String VSString = VSFile.readFile();
+  CreateVertexShader(basepath + "Shaders/hlsl/GBufferVertex.hlsl",
+                     &gbuffer_vs_blob,
+                     &GBufferVSShader);
 
-    ID3DBlob* errorBlob = nullptr;
+  
+  CreateFragmentShader(basepath + "Shaders/hlsl/GBufferFragment.hlsl",
+                       &gbuffer_fs_blob,
+                       &GBufferPSShader);
 
-    uint32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if _DEBUG
-    flags |= D3DCOMPILE_DEBUG;
-#endif
-
-    HRESULT HRVertexShader = D3DCompile(VSString.c_str(),
-                                        VSString.size(),
-                                        0,
-                                        0,
-                                        0,
-                                        "main",
-                                        "vs_5_0",
-                                        flags,
-                                        0,
-                                        &vs_blob,
-                                        &errorBlob);
-
-    if (FAILED(HRVertexShader)) {
-      printf("Vertex shader couldn't be compiled: ");
-      printf("%s\n", (char*)errorBlob->GetBufferPointer());
-      errorBlob->Release();
-      return false;
-    }
-
-    HRESULT HRCreateVS = device->CreateVertexShader(vs_blob->GetBufferPointer(),
-                                                    vs_blob->GetBufferSize(),
-                                                    nullptr,
-                                                    &vsShader);
-
-    if (FAILED(HRCreateVS)) {
-      printf("Vertex shader couldn't be created: ");
-      ErrorDescription(HRCreateVS);
-      return false;
-    }
-  }
-
-  // Create fragment shader
-  {
-    File FSFile = FileSystem::open(basepath + "Shaders/hlsl/Fragment.hlsl");
-    String FSString = FSFile.readFile();
-
-    ID3DBlob* errorBlob = nullptr;
-
-    uint32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if _DEBUG
-    flags |= D3DCOMPILE_DEBUG;
-#endif
-
-    HRESULT HRFragmentShader = D3DCompile(FSString.c_str(),
-                                          FSString.size(),
-                                          0,
-                                          0,
-                                          0,
-                                          "main",
-                                          "ps_5_0",
-                                          flags,
-                                          0,
-                                          &fs_blob,
-                                          &errorBlob);
-
-    if (FAILED(HRFragmentShader)) {
-      printf("Fragment shader couldn't be compiled: ");
-      printf("%s\n", (char*)errorBlob->GetBufferPointer());
-      errorBlob->Release();
-      return false;
-    }
-
-    HRESULT HRCreatePS = device->CreatePixelShader(fs_blob->GetBufferPointer(),
-                                                   fs_blob->GetBufferSize(),
-                                                   nullptr,
-                                                   &psShader);
-
-    if (FAILED(HRCreatePS)) {
-      printf("Pixel shader couldn't be created: ");
-      ErrorDescription(HRCreatePS);
-      return false;
-    }
-  }
+  CreateComputeShader(basepath + "Shaders/hlsl/ComputeTexture.hlsl",
+                      &image_cs_blob,
+                      &ImageCSShader);
 
   // create the input layout
   {
@@ -868,8 +846,8 @@ initDX11(String basepath,
 
     HRESULT HRInputLayout = device->CreateInputLayout(ied,
                                                       ARRAYSIZE(ied),
-                                                      vs_blob->GetBufferPointer(),
-                                                      vs_blob->GetBufferSize(),
+                                                      gbuffer_vs_blob->GetBufferPointer(),
+                                                      gbuffer_vs_blob->GetBufferSize(),
                                                       &inputLayout);
 
     if (FAILED(HRInputLayout)) {
@@ -927,6 +905,8 @@ initDX11(String basepath,
   }
 
   CreateComputeBuffer();
+
+  CreateRenderTarget(1280, 720, &GBufferTexture, &GBufferRTV, &GBufferSRV);
 
   // Create constant buffer
   {
@@ -1014,7 +994,10 @@ initDX11(String basepath,
 }
 
 void
-CreateComputeShader(String path) {
+CreateComputeShader(String path,
+                    ID3DBlob** csBlob,
+                    ID3D11ComputeShader** cs,
+                    String entryPoint) {
   File CSFile = FileSystem::open(path);
   String CSString = CSFile.readFile();
 
@@ -1030,11 +1013,11 @@ CreateComputeShader(String path) {
                             0,
                             0,
                             0,
-                            "main",
+                            entryPoint.c_str(),
                             "cs_5_0",
                             flags,
                             0,
-                            &cs_blob,
+                            csBlob,
                             &errorBlob);
 
   if (FAILED(HRCS)) {
@@ -1044,14 +1027,110 @@ CreateComputeShader(String path) {
     return;
   }
 
-  HRESULT HRCreateCS = device->CreateComputeShader(cs_blob->GetBufferPointer(),
-                                                   cs_blob->GetBufferSize(),
+  HRESULT HRCreateCS = device->CreateComputeShader((*csBlob)->GetBufferPointer(),
+                                                   (*csBlob)->GetBufferSize(),
                                                    nullptr,
-                                                   &csShader);
+                                                   cs);
 
   if (FAILED(HRCreateCS)) {
     printf("Compute shader couldn't be created: ");
     ErrorDescription(HRCreateCS);
+    return;
+  }
+}
+
+void
+CreateVertexShader(String path,
+                   ID3DBlob** vsBlob,
+                   ID3D11VertexShader** vs,
+                   String entryPoint) {
+  File VSFile = FileSystem::open(path);
+
+  String VSString = VSFile.readFile();
+  
+  ID3DBlob* errorBlob = nullptr;
+  
+  uint32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if _DEBUG
+  flags |= D3DCOMPILE_DEBUG;
+#endif
+
+  HRESULT HRVertexShader = D3DCompile(VSString.c_str(),
+                                      VSString.size(),
+                                      0,
+                                      0,
+                                      0,
+                                      entryPoint.c_str(),
+                                      "vs_5_0",
+                                      flags,
+                                      0,
+                                      vsBlob,
+                                      &errorBlob);
+
+  if (FAILED(HRVertexShader)) {
+    printf("Vertex shader couldn't be compiled: ");
+    printf("%s\n", (char*)errorBlob->GetBufferPointer());
+
+    errorBlob->Release();
+  }
+
+  HRESULT HRCreateVS = device->CreateVertexShader((*vsBlob)->GetBufferPointer(),
+                                                  (*vsBlob)->GetBufferSize(),
+                                                  nullptr,
+                                                  vs);
+
+  if (FAILED(HRCreateVS)) {
+    printf("Vertex shader couldn't be created: ");
+    ErrorDescription(HRCreateVS);
+    return;
+  }
+}
+
+void
+CreateFragmentShader(String path,
+                     ID3DBlob** fsBlob,
+                     ID3D11PixelShader** ps,
+                     String entryPoint) {
+  File FSFile = FileSystem::open(path);
+  String FSString = FSFile.readFile();
+
+  ID3DBlob* errorBlob = nullptr;
+
+  uint32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if _DEBUG
+  flags |= D3DCOMPILE_DEBUG;
+#endif
+
+  HRESULT HRFragmentShader = D3DCompile(FSString.c_str(),
+                                        FSString.size(),
+                                        0,
+                                        0,
+                                        0,
+                                        entryPoint.c_str(),
+                                        "ps_5_0",
+                                        flags,
+                                        0,
+                                        fsBlob,
+                                        &errorBlob);
+
+  if (FAILED(HRFragmentShader)) {
+    printf("Fragment shader couldn't be compiled: ");
+    printf("%s\n", (char*)errorBlob->GetBufferPointer());
+
+    errorBlob->Release();
+
+    return;
+  }
+
+  HRESULT HRCreatePS = device->CreatePixelShader((*fsBlob)->GetBufferPointer(),
+                                                 (*fsBlob)->GetBufferSize(),
+                                                 nullptr,
+                                                 ps);
+
+  if (FAILED(HRCreatePS)) {
+    printf("Pixel shader couldn't be created: ");
+    ErrorDescription(HRCreatePS);
+
     return;
   }
 }
@@ -1109,6 +1188,91 @@ CreateComputeBuffer() {
 }
 
 void
+CreateRenderTarget(uint32 width,
+                   uint32 height,
+                   ID3D11Texture2D** buffer,
+                   ID3D11RenderTargetView** rtv,
+                   ID3D11ShaderResourceView** srv) {
+  // Initialize the render target texture description.
+  D3D11_TEXTURE2D_DESC textureDesc;
+  ZeroMemory(&textureDesc, sizeof(textureDesc));
+
+  // Setup the render target texture description.
+  textureDesc.Width = width;
+  textureDesc.Height = height;
+  textureDesc.MipLevels = 1;
+  textureDesc.ArraySize = 1;
+  textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  textureDesc.SampleDesc.Count = 1;
+  textureDesc.Usage = D3D11_USAGE_DEFAULT;
+  textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET |
+                          D3D11_BIND_SHADER_RESOURCE |
+                          D3D11_BIND_UNORDERED_ACCESS;
+  textureDesc.CPUAccessFlags = 0;
+  textureDesc.MiscFlags = 0;
+
+  HRESULT HRCB = device->CreateTexture2D(&textureDesc, nullptr, buffer);
+
+  if (FAILED(HRCB)) {
+    printf("RT buffer couldn't be created: ");
+    ErrorDescription(HRCB);
+    return;
+  }
+
+  // Create RTV
+  {
+    D3D11_RENDER_TARGET_VIEW_DESC RTVDesc;
+    RTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    RTVDesc.Texture2D.MipSlice = 0;
+
+    HRESULT HRCreateRT = device->CreateRenderTargetView(*buffer, &RTVDesc, rtv);
+
+    if (FAILED(HRCreateRT)) {
+      printf("RT RTV couldn't be created: ");
+      ErrorDescription(HRCreateRT);
+      return;
+    }
+  }
+
+  // Create SRV
+  {
+    D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+    SRVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    SRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+    SRVDesc.Texture2D.MostDetailedMip = 0;
+    SRVDesc.Texture2D.MipLevels = 1;
+
+    ID3D11ShaderResourceView* rt = nullptr;
+    HRESULT HRCreateSR = device->CreateShaderResourceView(*buffer, &SRVDesc, srv);
+
+    if (FAILED(HRCreateSR)) {
+      printf("RT SRV couldn't be created: ");
+      ErrorDescription(HRCreateSR);
+      return;
+    }
+  }
+
+  // Create UAV
+  {
+    D3D11_UNORDERED_ACCESS_VIEW_DESC UAV;
+    UAV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    UAV.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+    UAV.Buffer.Flags = 0;
+    UAV.Buffer.FirstElement = 0;
+    UAV.Buffer.NumElements = 1;
+
+    HRESULT HRCreateUAV = device->CreateUnorderedAccessView(*buffer, &UAV, &GBufferUAV);
+
+    if (FAILED(HRCreateUAV)) {
+      printf("RT UAV couldn't be created: ");
+      ErrorDescription(HRCreateUAV);
+      return;
+    }
+  }
+}
+
+void
 render(uint32& gProgramID,
        uint32* gVBO,
        uint32& gIBO,
@@ -1118,60 +1282,102 @@ render(uint32& gProgramID,
        int32& gUV,
        int32& gVertexColor,
        unsigned int texture) {
+  // Compute shader buffer
+  {
+    context->CSSetShader(csShader, nullptr, 0);
 
-  context->CSSetUnorderedAccessViews(0, 1, &uavBuffer, nullptr);
-  context->CSSetShader(csShader, nullptr, 0);
-  context->Dispatch(4, 4, 1);
+    context->CSSetUnorderedAccessViews(0, 1, &uavBuffer, nullptr);
 
-  ID3D11UnorderedAccessView* UAV_NULL = nullptr;
-  context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, 0);
+    context->Dispatch(4, 4, 1);
+
+    ID3D11UnorderedAccessView* UAV_NULL = nullptr;
+    context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, 0);
+  }
 
   float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
+  Matrix4x4 matrices[2] = { View, Projection };
 
-  context->RSSetViewports(1, &viewport);
+  // Update buffers
+  {
+    context->UpdateSubresource(constantbuffer, 0, nullptr, matrices, 0, 0);
+  }
 
-  context->RSSetState(rasterizer);
+  // Clear
+  {
+    context->ClearRenderTargetView(renderTargetView, color);
+
+    context->ClearDepthStencilView(DSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+  }
+
+  // Rasterizer
+  {
+    context->RSSetViewports(1, &viewport);
+
+    context->RSSetState(rasterizer);
+  }
   
-  context->OMSetDepthStencilState(DSState, 1);
+  // Input layout
+  {
+    context->IASetInputLayout(inputLayout);
 
-  context->OMSetRenderTargets(1, &renderTargetView, DSV);
+    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-  context->ClearRenderTargetView(renderTargetView, color);
-  context->ClearDepthStencilView(DSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    uint32 stride = sizeof(Vertex);
+    uint32 offset = 0;
+    context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
 
-  context->VSSetShader(vsShader, nullptr, 0);
-  context->PSSetShader(psShader, nullptr, 0);
+    context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+  }
 
-  Matrix4x4 matrices[2] = {
-    View,
-    Projection
-  };
+  // Graphics shaders
+  {
+    // Vertex shader
+    context->VSSetShader(GBufferVSShader, nullptr, 0);
 
-  context->UpdateSubresource(constantbuffer, 0, nullptr, matrices, 0, 0);
+    context->VSSetConstantBuffers(0, 1, &constantbuffer);
 
-  context->VSSetShaderResources(0, 1, &srvuav);
-  context->VSSetConstantBuffers(0, 1, &constantbuffer);
-  context->PSSetConstantBuffers(0, 1, &constantbuffer);
+    context->VSSetShaderResources(0, 1, &srvuav);
 
-  context->PSSetSamplers(0, 1, &samplerState);
+    // Pixel shader
+    context->PSSetShader(GBufferPSShader, nullptr, 0);
 
-  context->PSSetShaderResources(0, 1, &checkerTexture);
+    context->PSSetConstantBuffers(0, 1, &constantbuffer);
 
-  context->IASetInputLayout(inputLayout);
+    context->PSSetShaderResources(0, 1, &checkerTextureSRV);
 
-  context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    context->PSSetSamplers(0, 1, &samplerState);
+  }
 
-  uint32 stride = sizeof(Vertex);
-  uint32 offset = 0;
-  context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+  // Output Merge
+  {
+    context->OMSetDepthStencilState(DSState, 1);
 
-  context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+    context->OMSetRenderTargets(1, &renderTargetView, DSV);
+    //context->OMSetRenderTargets(1, &GBufferRTV, DSV);
+  }
 
   //context->DrawIndexed(6, 0, 0);
   context->DrawIndexedInstanced(6, 1024, 0, 0, 0);
+  
+  // Unbind
+  {
+    ID3D11ShaderResourceView* SRV_NULL = nullptr;
+    context->VSSetShaderResources(0, 1, &SRV_NULL);
+
+    context->OMSetRenderTargets(0, nullptr, nullptr);
+  }
+
+  // Compute shader image
+  {
+    context->CSSetShader(ImageCSShader, nullptr, 0);
+
+    context->CSSetUnorderedAccessViews(0, 1, &unorderedAccessView, nullptr);
+
+    context->Dispatch(40, 23, 1);
+
+    ID3D11UnorderedAccessView* UAV_NULL = nullptr;
+    context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, 0);
+  }
 
   swapchain->Present(1, 0);
-
-  ID3D11ShaderResourceView* SRV_NULL = nullptr;
-  context->VSSetShaderResources(0, 1, &SRV_NULL);
 }
