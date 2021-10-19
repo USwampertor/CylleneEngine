@@ -18,6 +18,8 @@ main() {
     JSON json;
     json.Parse("{\"hello\":\"world\"}");
     std::cout << json["hello"].GetString() << std::endl;
+    std::cout << json.stringify() << std::endl;
+    std::cout << json.prettyString() << std::endl;
   }
   catch (const std::exception& e)
   {

@@ -10,43 +10,35 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
-
+#include "cyStdHeaders.h"
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 
+
 namespace CYLLENE_SDK {
-  using JSON = rapidjson::Document;
+  // using JSON = rapidjson::Document;
   using JSONValue = rapidjson::Value;
 
-  class CY_UTILITY_EXPORT JSONUtility
+  class JSON : public rapidjson::Document
   {
   public:
-
-    static JSON
-    fromString(const String& jsonString) {
-      JSON toReturn;
-      toReturn.Parse(jsonString.c_str());
-      return toReturn;
-    }
-
-    static String
-    stringify(const JSON& json) {
+    std::string
+    stringify() {
       rapidjson::StringBuffer buffer;
       rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-      json.Accept(writer);
-      String toReturn = buffer.GetString();
-      return toReturn;
+      Accept(writer);
+      return buffer.GetString();
+     
     }
 
-    static String
-    prettyString(const JSON& json) {
+    std::string
+    prettyString() {
       rapidjson::StringBuffer buffer;
       rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-      json.Accept(writer);
+      Accept(writer);
       return buffer.GetString();
     }
-
   };
 }
