@@ -33,11 +33,8 @@ main(uint3 local_thread_ID  : SV_GroupThreadID,
   float3 color = backbuffer[global_thread_ID.xy].xyz;
 
   float vignette = distance(uv, float2(0.5f, 0.5f));
-  //vignette /= 0.5f;
   vignette /= 0.70711f;
-
-  //backbuffer[global_thread_ID.xy] = float4(uv, 0.0f, 1.0f);
-  //backbuffer[global_thread_ID.xy] = float4(color, 1.0f);
-  //backbuffer[global_thread_ID.xy] = float4(1.0f.xxx - color, 1.0f);
-  backbuffer[global_thread_ID.xy] = float4(lerp(color, 0.0f.xxx, vignette), 1.0f);
+  
+  backbuffer[global_thread_ID.xy] = float4(color, 1.0f);
+  //backbuffer[global_thread_ID.xy] = float4(lerp(color, 0.0f.xxx, vignette), 1.0f);
 }

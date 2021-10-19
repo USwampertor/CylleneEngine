@@ -21,6 +21,7 @@
 #include "cyVector2f.h"
 #include "cyVector3f.h"
 #include "cyFileSystem.h"
+#include "cyMatrix3x3.h"
 #include "cyMatrix4x4.h"
 #include "cyQuaternion.h"
 
@@ -65,10 +66,10 @@ ID3D11UnorderedAccessView* uavBuffer;
 ID3D11ShaderResourceView* srvuav;
 ID3D11Buffer* computebuffer;
 ID3D11Buffer* constantbuffer;
+ID3D11Buffer* indexbuffer;
 ID3D11Buffer* vertexbuffer;
 ID3D11Buffer* uvbuffer;
 ID3D11Buffer* colorbuffer;
-ID3D11Buffer* indexbuffer;
 
 ID3D11Texture2D* checkterTexture;
 ID3D11ShaderResourceView* checkerTextureSRV;
@@ -83,22 +84,28 @@ float g_aspectRatio;
 struct Vertex
 {
   Vector3f position;
-  Vector2f uv;
-  Vector3f color;
+  Vector2f texcoord;
+  Vector3f normal;
 };
 
 struct Mesh
 {
+  uint32 nVertices;
   Vertex* vertices;
-  Vector3f* indices;
-  int32 nVertices;
-  int32 nIndices;
+
+  uint32 nIndices;
+  uint32* indices;
+
+  ID3D11Buffer* indexbuffer;
+  ID3D11Buffer* vertexbuffer;
 };
 
 struct Model
 {
-  Mesh* meshes;
+  Mesh meshes;
 };
+
+Vector<Mesh> Meshes;
 
 void
 ErrorDescription(HRESULT hr) {
@@ -265,7 +272,7 @@ main(int argc, char** argv) {
   //glGenTextures(1, &texture);
   //glBindTexture(GL_TEXTURE_2D, texture);
   // set the texture wrapping/filtering options (on the currently bound texture object)
-
+  
   /***************************************************************************/
   FreeImage_Initialise();
 
@@ -381,7 +388,7 @@ main(int argc, char** argv) {
   Vector3f CamForward(0, 0, 1);
 
   Matrix4x4 Projection;
-  Projection.Perspective(1920.0f, 1080.0f, 0.01f, 1000.0f, 60.0f * 0.0174533f);
+  Projection.Perspective(1920.0f, 1080.0f, 0.01f, 10000.0f, 60.0f * 0.0174533f);
   //Projection.Orthogonal(19.2f, 10.8f, 0.01f, 1000.0);
 
   bool open = true;
@@ -421,12 +428,13 @@ main(int argc, char** argv) {
       mouseDeltaY = m_Mouse->getMouseState().Y.rel * deltaTime;
     }
 
-    if (keyboardW) CamPosition += CamForward * 10.0f * deltaTime;
-    if (keyboardS) CamPosition -= CamForward * 10.0f * deltaTime;
-    if (keyboardA) CamPosition -= CamRight * 10.0f * deltaTime;
-    if (keyboardD) CamPosition += CamRight * 10.0f * deltaTime;
-    if (keyboardE) CamPosition.y += 10.0f * deltaTime;
-    if (keyboardQ) CamPosition.y -= 10.0f * deltaTime;
+    float camSpeed = 500.0f;
+    if (keyboardW) CamPosition += CamForward * camSpeed * deltaTime;
+    if (keyboardS) CamPosition -= CamForward * camSpeed * deltaTime;
+    if (keyboardA) CamPosition -= CamRight * camSpeed * deltaTime;
+    if (keyboardD) CamPosition += CamRight * camSpeed * deltaTime;
+    if (keyboardE) CamPosition.y += camSpeed * deltaTime;
+    if (keyboardQ) CamPosition.y -= camSpeed * deltaTime;
 
     Quaternion rotY;
     rotY.fromEuler(Vector3f(0.0f, 0.1f * mouseDeltaX, 0.0f), 0);
@@ -495,10 +503,50 @@ DoTheImportThing(const std::string& pFile) {
   }
 
   int totalMeshes = scene->mNumMeshes;
+
+  Meshes.resize(totalMeshes);
+
   for (int meshIndex = 0; meshIndex < totalMeshes; meshIndex++) {
+    Mesh& mesh = Meshes[meshIndex];
+
     aiMesh* pMesh = scene->mMeshes[meshIndex];
-    aiFace* triangle = &pMesh->mFaces[0];
-    triangle->mIndices[0];
+    int32 totalTriangles = pMesh->mNumFaces;
+
+    mesh.nIndices = totalTriangles * 3;
+    mesh.indices = new uint32[mesh.nIndices];
+
+    for (int32 t = 0, i = 0;
+         t < totalTriangles;
+         t++, i += 3) {
+      aiFace face = pMesh->mFaces[t];
+
+      if (face.mNumIndices != 3) {
+        printf("Non triangle face, import aborted");
+        return false;
+      }
+
+      mesh.indices[i + 0] = face.mIndices[0];
+      mesh.indices[i + 1] = face.mIndices[1];
+      mesh.indices[i + 2] = face.mIndices[2];
+    }
+
+    mesh.nVertices = pMesh->mNumVertices;
+    mesh.vertices = new Vertex[mesh.nVertices];
+    for (int32 i = 0; i < mesh.nVertices; i++) {
+      mesh.vertices[i].position = Vector3f(pMesh->mVertices[i].x,
+                                           pMesh->mVertices[i].y,
+                                           pMesh->mVertices[i].z);
+      mesh.vertices[i].normal = Vector3f(pMesh->mNormals[i].x,
+                                         pMesh->mNormals[i].y,
+                                         pMesh->mNormals[i].z);
+      if (pMesh->HasTextureCoords(0)) {
+        mesh.vertices[i].texcoord = Vector2f(pMesh->mTextureCoords[0][i].x,
+                                             pMesh->mTextureCoords[0][i].y);
+      }
+      else {
+        mesh.vertices[i].texcoord = Vector2f(0.0f, 0.0f);
+      }
+    }
   }
 
   // We're done. Everything will be cleaned up by the importer destructor
@@ -795,6 +843,8 @@ init(String basepath,
   viewport.MinDepth = 0;
   viewport.MaxDepth = 1;
 
+  DoTheImportThing(basepath + "Models/BistroExterior.fbx");
+
   //Initialize DirectX 11
   if (!initDX11(basepath,
                 gProgramID,
@@ -841,7 +891,7 @@ initDX11(String basepath,
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     HRESULT HRInputLayout = device->CreateInputLayout(ied,
@@ -910,10 +960,11 @@ initDX11(String basepath,
 
   // Create constant buffer
   {
-    Matrix4x4 contantBuffer[] =
+    Matrix4x4 contantBuffer[3] =
     {
       Matrix4x4::IDENTITY,
       Matrix4x4::IDENTITY,
+      Matrix4x4::IDENTITY
     };
 
     D3D11_BUFFER_DESC bd;
@@ -965,6 +1016,25 @@ initDX11(String basepath,
     }
   }
 
+  for (Mesh& mesh : Meshes) {
+    D3D11_BUFFER_DESC bd;
+    bd.ByteWidth = sizeof(Vertex) * mesh.nVertices;
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+    bd.StructureByteStride = 0;
+  
+    D3D11_SUBRESOURCE_DATA srd = { mesh.vertices, 0, 0 };
+    HRESULT HRIndex = device->CreateBuffer(&bd, &srd, &mesh.vertexbuffer);
+
+    if (FAILED(HRIndex)) {
+      printf("Mesh Vertex buffer couldn't be created: ");
+      ErrorDescription(HRIndex);
+      return false;
+    }
+  }
+
   // Create index buffer
   {
     uint32 indices[] =
@@ -984,8 +1054,26 @@ initDX11(String basepath,
     HRESULT HRColor = device->CreateBuffer(&bd, &srd, &indexbuffer);
 
     if (FAILED(HRColor)) {
-      printf("Color buffer couldn't be created: ");
+      printf("Index buffer couldn't be created: ");
       ErrorDescription(HRColor);
+      return false;
+    }
+  }
+
+  for (Mesh& mesh : Meshes) {
+    D3D11_BUFFER_DESC bd = { 0 };
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.ByteWidth = sizeof(uint32) * mesh.nIndices;
+    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA srd = { mesh.indices, 0, 0 };
+    HRESULT HRIndex = device->CreateBuffer(&bd, &srd, &mesh.indexbuffer);
+
+    if (FAILED(HRIndex)) {
+      printf("Mesh index buffer couldn't be created: ");
+      ErrorDescription(HRIndex);
       return false;
     }
   }
@@ -1295,7 +1383,16 @@ render(uint32& gProgramID,
   }
 
   float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
-  Matrix4x4 matrices[2] = { View, Projection };
+  Quaternion worldRotation;
+  worldRotation.fromEuler(Vector3f(3.14159265f * 1.5f, 0.0f, 0.0f), 0);
+  Matrix3x3 world3x3 = worldRotation.getRotationMatrix();
+  Matrix4x4 world;
+  world.setValues(world3x3.m[0][0], world3x3.m[0][1], world3x3.m[0][2], 0.0f,
+                  world3x3.m[1][0], world3x3.m[1][1], world3x3.m[1][2], 0.0f,
+                  world3x3.m[2][0], world3x3.m[2][1], world3x3.m[2][2], 0.0f,
+                  0.0f,             0.0f,             0.0f,             1.0f);
+
+  Matrix4x4 matrices[3] = { world, View, Projection };
 
   // Update buffers
   {
@@ -1317,16 +1414,16 @@ render(uint32& gProgramID,
   }
   
   // Input layout
+  uint32 stride = sizeof(Vertex);
+  uint32 offset = 0;
   {
     context->IASetInputLayout(inputLayout);
 
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    uint32 stride = sizeof(Vertex);
-    uint32 offset = 0;
-    context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
-
-    context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+    //context->IASetVertexBuffers(0, 1, &vertexbuffer, &stride, &offset);
+    //
+    //context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
   }
 
   // Graphics shaders
@@ -1357,7 +1454,14 @@ render(uint32& gProgramID,
   }
 
   //context->DrawIndexed(6, 0, 0);
-  context->DrawIndexedInstanced(6, 1024, 0, 0, 0);
+  //context->DrawIndexedInstanced(6, 1024, 0, 0, 0);
+  for (const Mesh& mesh : Meshes) {
+    context->IASetVertexBuffers(0, 1, &mesh.vertexbuffer, &stride, &offset);
+    
+    context->IASetIndexBuffer(mesh.indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+
+    context->DrawIndexed(mesh.nIndices, 0, 0);
+  }
   
   // Unbind
   {

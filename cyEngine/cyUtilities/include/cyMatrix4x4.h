@@ -208,8 +208,5 @@ namespace CYLLENE_SDK {
       Vector4f vec[4];
       float fVec[16];
     };
-
-
-  
   };
 }
