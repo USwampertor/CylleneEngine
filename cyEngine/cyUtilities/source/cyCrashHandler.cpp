@@ -49,7 +49,7 @@ namespace CYLLENE_SDK {
 
   void
   CrashHandler::openCrashHandler() {
-
+    system(String(FileSystem::getBasePath().fullPath() + String("/CrashHandler.exe")).c_str());
   }
 
   void

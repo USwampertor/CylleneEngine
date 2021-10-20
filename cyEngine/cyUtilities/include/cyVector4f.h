@@ -29,10 +29,14 @@ namespace CYLLENE_SDK {
     /**
      * COnstructor taking a Vector3 as argument (you take x y z)
      */
+    Vector4f(const Vector2i& other);
+
+    Vector4f(const Vector2f& other);
+ 
     Vector4f(const Vector3f& other);
 
     Vector4f(const Vector4f& other);
- 
+
     Vector4f(const float& nx, const float& ny, const float& nz, const float& nw);
 
     ~Vector4f() = default;
