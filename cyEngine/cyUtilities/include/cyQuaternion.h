@@ -312,13 +312,13 @@ namespace CYLLENE_SDK {
     void
     setRotationMatrix(const Matrix3x3& m);
 
-    const Vector3f&
+    const Vector3f
     getVectorPart() const;
 
     const float&
     getScalarPart() const;
 
-    const Matrix3x3&
+    const Matrix3x3
     getRotationMatrix() const;
 
     float 

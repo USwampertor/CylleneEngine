@@ -5,6 +5,7 @@
 
 namespace CYLLENE_SDK {
 
+  class Matrix2x2;
   class Matrix3x3;
 
   class CY_UTILITY_EXPORT Matrix4x4
@@ -17,6 +18,10 @@ namespace CYLLENE_SDK {
     Matrix4x4(const float& value);
 
     Matrix4x4(const Matrix4x4& other);
+
+    Matrix4x4(const Matrix3x3& other);
+
+    Matrix4x4(const Matrix2x2& other);
 
     Matrix4x4(const float& v00, const float& v01, const float& v02, const float v03,
               const float& v10, const float& v11, const float& v12, const float v13,
