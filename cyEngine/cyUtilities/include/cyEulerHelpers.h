@@ -94,11 +94,11 @@ typedef Quat EulerAngles;    /* (x,y,z)=ang 1,2,3, w=order code  */
 #define EulOrdXYZr    EulOrd(Z,EulParOdd,EulRepNo,EulFrmR)
 #define EulOrdZYZr    EulOrd(Z,EulParOdd,EulRepYes,EulFrmR)
 
-EulerAngles Eul_(float ai, float aj, float ah, int order);
+EulerAngles Eul_(float ai, float aj, float ah, int32 order);
 Quat Eul_ToQuat(EulerAngles ea);
 void Eul_ToHMatrix(EulerAngles ea, HMatrix M);
-EulerAngles Eul_FromHMatrix(HMatrix M, int order);
-EulerAngles Eul_FromQuat(Quat q, int order);
+EulerAngles Eul_FromHMatrix(HMatrix M, int32 order);
+EulerAngles Eul_FromQuat(Quat q, int32 order);
 #endif
 
 }

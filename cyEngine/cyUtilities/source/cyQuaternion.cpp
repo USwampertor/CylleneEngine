@@ -287,7 +287,7 @@ namespace CYLLENE_SDK {
 
 
     float w1, x1, y1, z1, w2, x2, y2, z2, w3, x3, y3, z3;
-    Quaternion q2New;
+    // Quaternion q2New;
     float theta, mult1, mult2;
 
     w1 = q1.w; x1 = q1.x; y1 = q1.y; z1 = q1.z;
@@ -517,7 +517,7 @@ namespace CYLLENE_SDK {
 
     EulerAngles ea = Eul_FromQuat(q, order);
 
-    return Euler(ea.x, ea.y, ea.z, ea.w);
+    return Euler(ea.x, ea.y, ea.z, static_cast<int32>(ea.w));
   }
 
   Vector4f 

@@ -3,7 +3,7 @@
 #include "cyMath.h"
 namespace CYLLENE_SDK {
   Matrix2x2::Matrix2x2(const float& value) {
-    memset(this, value, sizeof(Matrix2x2));
+    memset(this, static_cast<int32>(value), sizeof(Matrix2x2));
   }
 
   Matrix2x2::Matrix2x2(const Matrix2x2& other)

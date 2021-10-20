@@ -79,9 +79,9 @@ namespace CYLLENE_SDK
     template<size_t N, typename T>
     inline T canonicalize(uint64 bits)
     {
-      constexpr int real_bits = NumericLimits<T>::digits;
-      constexpr int uint_bits = N;
-      constexpr int data_bits = (real_bits < uint_bits ? real_bits : uint_bits);
+      constexpr int32 real_bits = NumericLimits<T>::digits;
+      constexpr int32 uint_bits = N;
+      constexpr int32 data_bits = (real_bits < uint_bits ? real_bits : uint_bits);
       constexpr T norm = 1 / T(int64(1) << data_bits);
       return norm * T(bits >> (uint_bits - data_bits));
     }

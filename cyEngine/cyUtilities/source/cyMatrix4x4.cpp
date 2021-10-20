@@ -16,7 +16,7 @@
 
 namespace CYLLENE_SDK {
   Matrix4x4::Matrix4x4(const float& value) {
-    memset(this, value, sizeof(Matrix4x4));
+    memset(this, static_cast<int32>(value), sizeof(Matrix4x4));
   }
 
   Matrix4x4::Matrix4x4(const Matrix4x4& other)
@@ -270,8 +270,7 @@ namespace CYLLENE_SDK {
 
   Matrix4x4
   Matrix4x4::inversed() {
-    float det = this->determinant();
-    CY_ASSERT(det != 0.0f &&
+    CY_ASSERT(this->determinant() != 0.0f &&
               Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
     
     Matrix4x4 temp = *this;
