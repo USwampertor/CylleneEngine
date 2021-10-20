@@ -208,39 +208,12 @@ namespace CYLLENE_SDK {
     temp.transpose();
     temp *= Math::pow(this->determinant(), -1.0f);
     return temp;
-    // We assign the cofactored matrices on the corresponding space when transposing
-    // This way we save ourselves a function call
-    // temp.m[0][0] =  ((m[1][1] * m[2][2]) - (m[2][1] * m[1][2]));
-    // temp.m[1][0] = -((m[1][0] * m[2][2]) - (m[2][0] * m[1][2]));
-    // temp.m[2][0] =  ((m[1][0] * m[2][1]) - (m[2][0] * m[1][1]));
-    // temp.m[0][1] = -((m[0][1] * m[2][2]) - (m[2][1] * m[0][2]));
-    // temp.m[1][1] =  ((m[0][0] * m[2][2]) - (m[2][0] * m[0][2]));
-    // temp.m[2][1] = -((m[0][0] * m[2][1]) - (m[2][0] * m[0][1]));
-    // temp.m[0][2] =  ((m[0][1] * m[1][2]) - (m[1][1] * m[0][2]));
-    // temp.m[1][2] = -((m[0][0] * m[1][2]) - (m[1][0] * m[0][2]));
-    // temp.m[2][2] =  ((m[0][0] * m[1][1]) - (m[1][0] * m[0][1]));
   }
 
   void
   Matrix3x3::inverse() {
     *this = this->inversed();
-    // CY_ASSERT(this->determinant() != 0.0f &&
-    //           Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
-    // Matrix3x3 temp = *this;
-    // // We assign the cofactored matrices on the corresponding space when transposing
-    // // This way we save ourselves a function call
-    // // m[0][0] =  ((temp.m[1][1] * temp.m[2][2]) - (temp.m[2][1] * temp.m[1][2]));
-    // // m[1][0] = -((temp.m[1][0] * temp.m[2][2]) - (temp.m[2][0] * temp.m[1][2]));
-    // // m[2][0] =  ((temp.m[1][0] * temp.m[2][1]) - (temp.m[2][0] * temp.m[1][1]));
-    // // m[0][1] = -((temp.m[0][1] * temp.m[2][2]) - (temp.m[2][1] * temp.m[0][2]));
-    // // m[1][1] =  ((temp.m[0][0] * temp.m[2][2]) - (temp.m[2][0] * temp.m[0][2]));
-    // // m[2][1] = -((temp.m[0][0] * temp.m[2][1]) - (temp.m[2][0] * temp.m[0][1]));
-    // // m[0][2] =  ((temp.m[0][1] * temp.m[1][2]) - (temp.m[1][1] * temp.m[0][2]));
-    // // m[1][2] = -((temp.m[0][0] * temp.m[1][2]) - (temp.m[1][0] * temp.m[0][2]));
-    // // m[2][2] =  ((temp.m[0][0] * temp.m[1][1]) - (temp.m[1][0] * temp.m[0][1]));
-    // this->cofactor();
-    // this->transpose();
-    // *this /= this->determinant();
+
   }
 
   const float

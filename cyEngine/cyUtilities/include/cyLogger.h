@@ -17,24 +17,24 @@ namespace CYLLENE_SDK {
   namespace LOG_VERBOSITY
   {
     BETTER_ENUM(E, uint32, 
-      DEFAULT = 0, 
-      DEBUG, 
-      WARNING, 
-      ERROR)
+      eDEFAULT = 0, 
+      eDEBUG, 
+      eWARNING, 
+      eERROR)
   }
 
   namespace LOG_CHANNEL
   {
     BETTER_ENUM(E, uint32,
-      DEFAULT   = 0,
-      ANIMATION ,
-      AI        ,
-      GRAPHICS  ,
-      INPUT     ,
-      SCRIPTING ,
-      SOUND     ,
-      SYSTEM    ,
-      GAMEPLAY  
+      eDEFAULT   = 0,
+      eANIMATION ,
+      eAI        ,
+      eGRAPHICS  ,
+      eINPUT     ,
+      eSCRIPTING ,
+      eSOUND     ,
+      eSYSTEM    ,
+      eGAMEPLAY  
     );
   }
 
@@ -46,8 +46,8 @@ namespace CYLLENE_SDK {
     ~Log() = default;
 
     Log(const String& message, 
-        const LOG_VERBOSITY::E& type      = LOG_VERBOSITY::E::DEFAULT, 
-        const LOG_CHANNEL::E& channel     = LOG_CHANNEL::E::DEFAULT,
+        const LOG_VERBOSITY::E& type      = LOG_VERBOSITY::E::eDEFAULT, 
+        const LOG_CHANNEL::E& channel     = LOG_CHANNEL::E::eDEFAULT,
         const TimePoint<SystemClock> time = SystemClock::now())
       : m_message(message), m_type(type), m_channel(channel), m_time(time) {}
 
@@ -95,17 +95,17 @@ namespace CYLLENE_SDK {
 
     void
     log(const String& message, 
-        const LOG_VERBOSITY::E& type  = LOG_VERBOSITY::E::DEFAULT, 
-        const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::DEFAULT);
+        const LOG_VERBOSITY::E& type  = LOG_VERBOSITY::E::eDEFAULT, 
+        const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
 
     void
-    logDebug(const String& message, const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::DEFAULT);
+    logDebug(const String& message, const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
 
     void 
-    logWarning(const String& message, const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::DEFAULT);
+    logWarning(const String& message, const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
 
     void
-    logError(const String& message, const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::DEFAULT);
+    logError(const String& message, const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
     void
     dump();
 

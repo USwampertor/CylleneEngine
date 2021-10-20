@@ -5,21 +5,22 @@
 #include <conio.h>
 
 #include <cyJSON.h>
+#include <cyQuaternion.h>
 
 #include <cyCrashHandler.h>
+#include <cyMath.h>
 
 using namespace CYLLENE_SDK;
 
 int32
 main() {
   CrashHandler::startUp();
+  Quaternion q;
+
   try
   {
-    JSON json;
-    json.Parse("{\"hello\":\"world\"}");
-    std::cout << json["hello"].GetString() << std::endl;
-    std::cout << json.stringify() << std::endl;
-    std::cout << json.prettyString() << std::endl;
+    q.fromEuler(Euler(Math::PI * 1.5f, Math::PI, 0), 0);
+    std::cout << q.toString() << std::endl;
   }
   catch (const std::exception& e)
   {
