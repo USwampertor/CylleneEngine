@@ -66,7 +66,7 @@ namespace CYLLENE_SDK {
     ea.x = euler.x;
     ea.y = euler.y;
     ea.z = euler.z;
-    ea.w = order;
+    ea.w = static_cast<float>(order);
 
     Quat q = Eul_ToQuat(ea);
 
@@ -333,7 +333,7 @@ namespace CYLLENE_SDK {
     ea.x = euler.x;
     ea.y = euler.y;
     ea.z = euler.z;
-    ea.w = order;
+    ea.w = static_cast<float>(order);
 
     Quat q = Eul_ToQuat(ea);
 
