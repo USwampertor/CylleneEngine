@@ -524,10 +524,10 @@ namespace CYLLENE_SDK {
     (*this).m[2][2] = ZFar / FarMNear;
   #if HandSystem == LH
     (*this).m[2][3] = 1.0f;
-    (*this).m[3][2] = -(ZNear * ZFar) / FarMNear;
+    (*this).m[3][2] = -(ZFar * ZNear) / FarMNear;
   #elif HandSystem == RH
     (*this).m[2][3] = -1.0f;
-    (*this).m[3][2] = (ZNear * ZFar) / FarMNear;
+    (*this).m[3][2] = (ZFar * ZNear) / FarMNear;
   #endif
 #endif
 

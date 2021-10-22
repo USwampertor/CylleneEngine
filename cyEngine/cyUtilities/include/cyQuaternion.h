@@ -315,7 +315,7 @@ namespace CYLLENE_SDK {
     const float&
     getScalarPart() const;
 
-    const Matrix3x3&
+    const Matrix3x3
     getRotationMatrix() const;
 
     float 

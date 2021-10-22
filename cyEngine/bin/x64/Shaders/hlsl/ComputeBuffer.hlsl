@@ -1,5 +1,6 @@
 #define BLOCK_SIZE uint3(4, 4, 1)
 #define THREADS_SIZE uint3(8, 8, 1)
+
 RWBuffer<float> heights : register(u0);
 
 /**

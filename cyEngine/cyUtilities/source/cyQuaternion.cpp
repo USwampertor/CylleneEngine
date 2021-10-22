@@ -342,7 +342,7 @@ namespace CYLLENE_SDK {
     return w;
   }
 
-  const Matrix3x3&
+  const Matrix3x3
   Quaternion::getRotationMatrix() const {
     float x2 = x * x;
     float y2 = y * y;

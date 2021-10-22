@@ -16,16 +16,23 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 #include <tchar.h>
+#include <unordered_map>
 
-#include "cyTime.h"
-#include "cyVector2f.h"
-#include "cyVector3f.h"
 #include "cyFileSystem.h"
 #include "cyMatrix3x3.h"
 #include "cyMatrix4x4.h"
+//#include "cyPlatformMath.h"
 #include "cyQuaternion.h"
+#include "cyTime.h"
+#include "cyVector2f.h"
+#include "cyVector3f.h"
 
 #define durationCast std::chrono::duration_cast
+
+int clientWidth = 1280;
+int clientHeight = 720;
+
+std::unordered_map<size_t, std::pair<ID3D11Texture2D*, ID3D11ShaderResourceView*>> textures;
 
 using nanosecs = std::chrono::nanoseconds;
 using millisecs = std::chrono::milliseconds;
@@ -40,13 +47,20 @@ ID3D11Resource* backbuffer;
 ID3D11RenderTargetView* renderTargetView;
 ID3D11UnorderedAccessView* unorderedAccessView;
 
-D3D11_VIEWPORT viewport;
+Uint32 shadowSize = 4098;
+
+D3D11_VIEWPORT cameraViewport;
+D3D11_VIEWPORT shadowViewport;
 
 ID3D11RasterizerState* rasterizer;
 
 ID3D11Texture2D* depthStencil;
 ID3D11DepthStencilState* DSState;
 ID3D11DepthStencilView* DSV;
+
+ID3D11Texture2D* shadowDepthStencil;
+ID3D11DepthStencilView* shadowDSV;
+ID3D11ShaderResourceView* shadowSRV;
 
 ID3DBlob* cs_blob;
 ID3D11ComputeShader* csShader;
@@ -61,11 +75,13 @@ ID3DBlob* image_cs_blob;
 ID3D11ComputeShader* ImageCSShader;
 
 ID3D11InputLayout* inputLayout;
-ID3D11SamplerState* samplerState;
+ID3D11SamplerState* AnisotropicSamplerState;
+ID3D11SamplerState* PointSamplerState;
 ID3D11UnorderedAccessView* uavBuffer;
 ID3D11ShaderResourceView* srvuav;
 ID3D11Buffer* computebuffer;
-ID3D11Buffer* constantbuffer;
+ID3D11Buffer* graphicsConstantbuffer;
+ID3D11Buffer* computeConstantbuffer;
 ID3D11Buffer* indexbuffer;
 ID3D11Buffer* vertexbuffer;
 ID3D11Buffer* uvbuffer;
@@ -98,6 +114,9 @@ struct Mesh
 
   ID3D11Buffer* indexbuffer;
   ID3D11Buffer* vertexbuffer;
+
+  bool hasTexture;
+  size_t TextureID;
 };
 
 struct Model
@@ -105,19 +124,32 @@ struct Model
   Mesh meshes;
 };
 
+struct ComputeCB
+{
+  Matrix4x4 ShadowV;
+  Matrix4x4 ShadowP;
+  Matrix4x4 CameraV;
+  Matrix4x4 CameraP;
+  Vector2f  ScreenDimensions;
+};
+
 Vector<Mesh> Meshes;
 
 void
 ErrorDescription(HRESULT hr) {
-  if (FACILITY_WINDOWS == HRESULT_FACILITY(hr))
+  if (FACILITY_WINDOWS == HRESULT_FACILITY(hr)) {
     hr = HRESULT_CODE(hr);
+  }
+
   TCHAR* szErrMsg;
 
-  if (FormatMessage(
-    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-    NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-    (LPTSTR)&szErrMsg, 0, NULL) != 0)
-  {
+  if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+                    NULL,
+                    hr,
+                    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                    (LPTSTR)&szErrMsg,
+                    0,
+                    NULL) != 0) {
     _tprintf(TEXT("%s"), szErrMsg);
     LocalFree(szErrMsg);
   }
@@ -134,6 +166,9 @@ printProgramLog(uint32 program);
 void
 printShaderLog(uint32 shader);
 */
+
+bool
+CreateTexture(String texturePath, ID3D11Texture2D** texture2D, ID3D11ShaderResourceView** SRV);
 
 //Starts up SDL, creates window, and initializes OpenGL
 bool
@@ -188,19 +223,15 @@ CreateRenderTarget(uint32 width,
                    ID3D11ShaderResourceView** srv);
 
 void
-render(uint32& gProgramID,
-       uint32* gVBO,
-       uint32& gIBO,
-       Matrix4x4 View,
-       Matrix4x4 Projection,
-       int32& gVertexPosition2D,
-       int32& gUV,
-       int32& gVertexColor,
-       unsigned int texture);
+render(Matrix4x4 ShadowView,
+       Matrix4x4 ShadowProjection,
+       Matrix4x4 CameraView,
+       Matrix4x4 CameraProjection);
 
 int
 main(int argc, char** argv) {
-  int clientWidth = 1280, clientHeight = 720;
+  //int clientWidth = 1280, clientHeight = 720;
+  //int clientWidth = 1920, clientHeight = 1080;
 
   if (argc > 0) {
     printf("Application args:\n");
@@ -228,6 +259,10 @@ main(int argc, char** argv) {
   printf("\n");
   printf("Starting app with resolution %dx%d.\n", clientWidth, clientHeight);
   printf("\n");
+
+  FreeImage_Initialise();
+
+  printf("FreeImage version: %s\n", FreeImage_GetVersion());
 
   //The window we'll be rendering to
   SDL_Window* window = nullptr;
@@ -272,83 +307,6 @@ main(int argc, char** argv) {
   //glGenTextures(1, &texture);
   //glBindTexture(GL_TEXTURE_2D, texture);
   // set the texture wrapping/filtering options (on the currently bound texture object)
-  
-  /***************************************************************************/
-  FreeImage_Initialise();
-
-  printf("FreeImage version: %s\n", FreeImage_GetVersion());
-  std::string textureName = currentDirectory + "../../Checker.webp";
-  FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(textureName.c_str());
-
-  FIBITMAP* pImage = FreeImage_Load(fif, textureName.c_str(), 0);
-  if (pImage) {
-    FIBITMAP* pImageRGBA = FreeImage_ConvertToRGBAF(pImage);
-    int nWidth = FreeImage_GetWidth(pImageRGBA);
-    int nHeight = FreeImage_GetHeight(pImageRGBA);
-
-    FREE_IMAGE_COLOR_TYPE fict = FreeImage_GetColorType(pImageRGBA);
-    uint32 pitch = FreeImage_GetPitch(pImageRGBA);
-    BITMAPINFO* imageInfo = FreeImage_GetInfo(pImageRGBA);
-
-    printf("Format: %i\n", fif);
-    printf("Width: %i\n", nWidth);
-    printf("Height: %i\n", nHeight);
-    printf("Bit count: %i\n", imageInfo->bmiHeader.biBitCount);
-    printf("Size: %i\n", imageInfo->bmiHeader.biSize);
-    printf("Image size: %i\n", imageInfo->bmiHeader.biSizeImage);
-    printf("Image byte pitch: %i\n", pitch);
-    printf("Color type: %i\n", fict);
-
-    BYTE* imageBytes = FreeImage_GetBits(pImageRGBA);
-    
-    D3D11_SUBRESOURCE_DATA initData = { imageBytes, pitch, pitch * nHeight };
-
-    D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = nWidth;
-    desc.Height = nHeight;
-    desc.MipLevels = 1;
-    desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    desc.SampleDesc.Count = 1;
-    desc.SampleDesc.Quality = 0;
-    desc.Usage = D3D11_USAGE_DEFAULT;
-    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-    desc.CPUAccessFlags = 0;
-    desc.MiscFlags = 0;
-
-    HRESULT HRTexture = device->CreateTexture2D(&desc, &initData, &checkterTexture);
-
-    if (FAILED(HRTexture)) {
-      printf("Texture couldn't be created: ");
-      ErrorDescription(HRTexture);
-      return -1;
-    }
-
-    D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-    SRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    SRVDesc.Texture2D.MipLevels = 1;
-
-    HRTexture = device->CreateShaderResourceView(checkterTexture,
-                                                 &SRVDesc,
-                                                 &checkerTextureSRV);
-
-    if (FAILED(HRTexture)) {
-      printf("Shader resource view couldn't be created: ");
-      ErrorDescription(HRTexture);
-      return -1;
-    }
-
-    FreeImage_Unload(pImage);
-    FreeImage_Unload(pImageRGBA);
-  }
-  else {
-    printf("Error while loading image\n");
-  }
-  
-
-  FreeImage_DeInitialise();
-  /***************************************************************************/
 
   printf("\n");
 
@@ -387,9 +345,21 @@ main(int argc, char** argv) {
   Vector3f CamRight(1, 0, 0);
   Vector3f CamForward(0, 0, 1);
 
+  Vector4f ShadowCamPosition(-1320.0f, 4200.0f, 230.0f, 1.0f);
+  Vector4f ShadowCamLookAt = Vector4f(0.0f, 300.0f, 0.0f, 1.0f) - ShadowCamPosition;
+  ShadowCamLookAt.normalize();
+
+  Matrix4x4 ShadowView;
+  ShadowView.View(ShadowCamPosition,
+                  ShadowCamLookAt,
+                  Vector4f(0, 1, 0, 0));
+
+  Matrix4x4 ShadowProjection;
+  ShadowProjection.Orthogonal(5760.0f, 3240.0f, 0.01f, 10000.0);
+
   Matrix4x4 Projection;
-  Projection.Perspective(1920.0f, 1080.0f, 0.01f, 10000.0f, 60.0f * 0.0174533f);
-  //Projection.Orthogonal(19.2f, 10.8f, 0.01f, 1000.0);
+  Projection.Perspective(1920.0f, 1080.0f, 1.0f, 10000.0f, 60.0f * 0.0174533f);
+  //Projection.Orthogonal(1920.0f, 1080.0f, 0.01f, 5000.0);
 
   bool open = true;
   double deltaTime = 0.0;
@@ -429,6 +399,7 @@ main(int argc, char** argv) {
     }
 
     float camSpeed = 500.0f;
+    //float camSpeed = 5.0f;
     if (keyboardW) CamPosition += CamForward * camSpeed * deltaTime;
     if (keyboardS) CamPosition -= CamForward * camSpeed * deltaTime;
     if (keyboardA) CamPosition -= CamRight * camSpeed * deltaTime;
@@ -451,9 +422,10 @@ main(int argc, char** argv) {
               CamPosition + CamForward,
               Vector4f(0, 1, 0, 0));
 
-    render(gProgramID, gVBO, gIBO, View, Projection, gVertexPosition2D, gUV, gVertexColor, 0);
+    render(ShadowView, ShadowProjection,
+           View, Projection);
 
-    SDL_GL_SwapWindow(window);
+    //SDL_GL_SwapWindow(window);
 
     steady_clock::time_point currentFrame = steady_clock::now();
     nanosecs frameDiff = currentFrame - lastFrame;
@@ -470,23 +442,39 @@ main(int argc, char** argv) {
   SDL_DestroyWindow(window);
 
   SDL_Quit();
+  
+  FreeImage_DeInitialise();
 
   return 0;
 }
 
 bool
 DoTheImportThing(const std::string& pFile) {
+  Path filePath(pFile);
+  String directoryPath = filePath.directoryPath();
+
   // Create an instance of the Importer class
   Assimp::Importer importer;
   
   // And have it read the given file with some example postprocessing
   // Usually - if speed is not the most important aspect for you - you'll
   // probably to request more postprocessing than we do in this example.
-  const aiScene* scene = importer.ReadFile(pFile,
-                                           aiProcess_CalcTangentSpace |
-                                           aiProcess_Triangulate |
-                                           aiProcess_JoinIdenticalVertices |
-                                           aiProcess_SortByPType);
+
+  Uint32 flags = 0;
+  flags |= aiProcess_MakeLeftHanded;
+  flags |= aiProcess_FlipWindingOrder;
+  //flags |= aiProcess_FlipUVs;
+  flags |= aiProcess_CalcTangentSpace;
+  flags |= aiProcess_RemoveRedundantMaterials;
+  flags |= aiProcess_LimitBoneWeights;
+  flags |= aiProcess_Triangulate;
+  //flags |= aiProcess_OptimizeGraph;
+  flags |= aiProcess_OptimizeMeshes;
+  flags |= aiProcess_JoinIdenticalVertices;
+  flags |= aiProcess_FindInvalidData;
+  flags |= aiProcess_GenUVCoords;
+
+  const aiScene* scene = importer.ReadFile(pFile, flags);
 
   // If the import failed, report it
   if (!scene) {
@@ -510,7 +498,38 @@ DoTheImportThing(const std::string& pFile) {
     Mesh& mesh = Meshes[meshIndex];
 
     aiMesh* pMesh = scene->mMeshes[meshIndex];
-    int32 totalTriangles = pMesh->mNumFaces;
+
+    Uint32 materialIndex = pMesh->mMaterialIndex;
+    aiMaterial* material = scene->mMaterials[materialIndex];
+    aiString aiTexturePath;
+    material->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexturePath);
+    mesh.hasTexture = false;
+    if (aiTexturePath.length > 0) {
+      std::hash<String> hasher;
+
+      Path texturePath(directoryPath + aiTexturePath.C_Str());
+      String textureName = texturePath.baseName();
+      size_t textureID = hasher(textureName);
+      if (textures.find(textureID) == textures.end()) {
+        std::pair<ID3D11Texture2D*, ID3D11ShaderResourceView*> pair;
+        if (CreateTexture(texturePath.fullPath(),
+                          &pair.first,
+                          &pair.second)) {
+          mesh.hasTexture = true;
+          mesh.TextureID = textureID;
+          textures[textureID] = pair;
+        }
+        else {
+          printf("Oh no.\n");
+        }
+      }
+      else {
+        mesh.hasTexture = true;
+        mesh.TextureID = textureID;
+      }
+    }
+
+    Uint32 totalTriangles = pMesh->mNumFaces;
 
     mesh.nIndices = totalTriangles * 3;
     mesh.indices = new uint32[mesh.nIndices];
@@ -530,6 +549,18 @@ DoTheImportThing(const std::string& pFile) {
       mesh.indices[i + 2] = face.mIndices[2];
     }
 
+    /*
+    for (int i = 0; i < 8; i++) {
+      printf("Mesh index %i uvs: %s\n", i, pMesh->HasTextureCoords(i) ? "Yes" : "No");
+      pMesh->HasTextureCoords(i);
+    }
+    */
+
+    bool hasUVs = pMesh->HasTextureCoords(0);
+    aiVector3D* texCoords = nullptr;
+    if (hasUVs)
+      texCoords = pMesh->mTextureCoords[0];
+
     mesh.nVertices = pMesh->mNumVertices;
     mesh.vertices = new Vertex[mesh.nVertices];
     for (int32 i = 0; i < mesh.nVertices; i++) {
@@ -539,9 +570,9 @@ DoTheImportThing(const std::string& pFile) {
       mesh.vertices[i].normal = Vector3f(pMesh->mNormals[i].x,
                                          pMesh->mNormals[i].y,
                                          pMesh->mNormals[i].z);
-      if (pMesh->HasTextureCoords(0)) {
-        mesh.vertices[i].texcoord = Vector2f(pMesh->mTextureCoords[0][i].x,
-                                             pMesh->mTextureCoords[0][i].y);
+      if (hasUVs) {
+        mesh.vertices[i].texcoord = Vector2f(texCoords[i].x,
+                                             texCoords[i].y);
       }
       else {
         mesh.vertices[i].texcoord = Vector2f(0.0f, 0.0f);
@@ -609,6 +640,111 @@ printShaderLog(uint32 name) {
   }
 }
 */
+
+bool
+CreateTexture(String texturePath, ID3D11Texture2D** texture2D, ID3D11ShaderResourceView** SRV) {
+  FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(texturePath.c_str());
+
+  uint32 flags = 0;
+  FIBITMAP* fileImage = FreeImage_Load(fif, texturePath.c_str(), flags);
+  //FreeImage_FlipVertical(pImage);
+  //FreeImage_FlipHorizontal(pImage);
+
+  if (fileImage == nullptr) {
+    printf("Error while loading image\n");
+    return false;
+  }
+
+  //FIBITMAP* standardImage = FreeImage_ConvertToStandardType(fileImage);
+  //FIBITMAP* image = FreeImage_ConvertToType(fileImage, FIT_BITMAP);
+  //FIBITMAP* imageF = FreeImage_ConvertToType(fileImage, FIT_BITMAP);
+  //FIBITMAP* image = FreeImage_ConvertToStandardType(fileImage);
+  //FIBITMAP* imageF = FreeImage_ConvertToRGBAF(fileImage);
+  //FIBITMAP* image = FreeImage_ConvertToRGBA16(fileImage);
+  //FIBITMAP* image = FreeImage_ConvertTo32Bits(imageF);
+  FIBITMAP* image = FreeImage_ConvertTo32Bits(fileImage);
+  FreeImage_Unload(fileImage);
+  //FreeImage_Unload(imageF);
+  //FreeImage_Unload(image);
+
+  if (image == nullptr) {
+    printf("Error while converting image\n");
+    return false;
+  }
+
+  //FIBITMAP* pImageRGB = FreeImage_ConvertToType(pImage, FIT_BITMAP);
+  //FIBITMAP* pImageRGB = FreeImage_ConvertTo32Bits(pImage);
+  //FIBITMAP* pImageRGB = FreeImage_ConvertToRGBAF(pImage);
+  //FreeImage_SetTransparent(pImageRGB, true);
+
+  int nWidth = FreeImage_GetWidth(image);
+  int nHeight = FreeImage_GetHeight(image);
+  FREE_IMAGE_COLOR_TYPE fict = FreeImage_GetColorType(image);
+
+  uint32 pitch = FreeImage_GetPitch(image);
+
+  /*
+  BITMAPINFO* imageInfo = FreeImage_GetInfo(image);
+  printf("Format: %i\n", fif);
+  printf("Width: %i\n", nWidth);
+  printf("Height: %i\n", nHeight);
+  printf("Bit count: %i\n", imageInfo->bmiHeader.biBitCount);
+  printf("Size: %i\n", imageInfo->bmiHeader.biSize);
+  printf("Image size: %i\n", imageInfo->bmiHeader.biSizeImage);
+  printf("Image byte pitch: %i\n", pitch);
+  printf("Color type: %i\n", fict);
+  */
+
+  BYTE* imageBytes = FreeImage_GetBits(image);
+
+  if (imageBytes == nullptr) {
+    printf("Error while getting image bytes\n");
+    return false;
+  }
+
+  D3D11_SUBRESOURCE_DATA initData = { imageBytes, pitch, pitch * nHeight };
+
+  D3D11_TEXTURE2D_DESC desc = {};
+  desc.Width = nWidth;
+  desc.Height = nHeight;
+  desc.MipLevels = 1;
+  desc.ArraySize = 1;
+  desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  //desc.Format = DXGI_FORMAT_R16G16B16A16_UNORM;
+  //desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  desc.SampleDesc.Count = 1;
+  desc.SampleDesc.Quality = 0;
+  desc.Usage = D3D11_USAGE_DEFAULT;
+  desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+  desc.CPUAccessFlags = 0;
+  desc.MiscFlags = 0;
+
+  HRESULT HRTexture = device->CreateTexture2D(&desc, &initData, texture2D);
+
+  if (FAILED(HRTexture)) {
+    printf("Texture couldn't be created: ");
+    ErrorDescription(HRTexture);
+    return false;
+  }
+
+  D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+  SRVDesc.Format = desc.Format;
+  SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+  SRVDesc.Texture2D.MipLevels = 1;
+
+  HRTexture = device->CreateShaderResourceView(*texture2D,
+                                               &SRVDesc,
+                                               SRV);
+
+  if (FAILED(HRTexture)) {
+    printf("Texture SRV couldn't be created: ");
+    ErrorDescription(HRTexture);
+    return false;
+  }
+
+  FreeImage_Unload(image);
+  return true;
+}
 
 bool
 init(String basepath,
@@ -783,6 +919,26 @@ init(String basepath,
     }
   }
 
+  // Create Depth Stencil view
+  {
+    D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+    descDSV.Flags = 0;
+    descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    descDSV.Texture2D.MipSlice = 0;
+
+    // Create the depth stencil view
+    HRESULT HRDepthStencilView = device->CreateDepthStencilView(depthStencil, // Depth stencil texture
+                                                                nullptr, // Depth stencil desc
+                                                                &DSV);  // [out] Depth stencil view
+
+    if (FAILED(HRDepthStencilView)) {
+      printf("Depth Stencil View couldn't be created: ");
+      ErrorDescription(HRDepthStencilView);
+      return false;
+    }
+  }
+
   // Create Depth Stencil State
   {
     D3D11_DEPTH_STENCIL_DESC dsDesc;
@@ -790,9 +946,7 @@ init(String basepath,
     // Depth test parameters
     dsDesc.DepthEnable = true;
     dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    //dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
     dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-    //dsDesc.DepthFunc = D3D11_COMPARISON_GREATER;
 
     // Stencil test parameters
     dsDesc.StencilEnable = false;
@@ -815,35 +969,95 @@ init(String basepath,
     device->CreateDepthStencilState(&dsDesc, &DSState);
   }
 
-  // Create Depth Stencil view
+  // Create Shadow Depth Stencil texture
+  {
+    D3D11_TEXTURE2D_DESC descDepth;
+    descDepth.Width = shadowSize;
+    descDepth.Height = shadowSize;
+    descDepth.MipLevels = 1;
+    descDepth.ArraySize = 1;
+    descDepth.Format = DXGI_FORMAT_R32_TYPELESS;
+    descDepth.SampleDesc.Count = 1;
+    descDepth.SampleDesc.Quality = 0;
+    descDepth.Usage = D3D11_USAGE_DEFAULT;
+    descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    descDepth.CPUAccessFlags = 0;
+    descDepth.MiscFlags = 0;
+
+    HRESULT HRDepthStencil = device->CreateTexture2D(&descDepth, NULL, &shadowDepthStencil);
+
+    if (FAILED(HRDepthStencil)) {
+      printf("Shadow Depth Stencil texture couldn't be created: ");
+      ErrorDescription(HRDepthStencil);
+      return false;
+    }
+  }
+
+  // Create Shadow Depth Stencil View
   {
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
     descDSV.Flags = 0;
-    descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descDSV.Format = DXGI_FORMAT_D32_FLOAT;
     descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     descDSV.Texture2D.MipSlice = 0;
 
     // Create the depth stencil view
-    HRESULT HRDepthStencilView = device->CreateDepthStencilView(depthStencil, // Depth stencil texture
+    HRESULT HRDepthStencilView = device->CreateDepthStencilView(shadowDepthStencil, // Depth stencil texture
                                                                 &descDSV, // Depth stencil desc
-                                                                &DSV);  // [out] Depth stencil view
+                                                                &shadowDSV);  // [out] Depth stencil view
 
     if (FAILED(HRDepthStencilView)) {
-      printf("Depth Stencil View couldn't be created: ");
+      printf("Shadow Depth Stencil View couldn't be created: ");
       ErrorDescription(HRDepthStencilView);
+      return false;
+    }
+  }
+  
+  // Create Shadow Shader Resource View
+  {
+    D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+    SRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    SRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+    SRVDesc.Texture2D.MostDetailedMip = 0;
+    SRVDesc.Texture2D.MipLevels = 1;
+
+    ID3D11ShaderResourceView* rt = nullptr;
+    HRESULT HRCreateSR = device->CreateShaderResourceView(shadowDepthStencil,
+                                                          &SRVDesc,
+                                                          &shadowSRV);
+
+    if (FAILED(HRCreateSR)) {
+      printf("Shadow Shader Resource View couldn't be created: ");
+      ErrorDescription(HRCreateSR);
       return false;
     }
   }
 
   // Viewport
-  viewport.Width = clientWidth;
-  viewport.Height = clientHeight;
-  viewport.TopLeftX = 0;
-  viewport.TopLeftY = 0;
-  viewport.MinDepth = 0;
-  viewport.MaxDepth = 1;
+  cameraViewport.Width = clientWidth;
+  cameraViewport.Height = clientHeight;
+  cameraViewport.TopLeftX = 0.0f;
+  cameraViewport.TopLeftY = 0.0f;
+  cameraViewport.MinDepth = 0.0f;
+  cameraViewport.MaxDepth = 1.0f;
+
+  shadowViewport.Width = shadowSize;
+  shadowViewport.Height = shadowSize;
+  shadowViewport.TopLeftX = 0.0f;
+  shadowViewport.TopLeftY = 0.0f;
+  shadowViewport.MinDepth = 0.0f;
+  shadowViewport.MaxDepth = 1.0f;
+
+  //CreateTexture(basepath + "Models/plant.png",
+  CreateTexture(basepath + "../../Checker.webp",
+                &checkterTexture,
+                &checkerTextureSRV);
 
   DoTheImportThing(basepath + "Models/BistroExterior.fbx");
+  //DoTheImportThing(basepath + "Models/ArrowRight.fbx");
+  //DoTheImportThing(basepath + "Models/Cow.fbx");
+  //DoTheImportThing(basepath + "Models/Plant.obj");
+  //DoTheImportThing(basepath + "Models/ScreenAlignedQuad.3ds");
 
   //Initialize DirectX 11
   if (!initDX11(basepath,
@@ -934,29 +1148,80 @@ initDX11(String basepath,
   // create sampler
   {
     D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+    samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    samplerDesc.MaxAnisotropy = 8;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    samplerDesc.MipLODBias = 0;
+
+    HRESULT HRSampler = device->CreateSamplerState(&samplerDesc, &AnisotropicSamplerState);
+
+    if (FAILED(HRSampler)) {
+      printf("Anisotropic Sampler state couldn't be created: ");
+      ErrorDescription(HRSampler);
+      return false;
+    }
+  }
+
+  // create sampler
+  {
+    D3D11_SAMPLER_DESC samplerDesc;
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+    //samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc.MaxAnisotropy = 1;
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
     samplerDesc.MipLODBias = 0;
 
-    HRESULT HRSampler = device->CreateSamplerState(&samplerDesc, &samplerState);
+    HRESULT HRSampler = device->CreateSamplerState(&samplerDesc, &PointSamplerState);
 
     if (FAILED(HRSampler)) {
-      printf("Sampler state couldn't be created: ");
+      printf("Point Sampler state couldn't be created: ");
       ErrorDescription(HRSampler);
       return false;
     }
-
   }
 
   CreateComputeBuffer();
 
-  CreateRenderTarget(1280, 720, &GBufferTexture, &GBufferRTV, &GBufferSRV);
+  //CreateRenderTarget(1280, 720, &GBufferTexture, &GBufferRTV, &GBufferSRV);
+  CreateRenderTarget(clientWidth, clientHeight, &GBufferTexture, &GBufferRTV, &GBufferSRV);
+
+
+  // Create constant buffer
+  {
+    ComputeCB initData;
+    initData.ShadowV = Matrix4x4::IDENTITY;
+    initData.ShadowV = Matrix4x4::IDENTITY;
+    initData.CameraV = Matrix4x4::IDENTITY;
+    initData.CameraP = Matrix4x4::IDENTITY;
+    initData.ScreenDimensions = Vector2f::ZERO;
+
+    D3D11_BUFFER_DESC bd;
+    bd.ByteWidth = std::ceil(sizeof(ComputeCB) / 16.0f) * 16;
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+    bd.StructureByteStride = 0;
+
+    D3D11_SUBRESOURCE_DATA srd = { &initData, 0, 0 };
+    HRESULT HRCB = device->CreateBuffer(&bd, &srd, &computeConstantbuffer);
+
+    if (FAILED(HRCB)) {
+      printf("Shadow Constant buffer couldn't be created: ");
+      ErrorDescription(HRCB);
+      return false;
+    }
+  }
 
   // Create constant buffer
   {
@@ -976,10 +1241,10 @@ initDX11(String basepath,
     bd.StructureByteStride = 0;
 
     D3D11_SUBRESOURCE_DATA srd = { contantBuffer, 0, 0 };
-    HRESULT HRCB = device->CreateBuffer(&bd, &srd, &constantbuffer);
+    HRESULT HRCB = device->CreateBuffer(&bd, &srd, &graphicsConstantbuffer);
 
     if (FAILED(HRCB)) {
-      printf("Constant buffer couldn't be created: ");
+      printf("Graphics Constant buffer couldn't be created: ");
       ErrorDescription(HRCB);
       return false;
     }
@@ -1241,15 +1506,12 @@ CreateComputeBuffer() {
     return;
   }
 
-  D3D11_BUFFER_UAV uavbDesc;
-  uavbDesc.Flags = 0;
-  uavbDesc.FirstElement = 0;
-  uavbDesc.NumElements = 1024;
-
   D3D11_UNORDERED_ACCESS_VIEW_DESC UAV;
   UAV.Format = DXGI_FORMAT_R32_FLOAT;
   UAV.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-  UAV.Buffer = uavbDesc;
+  UAV.Buffer.Flags = 0;
+  UAV.Buffer.FirstElement = 0;
+  UAV.Buffer.NumElements = 1024;
 
   HRESULT HRUAV = device->CreateUnorderedAccessView(computebuffer, &UAV, &uavBuffer);
 
@@ -1285,12 +1547,15 @@ CreateRenderTarget(uint32 width,
   D3D11_TEXTURE2D_DESC textureDesc;
   ZeroMemory(&textureDesc, sizeof(textureDesc));
 
+  //DXGI_FORMAT textureFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+  DXGI_FORMAT textureFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
   // Setup the render target texture description.
   textureDesc.Width = width;
   textureDesc.Height = height;
   textureDesc.MipLevels = 1;
   textureDesc.ArraySize = 1;
-  textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  textureDesc.Format = textureFormat;
   textureDesc.SampleDesc.Count = 1;
   textureDesc.Usage = D3D11_USAGE_DEFAULT;
   textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET |
@@ -1310,7 +1575,7 @@ CreateRenderTarget(uint32 width,
   // Create RTV
   {
     D3D11_RENDER_TARGET_VIEW_DESC RTVDesc;
-    RTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    RTVDesc.Format = textureFormat;
     RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
     RTVDesc.Texture2D.MipSlice = 0;
 
@@ -1326,7 +1591,7 @@ CreateRenderTarget(uint32 width,
   // Create SRV
   {
     D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-    SRVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    SRVDesc.Format = textureFormat;
     SRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
     SRVDesc.Texture2D.MostDetailedMip = 0;
     SRVDesc.Texture2D.MipLevels = 1;
@@ -1344,7 +1609,7 @@ CreateRenderTarget(uint32 width,
   // Create UAV
   {
     D3D11_UNORDERED_ACCESS_VIEW_DESC UAV;
-    UAV.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    UAV.Format = textureFormat;
     UAV.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
     UAV.Buffer.Flags = 0;
     UAV.Buffer.FirstElement = 0;
@@ -1361,15 +1626,32 @@ CreateRenderTarget(uint32 width,
 }
 
 void
-render(uint32& gProgramID,
-       uint32* gVBO,
-       uint32& gIBO,
-       Matrix4x4 View,
-       Matrix4x4 Projection,
-       int32& gVertexPosition2D,
-       int32& gUV,
-       int32& gVertexColor,
-       unsigned int texture) {
+render(Matrix4x4 ShadowView,
+       Matrix4x4 ShadowProjection,
+       Matrix4x4 CameraView,
+       Matrix4x4 CameraProjection) {
+  float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
+  Quaternion worldRotation;
+  worldRotation.fromEuler(Euler(3.14159265f * 0.5f, 0.0f, 0.0f), 0);
+
+  Matrix3x3 world3x3 = worldRotation.getRotationMatrix();
+  Matrix4x4 world(world3x3.m[0][0], world3x3.m[0][1], world3x3.m[0][2], 0.0f,
+                  world3x3.m[1][0], world3x3.m[1][1], world3x3.m[1][2], 0.0f,
+                  world3x3.m[2][0], world3x3.m[2][1], world3x3.m[2][2], 0.0f,
+                  0.0f,             0.0f,             0.0f,             1.0f);
+
+  Matrix4x4 shadowMatrices[3] = { world, ShadowView, ShadowProjection };
+
+  Matrix4x4 cameraMatrices[3] = { world, CameraView, CameraProjection };
+
+  ComputeCB computeData;
+  computeData.ShadowV = ShadowView;
+  computeData.ShadowP = ShadowProjection;
+  computeData.CameraV = CameraView.inversed();
+  computeData.CameraP = CameraProjection.inversed();
+  //computeData.ScreenDimensions = Vector2f(1280.0f, 720.0f);
+  computeData.ScreenDimensions = Vector2f(clientWidth, clientHeight);
+
   // Compute shader buffer
   {
     context->CSSetShader(csShader, nullptr, 0);
@@ -1380,37 +1662,18 @@ render(uint32& gProgramID,
 
     ID3D11UnorderedAccessView* UAV_NULL = nullptr;
     context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, 0);
-  }
 
-  float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
-  Quaternion worldRotation;
-  worldRotation.fromEuler(Vector3f(3.14159265f * 1.5f, 0.0f, 0.0f), 0);
-  Matrix3x3 world3x3 = worldRotation.getRotationMatrix();
-  Matrix4x4 world;
-  world.setValues(world3x3.m[0][0], world3x3.m[0][1], world3x3.m[0][2], 0.0f,
-                  world3x3.m[1][0], world3x3.m[1][1], world3x3.m[1][2], 0.0f,
-                  world3x3.m[2][0], world3x3.m[2][1], world3x3.m[2][2], 0.0f,
-                  0.0f,             0.0f,             0.0f,             1.0f);
-
-  Matrix4x4 matrices[3] = { world, View, Projection };
-
-  // Update buffers
-  {
-    context->UpdateSubresource(constantbuffer, 0, nullptr, matrices, 0, 0);
+    context->CSSetShader(nullptr, nullptr, 0);
   }
 
   // Clear
   {
     context->ClearRenderTargetView(renderTargetView, color);
+    context->ClearRenderTargetView(GBufferRTV, color);
 
     context->ClearDepthStencilView(DSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
-  }
 
-  // Rasterizer
-  {
-    context->RSSetViewports(1, &viewport);
-
-    context->RSSetState(rasterizer);
+    context->ClearDepthStencilView(shadowDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
   }
   
   // Input layout
@@ -1426,41 +1689,114 @@ render(uint32& gProgramID,
     //context->IASetIndexBuffer(indexbuffer, DXGI_FORMAT_R32_UINT, 0);
   }
 
-  // Graphics shaders
+  // Camera Rasterizer
+  {
+    context->RSSetViewports(1, &shadowViewport);
+
+    context->RSSetState(rasterizer);
+  }
+  
+  // Update shadow buffers
+  {
+    context->UpdateSubresource(graphicsConstantbuffer, 0, nullptr, shadowMatrices, 0, 0);
+  }
+
+  // Shadow Graphics shaders
   {
     // Vertex shader
     context->VSSetShader(GBufferVSShader, nullptr, 0);
 
-    context->VSSetConstantBuffers(0, 1, &constantbuffer);
+    context->VSSetConstantBuffers(0, 1, &graphicsConstantbuffer);
+  }
+
+  // Output Merge
+  {
+    context->OMSetDepthStencilState(DSState, 0);
+
+    ID3D11RenderTargetView* RTV_NULL = nullptr;
+    context->OMSetRenderTargets(1, &RTV_NULL, shadowDSV);
+  }
+
+  for (const Mesh& mesh : Meshes) {
+    context->IASetVertexBuffers(0, 1, &mesh.vertexbuffer, &stride, &offset);
+
+    context->IASetIndexBuffer(mesh.indexbuffer, DXGI_FORMAT_R32_UINT, 0);
+
+    context->DrawIndexed(mesh.nIndices, 0, 0);
+    //context->DrawIndexedInstanced(mesh.nIndices, 1024, 0, 0, 0);
+  }
+
+  // Unbind
+  {
+    ID3D11ShaderResourceView* SRV_NULL = nullptr;
+    context->VSSetShaderResources(0, 1, &SRV_NULL);
+
+    ID3D11RenderTargetView* RTV_NULL = nullptr;
+    context->OMSetRenderTargets(1, &RTV_NULL, nullptr);
+
+    context->VSSetShader(nullptr, nullptr, 0);
+
+    context->PSSetShader(nullptr, nullptr, 0);
+  }
+
+  // Camera Rasterizer
+  {
+    context->RSSetViewports(1, &cameraViewport);
+
+    context->RSSetState(rasterizer);
+  }
+  
+  // Update camera buffers
+  {
+    context->UpdateSubresource(graphicsConstantbuffer, 0, nullptr, cameraMatrices, 0, 0);
+  }
+
+  // Camera Graphics shaders
+  {
+    // Vertex shader
+    context->VSSetShader(GBufferVSShader, nullptr, 0);
+
+    context->VSSetConstantBuffers(0, 1, &graphicsConstantbuffer);
 
     context->VSSetShaderResources(0, 1, &srvuav);
 
     // Pixel shader
     context->PSSetShader(GBufferPSShader, nullptr, 0);
 
-    context->PSSetConstantBuffers(0, 1, &constantbuffer);
-
+    context->PSSetConstantBuffers(0, 1, &graphicsConstantbuffer);
+    
     context->PSSetShaderResources(0, 1, &checkerTextureSRV);
 
-    context->PSSetSamplers(0, 1, &samplerState);
+    context->PSSetSamplers(0, 1, &AnisotropicSamplerState);
   }
 
   // Output Merge
   {
-    context->OMSetDepthStencilState(DSState, 1);
+    context->OMSetDepthStencilState(DSState, 0);
 
-    context->OMSetRenderTargets(1, &renderTargetView, DSV);
-    //context->OMSetRenderTargets(1, &GBufferRTV, DSV);
+    //context->OMSetRenderTargets(1, &renderTargetView, DSV);
+    context->OMSetRenderTargets(1, &GBufferRTV, DSV);
   }
 
-  //context->DrawIndexed(6, 0, 0);
-  //context->DrawIndexedInstanced(6, 1024, 0, 0, 0);
+  bool checker = false;
   for (const Mesh& mesh : Meshes) {
     context->IASetVertexBuffers(0, 1, &mesh.vertexbuffer, &stride, &offset);
     
     context->IASetIndexBuffer(mesh.indexbuffer, DXGI_FORMAT_R32_UINT, 0);
 
+    if (mesh.hasTexture) {
+      context->PSSetShaderResources(0, 1, &textures[mesh.TextureID].second);
+      checker = false;
+    }
+    else {
+      context->PSSetShaderResources(0, 1, &checkerTextureSRV);
+      if (!checker) {
+        checker = true;
+      }
+    }
+
     context->DrawIndexed(mesh.nIndices, 0, 0);
+    //context->DrawIndexedInstanced(mesh.nIndices, 1024, 0, 0, 0);
   }
   
   // Unbind
@@ -1468,7 +1804,17 @@ render(uint32& gProgramID,
     ID3D11ShaderResourceView* SRV_NULL = nullptr;
     context->VSSetShaderResources(0, 1, &SRV_NULL);
 
-    context->OMSetRenderTargets(0, nullptr, nullptr);
+    ID3D11RenderTargetView* RTV_NULL = nullptr;
+    context->OMSetRenderTargets(1, &RTV_NULL, nullptr);
+
+    context->VSSetShader(nullptr, nullptr, 0);
+
+    context->PSSetShader(nullptr, nullptr, 0);
+  }
+
+  // Update shadow buffers
+  {
+    context->UpdateSubresource(computeConstantbuffer, 0, nullptr, &computeData, 0, 0);
   }
 
   // Compute shader image
@@ -1477,10 +1823,24 @@ render(uint32& gProgramID,
 
     context->CSSetUnorderedAccessViews(0, 1, &unorderedAccessView, nullptr);
 
-    context->Dispatch(40, 23, 1);
+    context->CSSetConstantBuffers(0, 1, &computeConstantbuffer);
+    context->CSSetShaderResources(0, 1, &GBufferSRV);
+    context->CSSetShaderResources(1, 1, &shadowSRV);
+    context->CSSetSamplers(0, 1, &AnisotropicSamplerState);
+    context->CSSetSamplers(1, 1, &PointSamplerState);
 
+    context->Dispatch(std::ceil(clientWidth / 32.0f),
+                      std::ceil(clientHeight / 32.0f), 1);
+
+    ID3D11Buffer* CB_NULL = nullptr;
+    ID3D11ShaderResourceView* SRV_NULL = nullptr;
     ID3D11UnorderedAccessView* UAV_NULL = nullptr;
     context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, 0);
+    context->CSSetConstantBuffers(0, 1, &CB_NULL);
+    context->CSSetShaderResources(0, 1, &SRV_NULL);
+    context->CSSetShaderResources(1, 1, &SRV_NULL);
+
+    context->CSSetShader(nullptr, nullptr, 0);
   }
 
   swapchain->Present(1, 0);
