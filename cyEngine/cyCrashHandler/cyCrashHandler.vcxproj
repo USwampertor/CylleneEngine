@@ -182,6 +182,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\cyCrashHandlerPrerequisites.h" />
+    <ClInclude Include="include\cyGLUI.h" />
     <ClInclude Include="include\cyGraphicsUI.h" />
     <ClInclude Include="include\cyDirectx11UI.h" />
   </ItemGroup>

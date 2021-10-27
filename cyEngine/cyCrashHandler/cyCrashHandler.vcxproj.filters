@@ -24,6 +24,9 @@
     <ClInclude Include="include\cyGraphicsUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyGLUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
