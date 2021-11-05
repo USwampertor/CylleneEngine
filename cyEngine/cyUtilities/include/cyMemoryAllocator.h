@@ -33,7 +33,7 @@ namespace CYLLENE_SDK {
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
   inline void*
-    platformAlignedAlloc16(SIZE_T size) {
+    platformAlignedAlloc16(SizeT size) {
     return _aligned_malloc(size, 16);
   }
 
@@ -43,7 +43,7 @@ namespace CYLLENE_SDK {
   }
 
   inline void*
-    platformAlignedAlloc(SIZE_T size, SIZE_T alignment) {
+    platformAlignedAlloc(SizeT size, SizeT alignment) {
     return _aligned_malloc(size, alignment);
   }
 
@@ -53,7 +53,7 @@ namespace CYLLENE_SDK {
   }
 #elif CY_PLATFORM == CY_PLATFORM_LINUX || CY_PLATFORM == CY_PLATFORM_ANDROID
   inline void*
-    platformAlignedAlloc16(SIZE_T size) {
+    platformAlignedAlloc16(SizeT size) {
     return ::memalign(16, size);
   }
 
@@ -63,7 +63,7 @@ namespace CYLLENE_SDK {
   }
 
   inline void*
-    platformAlignedAlloc(SIZE_T size, SIZE_T alignment) {
+    platformAlignedAlloc(SizeT size, SizeT alignment) {
     return ::memalign(alignment, size);
   }
 
@@ -73,7 +73,7 @@ namespace CYLLENE_SDK {
   }
 #else //16 byte alignment by default
   inline void*
-    platformAlignedAlloc16(SIZE_T size) {
+    platformAlignedAlloc16(SizeT size) {
     return ::malloc(size);
   }
 
@@ -83,7 +83,7 @@ namespace CYLLENE_SDK {
   }
 
   inline void*
-    platformAlignedAlloc(SIZE_T size, SIZE_T alignment) {
+    platformAlignedAlloc(SizeT size, SizeT alignment) {
     void* data = ::malloc(size + (alignment - 1) + sizeof(void*));
     if (nullptr == data) {
       return nullptr;
@@ -172,7 +172,7 @@ namespace CYLLENE_SDK {
   {
   public:
     static void*
-      allocate(SIZE_T bytes) {
+      allocate(SizeT bytes) {
 #if CY_PROFILING_ENABLED
       incrementAllocCount();
 #endif
@@ -186,7 +186,7 @@ namespace CYLLENE_SDK {
      *        Alignment must be power of two.
      */
     static void*
-      allocateAligned(SIZE_T bytes, SIZE_T alignment) {
+      allocateAligned(SizeT bytes, SizeT alignment) {
 #if CY_PROFILING_ENABLED
       incrementAllocCount();
 #endif
@@ -197,7 +197,7 @@ namespace CYLLENE_SDK {
      * @brief Allocates @p bytes and aligns them to a 16 byte boundary.
      */
     static void*
-      allocateAligned16(SIZE_T bytes) {
+      allocateAligned16(SizeT bytes) {
 #if CY_PROFILING_ENABLED
       incrementAllocCount();
 #endif
@@ -247,7 +247,7 @@ namespace CYLLENE_SDK {
    */
   template<class Alloc>
   inline void*
-    cy_alloc(SIZE_T count) {
+    cy_alloc(SizeT count) {
     return MemoryAllocator<Alloc>::allocate(count);
   }
 
@@ -265,10 +265,10 @@ namespace CYLLENE_SDK {
    */
   template<class T, class Alloc>
   inline T*
-    cy_newN(SIZE_T count) {
+    cy_newN(SizeT count) {
     auto ptr = reinterpret_cast<T*>(MemoryAllocator<Alloc>::allocate(sizeof(T) * count));
 
-    for (SIZE_T i = 0; i < count; ++i) {
+    for (SizeT i = 0; i < count; ++i) {
       new (&ptr[i]) T;
     }
 
@@ -308,8 +308,8 @@ namespace CYLLENE_SDK {
    */
   template<class T, class Alloc = GenAlloc>
   inline void
-    cy_deleteN(T* ptr, SIZE_T count) {
-    for (SIZE_T i = 0; i < count; ++i) {
+    cy_deleteN(T* ptr, SizeT count) {
+    for (SizeT i = 0; i < count; ++i) {
       ptr[i].~T();
     }
     MemoryAllocator<Alloc>::free(ptr);
@@ -325,7 +325,7 @@ namespace CYLLENE_SDK {
     * @brief Allocates the specified number of bytes.
     */
   inline void*
-    cy_alloc(SIZE_T count) {
+    cy_alloc(SizeT count) {
     return MemoryAllocator<GenAlloc>::allocate(count);
   }
 
@@ -343,7 +343,7 @@ namespace CYLLENE_SDK {
    *        Boundary is in bytes and must be a power of two.
    */
   inline void*
-    cy_alloc_aligned(SIZE_T count, SIZE_T align) {
+    cy_alloc_aligned(SizeT count, SizeT align) {
     return MemoryAllocator<GenAlloc>::allocateAligned(count, align);
   }
 
@@ -351,7 +351,7 @@ namespace CYLLENE_SDK {
    * @brief Allocates the specified number of bytes aligned to a 16 bytes boundary.
    */
   inline void*
-    cy_alloc_aligned16(SIZE_T count) {
+    cy_alloc_aligned16(SizeT count) {
     return MemoryAllocator<GenAlloc>::allocateAligned16(count);
   }
 
@@ -360,7 +360,7 @@ namespace CYLLENE_SDK {
    */
   template<class T>
   inline T*
-    cy_allocN(SIZE_T count) {
+    cy_allocN(SizeT count) {
     return reinterpret_cast<T*>(MemoryAllocator<GenAlloc>::allocate(sizeof(T) * count));
   }
 
@@ -369,9 +369,9 @@ namespace CYLLENE_SDK {
   */
   template<class T>
   inline T*
-    cy_newN(SIZE_T count) {
+    cy_newN(SizeT count) {
     T* ptr = reinterpret_cast<T*>(MemoryAllocator<GenAlloc>::allocate(sizeof(T) * count));
-    for (SIZE_T i = 0; i < count; ++i) {
+    for (SizeT i = 0; i < count; ++i) {
       new (&ptr[i]) T;
     }
 
@@ -442,7 +442,7 @@ namespace CYLLENE_SDK {
     using const_pointer = const value_type*;
     using reference = value_type&;
     using const_reference = const value_type&;
-    using size_type = SIZE_T;
+    using size_type = SizeT;
     using difference_type = ptrdiff_t;
 
     constexpr StdAlloc() = default;
@@ -475,12 +475,12 @@ namespace CYLLENE_SDK {
      * @brief Allocate but don't initialize number elements of type T.
      */
     static T*
-      allocate(const SIZE_T num) {
+      allocate(const SizeT num) {
       if (0 == num) {
         return nullptr;
       }
 
-      if (num > NumericLimits<SIZE_T>::max() / sizeof(T)) {
+      if (num > NumericLimits<SizeT>::max() / sizeof(T)) {
         throw nullptr;
       }
 
@@ -496,13 +496,13 @@ namespace CYLLENE_SDK {
      * @brief Deallocate storage p of deleted elements.
      */
     static void
-      deallocate(pointer p, SIZE_T) {
+      deallocate(pointer p, SizeT) {
       cy_free<Alloc>(p);
     }
 
-    static constexpr SIZE_T
+    static constexpr SizeT
       max_size() {
-      return NumericLimits<SIZE_T>::max() / sizeof(T);
+      return NumericLimits<SizeT>::max() / sizeof(T);
     }
 
     static constexpr void
