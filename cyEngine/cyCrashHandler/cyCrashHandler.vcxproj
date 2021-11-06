@@ -180,17 +180,6 @@
       <AdditionalDependencies>cyUtilities.lib; imgui.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="include\cyCrashHandlerPrerequisites.h" />
-    <ClInclude Include="include\cyGLUI.h" />
-    <ClInclude Include="include\cyGraphicsUI.h" />
-    <ClInclude Include="include\cyDirectx11UI.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\cyDirectx11UI.cpp" />
-    <ClCompile Include="src\cyGraphicsUI.cpp" />
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
