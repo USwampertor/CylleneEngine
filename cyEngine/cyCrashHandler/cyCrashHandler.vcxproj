@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{07a0942f-cfcb-427f-9c1b-401a59829e25}</ProjectGuid>
-    <RootNamespace>cyUtilities</RootNamespace>
+    <ProjectGuid>{15d9736f-94f7-4232-9d82-044fae1e50bb}</ProjectGuid>
+    <RootNamespace>cyCrashHandler</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -96,21 +96,20 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
-      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cyUtilitiesd.lib; imguid.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,44 +118,42 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
-      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cyUtilities.lib; imgui.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
-      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cyUtilitiesd.lib; imguid.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -165,76 +162,34 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
-      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cyUtilities.lib; imgui.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\cyColor.h" />
-    <ClInclude Include="include\cyCrashHandler.h" />
-    <ClInclude Include="include\cyDLLLoader.h" />
-    <ClInclude Include="include\cyEulerHelpers.h" />
-    <ClInclude Include="include\cyFileSystem.h" />
-    <ClInclude Include="include\cyJSON.h" />
-    <ClInclude Include="include\cyMath.h" />
-    <ClInclude Include="include\cyMatrix4x4.h" />
-    <ClInclude Include="include\cyPhysics.h" />
-    <ClInclude Include="include\cyPlatformMath.h" />
-    <ClInclude Include="include\cyQuaternion.h" />
-    <ClInclude Include="include\cyRandom.h" />
-    <ClInclude Include="include\cyTime.h" />
-    <ClInclude Include="include\cyLogger.h" />
-    <ClInclude Include="include\cyMemoryAllocator.h" />
-    <ClInclude Include="include\cyModule.h" />
-    <ClInclude Include="include\cyPlatformDefines.h" />
-    <ClInclude Include="include\cyPlatformTypes.h" />
-    <ClInclude Include="include\cyStdHeaders.h" />
-    <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
-    <ClInclude Include="include\cyUtilities.h" />
-    <ClInclude Include="include\cyVector2f.h" />
-    <ClInclude Include="include\cyVector2i.h" />
-    <ClInclude Include="include\cyVector3f.h" />
-    <ClInclude Include="include\cyVector4f.h" />
-    <ClInclude Include="include\cyWindowsMath.h" />
-    <ClInclude Include="include\cyMatrix2x2.h" />
-    <ClInclude Include="include\cyMatrix3x3.h" />
-    <ClInclude Include="include\cyZiggurat.h" />
+    <ClInclude Include="include\cyCrashHandlerPrerequisites.h" />
+    <ClInclude Include="include\cyGLUI.h" />
+    <ClInclude Include="include\cyGraphicsUI.h" />
+    <ClInclude Include="include\cyDirectx11UI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\cyCrashHandler.cpp" />
-    <ClCompile Include="source\cyColor.cpp" />
-    <ClCompile Include="source\cyDLLLoader.cpp" />
-    <ClCompile Include="source\cyEulerHelpers.cpp" />
-    <ClCompile Include="source\cyFileSystem.cpp" />
-    <ClCompile Include="source\cyLogger.cpp" />
-    <ClCompile Include="source\cyMatrix2x2.cpp" />
-    <ClCompile Include="source\cyMatrix3x3.cpp" />
-    <ClCompile Include="source\cyMatrix4x4.cpp" />
-    <ClCompile Include="source\cyMemoryAllocator.cpp" />
-    <ClCompile Include="source\cyPlatformMath.cpp" />
-    <ClCompile Include="source\cyQuaternion.cpp" />
-    <ClCompile Include="source\cyRandom.cpp" />
-    <ClCompile Include="source\cyTime.cpp" />
-    <ClCompile Include="source\cyUtilities.cpp" />
-    <ClCompile Include="source\cyVector2f.cpp" />
-    <ClCompile Include="source\cyVector2i.cpp" />
-    <ClCompile Include="source\cyVector3f.cpp" />
-    <ClCompile Include="source\cyVector4f.cpp" />
+    <ClCompile Include="src\cyDirectx11UI.cpp" />
+    <ClCompile Include="src\cyGraphicsUI.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

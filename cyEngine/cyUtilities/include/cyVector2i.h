@@ -496,7 +496,7 @@ namespace CYLLENE_SDK {
      * Member declaration
      */
 
-   private:
+   public:
 
     /**
      * x component

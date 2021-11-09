@@ -2,12 +2,31 @@
 #include "cyVector4f.h"
 #include "cyUtilities.h"
 
+#include "cyVector2i.h"
+#include "cyVector2f.h"
 #include "cyVector3f.h"
 
 #include "cyMath.h"
 
 namespace CYLLENE_SDK {
-  
+
+  Vector4f::Vector4f(const Vector2i& other)
+    : x(static_cast<float>(other.x)),
+      y(static_cast<float>(other.y)),
+      z(0.0f),
+      w(0.0f) {}
+
+  Vector4f::Vector4f(const Vector2f& other)
+    : x(other.x),
+      y(other.y),
+      z(0.0f),
+      w(0.0f) {}
+
+  Vector4f::Vector4f(const Vector3f& other)
+    : x(other[0]),
+      y(other[1]),
+      z(other[2]),
+      w(0.0f) {}
   
   Vector4f::Vector4f(const Vector4f& other)
     : x(other.x),
@@ -15,11 +34,6 @@ namespace CYLLENE_SDK {
       z(other.z),
       w(other.w) {}
 
-  Vector4f::Vector4f(const Vector3f& other)
-    : x(other[0]),
-      y(other[1]),
-      z(other[2]),
-      w(0) {}
 
 
   Vector4f::Vector4f(const float& nx, const float& ny, const float& nz, const float& nw)

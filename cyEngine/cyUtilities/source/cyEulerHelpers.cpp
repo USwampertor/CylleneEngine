@@ -6,7 +6,7 @@
 namespace CYLLENE_SDK {
 
 
-  EulerAngles Eul_(float ai, float aj, float ah, int order)
+  EulerAngles Eul_(float ai, float aj, float ah, int32 order)
   {
     EulerAngles ea;
     ea.x = ai; ea.y = aj; ea.z = ah;
@@ -69,7 +69,7 @@ namespace CYLLENE_SDK {
   }
 
   /* Convert matrix to Euler angles (in radians). */
-  EulerAngles Eul_FromHMatrix(HMatrix M, int order)
+  EulerAngles Eul_FromHMatrix(HMatrix M, int32 order)
   {
     EulerAngles ea;
     int32 i, j, k, h, n, s, f;
@@ -107,7 +107,7 @@ namespace CYLLENE_SDK {
   }
 
   /* Convert quaternion to Euler angles (in radians). */
-  EulerAngles Eul_FromQuat(Quat q, int order)
+  EulerAngles Eul_FromQuat(Quat q, int32 order)
   {
     HMatrix M;
     float Nq = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;

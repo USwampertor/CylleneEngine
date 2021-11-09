@@ -42,6 +42,11 @@ namespace CYLLENE_SDK {
       z(vector.z),
       order(static_cast<int32>(vector.w)) {}
 
+  String
+  Euler::toString() {
+    return Utils::format("( %2.2f, %2.2f, %2.2f, %2.2f)", x, y, z, order);
+  }
+
   Quaternion::Quaternion(const Vector3f& other) 
   : x(other.x),
     y(other.y),
@@ -61,7 +66,7 @@ namespace CYLLENE_SDK {
     ea.x = euler.x;
     ea.y = euler.y;
     ea.z = euler.z;
-    ea.w = order;
+    ea.w = static_cast<float>(order);
 
     Quat q = Eul_ToQuat(ea);
 
@@ -254,8 +259,71 @@ namespace CYLLENE_SDK {
 
   const Quaternion
   Quaternion::slerp(const Quaternion& q1, const Quaternion& q2, float t) {
-    // TODO: implement SLERP
-    return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+    // TODO: Check if this shit is correctly implemented
+
+    // Quaternion result;
+    // 
+    // float dotproduct = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+    // float theta, st, sut, sout, coeff1, coeff2;
+    // 
+    // // algorithm adapted from Shoemake's paper
+    // t = t / 2.0;
+    // 
+    // theta = (float)acos(dotproduct);
+    // if (theta < 0.0) theta = -theta;
+    // 
+    // st = (float)sin(theta);
+    // sut = (float)sin(t * theta);
+    // sout = (float)sin((1 - t) * theta);
+    // coeff1 = sout / st;
+    // coeff2 = sut / st;
+    // 
+    // result.x = coeff1 * q1.x + coeff2 * q2.x;
+    // result.y = coeff1 * q1.y + coeff2 * q2.y;
+    // result.z = coeff1 * q1.z + coeff2 * q2.z;
+    // result.w = coeff1 * q1.w + coeff2 * q2.w;
+    // 
+    // result.norm();
+
+
+    float w1, x1, y1, z1, w2, x2, y2, z2, w3, x3, y3, z3;
+    // Quaternion q2New;
+    float theta, mult1, mult2;
+
+    w1 = q1.w; x1 = q1.x; y1 = q1.y; z1 = q1.z;
+    w2 = q2.w; x2 = q2.x; y2 = q2.y; z2 = q2.z;
+
+    // Reverse the sign of q2 if q1.q2 < 0.
+    if (w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2 < 0)
+    {
+      w2 = -w2; x2 = -x2; y2 = -y2; z2 = -z2;
+    }
+
+    theta = acos(w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2);
+
+    if (theta > 0.000001)
+    {
+      mult1 = sin((1 - t) * theta) / sin(theta);
+      mult2 = sin(t * theta) / sin(theta);
+    }
+
+    // To avoid division by 0 and by very small numbers the approximation of sin(angle)
+    // by angle is used when theta is small (0.000001 is chosen arbitrarily).
+    else
+    {
+      mult1 = 1 - t;
+      mult2 = t;
+    }
+
+    w3 = mult1 * w1 + mult2 * w2;
+    x3 = mult1 * x1 + mult2 * x2;
+    y3 = mult1 * y1 + mult2 * y2;
+    z3 = mult1 * z1 + mult2 * z2;
+
+    return *new Quaternion(w3, x3, y3, z3);
+
+
+    // return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
   }
 
   void
@@ -265,7 +333,7 @@ namespace CYLLENE_SDK {
     ea.x = euler.x;
     ea.y = euler.y;
     ea.z = euler.z;
-    ea.w = order;
+    ea.w = static_cast<float>(order);
 
     Quat q = Eul_ToQuat(ea);
 
@@ -332,7 +400,7 @@ namespace CYLLENE_SDK {
     }
   }
 
-  const Vector3f&
+  const Vector3f
   Quaternion::getVectorPart() const {
     return Vector3f(x, y, z);
   }
@@ -380,6 +448,16 @@ namespace CYLLENE_SDK {
   void
   Quaternion::scale(const float& s) {
     *this = scaled(s);
+  }
+
+  Quaternion
+  Quaternion::normalized() const {
+    return Quaternion(x / norm(), y / norm(), z / norm(), w / norm());
+  }
+
+  void
+  Quaternion::normalize() {
+    *this = normalized();
   }
 
   Quaternion
@@ -439,7 +517,7 @@ namespace CYLLENE_SDK {
 
     EulerAngles ea = Eul_FromQuat(q, order);
 
-    return Euler(ea.x, ea.y, ea.z, ea.w);
+    return Euler(ea.x, ea.y, ea.z, static_cast<int32>(ea.w));
   }
 
   Vector4f 
@@ -448,7 +526,7 @@ namespace CYLLENE_SDK {
   }
 
   String
-  Quaternion::toString() {
+  Quaternion::toString() const {
     return Utils::format("(%2.2f, %2.2f, %2.2f, %2.2f)", x, y, z, w);
   }
 

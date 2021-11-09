@@ -1,6 +1,7 @@
 #include "cyMatrix4x4.h"
 #include "cyUtilities.h"
 
+#include "cyMatrix2x2.h"
 #include "cyMatrix3x3.h"
 #include "cyMath.h"
 
@@ -15,11 +16,25 @@
 
 namespace CYLLENE_SDK {
   Matrix4x4::Matrix4x4(const float& value) {
-    memset(this, value, sizeof(Matrix4x4));
+    memset(this, static_cast<int32>(value), sizeof(Matrix4x4));
   }
 
   Matrix4x4::Matrix4x4(const Matrix4x4& other)
     : _m(other._m) {}
+
+  Matrix4x4::Matrix4x4(const Matrix3x3& other) {
+    _m.m00 = other._m.m00; _m.m01 = other._m.m01; _m.m02 = other._m.m02; _m.m03 = 0;
+    _m.m10 = other._m.m10; _m.m11 = other._m.m11; _m.m12 = other._m.m12; _m.m13 = 0;
+    _m.m20 = other._m.m20; _m.m21 = other._m.m21; _m.m22 = other._m.m22; _m.m23 = 0;
+    _m.m30 = 0;            _m.m31 = 0;            _m.m32 = 0;            _m.m33 = 0;
+  }
+
+  Matrix4x4::Matrix4x4(const Matrix2x2& other) {
+    _m.m00 = other._m.m00; _m.m01 = other._m.m01; _m.m02 = 0;            _m.m03 = 0;
+    _m.m10 = other._m.m10; _m.m11 = other._m.m11; _m.m12 = 0;            _m.m13 = 0;
+    _m.m20 = 0;            _m.m21 = 0;            _m.m22 = 0;            _m.m23 = 0;
+    _m.m30 = 0;            _m.m31 = 0;            _m.m32 = 0;            _m.m33 = 0;
+  }
 
   Matrix4x4::Matrix4x4(const float& v00, const float& v01, const float& v02, const float v03,
                        const float& v10, const float& v11, const float& v12, const float v13,
@@ -255,8 +270,7 @@ namespace CYLLENE_SDK {
 
   Matrix4x4
   Matrix4x4::inversed() {
-    float det = this->determinant();
-    CY_ASSERT(det != 0.0f &&
+    CY_ASSERT(this->determinant() != 0.0f &&
               Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
     
     Matrix4x4 temp = *this;

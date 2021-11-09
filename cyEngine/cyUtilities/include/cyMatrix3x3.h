@@ -5,6 +5,9 @@
 #include "cyVector3f.h"
 
 namespace CYLLENE_SDK {
+
+  class Matrix4x4;
+
   class CY_UTILITY_EXPORT Matrix3x3
   {
   public:
@@ -16,6 +19,8 @@ namespace CYLLENE_SDK {
     Matrix3x3(const float& value);
 
     Matrix3x3(const Matrix3x3& other);
+
+    Matrix3x3(const Matrix4x4& other);
 
     Matrix3x3(const float& v00, const float& v01, const float& v02,
               const float& v10, const float& v11, const float& v12,

@@ -67,17 +67,17 @@ namespace CYLLENE_SDK {
 
   void
   Logger::logDebug(const String& message, const LOG_CHANNEL::E& channel) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::DEBUG, channel));
+    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eDEBUG, channel));
   }
 
   void
   Logger::logWarning(const String& message, const LOG_CHANNEL::E& channel) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::WARNING, channel));
+    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eWARNING, channel));
   }
 
   void
   Logger::logError(const String& message, const LOG_CHANNEL::E& channel) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::ERROR, channel));
+    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eERROR, channel));
   }
 
   void

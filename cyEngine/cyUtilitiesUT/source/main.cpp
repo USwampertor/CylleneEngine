@@ -4,29 +4,39 @@
 
 #include <conio.h>
 
-#include <cyCrashHandler.h>
-#include <cyMatrix2x2.h>
+#include <cyJSON.h>
+#include <cyQuaternion.h>
 #include <cyMatrix3x3.h>
 #include <cyMatrix4x4.h>
-#include <cyUtilities.h>
-#include <cyVector2f.h>
-#include <cyVector2i.h>
+#include <cyCrashHandler.h>
+#include <cyMath.h>
 
 using namespace CYLLENE_SDK;
 
 int32
 main() {
   CrashHandler::startUp();
+  Quaternion q;
 
-  Matrix2x2 test1(1, 2, 3, 4);
-  Matrix2x2 test2(5, 6, 7, 8);
-  Matrix3x3 test3(331, 34, 1, 357, 7, 13, 2, -38, 63);
-  Matrix3x3 test4(1.0f/7.0f, 4.0f /21.0f, -5.0f /21.0f, 5.0f /7.0f, -1.0f /21.0f, -4.0f /21.0f, -2.0f, 0.0f, 1.0f);
-  Matrix4x4 test5(1.0f, 9.0f, 5.0f, 21.0f, 4.0f, 12.0f, 5.0f, 3.0f, 4.0f, 6.0f, 11.0f, 2.0f, 45.0f, 7.0f, 6.0f, 4.0f);
-  Matrix4x4 test6(12.0f, 3.0f, 4.0f, 5.0f, 2.0f, 13.0f, 4.0f, 5.0f, 2.0f, 3.0f, 14.0f, 5.0f, 2.0f, 3.0f, 4.0f, 15.0f);
-  
   try
   {
+#if _DEBUG
+    printf("DEBUG\n");
+#else
+    printf("RELEASE\n");
+#endif
+
+    float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
+    Quaternion worldRotation;
+    worldRotation.fromEuler(Euler(3.14159265f * 1.5f, 3.14159265f, 0.0f), 0);
+    printf("Quaternion:\n%s\n", worldRotation.toString().c_str());
+
+    Matrix3x3 world3x3 = worldRotation.getRotationMatrix();
+    Matrix4x4 world(world3x3.m[0][0], world3x3.m[0][1], world3x3.m[0][2], 0.0f,
+                    world3x3.m[1][0], world3x3.m[1][1], world3x3.m[1][2], 0.0f,
+                    world3x3.m[2][0], world3x3.m[2][1], world3x3.m[2][2], 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f);
+    printf("Matrix:\n%s\n", world3x3.toString().c_str());
 
   }
   catch (const std::exception& e)

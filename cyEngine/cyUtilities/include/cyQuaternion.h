@@ -36,6 +36,9 @@ namespace CYLLENE_SDK {
 
     Euler(const Vector4f& vector);
 
+    String
+    toString();
+
   public:
     float x;
     float y;
@@ -309,7 +312,7 @@ namespace CYLLENE_SDK {
     void
     setRotationMatrix(const Matrix3x3& m);
 
-    const Vector3f&
+    const Vector3f
     getVectorPart() const;
 
     const float&
@@ -329,6 +332,12 @@ namespace CYLLENE_SDK {
 
     void 
     scale(const float& s);
+
+    Quaternion
+    normalized() const;
+
+    void
+    normalize();
 
     Quaternion
     conjugated() const;
@@ -367,7 +376,7 @@ namespace CYLLENE_SDK {
     toVector4() const;
 
     String
-    toString();
+    toString() const;
 
 
   public:

@@ -106,5 +106,5 @@ namespace CYLLENE_SDK {
   /**
    * SIZE_T is an architecture dependent data type
    */
-  using SIZE_T = size_t;
+  using SizeT = size_t;
 }

@@ -23,13 +23,12 @@ namespace CYLLENE_SDK {
     static void 
     init() {
       std::mt19937_64 random;
-
     }
 
-    void 
+    static void 
     next();
 
-    void
+    static void
     range();
 
 

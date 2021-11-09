@@ -16,6 +16,7 @@
 #include <cppfs/FilePath.h>
 #include <cppfs/LoginCredentials.h>
 #include <cppfs/fs.h>
+#include <cpplocate/cpplocate.h>
 
 namespace CYLLENE_SDK
 {
@@ -51,6 +52,66 @@ namespace CYLLENE_SDK
     static String
     stringToHash(const String& fileName) {
       return cppfs::fs::sha1(fileName);
+    }
+
+    static Path
+    getExecutablePath() {
+      return Path(cpplocate::getExecutablePath());
+    }
+
+    static Path
+    getBasePath(){
+      return Path(cpplocate::getModulePath());
+    }
+
+    static Path
+    getBundlePath() {
+      return Path(cpplocate::getBundlePath());
+    }
+
+    static Path
+    getLibraryPath(void* library) {
+      return Path(cpplocate::getLibraryPath(library));
+    }
+
+    static Path
+    locatePath(const String& relPath, const String& systemDir, void* symbol) {
+      return Path(cpplocate::locatePath(relPath, systemDir, symbol));
+    }
+
+    static Path
+    homeDir() {
+      return Path(cpplocate::homeDir());
+    }
+
+    static Path
+    documentsDir() {
+      return Path(cpplocate::documentDir());
+    }
+
+    static Path
+    profileDir() {
+      return Path(cpplocate::profileDir());
+    }
+
+    static Path
+    tempDir() {
+      return Path(cpplocate::tempDir(getExecutablePath().baseName()));
+    }
+
+    static Path
+    configDir() {
+      return Path(cpplocate::configDir(getExecutablePath().baseName()));
+    }
+
+    static Path
+    localDir() {
+      return Path(cpplocate::localDir(getExecutablePath().baseName()));
+    }
+
+    static Path
+    roamingDir() {
+      return Path(cpplocate::roamingDir(getExecutablePath().baseName()));
     }
   };
 }
