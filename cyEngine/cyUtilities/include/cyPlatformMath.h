@@ -507,7 +507,7 @@ namespace CYLLENE_SDK {
     template<typename T>
     static T
     max(T a, T b) {
-      return (a < b) ? a : b;
+      return (a > b) ? a : b;
 
       //return std::max(a, b);
     }
@@ -522,7 +522,7 @@ namespace CYLLENE_SDK {
     static T
     min(T a, T b) {
 
-      return (a > b) ? a : b;
+      return (a < b) ? a : b;
 
       //return std::min(a, b);
     }
