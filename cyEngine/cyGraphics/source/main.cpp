@@ -1,3 +1,10 @@
+#define BISTRO 0
+#define COW 1
+#define QUAD 2
+#define PLANT 3
+
+#define SCENE BISTRO
+
 #include <chrono>
 #include <stdio.h>
 #include <string>
@@ -18,6 +25,11 @@
 #include <tchar.h>
 #include <unordered_map>
 
+#include "cyUtilitiesPrerequisites.h"
+
+#include "cyCountAllocator.h"
+#include "cyCountAllocatorPointer.h"
+
 #include "cyFileSystem.h"
 #include "cyMatrix3x3.h"
 #include "cyMatrix4x4.h"
@@ -36,6 +48,7 @@ std::unordered_map<size_t, std::pair<ID3D11Texture2D*, ID3D11ShaderResourceView*
 
 using nanosecs = std::chrono::nanoseconds;
 using millisecs = std::chrono::milliseconds;
+using secs = std::chrono::seconds;
 using steady_clock = std::chrono::steady_clock;
 using namespace CYLLENE_SDK;
 
@@ -71,29 +84,43 @@ ID3D11VertexShader* GBufferVSShader;
 ID3DBlob* gbuffer_fs_blob;
 ID3D11PixelShader* GBufferPSShader;
 
+ID3DBlob* ao_cs_blob;
+ID3D11ComputeShader* AOCSShader;
+
 ID3DBlob* image_cs_blob;
 ID3D11ComputeShader* ImageCSShader;
 
 ID3D11InputLayout* inputLayout;
 ID3D11SamplerState* AnisotropicSamplerState;
+ID3D11SamplerState* LinearSamplerState;
 ID3D11SamplerState* PointSamplerState;
 ID3D11UnorderedAccessView* uavBuffer;
 ID3D11ShaderResourceView* srvuav;
 ID3D11Buffer* computebuffer;
+ID3D11Buffer* computeBufferConstantbuffer;
 ID3D11Buffer* graphicsConstantbuffer;
-ID3D11Buffer* computeConstantbuffer;
-ID3D11Buffer* indexbuffer;
-ID3D11Buffer* vertexbuffer;
+ID3D11Buffer* aoConstantbuffer;
+ID3D11Buffer* computeTextureConstantbuffer;
 ID3D11Buffer* uvbuffer;
 ID3D11Buffer* colorbuffer;
 
 ID3D11Texture2D* checkterTexture;
 ID3D11ShaderResourceView* checkerTextureSRV;
 
-ID3D11Texture2D* GBufferTexture;
-ID3D11RenderTargetView* GBufferRTV;
-ID3D11ShaderResourceView* GBufferSRV;
-ID3D11UnorderedAccessView* GBufferUAV;
+ID3D11Texture2D* GBuffer1Texture;
+ID3D11RenderTargetView* GBuffer1RTV;
+ID3D11ShaderResourceView* GBuffer1SRV;
+ID3D11UnorderedAccessView* GBuffer1UAV;
+
+ID3D11Texture2D* GBuffer2Texture;
+ID3D11RenderTargetView* GBuffer2RTV;
+ID3D11ShaderResourceView* GBuffer2SRV;
+ID3D11UnorderedAccessView* GBuffer2UAV;
+
+ID3D11Texture2D* AOTexture;
+ID3D11RenderTargetView* AORTV;
+ID3D11ShaderResourceView* AOSRV;
+ID3D11UnorderedAccessView* AOUAV;
 
 float g_aspectRatio;
 
@@ -130,6 +157,18 @@ struct ComputeCB
   Matrix4x4 ShadowP;
   Matrix4x4 CameraV;
   Matrix4x4 CameraP;
+  Vector2f  ScreenDimensions;
+};
+
+struct ComputeAOCB
+{
+  Matrix4x4 CameraView;
+  Matrix4x4 CameraInvView;
+  Matrix4x4 CameraInvProjection;
+  float     Intensity;
+  float     Scale;
+  float     Bias;
+  float     Sample;
   Vector2f  ScreenDimensions;
 };
 
@@ -213,17 +252,28 @@ CreateFragmentShader(String path,
                      String entryPoint = "main");
 
 void
-CreateComputeBuffer();
+CreateConstantBuffer(int32 sizeOfBuffer,
+                     ID3D11Buffer** buffer);
+
+void
+CreateComputeBuffer(int32 typeSize,
+                    int32 numberOfElements,
+                    ID3D11Buffer** buffer,
+                    ID3D11UnorderedAccessView** uav,
+                    ID3D11ShaderResourceView** srv);
 
 void
 CreateRenderTarget(uint32 width,
                    uint32 height,
                    ID3D11Texture2D** buffer,
                    ID3D11RenderTargetView** rtv,
-                   ID3D11ShaderResourceView** srv);
+                   ID3D11ShaderResourceView** srv,
+                   ID3D11UnorderedAccessView** uav);
 
 void
-render(Matrix4x4 ShadowView,
+render(float time,
+       float deltaTime,
+       Matrix4x4 ShadowView,
        Matrix4x4 ShadowProjection,
        Matrix4x4 CameraView,
        Matrix4x4 CameraProjection);
@@ -249,6 +299,26 @@ main(int argc, char** argv) {
       }
     }
   }
+
+  std::cout << std::endl;
+
+  /*
+  {
+    CAPointer<Vector4f> test1 = CAlloc.GetPointer<Vector4f>();
+    *test1.ptr = Vector4f(0.0f, 1.0f, 2.0f, 3.0f);
+    CAPointer<char> test2 = CAlloc.GetPointer<char>();
+    *test2.ptr = 'C';
+    CAPointer<float> test3 = CAlloc.GetPointer<float>();
+    *test3.ptr = 12.742f;
+    CAPointer<uint16> test4 = CAlloc.GetPointer<uint16>();
+    *test4.ptr = 7;
+
+    test1.~CAPointer();
+    test3.~CAPointer();
+    test4.~CAPointer();
+    test2.~CAPointer();
+  }
+  */
 
   printf("\n");
 
@@ -341,13 +411,24 @@ main(int argc, char** argv) {
   ms.width = clientWidth;
   ms.height = clientHeight;
 
+#if SCENE == QUAD
+  Vector4f CamPosition(-5, 5, -5, 1);
+#else
   Vector4f CamPosition(0, 0, -10, 1);
+#endif
   Vector3f CamRight(1, 0, 0);
   Vector3f CamForward(0, 0, 1);
 
+#if SCENE == BISTRO
   Vector4f ShadowCamPosition(-1320.0f, 4200.0f, 230.0f, 1.0f);
   Vector4f ShadowCamLookAt = Vector4f(0.0f, 300.0f, 0.0f, 1.0f) - ShadowCamPosition;
-  ShadowCamLookAt.normalize();
+#elif SCENE == COW
+  Vector4f ShadowCamPosition(-96.0f, 150.0f, -96.0f, 1.0f);
+  Vector4f ShadowCamLookAt = Vector4f(96.0f, 102.4f, 96.0f, 1.0f);
+#else
+  Vector4f ShadowCamPosition(-96.0f, 150.0f, -96.0f, 1.0f);
+  Vector4f ShadowCamLookAt = Vector4f(96.0f, 102.4f, 96.0f, 1.0f);
+#endif
 
   Matrix4x4 ShadowView;
   ShadowView.View(ShadowCamPosition,
@@ -355,7 +436,13 @@ main(int argc, char** argv) {
                   Vector4f(0, 1, 0, 0));
 
   Matrix4x4 ShadowProjection;
-  ShadowProjection.Orthogonal(5760.0f, 3240.0f, 0.01f, 10000.0);
+#if SCENE == BISTRO
+  ShadowProjection.Orthogonal(5760.0f, 3240.0f, 0.01f, 10000.0f);
+#elif SCENE == COW
+  ShadowProjection.Orthogonal(270.0f, 270.0f, 0.01f, 10000.0f);
+#else
+  ShadowProjection.Orthogonal(270.0f, 270.0f, 0.01f, 10000.0f);
+#endif
 
   Matrix4x4 Projection;
   Projection.Perspective(1920.0f, 1080.0f, 1.0f, 10000.0f, 60.0f * 0.0174533f);
@@ -363,6 +450,7 @@ main(int argc, char** argv) {
 
   bool open = true;
   double deltaTime = 0.0;
+  steady_clock::time_point appStartedTime = steady_clock::now();
   steady_clock::time_point lastFrame = steady_clock::now();
 
   while (open) {
@@ -398,8 +486,11 @@ main(int argc, char** argv) {
       mouseDeltaY = m_Mouse->getMouseState().Y.rel * deltaTime;
     }
 
+#if SCENE == BISTRO
     float camSpeed = 500.0f;
-    //float camSpeed = 5.0f;
+#else
+    float camSpeed = 15.0f;
+#endif
     if (keyboardW) CamPosition += CamForward * camSpeed * deltaTime;
     if (keyboardS) CamPosition -= CamForward * camSpeed * deltaTime;
     if (keyboardA) CamPosition -= CamRight * camSpeed * deltaTime;
@@ -422,8 +513,16 @@ main(int argc, char** argv) {
               CamPosition + CamForward,
               Vector4f(0, 1, 0, 0));
 
-    render(ShadowView, ShadowProjection,
-           View, Projection);
+    steady_clock::time_point now = steady_clock::now();
+    nanosecs startedDiff = now - appStartedTime;
+    double appTime = durationCast<millisecs>(startedDiff).count() / 1000.0f;
+
+    render(appTime,
+           deltaTime,
+           ShadowView,
+           ShadowProjection,
+           View,
+           Projection);
 
     //SDL_GL_SwapWindow(window);
 
@@ -709,7 +808,7 @@ CreateTexture(String texturePath, ID3D11Texture2D** texture2D, ID3D11ShaderResou
   desc.Height = nHeight;
   desc.MipLevels = 1;
   desc.ArraySize = 1;
-  desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
   //desc.Format = DXGI_FORMAT_R16G16B16A16_UNORM;
   //desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
   desc.SampleDesc.Count = 1;
@@ -828,7 +927,7 @@ init(String basepath,
   DXGI_SWAP_CHAIN_DESC1 sd;
   sd.Width = clientWidth;
   sd.Height = clientHeight;
-  sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+  sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
   sd.Stereo = false;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_SHADER_INPUT;
   sd.BufferCount = FrameCount;
@@ -1048,16 +1147,27 @@ init(String basepath,
   shadowViewport.MinDepth = 0.0f;
   shadowViewport.MaxDepth = 1.0f;
 
-  //CreateTexture(basepath + "Models/plant.png",
+#if SCENE == PLANT
+  CreateTexture(basepath + "Models/plant.png",
+                &checkterTexture,
+                &checkerTextureSRV);
+#else
   CreateTexture(basepath + "../../Checker.webp",
                 &checkterTexture,
                 &checkerTextureSRV);
+#endif
 
+#if SCENE == BISTRO
   DoTheImportThing(basepath + "Models/BistroExterior.fbx");
-  //DoTheImportThing(basepath + "Models/ArrowRight.fbx");
-  //DoTheImportThing(basepath + "Models/Cow.fbx");
-  //DoTheImportThing(basepath + "Models/Plant.obj");
-  //DoTheImportThing(basepath + "Models/ScreenAlignedQuad.3ds");
+#elif SCENE == COW
+  DoTheImportThing(basepath + "Models/Cow.fbx");
+#elif SCENE == PLANT
+  DoTheImportThing(basepath + "Models/Plant.obj");
+#elif SCENE == ARROW
+  DoTheImportThing(basepath + "Models/ArrowRight.fbx");
+#else
+  DoTheImportThing(basepath + "Models/ScreenAlignedQuad.3ds");
+#endif
 
   //Initialize DirectX 11
   if (!initDX11(basepath,
@@ -1094,6 +1204,10 @@ initDX11(String basepath,
   CreateFragmentShader(basepath + "Shaders/hlsl/GBufferFragment.hlsl",
                        &gbuffer_fs_blob,
                        &GBufferPSShader);
+
+  CreateComputeShader(basepath + "Shaders/hlsl/ComputeSSAO.hlsl",
+                      &ao_cs_blob,
+                      &AOCSShader);
 
   CreateComputeShader(basepath + "Shaders/hlsl/ComputeTexture.hlsl",
                       &image_cs_blob,
@@ -1151,7 +1265,7 @@ initDX11(String basepath,
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
     samplerDesc.MaxAnisotropy = 8;
     samplerDesc.MinLOD = 0;
@@ -1173,9 +1287,30 @@ initDX11(String basepath,
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    samplerDesc.MipLODBias = 0;
+
+    HRESULT HRSampler = device->CreateSamplerState(&samplerDesc, &LinearSamplerState);
+
+    if (FAILED(HRSampler)) {
+      printf("Linear Sampler state couldn't be created: ");
+      ErrorDescription(HRSampler);
+      return false;
+    }
+  }
+
+  // create sampler
+  {
+    D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-    //samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc.MaxAnisotropy = 1;
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -1190,96 +1325,30 @@ initDX11(String basepath,
     }
   }
 
-  CreateComputeBuffer();
+#if SCENE == QUAD
+  CreateComputeBuffer(sizeof(float) * 2, 1024 * 8 * 8, &computebuffer, &uavBuffer, &srvuav);
+#else
+  CreateComputeBuffer(sizeof(float) * 2, 1024, &computebuffer, &uavBuffer, &srvuav);
+#endif
 
-  //CreateRenderTarget(1280, 720, &GBufferTexture, &GBufferRTV, &GBufferSRV);
-  CreateRenderTarget(clientWidth, clientHeight, &GBufferTexture, &GBufferRTV, &GBufferSRV);
-
-
-  // Create constant buffer
-  {
-    ComputeCB initData;
-    initData.ShadowV = Matrix4x4::IDENTITY;
-    initData.ShadowV = Matrix4x4::IDENTITY;
-    initData.CameraV = Matrix4x4::IDENTITY;
-    initData.CameraP = Matrix4x4::IDENTITY;
-    initData.ScreenDimensions = Vector2f::ZERO;
-
-    D3D11_BUFFER_DESC bd;
-    bd.ByteWidth = std::ceil(sizeof(ComputeCB) / 16.0f) * 16;
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    bd.CPUAccessFlags = 0;
-    bd.MiscFlags = 0;
-    bd.StructureByteStride = 0;
-
-    D3D11_SUBRESOURCE_DATA srd = { &initData, 0, 0 };
-    HRESULT HRCB = device->CreateBuffer(&bd, &srd, &computeConstantbuffer);
-
-    if (FAILED(HRCB)) {
-      printf("Shadow Constant buffer couldn't be created: ");
-      ErrorDescription(HRCB);
-      return false;
-    }
-  }
-
-  // Create constant buffer
-  {
-    Matrix4x4 contantBuffer[3] =
-    {
-      Matrix4x4::IDENTITY,
-      Matrix4x4::IDENTITY,
-      Matrix4x4::IDENTITY
-    };
-
-    D3D11_BUFFER_DESC bd;
-    bd.ByteWidth = sizeof(Matrix4x4) * ARRAYSIZE(contantBuffer);
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    bd.CPUAccessFlags = 0;
-    bd.MiscFlags = 0;
-    bd.StructureByteStride = 0;
-
-    D3D11_SUBRESOURCE_DATA srd = { contantBuffer, 0, 0 };
-    HRESULT HRCB = device->CreateBuffer(&bd, &srd, &graphicsConstantbuffer);
-
-    if (FAILED(HRCB)) {
-      printf("Graphics Constant buffer couldn't be created: ");
-      ErrorDescription(HRCB);
-      return false;
-    }
-  }
-
-  // Create vertex buffer
-  {
-    Vertex OurVertices[] =
-    {
-      { { -0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-      { { -0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } },
-      { {  0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-
-      { { -0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } },
-      { {  0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } },
-      { {  0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-    };
+  CreateRenderTarget(clientWidth, clientHeight, &GBuffer1Texture, &GBuffer1RTV, &GBuffer1SRV, &GBuffer1UAV);
   
-    D3D11_BUFFER_DESC bd;
-    bd.ByteWidth = sizeof(Vertex) * ARRAYSIZE(OurVertices);
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = 0;
-    bd.MiscFlags = 0;
-    bd.StructureByteStride = 0;
-  
-    D3D11_SUBRESOURCE_DATA srd = { OurVertices, 0, 0 };
-    HRESULT HRVertex = device->CreateBuffer(&bd, &srd, &vertexbuffer);
+  CreateRenderTarget(clientWidth, clientHeight, &GBuffer2Texture, &GBuffer2RTV, &GBuffer2SRV, &GBuffer2UAV);
 
-    if (FAILED(HRVertex)) {
-      printf("Vertex buffer couldn't be created: ");
-      ErrorDescription(HRVertex);
-      return false;
-    }
-  }
+  CreateRenderTarget(clientWidth, clientHeight, &AOTexture, &AORTV, &AOSRV, &AOUAV);
+
+  CreateConstantBuffer(sizeof(Vector2f),
+                       &computeBufferConstantbuffer);
+
+  CreateConstantBuffer(sizeof(Matrix4x4) * 3,
+                       &graphicsConstantbuffer);
+
+  CreateConstantBuffer((sizeof(Matrix4x4) * 3) +
+                       (sizeof(float) * 6),
+                       &aoConstantbuffer);
+
+  CreateConstantBuffer((sizeof(Matrix4x4) * 4) + sizeof(Vector2f),
+                       &computeTextureConstantbuffer);
 
   for (Mesh& mesh : Meshes) {
     D3D11_BUFFER_DESC bd;
@@ -1289,38 +1358,13 @@ initDX11(String basepath,
     bd.CPUAccessFlags = 0;
     bd.MiscFlags = 0;
     bd.StructureByteStride = 0;
-  
+
     D3D11_SUBRESOURCE_DATA srd = { mesh.vertices, 0, 0 };
     HRESULT HRIndex = device->CreateBuffer(&bd, &srd, &mesh.vertexbuffer);
 
     if (FAILED(HRIndex)) {
       printf("Mesh Vertex buffer couldn't be created: ");
       ErrorDescription(HRIndex);
-      return false;
-    }
-  }
-
-  // Create index buffer
-  {
-    uint32 indices[] =
-    {
-      0, 1, 2,
-      3, 4, 5,
-    };
-
-    D3D11_BUFFER_DESC bd = { 0 };
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(uint32) * ARRAYSIZE(indices);
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bd.CPUAccessFlags = 0;
-    bd.MiscFlags = 0;
-
-    D3D11_SUBRESOURCE_DATA srd = { indices, 0, 0 };
-    HRESULT HRColor = device->CreateBuffer(&bd, &srd, &indexbuffer);
-
-    if (FAILED(HRColor)) {
-      printf("Index buffer couldn't be created: ");
-      ErrorDescription(HRColor);
       return false;
     }
   }
@@ -1489,16 +1533,41 @@ CreateFragmentShader(String path,
 }
 
 void
-CreateComputeBuffer() {
+CreateConstantBuffer(int32 sizeOfBuffer,
+                     ID3D11Buffer** buffer) {
   D3D11_BUFFER_DESC bd;
-  bd.ByteWidth = sizeof(float) * 1024;
+  bd.ByteWidth = std::ceil(sizeOfBuffer / 16.0f) * 16;
+  bd.Usage = D3D11_USAGE_DEFAULT;
+  bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  bd.CPUAccessFlags = 0;
+  bd.MiscFlags = 0;
+  bd.StructureByteStride = 0;
+
+  //D3D11_SUBRESOURCE_DATA srd = { &initData, 0, 0 };
+  HRESULT HRCB = device->CreateBuffer(&bd, nullptr, buffer);
+
+  if (FAILED(HRCB)) {
+    printf("Constant buffer couldn't be created: ");
+    ErrorDescription(HRCB);
+    return;
+  }
+}
+
+void
+CreateComputeBuffer(int32 typeSize,
+                    int32 numberOfElements,
+                    ID3D11Buffer** buffer,
+                    ID3D11UnorderedAccessView** uav,
+                    ID3D11ShaderResourceView** srv) {
+  D3D11_BUFFER_DESC bd;
+  bd.ByteWidth = typeSize * numberOfElements;
   bd.Usage = D3D11_USAGE_DEFAULT;
   bd.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
   bd.CPUAccessFlags = 0;
-  bd.MiscFlags = 0;
-  bd.StructureByteStride = sizeof(float);
+  bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+  bd.StructureByteStride = typeSize;
 
-  HRESULT HRCB = device->CreateBuffer(&bd, nullptr, &computebuffer);
+  HRESULT HRCB = device->CreateBuffer(&bd, nullptr, buffer);
 
   if (FAILED(HRCB)) {
     printf("Compute buffer couldn't be created: ");
@@ -1506,14 +1575,14 @@ CreateComputeBuffer() {
     return;
   }
 
-  D3D11_UNORDERED_ACCESS_VIEW_DESC UAV;
-  UAV.Format = DXGI_FORMAT_R32_FLOAT;
-  UAV.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-  UAV.Buffer.Flags = 0;
-  UAV.Buffer.FirstElement = 0;
-  UAV.Buffer.NumElements = 1024;
+  D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDescriptor;
+  UAVDescriptor.Format = DXGI_FORMAT_UNKNOWN;
+  UAVDescriptor.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+  UAVDescriptor.Buffer.FirstElement = 0;
+  UAVDescriptor.Buffer.NumElements = numberOfElements;
+  UAVDescriptor.Buffer.Flags = 0;
 
-  HRESULT HRUAV = device->CreateUnorderedAccessView(computebuffer, &UAV, &uavBuffer);
+  HRESULT HRUAV = device->CreateUnorderedAccessView(*buffer, &UAVDescriptor, uav);
 
   if (FAILED(HRUAV)) {
     printf("UAV couldn't be created: ");
@@ -1521,20 +1590,21 @@ CreateComputeBuffer() {
     return;
   }
 
-  D3D11_BUFFER_SRV srvuavDesc;
-  srvuavDesc.FirstElement = 0;
-  srvuavDesc.ElementOffset = 0;
-  srvuavDesc.NumElements = 1;
-  srvuavDesc.ElementWidth = 1024;
+  D3D11_SHADER_RESOURCE_VIEW_DESC SRVDescriptor;
+  SRVDescriptor.Format = DXGI_FORMAT_UNKNOWN;
+  SRVDescriptor.ViewDimension = D3D_SRV_DIMENSION_BUFFEREX;
+  SRVDescriptor.Buffer.FirstElement = 0;
+  SRVDescriptor.Buffer.NumElements = numberOfElements;
 
-  D3D11_SHADER_RESOURCE_VIEW_DESC SRUAV;
-  SRUAV.Format = DXGI_FORMAT_R32_FLOAT;
-  SRUAV.ViewDimension = D3D_SRV_DIMENSION_BUFFER;
-  SRUAV.Buffer = srvuavDesc;
+  HRESULT HRSRV = device->CreateShaderResourceView(*buffer,
+                                                   &SRVDescriptor,
+                                                   srv);
 
-  HRESULT HRUAVSV = device->CreateShaderResourceView(computebuffer,
-                                                     &SRUAV,
-                                                     &srvuav);
+  if (FAILED(HRSRV)) {
+    printf("SRV couldn't be created: ");
+    ErrorDescription(HRSRV);
+    return;
+  }
 }
 
 void
@@ -1542,7 +1612,8 @@ CreateRenderTarget(uint32 width,
                    uint32 height,
                    ID3D11Texture2D** buffer,
                    ID3D11RenderTargetView** rtv,
-                   ID3D11ShaderResourceView** srv) {
+                   ID3D11ShaderResourceView** srv,
+                   ID3D11UnorderedAccessView** uav) {
   // Initialize the render target texture description.
   D3D11_TEXTURE2D_DESC textureDesc;
   ZeroMemory(&textureDesc, sizeof(textureDesc));
@@ -1615,7 +1686,7 @@ CreateRenderTarget(uint32 width,
     UAV.Buffer.FirstElement = 0;
     UAV.Buffer.NumElements = 1;
 
-    HRESULT HRCreateUAV = device->CreateUnorderedAccessView(*buffer, &UAV, &GBufferUAV);
+    HRESULT HRCreateUAV = device->CreateUnorderedAccessView(*buffer, &UAV, uav);
 
     if (FAILED(HRCreateUAV)) {
       printf("RT UAV couldn't be created: ");
@@ -1626,11 +1697,14 @@ CreateRenderTarget(uint32 width,
 }
 
 void
-render(Matrix4x4 ShadowView,
+render(float time,
+       float deltaTime,
+       Matrix4x4 ShadowView,
        Matrix4x4 ShadowProjection,
        Matrix4x4 CameraView,
        Matrix4x4 CameraProjection) {
-  float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
+  float color[4] = { 0.3f, 0.3f, 0.3f, 0.0f };
+  float normal[4] = { 0.5f, 0.5f, 1.0f, 1.0f };
   Quaternion worldRotation;
   worldRotation.fromEuler(Euler(3.14159265f * 0.5f, 0.0f, 0.0f), 0);
 
@@ -1639,6 +1713,8 @@ render(Matrix4x4 ShadowView,
                   world3x3.m[1][0], world3x3.m[1][1], world3x3.m[1][2], 0.0f,
                   world3x3.m[2][0], world3x3.m[2][1], world3x3.m[2][2], 0.0f,
                   0.0f,             0.0f,             0.0f,             1.0f);
+
+  float timeVariables[2] = { time, deltaTime };
 
   Matrix4x4 shadowMatrices[3] = { world, ShadowView, ShadowProjection };
 
@@ -1649,18 +1725,39 @@ render(Matrix4x4 ShadowView,
   computeData.ShadowP = ShadowProjection;
   computeData.CameraV = CameraView.inversed();
   computeData.CameraP = CameraProjection.inversed();
-  //computeData.ScreenDimensions = Vector2f(1280.0f, 720.0f);
   computeData.ScreenDimensions = Vector2f(clientWidth, clientHeight);
+
+  ComputeAOCB computeAOData;
+  computeAOData.CameraView = CameraView;
+  computeAOData.CameraInvView = CameraView.inversed();
+  computeAOData.CameraInvProjection = CameraProjection.inversed();
+  computeAOData.Intensity = 15.0f;
+  computeAOData.Scale = 0.4f;
+  computeAOData.Bias = 0.3f;
+  computeAOData.Sample = 7.0f;
+  computeAOData.ScreenDimensions = Vector2f(clientWidth, clientHeight);
+
+  // Update compute buffers
+  {
+    context->UpdateSubresource(computeBufferConstantbuffer, 0, nullptr, &timeVariables[0], 0, 0);
+  }
 
   // Compute shader buffer
   {
     context->CSSetShader(csShader, nullptr, 0);
 
+    context->CSSetConstantBuffers(0, 1, &computeBufferConstantbuffer);
     context->CSSetUnorderedAccessViews(0, 1, &uavBuffer, nullptr);
 
-    context->Dispatch(4, 4, 1);
+#if SCENE == QUAD
+    context->Dispatch(8, 8, 1);
+#else
+    context->Dispatch(1, 1, 1);
+#endif
 
+    ID3D11Buffer* CB_NULL = nullptr;
     ID3D11UnorderedAccessView* UAV_NULL = nullptr;
+    context->CSSetConstantBuffers(0, 1, &CB_NULL);
     context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, 0);
 
     context->CSSetShader(nullptr, nullptr, 0);
@@ -1669,7 +1766,8 @@ render(Matrix4x4 ShadowView,
   // Clear
   {
     context->ClearRenderTargetView(renderTargetView, color);
-    context->ClearRenderTargetView(GBufferRTV, color);
+    context->ClearRenderTargetView(GBuffer1RTV, color);
+    context->ClearRenderTargetView(GBuffer2RTV, normal);
 
     context->ClearDepthStencilView(DSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -1698,7 +1796,7 @@ render(Matrix4x4 ShadowView,
   
   // Update shadow buffers
   {
-    context->UpdateSubresource(graphicsConstantbuffer, 0, nullptr, shadowMatrices, 0, 0);
+    context->UpdateSubresource(graphicsConstantbuffer, 0, nullptr, &shadowMatrices[0], 0, 0);
   }
 
   // Shadow Graphics shaders
@@ -1707,6 +1805,8 @@ render(Matrix4x4 ShadowView,
     context->VSSetShader(GBufferVSShader, nullptr, 0);
 
     context->VSSetConstantBuffers(0, 1, &graphicsConstantbuffer);
+
+    context->VSSetShaderResources(0, 1, &srvuav);
   }
 
   // Output Merge
@@ -1722,12 +1822,21 @@ render(Matrix4x4 ShadowView,
 
     context->IASetIndexBuffer(mesh.indexbuffer, DXGI_FORMAT_R32_UINT, 0);
 
-    context->DrawIndexed(mesh.nIndices, 0, 0);
+#if SCENE == COW
     //context->DrawIndexedInstanced(mesh.nIndices, 1024, 0, 0, 0);
+    context->DrawIndexedInstanced(mesh.nIndices, 1, 0, 0, 0);
+#elif SCENE == QUAD
+    //context->DrawIndexedInstanced(mesh.nIndices, 1024 * 4 * 4, 0, 0, 0);
+#else
+    context->DrawIndexed(mesh.nIndices, 0, 0);
+#endif
   }
 
   // Unbind
   {
+    ID3D11Buffer* BUFFER_NULL = nullptr;
+    context->VSSetConstantBuffers(0, 1, &BUFFER_NULL);
+
     ID3D11ShaderResourceView* SRV_NULL = nullptr;
     context->VSSetShaderResources(0, 1, &SRV_NULL);
 
@@ -1748,7 +1857,7 @@ render(Matrix4x4 ShadowView,
   
   // Update camera buffers
   {
-    context->UpdateSubresource(graphicsConstantbuffer, 0, nullptr, cameraMatrices, 0, 0);
+    context->UpdateSubresource(graphicsConstantbuffer, 0, nullptr, &cameraMatrices[0], 0, 0);
   }
 
   // Camera Graphics shaders
@@ -1775,7 +1884,11 @@ render(Matrix4x4 ShadowView,
     context->OMSetDepthStencilState(DSState, 0);
 
     //context->OMSetRenderTargets(1, &renderTargetView, DSV);
-    context->OMSetRenderTargets(1, &GBufferRTV, DSV);
+    ID3D11RenderTargetView* RTVs[2] = {
+      GBuffer1RTV,
+      GBuffer2RTV
+    };
+    context->OMSetRenderTargets(2, RTVs, DSV);
   }
 
   bool checker = false;
@@ -1789,32 +1902,86 @@ render(Matrix4x4 ShadowView,
       checker = false;
     }
     else {
-      context->PSSetShaderResources(0, 1, &checkerTextureSRV);
       if (!checker) {
+        context->PSSetShaderResources(0, 1, &checkerTextureSRV);
         checker = true;
       }
     }
 
-    context->DrawIndexed(mesh.nIndices, 0, 0);
+#if SCENE == COW
     //context->DrawIndexedInstanced(mesh.nIndices, 1024, 0, 0, 0);
+    context->DrawIndexedInstanced(mesh.nIndices, 1, 0, 0, 0);
+#elif SCENE == QUAD
+    context->DrawIndexedInstanced(mesh.nIndices, 1024 * 8 * 8, 0, 0, 0);
+#else
+    context->DrawIndexed(mesh.nIndices, 0, 0);
+#endif
   }
   
   // Unbind
   {
+    ID3D11Buffer* BUFFER_NULL = nullptr;
+    context->VSSetConstantBuffers(0, 1, &BUFFER_NULL);
+
     ID3D11ShaderResourceView* SRV_NULL = nullptr;
     context->VSSetShaderResources(0, 1, &SRV_NULL);
 
-    ID3D11RenderTargetView* RTV_NULL = nullptr;
-    context->OMSetRenderTargets(1, &RTV_NULL, nullptr);
+    ID3D11RenderTargetView* RTV_NULL[2] = {
+      nullptr,
+      nullptr
+    };
+    context->OMSetRenderTargets(2, RTV_NULL, nullptr);
 
     context->VSSetShader(nullptr, nullptr, 0);
 
     context->PSSetShader(nullptr, nullptr, 0);
   }
 
-  // Update shadow buffers
+  // Update AO compute buffer
   {
-    context->UpdateSubresource(computeConstantbuffer, 0, nullptr, &computeData, 0, 0);
+    context->UpdateSubresource(aoConstantbuffer, 0, nullptr, &computeAOData, 0, 0);
+  }
+
+  // Compute AO shader
+  {
+    context->CSSetShader(AOCSShader, nullptr, 0);
+
+    context->CSSetUnorderedAccessViews(0, 1, &AOUAV, nullptr);
+
+    context->CSSetShaderResources(0, 1, &GBuffer1SRV);
+    context->CSSetShaderResources(1, 1, &GBuffer2SRV);
+
+    context->CSSetSamplers(0, 1, &AnisotropicSamplerState);
+    context->CSSetSamplers(1, 1, &LinearSamplerState);
+    context->CSSetSamplers(2, 1, &PointSamplerState);
+
+    context->CSSetConstantBuffers(0, 1, &aoConstantbuffer);
+
+    context->Dispatch(std::ceil(clientWidth / 32.0f),
+                      std::ceil(clientHeight / 32.0f),
+                      1);
+
+    ID3D11Buffer* CB_NULL = nullptr;
+    ID3D11ShaderResourceView* SRV_NULL = nullptr;
+    ID3D11UnorderedAccessView* UAV_NULL = nullptr;
+    ID3D11SamplerState* SS_NULL = nullptr;
+
+    context->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, nullptr);
+
+    context->CSSetShaderResources(0, 1, &SRV_NULL);
+    context->CSSetShaderResources(1, 1, &SRV_NULL);
+
+    context->CSSetSamplers(0, 1, &SS_NULL);
+    context->CSSetSamplers(1, 1, &SS_NULL);
+
+    context->CSSetConstantBuffers(0, 1, &CB_NULL);
+
+    context->CSSetShader(nullptr, nullptr, 0);
+  }
+
+  // Update compute buffers
+  {
+    context->UpdateSubresource(computeTextureConstantbuffer, 0, nullptr, &computeData, 0, 0);
   }
 
   // Compute shader image
@@ -1823,9 +1990,11 @@ render(Matrix4x4 ShadowView,
 
     context->CSSetUnorderedAccessViews(0, 1, &unorderedAccessView, nullptr);
 
-    context->CSSetConstantBuffers(0, 1, &computeConstantbuffer);
-    context->CSSetShaderResources(0, 1, &GBufferSRV);
-    context->CSSetShaderResources(1, 1, &shadowSRV);
+    context->CSSetConstantBuffers(0, 1, &computeTextureConstantbuffer);
+    context->CSSetShaderResources(0, 1, &GBuffer1SRV);
+    context->CSSetShaderResources(1, 1, &GBuffer2SRV);
+    context->CSSetShaderResources(2, 1, &AOSRV);
+    context->CSSetShaderResources(3, 1, &shadowSRV);
     context->CSSetSamplers(0, 1, &AnisotropicSamplerState);
     context->CSSetSamplers(1, 1, &PointSamplerState);
 
@@ -1839,6 +2008,8 @@ render(Matrix4x4 ShadowView,
     context->CSSetConstantBuffers(0, 1, &CB_NULL);
     context->CSSetShaderResources(0, 1, &SRV_NULL);
     context->CSSetShaderResources(1, 1, &SRV_NULL);
+    context->CSSetShaderResources(2, 1, &SRV_NULL);
+    context->CSSetShaderResources(3, 1, &SRV_NULL);
 
     context->CSSetShader(nullptr, nullptr, 0);
   }

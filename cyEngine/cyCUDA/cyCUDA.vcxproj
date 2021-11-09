@@ -18,11 +18,14 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="main.cu" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{89ff3d27-c927-41b4-953f-21d9d5234ffb}</ProjectGuid>
-    <RootNamespace>cyGraphics</RootNamespace>
+    <ProjectGuid>{876ba128-f5b5-4a77-8365-b78d4ffbd68c}</ProjectGuid>
+    <RootNamespace>cyCUDA</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -54,6 +57,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.4.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -105,7 +109,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitiesd.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;SDL2d.lib;SDL2maind.lib;cppfsd.lib;FreeImaged.lib;OISd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;FreeImaged.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +129,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilities.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;cppfs.lib;FreeImage.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;FreeImage.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -141,8 +145,11 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitiesd.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;SDL2d.lib;SDL2maind.lib;cppfsd.lib;FreeImaged.lib;OISd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;FreeImaged.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -161,25 +168,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilities.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;cppfs.lib;FreeImage.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;FreeImage.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="include\cyCountAllocator.h" />
-    <ClInclude Include="include\cyCountAllocatorPointer.h" />
-    <ClInclude Include="include\cyInput.h" />
-    <ClInclude Include="Include\cyKeyboard.h" />
-    <ClInclude Include="include\cyMouse.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\cyCountAllocator.cpp" />
-    <ClCompile Include="source\cyCountAllocatorPointer.cpp" />
-    <ClCompile Include="source\cyInput.cpp" />
-    <ClCompile Include="source\cyKeyboard.cpp" />
-    <ClCompile Include="source\cyMouse.cpp" />
-    <ClCompile Include="source\main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.4.targets" />
   </ImportGroup>
 </Project>

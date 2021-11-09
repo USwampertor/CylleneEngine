@@ -24,6 +24,12 @@
     <ClInclude Include="include\cyMouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyCountAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyCountAllocatorPointer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyKeyboard.cpp">
@@ -36,6 +42,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyMouse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyCountAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyCountAllocatorPointer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
