@@ -31,26 +31,27 @@
 #include "cyCountAllocatorPointer.h"
 
 #include "cyFileSystem.h"
+#include "cyMath.h"
 #include "cyMatrix3x3.h"
 #include "cyMatrix4x4.h"
-//#include "cyPlatformMath.h"
 #include "cyQuaternion.h"
 #include "cyTime.h"
 #include "cyVector2f.h"
 #include "cyVector3f.h"
+
+using namespace CYLLENE_SDK;
 
 #define durationCast std::chrono::duration_cast
 
 int clientWidth = 1280;
 int clientHeight = 720;
 
-std::unordered_map<size_t, std::pair<ID3D11Texture2D*, ID3D11ShaderResourceView*>> textures;
+std::unordered_map<SizeT, std::pair<ID3D11Texture2D*, ID3D11ShaderResourceView*>> textures;
 
 using nanosecs = std::chrono::nanoseconds;
 using millisecs = std::chrono::milliseconds;
 using secs = std::chrono::seconds;
 using steady_clock = std::chrono::steady_clock;
-using namespace CYLLENE_SDK;
 
 ID3D11Device* device;
 ID3D11DeviceContext* context;
@@ -143,7 +144,7 @@ struct Mesh
   ID3D11Buffer* vertexbuffer;
 
   bool hasTexture;
-  size_t TextureID;
+  SizeT TextureID;
 };
 
 struct Model
@@ -386,7 +387,7 @@ main(int argc, char** argv) {
 
   // Inputs
   OIS::ParamList pl;
-  size_t windowHnd = reinterpret_cast<size_t>(wmInfo.info.win.window);
+  SizeT windowHnd = reinterpret_cast<SizeT>(wmInfo.info.win.window);
   std::ostringstream windowHndStr;
 
   windowHndStr << windowHnd;
@@ -608,7 +609,7 @@ DoTheImportThing(const std::string& pFile) {
 
       Path texturePath(directoryPath + aiTexturePath.C_Str());
       String textureName = texturePath.baseName();
-      size_t textureID = hasher(textureName);
+      SizeT textureID = hasher(textureName);
       if (textures.find(textureID) == textures.end()) {
         std::pair<ID3D11Texture2D*, ID3D11ShaderResourceView*> pair;
         if (CreateTexture(texturePath.fullPath(),

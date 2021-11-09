@@ -24,8 +24,8 @@ enum class CountAllocatorExceptions {
 * 
 */
 struct CAMemoryBlock {
-  CAMemoryBlock(SIZE_T allocatorOffset,
-                SIZE_T memorySize)
+  CAMemoryBlock(SizeT allocatorOffset,
+                SizeT memorySize)
     : offset(allocatorOffset), size(memorySize) {
   };
 
@@ -34,8 +34,8 @@ struct CAMemoryBlock {
     return lhs.size < rhs.size;
   }
 
-  SIZE_T offset;
-  SIZE_T size;
+  SizeT offset;
+  SizeT size;
 };
 
 /**
@@ -69,7 +69,7 @@ class CountAllocator
   *   False if memory couldn't be allocated (throws and exception).
   */
   bool
-  Allocate(SIZE_T size);
+  Allocate(SizeT size);
 
   /**
   * Frees Count Allocator memory.
@@ -92,7 +92,7 @@ class CountAllocator
   */
   template<typename T>
   CAPointer<T>
-  GetPointer(SIZE_T elements = 1);
+  GetPointer(SizeT elements = 1);
 
   /**
   * Removes the bubbles between the memory blocks.
@@ -124,7 +124,7 @@ class CountAllocator
   /**
   * Size of the allocated memory.
   */
-  SIZE_T m_memorySize;
+  SizeT m_memorySize;
 
   /**
   * List of avaible memory blocks.
@@ -137,9 +137,9 @@ class CountAllocator
 
 template<typename T>
 CAPointer<T>
-inline CountAllocator::GetPointer(SIZE_T elements) {
-  const SIZE_T typeSize = sizeof(T);
-  const SIZE_T requiredSize = typeSize * elements;
+inline CountAllocator::GetPointer(SizeT elements) {
+  const SizeT typeSize = sizeof(T);
+  const SizeT requiredSize = typeSize * elements;
 
   for (auto it : m_memoryBlocks) {
     const CAMemoryBlock memoryBlock = it;

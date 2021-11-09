@@ -13,7 +13,7 @@ Input::Input() {
 /**
 *
 */
-Input::Input(SIZE_T _windowHandle)
+Input::Input(SizeT _windowHandle)
   : m_windowHandle(_windowHandle),
     m_manager(nullptr) {
 }

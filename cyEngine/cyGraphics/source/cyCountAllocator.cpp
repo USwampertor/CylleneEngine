@@ -16,7 +16,7 @@ CountAllocator::~CountAllocator() {
 }
 
 bool
-CountAllocator::Allocate(SIZE_T size) {
+CountAllocator::Allocate(SizeT size) {
   if (m_initialized) {
     throw CountAllocatorExceptions::kMemoryAlreadyInitialized;
     return false;

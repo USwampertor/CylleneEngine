@@ -21,7 +21,7 @@ class Input {
   /**
   *
   */
-  Input(SIZE_T _windowHandle);
+  Input(SizeT _windowHandle);
   
   /**
   *
@@ -34,7 +34,7 @@ class Input {
   void
   Initialize();
  private:
-   SIZE_T m_windowHandle;
+   SizeT m_windowHandle;
    OIS::InputManager* m_manager;
 };
 
