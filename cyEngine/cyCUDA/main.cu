@@ -132,18 +132,33 @@ main(int argc, char** argv) {
   cudaDeviceSynchronize();
 
   timer.update();
-  printf("Initialization time: %f\n", timer.deltaTime(secEnum));
+  //printf("Initialization time: %f\n", timer.deltaTime(secEnum));
+
+  int maxValue = 0;
+  for (int i = 0; i < 256; ++i) {
+    int r = histogramValues[(i * 3) + 0];
+    int g = histogramValues[(i * 3) + 1];
+    int b = histogramValues[(i * 3) + 2];
+
+    maxValue = Math::max(maxValue, r);
+    maxValue = Math::max(maxValue, g);
+    maxValue = Math::max(maxValue, b);
+  }
+  printf("Max value: %d\n", maxValue);
 
   for (int i = 0; i < 256; ++i) {
     int r = histogramValues[(i * 3) + 0];
     int g = histogramValues[(i * 3) + 1];
     int b = histogramValues[(i * 3) + 2];
 
-    printf("Pixel %d: %d, %d, %d\n", i, r, g, b);
+    printf("float3(%f, %f, %f),\n",
+           r / static_cast<float>(maxValue),
+           g / static_cast<float>(maxValue),
+           b / static_cast<float>(maxValue));
   }
 
   timer.update();
-  printf("Time required to compute: %f\n", timer.deltaTime(secEnum));
+  //printf("Time required to compute: %f\n", timer.deltaTime(secEnum));
 
   cudaFree(bytes);
   cudaFree(histogramValues);
