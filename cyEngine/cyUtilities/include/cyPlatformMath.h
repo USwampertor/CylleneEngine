@@ -805,12 +805,12 @@ namespace CYLLENE_SDK {
     static T
     fasttanh(T rad) {
       return (rad *
-        (135135.0f + Math::sqr(rad) *
-          (17325.0f + Math::sqr(rad) *
-            (378.0f + Math::sqr(rad))))) /
+        (135135.0f + PlatformMath::sqr(rad) *
+          (17325.0f + PlatformMath::sqr(rad) *
+            (378.0f + PlatformMath::sqr(rad))))) /
         135135.0f +
-        Math::sqr(rad) *
-        (62370.0f + Math::sqr(rad) * (3150.0f + Math::sqr(rad) * 28.0f));
+        PlatformMath::sqr(rad) *
+        (62370.0f + PlatformMath::sqr(rad) * (3150.0f + PlatformMath::sqr(rad) * 28.0f));
     }
 
     template<typename T>
