@@ -22,6 +22,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCUDA", "cyCUDA\cyCUDA.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCrashHandler", "cyCrashHandler\cyCrashHandler.vcxproj", "{15D9736F-94F7-4232-9D82-044FAE1E50BB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDATest", "CUDATest\CUDATest.vcxproj", "{392178D9-7DE9-4428-B03C-7EBD48D5657D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -70,6 +72,12 @@ Global
 		{15D9736F-94F7-4232-9D82-044FAE1E50BB}.Release|x64.Build.0 = Release|x64
 		{15D9736F-94F7-4232-9D82-044FAE1E50BB}.Release|x86.ActiveCfg = Release|Win32
 		{15D9736F-94F7-4232-9D82-044FAE1E50BB}.Release|x86.Build.0 = Release|Win32
+		{392178D9-7DE9-4428-B03C-7EBD48D5657D}.Debug|x64.ActiveCfg = Debug|x64
+		{392178D9-7DE9-4428-B03C-7EBD48D5657D}.Debug|x64.Build.0 = Debug|x64
+		{392178D9-7DE9-4428-B03C-7EBD48D5657D}.Debug|x86.ActiveCfg = Debug|x64
+		{392178D9-7DE9-4428-B03C-7EBD48D5657D}.Release|x64.ActiveCfg = Release|x64
+		{392178D9-7DE9-4428-B03C-7EBD48D5657D}.Release|x64.Build.0 = Release|x64
+		{392178D9-7DE9-4428-B03C-7EBD48D5657D}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -35,9 +35,6 @@
     <ClCompile Include="source\cyKeyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\cyInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,5 +47,10 @@
     <ClCompile Include="source\cyCountAllocatorPointer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="source\main.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

@@ -107,7 +107,7 @@ main(VS_INPUT input) {
   position.xy = RotateAround(position.xy, 0.0f, angle + TAU * 0.25f);
   */
 
-  position = mul(World, float4(position, 1.0f)).xyz;
+  //position = mul(World, float4(position, 1.0f)).xyz;
   normal = mul(World, float4(normal, 0.0f)).xyz;
   
   /*

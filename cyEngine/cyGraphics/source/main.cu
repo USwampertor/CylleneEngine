@@ -3,7 +3,7 @@
 #define QUAD 2
 #define PLANT 3
 
-#define SCENE BISTRO
+#define SCENE QUAD
 
 #include <chrono>
 #include <stdio.h>
@@ -24,6 +24,14 @@
 #include <SDL2/SDL_syswm.h>
 #include <tchar.h>
 #include <unordered_map>
+
+#include "cuda.h"
+#include "cuda_runtime.h"
+#include "cuda_runtime_api.h"
+#include "device_functions.h"
+#include "device_launch_parameters.h"
+#include "math.h"
+#include "cuda_d3d11_interop.h"
 
 #include "cyUtilitiesPrerequisites.h"
 
@@ -105,6 +113,8 @@ ID3D11Buffer* computeTextureConstantbuffer;
 ID3D11Buffer* uvbuffer;
 ID3D11Buffer* colorbuffer;
 
+unsigned int checkerTextureWidth = 0;
+unsigned int checkerTextureHeight = 0;
 ID3D11Texture2D* checkterTexture;
 ID3D11ShaderResourceView* checkerTextureSRV;
 
@@ -122,6 +132,9 @@ ID3D11Texture2D* AOTexture;
 ID3D11RenderTargetView* AORTV;
 ID3D11ShaderResourceView* AOSRV;
 ID3D11UnorderedAccessView* AOUAV;
+
+ID3D11Buffer* histogram;
+ID3D11ShaderResourceView* histogramSRV;
 
 float g_aspectRatio;
 
@@ -208,7 +221,11 @@ printShaderLog(uint32 shader);
 */
 
 bool
-CreateTexture(String texturePath, ID3D11Texture2D** texture2D, ID3D11ShaderResourceView** SRV);
+CreateTexture(String texturePath,
+              unsigned int* textureWidth,
+              unsigned int* textureHeight,
+              ID3D11Texture2D** texture2D,
+              ID3D11ShaderResourceView** SRV);
 
 //Starts up SDL, creates window, and initializes OpenGL
 bool
@@ -278,6 +295,79 @@ render(float time,
        Matrix4x4 ShadowProjection,
        Matrix4x4 CameraView,
        Matrix4x4 CameraProjection);
+
+/**
+* gridDim (dim3)
+*   dimensions of grid
+* blockDim (dim3)
+*   dimensions of block
+* blockIdx (uint3)
+*   block index within grid
+* threadIdx (uint3)
+*   thread index within block
+*/
+
+__global__
+void
+KernelAdd(int* a, int* b, int* c, int size) {
+  int index = threadIdx.x;
+  c[index] = a[index] + b[index];
+}
+
+__global__
+void
+KernelTexture(cudaSurfaceObject_t texObj) {
+  unsigned int x = (blockDim.x * blockIdx.x) + threadIdx.x;
+  unsigned int y = (blockDim.y * blockIdx.y) + threadIdx.y;
+
+  uchar4 data = make_uchar4((blockIdx.x % 3) * 127,
+                            (blockIdx.y % 3) * 127,
+                            (((blockIdx.x % 3) + (blockIdx.y % 3)) % 5) * 63,
+                            255);
+  surf2Dwrite(data, texObj, x * 4, y);
+}
+
+__global__
+void
+KernelBufferInit(float3* values, SizeT size) {
+  values[threadIdx.x] = make_float3(0.0f, 0.0f, 0.0f);
+}
+
+__global__
+void
+KernelBufferHistogram(cudaSurfaceObject_t texObj,
+                      float3* valueCount,
+                      unsigned int textureWidth,
+                      unsigned int textureHeight) {
+  unsigned int x = (blockIdx.x * blockDim.x) + threadIdx.x;
+  unsigned int y = (blockIdx.y * blockDim.y) + threadIdx.y;
+
+  if (x >= textureWidth || y >= textureHeight) return;
+
+  uchar4 data;
+  surf2Dread(&data, texObj, x * 4, y);
+  atomicAdd(&valueCount[data.x].x, 1.0f);
+  atomicAdd(&valueCount[data.y].y, 1.0f);
+  atomicAdd(&valueCount[data.z].z, 1.0f);
+}
+
+__global__
+void
+KernelBufferNormalize(float3* valueCount) {
+  __shared__ uint3 colorMaxCount;
+
+  unsigned int index = threadIdx.x;
+
+  atomicMax(&colorMaxCount.x, unsigned int(valueCount[index].x));
+  atomicMax(&colorMaxCount.y, unsigned int(valueCount[index].y));
+  atomicMax(&colorMaxCount.z, unsigned int(valueCount[index].z));
+
+  __syncthreads();
+
+  valueCount[index].x /= float(colorMaxCount.x);
+  valueCount[index].y /= float(colorMaxCount.y);
+  valueCount[index].z /= float(colorMaxCount.z);
+}
 
 int
 main(int argc, char** argv) {
@@ -368,18 +458,141 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  // get version info
-  //printf("Renderer: %s\n", glGetString(GL_RENDERER));
-  //printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
+  
+  // Histogram creation.
+  {
+    D3D11_BUFFER_DESC histogramDes;
+    histogramDes.ByteWidth = sizeof(Vector3f) * 256;
+    histogramDes.Usage = D3D11_USAGE_DEFAULT;
+    histogramDes.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    histogramDes.CPUAccessFlags = 0;
+    histogramDes.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+    histogramDes.StructureByteStride = sizeof(Vector3f);
 
-  printf("\n");
+    HRESULT HRCB = device->CreateBuffer(&histogramDes, nullptr, &histogram);
+    if (FAILED(HRCB)) {
+      printf("SRV couldn't be created: ");
+      ErrorDescription(HRCB);
+      return -1;
+    }
 
-  //unsigned int texture;
-  //glGenTextures(1, &texture);
-  //glBindTexture(GL_TEXTURE_2D, texture);
-  // set the texture wrapping/filtering options (on the currently bound texture object)
+    D3D11_SHADER_RESOURCE_VIEW_DESC SRVDescriptor;
+    SRVDescriptor.Format = DXGI_FORMAT_UNKNOWN;
+    SRVDescriptor.ViewDimension = D3D_SRV_DIMENSION_BUFFEREX;
+    SRVDescriptor.Buffer.FirstElement = 0;
+    SRVDescriptor.Buffer.NumElements = 256;
 
-  printf("\n");
+    HRESULT HRSRV = device->CreateShaderResourceView(histogram,
+                                                     &SRVDescriptor,
+                                                     &histogramSRV);
+
+    if (FAILED(HRSRV)) {
+      printf("SRV couldn't be created: ");
+      ErrorDescription(HRSRV);
+      return -1;
+    }
+  }
+
+  cudaError textureError;
+  cudaError bufferError;
+
+  // CUDA Buffer
+  cudaGraphicsResource* bufferResource = nullptr;
+  bufferError = cudaGraphicsD3D11RegisterResource(&bufferResource, histogram, cudaGraphicsRegisterFlagsNone);
+  if (bufferError != cudaSuccess) { return -1; }
+
+  bufferError = cudaGraphicsResourceSetMapFlags(bufferResource, cudaGraphicsMapFlagsWriteDiscard);
+  if (bufferError != cudaSuccess) { return -1; }
+
+  bufferError = cudaGraphicsMapResources(1, &bufferResource, 0);
+  if (bufferError != cudaSuccess) { return -1; }
+
+  float3* values = nullptr;
+  SizeT valuesSize = 0;
+  bufferError = cudaGraphicsResourceGetMappedPointer((void**)&values, &valuesSize, bufferResource);
+  if (bufferError != cudaSuccess) { return -1; }
+
+  // CUDA Texture
+  cudaGraphicsResource* texResource = nullptr;
+  textureError = cudaGraphicsD3D11RegisterResource(&texResource, checkterTexture, cudaGraphicsRegisterFlagsNone);
+  if (textureError != cudaSuccess) {
+    printf("CUDA register resource error!\n");
+    return -1;
+  }
+
+  textureError = cudaGraphicsResourceSetMapFlags(texResource, cudaGraphicsMapFlagsWriteDiscard);
+  if (textureError != cudaSuccess) {
+    printf("CUDA set flags error!\n");
+    return -1;
+  }
+
+  textureError = cudaGraphicsMapResources(1, &texResource, 0);
+  if (textureError != cudaSuccess) {
+    printf("CUDA map resource error!\n");
+    return -1;
+  }
+
+  cudaArray* cudaTextures = nullptr;
+  textureError = cudaGraphicsSubResourceGetMappedArray(&cudaTextures, texResource, 0, 0);
+  if (textureError != cudaSuccess) {
+    printf("CUDA get subresource array error!\n");
+    return -1;
+  }
+
+  struct cudaResourceDesc resDesc;
+  memset(&resDesc, 0, sizeof(resDesc));
+  resDesc.resType = cudaResourceTypeArray;
+  resDesc.res.array.array = cudaTextures;
+
+  cudaSurfaceObject_t outputSurfObj = 0;
+  textureError = cudaCreateSurfaceObject(&outputSurfObj, &resDesc);
+  if (textureError != cudaSuccess) {
+    printf("CUDA create texture error!\n");
+    return -1;
+  }
+
+  // CUDA Execution
+  //KernelTexture<<<dim3(4, 4, 1), dim3(32, 32, 1)>>>(outputSurfObj);
+  //KernelBufferInit<<<1, 256>>>(values, valuesSize);
+  //bufferError = cudaDeviceSynchronize();
+  //if (bufferError != cudaSuccess) { return -1; }
+
+  KernelBufferHistogram<<<dim3(CYLLENE_SDK::Math::ceil(checkerTextureWidth / 32.0f),
+                               CYLLENE_SDK::Math::ceil(checkerTextureHeight / 32.0f),
+                               1),
+                          dim3(32, 32, 1)>>>(outputSurfObj, values, checkerTextureWidth, checkerTextureHeight);
+  textureError = cudaDeviceSynchronize();
+  if (textureError != cudaSuccess) { return -1; }
+
+  KernelBufferNormalize<<<1, 256>>>(values);
+  bufferError = cudaDeviceSynchronize();
+  if (textureError != cudaSuccess) { return -1; }
+
+  // CUDA Destroy texture
+  textureError = cudaDestroySurfaceObject(outputSurfObj);
+  if (textureError != cudaSuccess) {
+    printf("CUDA destroy texture error!\n");
+    return -1;
+  }
+
+  textureError = cudaGraphicsUnmapResources(1, &texResource, 0);;
+  if (textureError != cudaSuccess) {
+    printf("Error while unmapping resource.\n");
+    return -1;
+  }
+
+  textureError = cudaGraphicsUnregisterResource(texResource);
+  if (textureError != cudaSuccess) {
+    printf("Error while unregistering resource.\n");
+    return -1;
+  }
+
+  // CUDA Destroy buffer
+  bufferError = cudaGraphicsUnmapResources(1, &bufferResource);
+  if (bufferError != cudaSuccess) { return -1; }
+
+  bufferError = cudaGraphicsUnregisterResource(bufferResource);
+  if (bufferError != cudaSuccess) { return -1; }
 
   SDL_SysWMinfo wmInfo;
   SDL_VERSION(&wmInfo.version);
@@ -413,7 +626,7 @@ main(int argc, char** argv) {
   ms.height = clientHeight;
 
 #if SCENE == QUAD
-  Vector4f CamPosition(-5, 5, -5, 1);
+  Vector4f CamPosition(0, 0, -5, 1);
 #else
   Vector4f CamPosition(0, 0, -10, 1);
 #endif
@@ -446,7 +659,8 @@ main(int argc, char** argv) {
 #endif
 
   Matrix4x4 Projection;
-  Projection.Perspective(1920.0f, 1080.0f, 1.0f, 10000.0f, 60.0f * 0.0174533f);
+  //Projection.Perspective(1920.0f, 1080.0f, 1.0f, 10000.0f, 60.0f * 0.0174533f);
+  Projection.Perspective(1920.0f, 1080.0f, 0.1f, 10000.0f, 60.0f * 0.0174533f);
   //Projection.Orthogonal(1920.0f, 1080.0f, 0.01f, 5000.0);
 
   bool open = true;
@@ -613,6 +827,8 @@ DoTheImportThing(const std::string& pFile) {
       if (textures.find(textureID) == textures.end()) {
         std::pair<ID3D11Texture2D*, ID3D11ShaderResourceView*> pair;
         if (CreateTexture(texturePath.fullPath(),
+                          nullptr,
+                          nullptr,
                           &pair.first,
                           &pair.second)) {
           mesh.hasTexture = true;
@@ -657,6 +873,7 @@ DoTheImportThing(const std::string& pFile) {
     */
 
     bool hasUVs = pMesh->HasTextureCoords(0);
+    bool hasNormals = pMesh->HasNormals();
     aiVector3D* texCoords = nullptr;
     if (hasUVs)
       texCoords = pMesh->mTextureCoords[0];
@@ -667,9 +884,11 @@ DoTheImportThing(const std::string& pFile) {
       mesh.vertices[i].position = Vector3f(pMesh->mVertices[i].x,
                                            pMesh->mVertices[i].y,
                                            pMesh->mVertices[i].z);
-      mesh.vertices[i].normal = Vector3f(pMesh->mNormals[i].x,
-                                         pMesh->mNormals[i].y,
-                                         pMesh->mNormals[i].z);
+      if (hasNormals) {
+        mesh.vertices[i].normal = Vector3f(pMesh->mNormals[i].x,
+                                           pMesh->mNormals[i].y,
+                                           pMesh->mNormals[i].z);
+      }
       if (hasUVs) {
         mesh.vertices[i].texcoord = Vector2f(texCoords[i].x,
                                              texCoords[i].y);
@@ -742,7 +961,7 @@ printShaderLog(uint32 name) {
 */
 
 bool
-CreateTexture(String texturePath, ID3D11Texture2D** texture2D, ID3D11ShaderResourceView** SRV) {
+CreateTexture(String texturePath, unsigned int* textureWidth, unsigned int* textureHeight, ID3D11Texture2D** texture2D, ID3D11ShaderResourceView** SRV) {
   FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(texturePath.c_str());
 
   uint32 flags = 0;
@@ -779,6 +998,8 @@ CreateTexture(String texturePath, ID3D11Texture2D** texture2D, ID3D11ShaderResou
 
   int nWidth = FreeImage_GetWidth(image);
   int nHeight = FreeImage_GetHeight(image);
+  if (textureWidth != nullptr) { *textureWidth = nWidth; }
+  if (textureHeight != nullptr) { *textureHeight = nHeight; }
   FREE_IMAGE_COLOR_TYPE fict = FreeImage_GetColorType(image);
 
   uint32 pitch = FreeImage_GetPitch(image);
@@ -1154,6 +1375,9 @@ init(String basepath,
                 &checkerTextureSRV);
 #else
   CreateTexture(basepath + "../../Checker.webp",
+  //CreateTexture(basepath + "wench.jpg",
+                &checkerTextureWidth,
+                &checkerTextureHeight,
                 &checkterTexture,
                 &checkerTextureSRV);
 #endif
@@ -1167,7 +1391,7 @@ init(String basepath,
 #elif SCENE == ARROW
   DoTheImportThing(basepath + "Models/ArrowRight.fbx");
 #else
-  DoTheImportThing(basepath + "Models/ScreenAlignedQuad.3ds");
+  DoTheImportThing(basepath + "Models/SSAQ.obj");
 #endif
 
   //Initialize DirectX 11
@@ -1913,7 +2137,8 @@ render(float time,
     //context->DrawIndexedInstanced(mesh.nIndices, 1024, 0, 0, 0);
     context->DrawIndexedInstanced(mesh.nIndices, 1, 0, 0, 0);
 #elif SCENE == QUAD
-    context->DrawIndexedInstanced(mesh.nIndices, 1024 * 8 * 8, 0, 0, 0);
+    //context->DrawIndexedInstanced(mesh.nIndices, 1024 * 8 * 8, 0, 0, 0);
+    context->DrawIndexed(mesh.nIndices, 0, 0);
 #else
     context->DrawIndexed(mesh.nIndices, 0, 0);
 #endif
@@ -1996,6 +2221,7 @@ render(float time,
     context->CSSetShaderResources(1, 1, &GBuffer2SRV);
     context->CSSetShaderResources(2, 1, &AOSRV);
     context->CSSetShaderResources(3, 1, &shadowSRV);
+    context->CSSetShaderResources(4, 1, &histogramSRV);
     context->CSSetSamplers(0, 1, &AnisotropicSamplerState);
     context->CSSetSamplers(1, 1, &PointSamplerState);
 
@@ -2011,6 +2237,7 @@ render(float time,
     context->CSSetShaderResources(1, 1, &SRV_NULL);
     context->CSSetShaderResources(2, 1, &SRV_NULL);
     context->CSSetShaderResources(3, 1, &SRV_NULL);
+    context->CSSetShaderResources(4, 1, &SRV_NULL);
 
     context->CSSetShader(nullptr, nullptr, 0);
   }

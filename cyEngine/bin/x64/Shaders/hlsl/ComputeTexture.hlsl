@@ -4,6 +4,7 @@ Texture2D<float4> GBuffer1          : register(t0);
 Texture2D<float4> GBuffer2          : register(t1);
 Texture2D<float4> AO                : register(t2);
 Texture2D<float> shadowDepthTexture : register(t3);
+StructuredBuffer<float3> histogram : register(t4);
 
 SamplerState AnisotropicSS : register(s0);
 SamplerState PointSS : register(s1);
@@ -352,6 +353,12 @@ main(uint3 local_thread_ID  : SV_GroupThreadID,
 
   float2 uv = global_thread_ID.xy / ScreenDimensions;
   
+  float2 hUV = uv * 10.0f;
+  float showHistogram = min(step(1.0f, hUV.x) + step(1.0f, hUV.y), 1);
+  uint hIndex = min(uint(hUV.x * 255.0f), 255);
+  float3 colorValue = histogram[hIndex];
+  float3 histogramValue = step(1.0f - hUV.y, colorValue).bgr;
+  
   float3 normal = GBuffer2.SampleLevel(PointSS, uv, 0).xyz;
   //backbuffer[global_thread_ID.xy] = float4(normal, 1.0f); return;
   
@@ -361,7 +368,8 @@ main(uint3 local_thread_ID  : SV_GroupThreadID,
   float vignette = distance(uv, float2(0.5f, 0.5f));
   vignette /= 0.70711f;
 
-  float3 color = GBuffer1.SampleLevel(AnisotropicSS, uv, 0).rgb * occlussion;
+  //float3 color = GBuffer1.SampleLevel(AnisotropicSS, uv, 0).rgb * occlussion;
+  float3 color = GBuffer1.SampleLevel(AnisotropicSS, uv, 0).rgb;
   float  depth = GBuffer1.SampleLevel(PointSS, uv, 0).a;
   
   // Transform from Camera NDC (uv's) to Camera World Space.
@@ -393,8 +401,9 @@ main(uint3 local_thread_ID  : SV_GroupThreadID,
   }
   
   color *= shadowValue;
+  color = lerp(color,
+               float3(0.0f, 0.0f, 0.0f),
+               vignette * 0.5f);
   
-  backbuffer[global_thread_ID.xy] = float4(lerp(color,
-                                                float3(0.0f, 0.0f, 0.0f),
-                                                vignette * 0.5f), 1.0f);
+  backbuffer[global_thread_ID.xy] = float4(lerp(histogramValue, color, showHistogram), 1.0f);
 }

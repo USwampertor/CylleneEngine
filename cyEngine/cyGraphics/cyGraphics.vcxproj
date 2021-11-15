@@ -54,6 +54,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.4.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -105,7 +106,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitiesd.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;SDL2d.lib;SDL2maind.lib;cppfsd.lib;FreeImaged.lib;OISd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cudart_static.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;SDL2d.lib;SDL2maind.lib;cppfsd.lib;FreeImaged.lib;OISd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +126,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilities.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;cppfs.lib;FreeImage.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cudart_static.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;cppfs.lib;FreeImage.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -141,7 +142,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitiesd.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;SDL2d.lib;SDL2maind.lib;cppfsd.lib;FreeImaged.lib;OISd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cudart_static.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;SDL2d.lib;SDL2maind.lib;cppfsd.lib;FreeImaged.lib;OISd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,7 +162,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)/lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilities.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;cppfs.lib;FreeImage.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cudart_static.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;cppfs.lib;FreeImage.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -177,9 +178,12 @@
     <ClCompile Include="source\cyInput.cpp" />
     <ClCompile Include="source\cyKeyboard.cpp" />
     <ClCompile Include="source\cyMouse.cpp" />
-    <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="source\main.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.4.targets" />
   </ImportGroup>
 </Project>
