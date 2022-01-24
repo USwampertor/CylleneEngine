@@ -39,7 +39,7 @@ main() {
     printf("Matrix:\n%s\n", world3x3.toString().c_str());
 
   }
-  catch (const std::exception& e)
+  catch (const Exception& e)
   {
     std::cout << e.what();
     CrashHandler::instance().createReport(e);
