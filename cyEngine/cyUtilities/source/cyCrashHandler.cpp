@@ -22,7 +22,9 @@
 namespace CYLLENE_SDK {
   void
   CrashHandler::init() {
-
+    m_crashFolder = "Crash Reports";
+    m_crashLog = "Cyllene_crash";
+    m_errorMessage = "A fatal error has occurred comrade!";
   }
 
   void
@@ -41,6 +43,32 @@ namespace CYLLENE_SDK {
   }
 
   void
+  CrashHandler::createReport(void* exception) {
+
+  }
+
+  void
+  CrashHandler::createReport(const String& type,
+                              const String& description,
+                              const String& errorFunction,
+                              const String& file) {
+
+  }
+
+  String
+  CrashHandler::getStack() {
+    return "";
+  }
+
+  Path
+  CrashHandler::getCrashFolder() {
+    File errorFolder = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() + "/" + m_crashFolder);
+    FileSystem::createFolder(errorFolder.path());
+    Path p(errorFolder.path());
+    return p;
+  }
+
+  void
   CrashHandler::createMiniDump() {
     File dump = FileSystem::open("./dump.txt");
     String output = "Cyllene Engine has failed";
@@ -49,7 +77,7 @@ namespace CYLLENE_SDK {
 
   void
   CrashHandler::openCrashHandler() {
-    system(String(FileSystem::getBasePath().fullPath() + String("/CrashHandler.exe")).c_str());
+    system(String(FileSystem::getWorkingDirectory().fullPath() + String("/CrashHandler.exe")).c_str());
   }
 
   void

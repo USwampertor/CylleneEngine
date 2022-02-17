@@ -71,7 +71,7 @@ namespace CYLLENE_SDK {
     static Vector3f
     getVector3f(float thickness);
 
-  private:
+  public:
 
     static uint32 m_seed[4];
 

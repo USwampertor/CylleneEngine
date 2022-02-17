@@ -12,6 +12,8 @@
 
 namespace CYLLENE_SDK {
 
+  uint32 Random::m_seed[4] = { 0,0,0,0 };
+
   void
   Random::set(uint32 newSeed) {
     m_seed[0] = newSeed;
@@ -62,7 +64,8 @@ namespace CYLLENE_SDK {
 
   float
   Random::getNormalized() {
-    return static_cast<float>(get() & 0x007FFFFF) / 8388607.0f;
+    float f = static_cast<float>(get() & 0x007FFFFF) / 8388607.0f;
+    return f;
   }
 
   Vector2i
@@ -73,7 +76,7 @@ namespace CYLLENE_SDK {
     do {
       output.x = getRangeInt32(-1, 1);
       output.y = getRangeInt32(-1, 1);
-      sqrdSize = output.sqrMagnitude();
+      sqrdSize = static_cast<float>(output.sqrMagnitude());
     } while (sqrdSize > 1.0f || sqrdSize < 0.001f);
 
     output.normalize();

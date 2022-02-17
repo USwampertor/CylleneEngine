@@ -34,6 +34,36 @@ namespace CYLLENE_SDK
       return cppfs::fs::open(fileName);
     }
 
+    static bool
+    exists(const String& filePath) {
+      return cppfs::fs::open(filePath).exists();
+    }
+
+    static File
+    createFile(const String& filePath) {
+      std::fstream newFile;
+      newFile.open(filePath, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+      newFile.close();
+      return cppfs::fs::open(filePath);
+    }
+
+    static bool
+    createFolder(const String& folderPath) {
+      File f = cppfs::fs::open(folderPath);
+      if (!f.exists()) {
+        return f.createDirectory();
+      }
+      return false;
+    }
+
+    static void
+    deleteFolder(const String& folderPath) {
+      File f = cppfs::fs::open(folderPath);
+      if (f.isDirectory()) {
+        f.removeDirectoryRec();
+      }
+    }
+
     static String
     toBase64(const String& fileName) {
       return cppfs::fs::base64(fileName);
@@ -60,7 +90,7 @@ namespace CYLLENE_SDK
     }
 
     static Path
-    getBasePath(){
+    getWorkingDirectory(){
       return Path(cpplocate::getModulePath());
     }
 

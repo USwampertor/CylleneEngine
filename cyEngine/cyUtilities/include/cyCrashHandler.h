@@ -11,7 +11,7 @@
 
 #include "cyModule.h"
 #include "cyUtilitiesPrerequisites.h"
-
+#include "cyFileSystem.h"
 
 namespace CYLLENE_SDK
 {
@@ -30,6 +30,21 @@ namespace CYLLENE_SDK
     createReport(Exception exception);
     
     void
+    createReport(void* exception);
+
+    void
+    createReport(const String& type, 
+                 const String& description, 
+                 const String& errorFunction, 
+                 const String& file);
+
+    String
+    getStack();
+
+    Path
+    getCrashFolder();
+
+    void
     createMiniDump();
 
     void
@@ -37,6 +52,11 @@ namespace CYLLENE_SDK
 
     void
     shutdown();
+
+  private:
+    String m_crashFolder;
+    String m_crashLog;
+    String m_errorMessage;
 
   };
 }
