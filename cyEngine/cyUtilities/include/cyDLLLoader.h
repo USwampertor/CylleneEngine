@@ -13,7 +13,7 @@
 #include "cyModule.h"
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
-# include "windows.h"
+# include "cyWindows.h"
 #elif CY_PLATFORM == CY_PLATFORM_LINUX
 
 #endif

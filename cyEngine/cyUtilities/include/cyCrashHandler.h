@@ -13,11 +13,14 @@
 #include "cyUtilitiesPrerequisites.h"
 #include "cyFileSystem.h"
 
+#define CY_MAX_STACKTRACE_DEPTH 200
+#define CY_MAX_STACKTRACE_NAME_BYTES 1024
+
 namespace CYLLENE_SDK
 {
   class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
   {
-  public:
+   public:
     
     CrashHandler() = default;
 
@@ -27,19 +30,39 @@ namespace CYLLENE_SDK
     init();
 
     void 
-    createReport(Exception exception);
+    createReport(StdException exception);
     
     void
-    createReport(void* exception);
+    createReport(void* exception) const;
 
     void
     createReport(const String& type, 
                  const String& description, 
                  const String& errorFunction, 
-                 const String& file);
+                 const String& file,
+                 uint32 line) const;
+
+    String
+    getPlatformStack();
 
     String
     getStack();
+
+    void
+    logErrorAndStackTrace(const String& message, const String stackTrace) const;
+
+    void
+    logErrorAndStackTrace(const String& type,
+                          const String& strDescription,
+                          const String& strFunction,
+                          const String& strFile,
+                          uint32 nLine) const;
+
+    void
+    showCallStack();
+
+    void*
+    loadModuleSymbols(void* process, String pid);
 
     Path
     getCrashFolder();
@@ -48,7 +71,7 @@ namespace CYLLENE_SDK
     createMiniDump();
 
     void
-    openCrashHandler();
+    openCrashHandlerApp();
 
     void
     shutdown();
@@ -58,5 +81,6 @@ namespace CYLLENE_SDK
     String m_crashLog;
     String m_errorMessage;
 
+    void* m_data;
   };
 }

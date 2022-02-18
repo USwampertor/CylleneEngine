@@ -13,6 +13,6 @@
 
 namespace CYLLENE_SDK {
   struct CY_UTILITY_EXPORT WindowsMath : public PlatformMath {
-
+    
   };
 }

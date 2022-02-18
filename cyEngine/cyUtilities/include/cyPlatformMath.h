@@ -6,10 +6,12 @@
 #include <cmath>
 #include <algorithm>
 
-#undef min
-#undef max
-#undef isinf
-#undef isnan
+#if CY_PLATFORM == CY_PLATFORM_WIN32
+# undef min
+# undef max
+# undef isinf
+# undef isnan
+#endif
 
 namespace CYLLENE_SDK {
 

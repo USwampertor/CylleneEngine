@@ -12,6 +12,7 @@
 #include <cyMath.h>
 #include <cyFileSystem.h>
 #include <cyRandom.h>
+#include <cyException.h>
 
 using namespace CYLLENE_SDK;
 
@@ -40,12 +41,14 @@ main() {
     }
 
     std::cout << FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/DoesntExist.hlsl") << std::endl;
-
+    // library_throw("Test Exception");
   }
   catch (const Exception& e)
   {
     std::cout << e.what();
+    // library_handle_exception(e);
     CrashHandler::instance().createReport(e);
+    CrashHandler::instance().showCallStack();
   }
   std::cout << "End of test..." << std::endl;
   return 0;

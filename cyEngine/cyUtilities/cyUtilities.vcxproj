@@ -108,7 +108,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib;shell32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -133,7 +133,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib;shell32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -154,7 +154,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib;shell32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -179,7 +179,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib;shell32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -189,12 +189,14 @@
     <ClInclude Include="include\cyCrashHandler.h" />
     <ClInclude Include="include\cyDLLLoader.h" />
     <ClInclude Include="include\cyEulerHelpers.h" />
+    <ClInclude Include="include\cyException.h" />
     <ClInclude Include="include\cyFileSystem.h" />
     <ClInclude Include="include\cyJSON.h" />
     <ClInclude Include="include\cyMath.h" />
     <ClInclude Include="include\cyMatrix4x4.h" />
     <ClInclude Include="include\cyPhysics.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
+    <ClInclude Include="include\cyPlatformUtilities.h" />
     <ClInclude Include="include\cyQuaternion.h" />
     <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyTime.h" />
@@ -210,16 +212,21 @@
     <ClInclude Include="include\cyVector2i.h" />
     <ClInclude Include="include\cyVector3f.h" />
     <ClInclude Include="include\cyVector4f.h" />
+    <ClInclude Include="include\cyWindows.h" />
     <ClInclude Include="include\cyWindowsMath.h" />
     <ClInclude Include="include\cyMatrix2x2.h" />
     <ClInclude Include="include\cyMatrix3x3.h" />
+    <ClInclude Include="include\cyWindowsUtilities.h" />
     <ClInclude Include="include\cyZiggurat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp" />
     <ClCompile Include="source\cyColor.cpp" />
+    <ClCompile Include="source\cyCrashHandlerLinux.cpp" />
+    <ClCompile Include="source\cyCrashHandlerWindows.cpp" />
     <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyEulerHelpers.cpp" />
+    <ClCompile Include="source\cyException.cpp" />
     <ClCompile Include="source\cyFileSystem.cpp" />
     <ClCompile Include="source\cyLogger.cpp" />
     <ClCompile Include="source\cyMatrix2x2.cpp" />

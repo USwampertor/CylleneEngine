@@ -117,7 +117,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitiesd.lib; imguid.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib; imguid.lib;user32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,7 +141,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilities.lib; imgui.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib; imgui.lib;user32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -161,7 +161,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilitiesd.lib; imguid.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib; imguid.lib;user32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -185,7 +185,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cyUtilities.lib; imgui.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib; imgui.lib;user32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

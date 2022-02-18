@@ -16,7 +16,17 @@
 
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
-#include <windows.h>
+# include "cyWindows.h"
+# include <Psapi.h>
+# include <winnt.h>
+# include <iomanip>
+
+# pragma comment(lib, "psapi.lib")
+# pragma comment(lib, "dbghelp.lib")
+
+#pragma pack( push, before_imagehlp, 8 )
+#include <imagehlp.h>
+#pragma pack( pop, before_imagehlp )
 #endif
 
 namespace CYLLENE_SDK {
@@ -28,7 +38,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::createReport(Exception exception) {
+  CrashHandler::createReport(StdException exception) {
 
     // WINDOWS OS SPECIFIC CALL FUNCTIONS
 #if CY_PLATFORM == CY_PLATFORM_WIN32
@@ -43,21 +53,34 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::createReport(void* exception) {
+  CrashHandler::createReport(void* exception) const {
 
   }
 
   void
   CrashHandler::createReport(const String& type,
-                              const String& description,
-                              const String& errorFunction,
-                              const String& file) {
+                             const String& description,
+                             const String& errorFunction,
+                             const String& file, 
+                             uint32 line) const {
 
+  }
+
+  String
+  CrashHandler::getPlatformStack() {
+#if CY_PLATFORM == CY_PLATFORM_WIN32
+    auto lastError = GetLastError();
+#endif
+    return "";
   }
 
   String
   CrashHandler::getStack() {
     return "";
+  }
+
+  void
+  CrashHandler::showCallStack() {
   }
 
   Path
@@ -76,7 +99,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::openCrashHandler() {
+  CrashHandler::openCrashHandlerApp() {
     system(String(FileSystem::getWorkingDirectory().fullPath() + String("/CrashHandler.exe")).c_str());
   }
 

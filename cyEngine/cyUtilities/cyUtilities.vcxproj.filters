@@ -105,6 +105,18 @@
     <ClInclude Include="include\cyPhysics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPlatformUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyWindowsUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyWindows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">
@@ -162,6 +174,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyRandom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyCrashHandlerWindows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyCrashHandlerLinux.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
