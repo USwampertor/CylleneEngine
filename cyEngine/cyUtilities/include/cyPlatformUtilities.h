@@ -16,8 +16,7 @@ namespace CYLLENE_SDK {
   public:
 
     template<typename ... Args>
-    static String format(const String& format, Args ... args)
-    {
+    static String format(const String& format, Args ... args) {
       int32 size_s = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
       if (size_s <= 0) { ThrowRuntimeError("Error during formatting."); }
       auto size = static_cast<size_t>(size_s);
@@ -27,30 +26,30 @@ namespace CYLLENE_SDK {
     }
 
 
-    static String timeFormat(const TM& toformat, const String& format)
-    {
+    static String
+      timeFormat(const TM& toformat, const String& format) {
       char buffer[128];
       std::strftime(buffer, sizeof(buffer), format.c_str(), &toformat);
       return String(buffer);
     }
 
     template<typename T>
-    static
-      String toString(const T& number) {
+    static String 
+    toString(const T& number) {
       return std::to_string(number);
     }
 
-    static
-      void ThrowException(const String& message) {
+    static void 
+    ThrowException(const String& message) {
       throw::std::exception(message.c_str());
     }
 
-    static
-      void ThrowRuntimeError(const String& message) {
+    static void 
+    ThrowRuntimeError(const String& message) {
       throw::std::runtime_error(message.c_str());
     }
 
-    
+    const String BLANK = String("");
 
   };
 }

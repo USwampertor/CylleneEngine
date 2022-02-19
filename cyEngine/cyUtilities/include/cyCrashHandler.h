@@ -42,14 +42,14 @@ namespace CYLLENE_SDK
                  const String& file,
                  uint32 line) const;
 
-    String
-    getPlatformStack();
+    static String
+    getWindowsStackTrace();
 
-    String
-    getStack();
+    static String
+    getStackTrace();
 
     void
-    logErrorAndStackTrace(const String& message, const String stackTrace) const;
+    logErrorAndStackTrace(const String& message, const String& stackTrace) const;
 
     void
     logErrorAndStackTrace(const String& type,
@@ -64,11 +64,11 @@ namespace CYLLENE_SDK
     void*
     loadModuleSymbols(void* process, String pid);
 
-    Path
+    static const Path&
     getCrashFolder();
 
     void
-    createMiniDump();
+    createDump();
 
     void
     openCrashHandlerApp();
@@ -77,9 +77,9 @@ namespace CYLLENE_SDK
     shutdown();
 
   private:
-    String m_crashFolder;
-    String m_crashLog;
-    String m_errorMessage;
+    static const String m_crashFolder;
+    static const String m_crashLog;
+    static const String m_errorMessage;
 
     void* m_data;
   };

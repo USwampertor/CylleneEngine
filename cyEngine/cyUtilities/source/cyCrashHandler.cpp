@@ -11,6 +11,7 @@
 
 #include "cyFileSystem.h"
 #include "cyUtilities.h"
+#include "cyLogger.h"
 
 #include <stdexcept>
 
@@ -30,69 +31,51 @@
 #endif
 
 namespace CYLLENE_SDK {
+  const String CrashHandler::m_crashFolder  = "Crash Reports";
+  const String CrashHandler::m_crashLog     = "CylleneEngine_crashlog";
+  const String CrashHandler::m_errorMessage = "A fatal error has occurred comrade!";
   void
   CrashHandler::init() {
-    m_crashFolder = "Crash Reports";
-    m_crashLog = "Cyllene_crash";
-    m_errorMessage = "A fatal error has occurred comrade!";
   }
 
-  void
-  CrashHandler::createReport(StdException exception) {
-
-    // WINDOWS OS SPECIFIC CALL FUNCTIONS
-#if CY_PLATFORM == CY_PLATFORM_WIN32
-
-    
-    // LINUX OS SPECIFIC CALL FUNCTIONS
-#elif CY_PLATFORM == CY_PLATFORM_LINUX
-
-#endif
-
-    createMiniDump();
-  }
-
-  void
-  CrashHandler::createReport(void* exception) const {
-
-  }
-
-  void
-  CrashHandler::createReport(const String& type,
-                             const String& description,
-                             const String& errorFunction,
-                             const String& file, 
-                             uint32 line) const {
-
-  }
-
-  String
-  CrashHandler::getPlatformStack() {
-#if CY_PLATFORM == CY_PLATFORM_WIN32
-    auto lastError = GetLastError();
-#endif
-    return "";
-  }
-
-  String
-  CrashHandler::getStack() {
-    return "";
-  }
-
-  void
-  CrashHandler::showCallStack() {
-  }
-
-  Path
+  const Path&
   CrashHandler::getCrashFolder() {
-    File errorFolder = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() + "/" + m_crashFolder);
+    File errorFolder = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() +
+                                        "/" + 
+                                        m_crashFolder);
     FileSystem::createFolder(errorFolder.path());
     Path p(errorFolder.path());
     return p;
   }
 
   void
-  CrashHandler::createMiniDump() {
+  CrashHandler::logErrorAndStackTrace(const String& message, 
+                                      const String& stackTrace) const {
+    StringStream msg;
+    msg << m_errorMessage << std::endl << std::endl;
+    msg << message << std::endl;
+    msg << "Stack Trace" << std::endl;
+    msg << stackTrace;
+
+    Logger::instance().logError(msg.str(), LOG_CHANNEL::E::eSYSTEM);
+  }
+
+  void
+  CrashHandler::logErrorAndStackTrace(const String& type, 
+                                      const String& strDescription, 
+                                      const String& strFunction, 
+                                      const String& strFile, 
+                                      uint32 nLine) const {
+    StringStream errorMessage;
+    errorMessage << "  - Error: " << type << std::endl;
+    errorMessage << "  - Description: " << strDescription << std::endl;
+    errorMessage << "  - In function: " << strFunction << std::endl;
+    errorMessage << "  - In file: " << strFile << ":" << nLine;
+    logErrorAndStackTrace(errorMessage.str(), getStackTrace());
+  }
+
+  void
+  CrashHandler::createDump() {
     File dump = FileSystem::open("./dump.txt");
     String output = "Cyllene Engine has failed";
     dump.writeFile(output);
@@ -100,12 +83,19 @@ namespace CYLLENE_SDK {
 
   void
   CrashHandler::openCrashHandlerApp() {
-    system(String(FileSystem::getWorkingDirectory().fullPath() + String("/CrashHandler.exe")).c_str());
+    Utils::open(String(FileSystem::getWorkingDirectory().fullPath() + String("/CrashHandler.exe")));
   }
 
   void
   CrashHandler::shutdown() {
 
+  }
+
+  String
+  CrashHandler::getStackTrace() {
+#if CY_PLATFORM == CY_PLATFORM_WIN32 
+    return getWindowsStackTrace();
+#endif
   }
 
 }

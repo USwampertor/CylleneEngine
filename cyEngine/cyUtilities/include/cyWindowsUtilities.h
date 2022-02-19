@@ -11,6 +11,8 @@
 
 
 namespace CYLLENE_SDK {
+#if CY_PLATFORM == CY_PLATFORM_WIN32
+
 struct CY_UTILITY_EXPORT WindowsUtils : public PlatformUtils
 {
   static void 
@@ -24,16 +26,17 @@ struct CY_UTILITY_EXPORT WindowsUtils : public PlatformUtils
   }
   
   static void
-  execute(const String& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
+  open(const String& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
     ShellExecute(nullptr, "open", path.c_str(), nullptr, nullptr, showOption);
   }
   
   static void
-  execute(const Path& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
+  open(const Path& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
     ShellExecute(nullptr, "open", path.fullPath().c_str(), nullptr, nullptr, showOption);
   
   }
   
-
 };
+
+#endif
 }

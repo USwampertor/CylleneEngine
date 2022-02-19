@@ -179,7 +179,7 @@
     <ClCompile Include="source\cyException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyCrashHandlerWindows.cpp">
+    <ClCompile Include="source\cyWindowsCrashHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyCrashHandlerLinux.cpp">

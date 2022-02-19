@@ -41,6 +41,8 @@ main() {
     }
 
     std::cout << FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/DoesntExist.hlsl") << std::endl;
+
+
     // library_throw("Test Exception");
   }
   catch (const Exception& e)
