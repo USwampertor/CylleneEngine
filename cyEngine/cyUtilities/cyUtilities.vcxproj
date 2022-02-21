@@ -237,7 +237,7 @@
     <ClCompile Include="source\cyQuaternion.cpp" />
     <ClCompile Include="source\cyRandom.cpp" />
     <ClCompile Include="source\cyTime.cpp" />
-    <ClCompile Include="source\cyUtilities.cpp" />
+    <ClCompile Include="source\cyPlatformUtilities.cpp" />
     <ClCompile Include="source\cyVector2f.cpp" />
     <ClCompile Include="source\cyVector2i.cpp" />
     <ClCompile Include="source\cyVector3f.cpp" />

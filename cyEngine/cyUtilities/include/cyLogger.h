@@ -113,4 +113,11 @@ namespace CYLLENE_SDK {
     Vector<Log> m_logStack;
 
   };
+
+#define CY_LOG(message, type, channel, ...)                                     \
+        Logger::instance().log((Utils::format(message, ##__VA_ARGS__)+          \
+                          String("\n\t\t in ") +                                \
+                          __PRETTY_FUNCTION__ +                                 \
+                          " [" + __FILE__ + ":" +                               \
+                          Utils::toString(__LINE__) + "]\n"), type, channel);
 }

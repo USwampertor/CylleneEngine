@@ -28,11 +28,8 @@ namespace CYLLENE_SDK
 
     void
     init();
-
-    void 
-    createReport(StdException exception);
     
-    void
+    int
     createReport(void* exception) const;
 
     void
@@ -40,10 +37,7 @@ namespace CYLLENE_SDK
                  const String& description, 
                  const String& errorFunction, 
                  const String& file,
-                 uint32 line) const;
-
-    static String
-    getWindowsStackTrace();
+                 uint32 line = 0) const;
 
     static String
     getStackTrace();
@@ -57,12 +51,6 @@ namespace CYLLENE_SDK
                           const String& strFunction,
                           const String& strFile,
                           uint32 nLine) const;
-
-    void
-    showCallStack();
-
-    void*
-    loadModuleSymbols(void* process, String pid);
 
     static const Path&
     getCrashFolder();
@@ -80,7 +68,9 @@ namespace CYLLENE_SDK
     static const String m_crashFolder;
     static const String m_crashLog;
     static const String m_errorMessage;
-
-    void* m_data;
+#if CY_PLATFORM == CY_PLATFORM_WIN32
+    struct Data;
+    Data* m_data;
+#endif
   };
 }

@@ -49,7 +49,13 @@ namespace CYLLENE_SDK {
       throw::std::runtime_error(message.c_str());
     }
 
-    const String BLANK = String("");
+    static const String BLANK;
 
+    static WString
+    toWide(String str) {
+      std::wstring stemp = std::wstring(str.begin(), str.end());
+      return stemp;
+
+    }
   };
 }

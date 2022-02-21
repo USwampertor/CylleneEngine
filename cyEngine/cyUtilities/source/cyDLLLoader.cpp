@@ -6,7 +6,7 @@ namespace CYLLENE_SDK {
 
   typedef void* (*PLUGIN_FUNCTION)();
   void*
-  DLLLoader::Load(String path, String functionName) {
+  DLLLoader::load(String path, String functionName) {
     PLUGIN_FUNCTION t_api;
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32 

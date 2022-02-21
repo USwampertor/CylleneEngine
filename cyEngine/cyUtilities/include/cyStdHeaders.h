@@ -66,6 +66,8 @@ namespace CYLLENE_SDK {
 
   using Mutex         = std::mutex;
 
+  using MutexLock     = std::unique_lock<Mutex>;
+
   using HighClock     = std::chrono::high_resolution_clock;
 
   using SteadyClock   = std::chrono::steady_clock;
@@ -144,6 +146,7 @@ namespace CYLLENE_SDK {
 
   using String = std::string;
 
+  using WString = std::wstring;
 #else
   template<typename T, size_t N = 1>
   using Array = eastl::array<T, N>;
@@ -196,6 +199,7 @@ namespace CYLLENE_SDK {
 
   using String = eastl::string;
 
+  using WString = eastl::wstring;
 
 #endif
 

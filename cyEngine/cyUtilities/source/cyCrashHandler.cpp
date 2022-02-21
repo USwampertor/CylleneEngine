@@ -79,6 +79,7 @@ namespace CYLLENE_SDK {
     File dump = FileSystem::open("./dump.txt");
     String output = "Cyllene Engine has failed";
     dump.writeFile(output);
+
   }
 
   void
@@ -89,13 +90,6 @@ namespace CYLLENE_SDK {
   void
   CrashHandler::shutdown() {
 
-  }
-
-  String
-  CrashHandler::getStackTrace() {
-#if CY_PLATFORM == CY_PLATFORM_WIN32 
-    return getWindowsStackTrace();
-#endif
   }
 
 }

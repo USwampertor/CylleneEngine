@@ -146,7 +146,7 @@
     <ClCompile Include="source\cyVector2f.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyUtilities.cpp">
+    <ClCompile Include="source\cyPlatformUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyColor.cpp">

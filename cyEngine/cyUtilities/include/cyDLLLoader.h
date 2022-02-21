@@ -26,7 +26,7 @@ namespace CYLLENE_SDK {
     ~DLLLoader() = default;
 
     static void*
-    Load(String path, String functionName = "create");
+    load(String path, String functionName = "create");
 
   };
 }
