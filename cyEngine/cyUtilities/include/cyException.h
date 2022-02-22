@@ -71,7 +71,7 @@ class Exception : public StdException
   getFullDescription() const {
     if (m_fullDesc.empty()) {
       StringStream desc;
-      desc << "GEENGINE EXCEPTION(" << m_typeName << "): " 
+      desc << "CYLLENE ENGINE EXCEPTION(" << m_typeName << "): " 
            << m_description << " in " << m_source;
 
       if (m_line > 0) {
@@ -204,7 +204,7 @@ public:
 {                                                                             \
   static_assert((is_base_of<StdException, type>::value),                      \
                 "Invalid exception type (" #type ") for CY_EXCEPT macro."     \
-                "It needs to derive from geEngineSDK::Exception.");           \
+                "It needs to derive from CYLLEME_SDK::Exception.");           \
   CrashHandler::instance().createReport(#type,                                \
                                desc,                                          \
                                __PRETTY_FUNCTION__,                           \

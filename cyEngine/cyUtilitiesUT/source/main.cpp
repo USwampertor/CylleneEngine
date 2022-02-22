@@ -13,6 +13,8 @@
 #include <cyFileSystem.h>
 #include <cyRandom.h>
 #include <cyException.h>
+#include <cyLogger.h>
+#include <cyTime.h>
 
 using namespace CYLLENE_SDK;
 
@@ -22,6 +24,13 @@ main() {
   CrashHandler::instance().init();
   Random::init();
   Random::init();
+
+  Logger::startUp();
+  Logger::instance().init();
+
+  Time::startUp();
+  Time::instance().init();
+
   try
   {
 #if _DEBUG
@@ -42,15 +51,13 @@ main() {
 
     std::cout << FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/DoesntExist.hlsl") << std::endl;
 
-
+    CY_EXCEPT(UnitTestException, "Test");
     // library_throw("Test Exception");
   }
   catch (const Exception& e)
   {
     std::cout << e.what();
     // library_handle_exception(e);
-    CrashHandler::instance().createReport(e);
-    CrashHandler::instance().showCallStack();
   }
   std::cout << "End of test..." << std::endl;
   return 0;

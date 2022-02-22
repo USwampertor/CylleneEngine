@@ -16,9 +16,11 @@
 #include "cyMath.h"
 #include "cyLogger.h"
 #include "cyCrashHandler.h"
+#include "cyException.h"
 
 namespace CYLLENE_SDK {
 
+#if CY_PLATFORM == CY_PLATFORM_WIN32
   static const char* s_MiniDumpName = "CylleneDump.dmp";
 
   uint32
@@ -113,14 +115,14 @@ namespace CYLLENE_SDK {
       DWORD column;
       if (SymGetLineFromAddr64(hProcess, funcAddress, &column, &lineData)) {
         Path filePath = lineData.FileName;
-        outputStream << Utils::format("0x%s File[%s:%u (%u)]",
+        outputStream << Utils::format("0x%llx File[%s:%u (%u)]",
           addressString,
           filePath.fileName(),
           static_cast<uint32>(lineData.LineNumber),
           static_cast<uint32>(column));
       }
       else {
-        outputStream << Utils::format("0x%s", addressString);
+        outputStream << Utils::format("0x%llx", addressString);
       }
 
       //Output module name
@@ -168,16 +170,16 @@ namespace CYLLENE_SDK {
   loadPSAPISymbols() {
 
     g_enumProcessModules = 
-      static_cast<EnumProcessModulesType>(DLLLoader::load("PSAPI.dll", 
+      reinterpret_cast<EnumProcessModulesType>(DLLLoader::load("psapi.dll",
                                                           "EnumProcessModules"));
     g_getModuleBaseName = 
-      static_cast<GetModuleBaseNameType>(DLLLoader::load("PSAPI.dll", 
-                                                         "GetModuleFileNameExA"));
+      reinterpret_cast<GetModuleBaseNameType>(DLLLoader::load("psapi.dll",
+                                                         "GetModuleBaseNameA"));
     g_getModuleFileNameEx = 
-      static_cast<GetModuleFileNameExType>(DLLLoader::load("PSAPI.dll", 
-                                                           "GetModuleBaseNameA"));
+      reinterpret_cast<GetModuleFileNameExType>(DLLLoader::load("psapi.dll",
+                                                           "GetModuleFileNameExA"));
     g_getModuleInformation = 
-      static_cast<GetModuleInformationType>(DLLLoader::load("PSAPI.dll", 
+      reinterpret_cast<GetModuleInformationType>(DLLLoader::load("psapi.dll",
                                                             "GetModuleInformation"));
     if (g_enumProcessModules == nullptr   ||
         g_getModuleBaseName == nullptr    || 
@@ -494,11 +496,14 @@ namespace CYLLENE_SDK {
   }
 
   void
-  popupErrorMessage(const String& msg, const Path& folder) {
+  popupErrorMessage(const String& msg, const Path& folder, const Path& dumpFile) {
     const String errorMessage = msg +
       "\n\nFor more information check the crash report located at:\n " +
       folder.fullPath();
-    MessageBox(nullptr, errorMessage.c_str(), "Cyllene Engine Error!", MB_OK);
+    auto response = MessageBox(nullptr, errorMessage.c_str(), "Cyllene Engine Error!", MB_YESNO);
+    if (response == IDYES) {
+      CrashHandler::instance().openCrashHandlerApp(Utils::format("-p %s", dumpFile.fullPath()));
+    }
   }
 
   struct CrashHandler::Data
@@ -525,16 +530,23 @@ namespace CYLLENE_SDK {
 
     logErrorAndStackTrace(type, strDescription, strFunction, strFile, nLine);
     Logger::instance().dump();
+    Path folderPath = CrashHandler::instance().getCrashFolder();
 
-    createPlatformDump(getCrashFolder().path() + String(s_MiniDumpName), nullptr);
-    popupErrorMessage(m_errorMessage, getCrashFolder());
-    
-    //Note: Potentially also log Windows Error Report and/or send crash data to server
+    StringStream errorMessage;
+    errorMessage << "  - Error: " << type << std::endl;
+    errorMessage << "  - Description: " << strDescription << std::endl;
+    errorMessage << "  - In function: " << strFunction << std::endl;
+    errorMessage << "  - In file: " << strFile << ":" << nLine;
+
+    createPlatformDump(folderPath.path() + "/" + String(s_MiniDumpName), nullptr);
+    Path p = CrashHandler::instance().createDump(errorMessage.str(), getStackTrace());
+
+    popupErrorMessage(m_errorMessage, folderPath, p);
   }
 
   int
-  CrashHandler::createReport(void* exceptionDataPtr) const {
-    EXCEPTION_POINTERS* exceptionData = static_cast<EXCEPTION_POINTERS*>(exceptionDataPtr);
+  CrashHandler::createReport(void* exception) const {
+    EXCEPTION_POINTERS* exceptionData = static_cast<EXCEPTION_POINTERS*>(exception);
 
     //Win32 debug methods are not thread safe
     MutexLock lock(m_data->mutex);
@@ -546,11 +558,12 @@ namespace CYLLENE_SDK {
                           getWindowsStackTrace(*exceptionData->ContextRecord, 0));
 
     Logger::instance().dump();
+    Path folderPath = CrashHandler::instance().getCrashFolder();
+    createPlatformDump(folderPath.path() + "/" + String(s_MiniDumpName), nullptr);
+    Path p = CrashHandler::instance().createDump(getWindowsExceptionMessage(exceptionData->ExceptionRecord),
+                                                 getWindowsStackTrace(*exceptionData->ContextRecord, 0));
 
-    createPlatformDump(getCrashFolder().path() + String(s_MiniDumpName), nullptr);
-    popupErrorMessage(m_errorMessage, getCrashFolder());
-
-    //Note: Potentially also log Windows Error Report and/or send crash data to server
+    popupErrorMessage(m_errorMessage, CrashHandler::instance().getCrashFolder(), p);
     return EXCEPTION_EXECUTE_HANDLER;
   }
 
@@ -564,4 +577,6 @@ namespace CYLLENE_SDK {
     return getWindowsStackTrace(context);
 
   }
+
+#endif
 }

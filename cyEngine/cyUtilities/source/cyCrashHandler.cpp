@@ -12,6 +12,7 @@
 #include "cyFileSystem.h"
 #include "cyUtilities.h"
 #include "cyLogger.h"
+#include "cyTime.h"
 
 #include <stdexcept>
 
@@ -38,7 +39,7 @@ namespace CYLLENE_SDK {
   CrashHandler::init() {
   }
 
-  const Path&
+  Path
   CrashHandler::getCrashFolder() {
     File errorFolder = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() +
                                         "/" + 
@@ -74,17 +75,29 @@ namespace CYLLENE_SDK {
     logErrorAndStackTrace(errorMessage.str(), getStackTrace());
   }
 
-  void
-  CrashHandler::createDump() {
-    File dump = FileSystem::open("./dump.txt");
-    String output = "Cyllene Engine has failed";
-    dump.writeFile(output);
-
+  Path
+  CrashHandler::createDump(const String& message,
+                           const String& stackTrace) {
+    StringStream msg;
+    msg << m_errorMessage << std::endl << std::endl;
+    msg << message << std::endl;
+    msg << "Stack Trace" << std::endl;
+    msg << stackTrace;
+    String dumpPath = FileSystem::getWorkingDirectory().fullPath() +
+                      "/Crash Reports/CylleneDump" + 
+                      Time::instance().now().toString("%Y%m%d_%H%M%S") +
+                      ".ccr";
+    File dump = FileSystem::createFile(dumpPath);
+    if (!dump.writeFile(msg.str())) {
+      Logger::instance().logError("Error writing dump file");
+    }
+    return Path(dump.path());
   }
 
   void
-  CrashHandler::openCrashHandlerApp() {
-    Utils::open(String(FileSystem::getWorkingDirectory().fullPath() + String("/CrashHandler.exe")));
+  CrashHandler::openCrashHandlerApp(const String& params) {
+    Utils::open(String(FileSystem::getWorkingDirectory().fullPath() + String("/cyCrashHandlerd.exe")),
+                params);
   }
 
   void
