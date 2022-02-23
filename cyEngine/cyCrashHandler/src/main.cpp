@@ -231,7 +231,7 @@ main(int argc, char* argv[]) {
   //IM_ASSERT(font != NULL);
 
   // Our state
-  // bool show_demo_window = true;
+  bool show_demo_window = true;
   bool show_another_window = false;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -263,13 +263,12 @@ main(int argc, char* argv[]) {
 
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
     // if (show_demo_window)
-    //   ImGui::ShowDemoWindow(&show_demo_window);
-
+    
+    bool alwaysOpen = true;
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
     {
       static float f = 0.0f;
       static int counter = 0;
-      bool alwaysOpen = false;
       ImGui::SetNextWindowSize(ImVec2(1010, 570));
       ImGui::SetNextWindowPos(ImVec2(0, 0));
       ImGui::Begin("CYLLENE CRASH HANDLER", 
@@ -279,12 +278,12 @@ main(int argc, char* argv[]) {
                    ImGuiWindowFlags_NoCollapse);
       if (ImGui::IsMouseDragging(0)) {
         
-        MoveWindow(hwnd, 
-                   ImGui::GetMousePos().x, 
-                   ImGui::GetMousePos().y, 
-                   1024, 
-                   576, 
-                   true);
+        // MoveWindow(hwnd, 
+        //            ImGui::GetMousePos().x, 
+        //            ImGui::GetMousePos().y, 
+        //            1024, 
+        //            576, 
+        //            true);
       }
       // Create a window called "Hello, world!" and append into it.
       // ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
@@ -296,10 +295,17 @@ main(int argc, char* argv[]) {
       ImGui::Text("Oh no! Cyllene Engine has crashed!");
       ImGui::Text("We are very sorry comrade");
       ImGui::Text("Thanks for your help improving the Cyllene Engine");
-      char buffer[1024] = "Type what you were doing here";
-      if (ImGui::InputText("Type what you were doing here", buffer, sizeof(buffer))) {
+      char detailsBuffer[1024] = "";
+      if (ImGui::InputTextMultilineWithHint("##Description", "Type what you were doing here", detailsBuffer, sizeof(detailsBuffer), ImVec2(1020,200))) {
 
       }
+      char stackBuffer[1024] = "Data";
+      if (ImGui::InputTextMultilineWithHint("##Stack", "", stackBuffer, sizeof(stackBuffer), ImVec2(1020, 200), ImGuiInputTextFlags_ReadOnly)) {
+        ImGui::BeginChild("scrolling");
+        ImGui::SetScrollY(ImGui::GetScrollY());
+        ImGui::EndChild();
+      }
+
       
       if (ImGui::Button("Send Report", ImVec2(500,50))) {
         done = true;
@@ -317,7 +323,7 @@ main(int argc, char* argv[]) {
       // ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
       ImGui::End();
     }
-
+    
     // 3. Show another simple window.
     // if (show_another_window)
     // {
@@ -327,6 +333,7 @@ main(int argc, char* argv[]) {
     //     show_another_window = false;
     //   ImGui::End();
     // }
+    ImGui::ShowDemoWindow(&show_demo_window);
 
     // Rendering
     ImGui::Render();
@@ -337,6 +344,7 @@ main(int argc, char* argv[]) {
 
     g_pSwapChain->Present(1, 0); // Present with vsync
     //g_pSwapChain->Present(0, 0); // Present without vsync
+    if (alwaysOpen == false) { break; }
   }
 
   // Cleanup
