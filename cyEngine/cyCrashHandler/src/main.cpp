@@ -24,16 +24,17 @@
 #endif
 
 // Data
-static ID3D11Device* g_pd3dDevice = NULL;
-static ID3D11DeviceContext* g_pd3dDeviceContext = NULL;
-static IDXGISwapChain* g_pSwapChain = NULL;
-static ID3D11RenderTargetView* g_mainRenderTargetView = NULL;
+static ID3D11Device*            g_pd3dDevice            = NULL;
+static ID3D11DeviceContext*     g_pd3dDeviceContext     = NULL;
+static IDXGISwapChain*          g_pSwapChain            = NULL;
+static ID3D11RenderTargetView*  g_mainRenderTargetView  = NULL;
 
 // Forward declarations of helper functions
 bool CreateDeviceD3D(HWND hWnd);
 void CleanupDeviceD3D();
-void CreateRenderTarget();
+void CreateRenderTarget(); 
 void CleanupRenderTarget();
+void SendReport();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 using namespace CYLLENE_SDK;
@@ -69,13 +70,17 @@ main(int argc, char* argv[]) {
                     nullptr, 
                     nullptr, 
                     nullptr, 
-                    _T("ImGui Example"), 
+                    _T("Cyllene Engine Crash Handler"), 
                     nullptr };
 
   ::RegisterClassEx(&wc);
   HWND hwnd = ::CreateWindow(wc.lpszClassName, 
                              _T("Cyllene Engine Crash Handler"), 
-                             WS_OVERLAPPEDWINDOW, 
+                             WS_POPUP         | 
+                             WS_THICKFRAME    | 
+                             WS_SYSMENU       | 
+                             WS_MAXIMIZEBOX   | 
+                             WS_MINIMIZEBOX   ,
                              100, 
                              100, 
                              1024, 
@@ -84,7 +89,7 @@ main(int argc, char* argv[]) {
                              nullptr, 
                              wc.hInstance, 
                              nullptr);
-
+  
   // Initialize Direct3D
   if (!CreateDeviceD3D(hwnd))
   {
@@ -106,6 +111,104 @@ main(int argc, char* argv[]) {
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
+  ImGuiStyle* style = &ImGui::GetStyle();
+  style->WindowTitleAlign = ImVec2(0.5, 0.5);
+  
+  ImVec4* colors = style->Colors;
+
+  /// 0 = FLAT APPEARENCE
+  /// 1 = MORE "3D" LOOK
+  int is3D = 0;
+
+  style->Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+  style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+  style->Colors[ImGuiCol_WindowBg] = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
+  style->Colors[ImGuiCol_ChildBg] = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
+  style->Colors[ImGuiCol_PopupBg] = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
+  style->Colors[ImGuiCol_Border] = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
+  style->Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+  style->Colors[ImGuiCol_FrameBg] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+  style->Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
+  style->Colors[ImGuiCol_FrameBgActive] = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
+  style->Colors[ImGuiCol_TitleBg] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
+  style->Colors[ImGuiCol_TitleBgActive] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
+  style->Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+  style->Colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+  style->Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+  style->Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+  style->Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+  style->Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+  style->Colors[ImGuiCol_CheckMark] = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
+  style->Colors[ImGuiCol_SliderGrab] = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
+  style->Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.08f, 0.50f, 0.72f, 1.00f);
+  style->Colors[ImGuiCol_Button] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+  style->Colors[ImGuiCol_ButtonHovered] = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
+  style->Colors[ImGuiCol_ButtonActive] = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
+  style->Colors[ImGuiCol_Header] = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
+  style->Colors[ImGuiCol_HeaderHovered] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+  style->Colors[ImGuiCol_HeaderActive] = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
+  style->Colors[ImGuiCol_Separator] = style->Colors[ImGuiCol_Border];
+  style->Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.41f, 0.42f, 0.44f, 1.00f);
+  style->Colors[ImGuiCol_SeparatorActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+  style->Colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+  style->Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.29f, 0.30f, 0.31f, 0.67f);
+  style->Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+  style->Colors[ImGuiCol_Tab] = ImVec4(0.08f, 0.08f, 0.09f, 0.83f);
+  style->Colors[ImGuiCol_TabHovered] = ImVec4(0.33f, 0.34f, 0.36f, 0.83f);
+  style->Colors[ImGuiCol_TabActive] = ImVec4(0.23f, 0.23f, 0.24f, 1.00f);
+  style->Colors[ImGuiCol_TabUnfocused] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
+  style->Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
+  style->Colors[ImGuiCol_DockingPreview] = ImVec4(0.26f, 0.59f, 0.98f, 0.70f);
+  style->Colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+  style->Colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+  style->Colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+  style->Colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+  style->Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+  style->Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+  style->Colors[ImGuiCol_DragDropTarget] = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
+  style->Colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+  style->Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+  style->Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+  style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+  style->GrabRounding = style->FrameRounding = 2.3f;
+
+  style->PopupRounding = 3;
+
+  style->WindowPadding = ImVec2(4, 4);
+  style->FramePadding = ImVec2(6, 4);
+  style->ItemSpacing = ImVec2(6, 2);
+
+  style->ScrollbarSize = 18;
+
+  style->WindowBorderSize = 1;
+  style->ChildBorderSize = 1;
+  style->PopupBorderSize = 1;
+  style->FrameBorderSize = is3D;
+
+  style->WindowRounding = 3;
+  style->ChildRounding = 3;
+  style->ScrollbarRounding = 2;
+
+#ifdef IMGUI_HAS_DOCK 
+  style->TabBorderSize = is3D;
+  style->TabRounding = 3;
+
+  colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
+  colors[ImGuiCol_Tab] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+  colors[ImGuiCol_TabHovered] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+  colors[ImGuiCol_TabActive] = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
+  colors[ImGuiCol_TabUnfocused] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+  colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
+  colors[ImGuiCol_DockingPreview] = ImVec4(0.85f, 0.85f, 0.85f, 0.28f);
+
+  if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+  {
+    style->WindowRounding = 0.0f;
+    style->Colors[ImGuiCol_WindowBg].w = 1.0f;
+  }
+#endif
+
+
   //ImGui::StyleColorsClassic();
 
   // Setup Platform/Renderer backends
@@ -128,7 +231,7 @@ main(int argc, char* argv[]) {
   //IM_ASSERT(font != NULL);
 
   // Our state
-  bool show_demo_window = true;
+  // bool show_demo_window = true;
   bool show_another_window = false;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -149,8 +252,9 @@ main(int argc, char* argv[]) {
       if (msg.message == WM_QUIT)
         done = true;
     }
-    if (done)
+    if (done) {
       break;
+    }
 
     // Start the Dear ImGui frame
     ImGui_ImplDX11_NewFrame();
@@ -158,41 +262,71 @@ main(int argc, char* argv[]) {
     ImGui::NewFrame();
 
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-    if (show_demo_window)
-      ImGui::ShowDemoWindow(&show_demo_window);
+    // if (show_demo_window)
+    //   ImGui::ShowDemoWindow(&show_demo_window);
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
     {
       static float f = 0.0f;
       static int counter = 0;
+      bool alwaysOpen = false;
+      ImGui::SetNextWindowSize(ImVec2(1010, 570));
+      ImGui::SetNextWindowPos(ImVec2(0, 0));
+      ImGui::Begin("CYLLENE CRASH HANDLER", 
+                   &alwaysOpen, 
+                   ImGuiWindowFlags_NoResize  |
+                   ImGuiWindowFlags_NoMove    |
+                   ImGuiWindowFlags_NoCollapse);
+      if (ImGui::IsMouseDragging(0)) {
+        
+        MoveWindow(hwnd, 
+                   ImGui::GetMousePos().x, 
+                   ImGui::GetMousePos().y, 
+                   1024, 
+                   576, 
+                   true);
+      }
+      // Create a window called "Hello, world!" and append into it.
+      // ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+      // ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+      // ImGui::Checkbox("Another Window", &show_another_window);
+      // 
+      // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+      // ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+      ImGui::Text("Oh no! Cyllene Engine has crashed!");
+      ImGui::Text("We are very sorry comrade");
+      ImGui::Text("Thanks for your help improving the Cyllene Engine");
+      char buffer[1024] = "Type what you were doing here";
+      if (ImGui::InputText("Type what you were doing here", buffer, sizeof(buffer))) {
 
-      ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+      }
+      
+      if (ImGui::Button("Send Report", ImVec2(500,50))) {
+        done = true;
+      }
+      ImGui::SameLine(0,1020-1015);
+      if (ImGui::Button("Close", ImVec2(500, 50))) {
+        done = true;
+      }
 
-      ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-      ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-      ImGui::Checkbox("Another Window", &show_another_window);
-
-      ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-      ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-      if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-        counter++;
-      ImGui::SameLine();
-      ImGui::Text("counter = %d", counter);
-
-      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+      // if (ImGui::Button("Send Report"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+      //   counter++;
+      // ImGui::SameLine();
+      // ImGui::Text("counter = %d", counter);
+      // 
+      // ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
       ImGui::End();
     }
 
     // 3. Show another simple window.
-    if (show_another_window)
-    {
-      ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-      ImGui::Text("Hello from another window!");
-      if (ImGui::Button("Close Me"))
-        show_another_window = false;
-      ImGui::End();
-    }
+    // if (show_another_window)
+    // {
+    //   ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    //   ImGui::Text("Hello from another window!");
+    //   if (ImGui::Button("Close Me"))
+    //     show_another_window = false;
+    //   ImGui::End();
+    // }
 
     // Rendering
     ImGui::Render();
@@ -217,6 +351,10 @@ main(int argc, char* argv[]) {
   return 0;
 }
 
+void
+SendReport() {
+
+}
 
 // Helper functions
 

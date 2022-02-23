@@ -18,7 +18,13 @@
     <ClInclude Include="include\cyCrashHandlerPrerequisites.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyPlatformCrashHandlerUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\cyCrashHandlerUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyWindowsCrashHandlerUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,7 +32,7 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyCrashHandlerUI.cpp">
+    <ClCompile Include="src\cyPlaformCrashHandlerUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

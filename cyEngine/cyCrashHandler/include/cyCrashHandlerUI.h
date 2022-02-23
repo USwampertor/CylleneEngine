@@ -1,45 +1,13 @@
-/*********************************************/
-/*
- * @file 	cyCrashHandler
- * @author	Marco "Swampertor" Millan
- * @date	24/01/2022
- * @brief	
- *
- */
-/******************************************** */
-
 #pragma once
-#include <cyModule.h>
+
+#include "cyPlatformCrashHandlerUI.h"
+
+#if CY_PLATFORM == CY_PLATFORM_WIN32 
+#include "cyWindowsCrashHandlerUI.h"
+#endif
 
 namespace CYLLENE_SDK {
-
-  class CrashHandlerUI
-  {
-  public:
-
-    /**
-     *
-     */
-    CrashHandlerUI() = default;
-
-    /**
-     *
-     */
-    ~CrashHandlerUI() = default;
-
-    void
-    init();
-
-    void
-    showMessage();
-
-    void
-    sendError();
-
-    void
-    shutdown();
-  };
-
+#if CY_PLATFORM == CY_PLATFORM_WIN32 
+  using CrashHandlerUI = WindowsCrashHandlerUI;
+#endif
 }
-
-

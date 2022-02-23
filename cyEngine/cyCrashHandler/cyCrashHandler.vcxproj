@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cyCrashHandlerUI.h" />
+    <ClInclude Include="include\cyPlatformCrashHandlerUI.h" />
     <ClInclude Include="include\cyCrashHandlerPrerequisites.h" />
+    <ClInclude Include="include\cyWindowsCrashHandlerUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\cyCrashHandlerUI.cpp" />
+    <ClCompile Include="src\cyPlaformCrashHandlerUI.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
