@@ -35,5 +35,8 @@
     <ClCompile Include="src\cyPlaformCrashHandlerUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\cyWindowsCrashHandlerUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

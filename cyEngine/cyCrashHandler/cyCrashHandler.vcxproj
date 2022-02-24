@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyPlaformCrashHandlerUI.cpp" />
+    <ClCompile Include="src\cyWindowsCrashHandlerUI.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -34,6 +34,18 @@ namespace CYLLENE_SDK
       return cppfs::fs::open(fileName);
     }
 
+    static unsigned char*
+    openB(const String& fileName) {
+      IfStream file;
+      file.open(fileName, IfStream::binary | IfStream::in | IfStream::ate);
+      const int file_length = file.tellg();
+
+      unsigned char* data = new unsigned char[file_length];
+      file.seekg(file.beg);
+      file.read(reinterpret_cast<char*>(data), file_length); // error PBYTE is incompatibe with char*
+      return data;
+    }
+
     static bool
     exists(const String& filePath) {
       return cppfs::fs::open(filePath).exists();

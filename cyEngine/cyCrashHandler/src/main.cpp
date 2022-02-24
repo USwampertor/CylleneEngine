@@ -8,13 +8,14 @@
  */
 /******************************************** */
 #include "cyCrashHandlerPrerequisites.h"
-#include "cyCrashHandlerUI.h"
+// #include "cyCrashHandlerUI.h"
 
 
 #include <imgui/imgui.h>
 #include <tchar.h>
 
 #include <cyFileSystem.h>
+#include <cyUtilities.h>
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # include <cyWindows.h>
@@ -43,22 +44,22 @@ int
 main(int argc, char* argv[]) {
   // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
-  HICON hicon = LoadIcon(NULL, IDI_QUESTION);
-  if (FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/ceicon.ico")) {
-    File iconFile = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() + "/ceicon.ico");
-    String iconBuffer;
-    iconBuffer = iconFile.readFile();
-
-    static const int icon_size = 32;
-    int offset = LookupIconIdFromDirectoryEx((PBYTE)iconBuffer.c_str(), TRUE, icon_size, icon_size, LR_DEFAULTCOLOR);
-    if (offset != 0) {
-      hicon = CreateIconFromResourceEx((PBYTE)iconBuffer.c_str() + offset, 0, TRUE, 0x30000, icon_size, icon_size, LR_DEFAULTCOLOR);
-      if (hicon != nullptr) {
-        printf("SUCCESS");
-        return 0;
-      }
-    }
-  }
+  // HICON hicon = LoadIcon(NULL, IDI_QUESTION);
+  // String iconPath = FileSystem::getWorkingDirectory().fullPath() + "/ch.ico";
+  // if (FileSystem::exists(iconPath)) {
+  //   File iconFile = FileSystem::open(iconPath);
+  //   PBYTE fileBinary = FileSystem::openB(iconPath);
+  //   std::cout << fileBinary << std::endl;
+  //   static const int icon_size = 32;
+  //   int offset = LookupIconIdFromDirectoryEx(fileBinary, TRUE, icon_size, icon_size, LR_DEFAULTCOLOR);
+  //   if (offset != 0) {
+  //     hicon = CreateIconFromResourceEx(fileBinary + offset, 0, TRUE, 0x30000, icon_size, icon_size, LR_DEFAULTCOLOR);
+  //     if (hicon != nullptr) {
+  //       printf("SUCCESS");
+  //       return 0;
+  //     }
+  //   }
+  // }
 
   WNDCLASSEX wc = { sizeof(WNDCLASSEX), 
                     CS_CLASSDC, 
@@ -66,13 +67,22 @@ main(int argc, char* argv[]) {
                     0L, 
                     0L, 
                     GetModuleHandle(nullptr),
-                    hicon,
+                    nullptr,
                     nullptr, 
                     nullptr, 
                     nullptr, 
                     _T("Cyllene Engine Crash Handler"), 
                     nullptr };
-
+  wc.hIcon = static_cast<HICON>(LoadImage(
+    nullptr,
+    (FileSystem::getWorkingDirectory().fullPath() + "/ch.ico").c_str(),
+    IMAGE_ICON,
+    0,
+    0,
+    LR_LOADFROMFILE |  // we want to load a file (as opposed to a resource)
+    LR_DEFAULTSIZE |   // default metrics based on the type (IMAGE_ICON, 32x32)
+    LR_SHARED         // let the system release the handle when it's no longer used
+  ));
   ::RegisterClassEx(&wc);
   HWND hwnd = ::CreateWindow(wc.lpszClassName, 
                              _T("Cyllene Engine Crash Handler"), 
@@ -106,8 +116,6 @@ main(int argc, char* argv[]) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO(); (void)io;
-  //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-  //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
@@ -180,10 +188,10 @@ main(int argc, char* argv[]) {
 
   style->ScrollbarSize = 18;
 
-  style->WindowBorderSize = 1;
+  style->WindowBorderSize = 0;
   style->ChildBorderSize = 1;
   style->PopupBorderSize = 1;
-  style->FrameBorderSize = is3D;
+  style->FrameBorderSize = 1;
 
   style->WindowRounding = 3;
   style->ChildRounding = 3;
@@ -208,6 +216,7 @@ main(int argc, char* argv[]) {
   }
 #endif
 
+  auto originalFontSize = ImGui::GetFontSize();
 
   //ImGui::StyleColorsClassic();
 
@@ -227,6 +236,10 @@ main(int argc, char* argv[]) {
   //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
   //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
   //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
+  String fontPath = FileSystem::getWorkingDirectory().fullPath() + "/Buran USSR.ttf";
+  ImFont* tinyUSSRfont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 10.0f);
+  ImFont* smallUSSRfont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 16.0f);
+  ImFont* bigUSSRfont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 30.0f);
   //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
   //IM_ASSERT(font != NULL);
 
@@ -234,6 +247,8 @@ main(int argc, char* argv[]) {
   bool show_demo_window = true;
   bool show_another_window = false;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+  char detailsBuffer[1024] = "";
+  char stackBuffer[1024] = "Data";
 
   // Main loop
   bool done = false;
@@ -260,7 +275,6 @@ main(int argc, char* argv[]) {
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
-
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
     // if (show_demo_window)
     
@@ -271,69 +285,77 @@ main(int argc, char* argv[]) {
       static int counter = 0;
       ImGui::SetNextWindowSize(ImVec2(1010, 570));
       ImGui::SetNextWindowPos(ImVec2(0, 0));
-      ImGui::Begin("CYLLENE CRASH HANDLER", 
-                   &alwaysOpen, 
-                   ImGuiWindowFlags_NoResize  |
-                   ImGuiWindowFlags_NoMove    |
-                   ImGuiWindowFlags_NoCollapse);
-      if (ImGui::IsMouseDragging(0)) {
-        
-        // MoveWindow(hwnd, 
-        //            ImGui::GetMousePos().x, 
-        //            ImGui::GetMousePos().y, 
-        //            1024, 
-        //            576, 
-        //            true);
-      }
-      // Create a window called "Hello, world!" and append into it.
-      // ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-      // ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-      // ImGui::Checkbox("Another Window", &show_another_window);
-      // 
-      // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-      // ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-      ImGui::Text("Oh no! Cyllene Engine has crashed!");
-      ImGui::Text("We are very sorry comrade");
-      ImGui::Text("Thanks for your help improving the Cyllene Engine");
-      char detailsBuffer[1024] = "";
-      if (ImGui::InputTextMultilineWithHint("##Description", "Type what you were doing here", detailsBuffer, sizeof(detailsBuffer), ImVec2(1020,200))) {
+      ImGui::PushFont(bigUSSRfont);
+      if (ImGui::Begin("CYLLENE CRASH HANDLER",
+        &alwaysOpen,
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse)) {
+        if (ImGui::IsMouseDragging(0)) {
+          RECT rect;
+          if (GetWindowRect(hwnd, &rect)) {
+            MoveWindow(hwnd, 
+                       rect.left +  ImGui::GetMouseDragDelta().x, 
+                       rect.top +   ImGui::GetMouseDragDelta().y,
+                       1024, 
+                       576, 
+                       true);
+          }
+        }
+        ImGui::PopFont();
+        ImGui::PushFont(bigUSSRfont);
+        ImGui::Text("Oh no! Cyllene Engine has crashed!");
+        ImGui::PopFont();
+        ImGui::PushFont(smallUSSRfont);
+        ImGui::Text("\n");
+        ImGui::Text("We are very sorry comrade, but it seems that Cyllene Engine got into an error" \
+          " and crashed! But we can grow stronger and better if you help us sending the" \
+          "\ninformation below so our experts can handle the situation! " \
+          " Thanks for your help improving the Cyllene Engine");
+        ImGui::Text("\n");
+        ImGui::PopFont();
+        ImGui::PushFont(tinyUSSRfont);
+        if (ImGui::InputTextMultilineWithHint("##Description",
+          "Type what you were doing here",
+          detailsBuffer,
+          sizeof(detailsBuffer),
+          ImVec2(1020, ImGui::GetTextLineHeight() * 10),
+          ImGuiInputTextFlags_AllowTabInput)) {
 
-      }
-      char stackBuffer[1024] = "Data";
-      if (ImGui::InputTextMultilineWithHint("##Stack", "", stackBuffer, sizeof(stackBuffer), ImVec2(1020, 200), ImGuiInputTextFlags_ReadOnly)) {
-        ImGui::BeginChild("scrolling");
-        ImGui::SetScrollY(ImGui::GetScrollY());
-        ImGui::EndChild();
-      }
+        }
+        ImGui::PopFont();
+        ImGui::PushFont(smallUSSRfont);
+        ImGui::Text("\n");
+        ImGui::Text("Cyllene Engine retrieved the next callstack before shutting down:");
+        ImGui::PopFont();
+        ImGui::PushFont(tinyUSSRfont);
+        if (ImGui::InputTextMultilineWithHint("##Stack",
+          "",
+          stackBuffer,
+          sizeof(stackBuffer),
+          ImVec2(1020, ImGui::GetTextLineHeight() * 18),
+          ImGuiInputTextFlags_ReadOnly)) {
 
+        }
+
+        ImGui::PopFont();
+        ImGui::PushFont(bigUSSRfont);
+        ImGui::Text("\n");
+        ImGui::Text("\n");
+        ImGui::SameLine(50, 0);
+        if (ImGui::Button("Send Report", ImVec2(450, 50))) {
+          done = true;
+        }
+        ImGui::SameLine(0, 1020 - 1010);
+        if (ImGui::Button("Close", ImVec2(450, 50))) {
+          done = true;
+      }
       
-      if (ImGui::Button("Send Report", ImVec2(500,50))) {
-        done = true;
-      }
-      ImGui::SameLine(0,1020-1015);
-      if (ImGui::Button("Close", ImVec2(500, 50))) {
-        done = true;
-      }
+    }
 
-      // if (ImGui::Button("Send Report"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-      //   counter++;
-      // ImGui::SameLine();
-      // ImGui::Text("counter = %d", counter);
-      // 
-      // ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+      ImGui::PopFont();
       ImGui::End();
     }
-    
-    // 3. Show another simple window.
-    // if (show_another_window)
-    // {
-    //   ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-    //   ImGui::Text("Hello from another window!");
-    //   if (ImGui::Button("Close Me"))
-    //     show_another_window = false;
-    //   ImGui::End();
-    // }
-    ImGui::ShowDemoWindow(&show_demo_window);
 
     // Rendering
     ImGui::Render();

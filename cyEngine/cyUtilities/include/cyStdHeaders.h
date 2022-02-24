@@ -61,6 +61,12 @@
 namespace CYLLENE_SDK {
   using StringStream  = std::stringstream;
 
+  using IfStream = std::ifstream;
+
+  using OfStream = std::ofstream;
+
+  using FileBuffer = std::filebuf;
+
   template<typename T>
   using SharedPointer = std::shared_ptr<T>;
 

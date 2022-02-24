@@ -10,56 +10,63 @@
 
 #pragma once
 #include "cyCrashHandlerPrerequisites.h"
-#include <cyFileSystem.h>
+
 #include <imgui/imgui.h>
+
+#include <cyFileSystem.h>
+#include <cyModule.h>
 #include <cyVector2i.h>
 
 namespace CYLLENE_SDK {
 
 class PlatformCrashHandlerUI
 {
-  public:
-
-  /**
-    *
-    */
+ public:
   PlatformCrashHandlerUI() = default;
 
-  PlatformCrashHandlerUI(int newWidth = 1024, int newHeight = 576)
-    : m_width(newWidth),
-      m_height(newHeight),
-      m_done(false) {}
 
   /**
     *
     */
-  ~PlatformCrashHandlerUI() = default;
+  virtual ~PlatformCrashHandlerUI() = default;
 
-  void
-  init();
+  virtual void
+  init(void* data);
 
-  void
+  virtual void
   showWindow();
+
+  virtual void
+  newFrame();
 
   void
   sendError();
 
-  void
+  virtual void
   shutdown();
 
-  int m_width;
+  bool
+  isDone() { return m_done; }
 
-  int m_height;
+  int m_width = 0;
 
-  bool m_done;
+  int m_height = 0;
 
-  File m_iconFile;
+  bool m_done = false;
+
+  File m_iconFile = {};
+
+  File m_stackFile = {};
 
   static const String m_icon;
 
   static const Vector2i m_buttonSize;
 
-  // static ImGuiIO& m_io;
+  ImGuiIO* m_io;
+
+  String m_stackBuffer;
+
+  String m_detailsBuffer;
 };
 
 }
