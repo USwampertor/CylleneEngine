@@ -32,44 +32,32 @@ namespace CYLLENE_SDK {
   }
 
 
-  void
+  bool
   WindowsCrashHandlerUI::init(void* data) {
 
-    HICON hicon = LoadIcon(NULL, IDI_QUESTION);
-    if (FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/ch.ico")) {
-      File iconFile = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() + "/ch.ico");
-      String iconBuffer = Utils::BLANK;
-      iconBuffer = iconFile.readFile().c_str();
-      std::cout << iconBuffer << std::endl;
-      static const int icon_size = 32;
-      int offset = LookupIconIdFromDirectoryEx((PBYTE)iconBuffer.c_str(), TRUE, icon_size, icon_size, LR_DEFAULTCOLOR);
-      if (offset != 0) {
-        hicon = CreateIconFromResourceEx((PBYTE)iconBuffer.c_str() + offset, 0, TRUE, 0x30000, icon_size, icon_size, LR_DEFAULTCOLOR);
-        if (hicon == nullptr) {
-          hicon = LoadIcon(NULL, IDI_QUESTION);
-        }
-      }
-    }
-
-
-
-    String crashTitle("Cyllene Engine Crash Handler");
-    WNDCLASSEX m_wc = { sizeof(WNDCLASSEX),
-                    CS_CLASSDC,
-                    WndProc,
-                    0L,
-                    0L,
+    m_wc = { sizeof(WNDCLASSEX), 
+                    CS_CLASSDC, 
+                    WndProc, 
+                    0L, 
+                    0L, 
                     GetModuleHandle(nullptr),
-                    m_windowIcon,
                     nullptr,
-                    nullptr,
-                    nullptr,
-                    crashTitle.c_str(),
-                    m_windowIcon };
-    
-    ::RegisterClassEx(&m_wc);
-    m_hwnd = ::CreateWindow(m_wc.lpszClassName, 
-                             crashTitle.c_str(), 
+                    nullptr, 
+                    nullptr, 
+                    nullptr, 
+                    ("Cyllene Engine Crash Handler"), 
+                    nullptr };
+  m_wc.hIcon = static_cast<HICON>(LoadImage(nullptr,
+                                (FileSystem::getWorkingDirectory().fullPath() + "/ch.ico").c_str(),
+                                IMAGE_ICON,
+                                0,
+                                0,
+                                LR_LOADFROMFILE |  // we want to load a file (as opposed to a resource)
+                                LR_DEFAULTSIZE |   // default metrics based on the type (IMAGE_ICON, 32x32)
+                                LR_SHARED));
+  ::RegisterClassEx(&m_wc);
+  m_hwnd = ::CreateWindow(m_wc.lpszClassName,
+                             ("Cyllene Engine Crash Handler"), 
                              WS_POPUP         | 
                              WS_THICKFRAME    | 
                              WS_SYSMENU       | 
@@ -77,8 +65,8 @@ namespace CYLLENE_SDK {
                              WS_MINIMIZEBOX   ,
                              100, 
                              100, 
-                             1024, 
-                             576, 
+                             m_width, 
+                             m_height, 
                              nullptr, 
                              nullptr, 
                              m_wc.hInstance, 
@@ -89,7 +77,7 @@ namespace CYLLENE_SDK {
     {
       CleanupDeviceD3D();
       ::UnregisterClass(m_wc.lpszClassName, m_wc.hInstance);
-      return;
+      return false;
     }
     // Show the window
     ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
@@ -99,6 +87,7 @@ namespace CYLLENE_SDK {
 
     ImGui_ImplWin32_Init(m_hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+    return true;
   }
 
   void
@@ -123,19 +112,22 @@ namespace CYLLENE_SDK {
 
     PlatformCrashHandlerUI::showWindow();
     if (ImGui::IsMouseDragging(0)) {
-
-      MoveWindow(m_hwnd, 
-                 ImGui::GetMousePos().x, 
-                 ImGui::GetMousePos().y, 
-                 m_width, 
-                 m_height, 
-                 true);
+      RECT rect;
+      if (GetWindowRect(m_hwnd, &rect)) {
+        MoveWindow(m_hwnd,
+          rect.left + ImGui::GetMouseDragDelta().x,
+          rect.top + ImGui::GetMouseDragDelta().y,
+          1024,
+          576,
+          true);
+      }
     }
     ImGui::Render();
     const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
     g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
     g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    g_pSwapChain->Present(1, 0); // Present with vsync
   }
 
   void

@@ -36,7 +36,7 @@ public:
 
   ~WindowsCrashHandlerUI() = default;
 
-  virtual void
+  virtual bool
   init(void* data) override;
 
   virtual void

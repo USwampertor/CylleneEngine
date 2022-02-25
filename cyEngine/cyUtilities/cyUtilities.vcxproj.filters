@@ -117,6 +117,9 @@
     <ClInclude Include="include\cyWindows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyArgumentParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">
@@ -183,6 +186,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyCrashHandlerLinux.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyArgumentParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -30,7 +30,7 @@ class PlatformCrashHandlerUI
     */
   virtual ~PlatformCrashHandlerUI() = default;
 
-  virtual void
+  virtual bool
   init(void* data);
 
   virtual void
@@ -67,6 +67,8 @@ class PlatformCrashHandlerUI
   String m_stackBuffer;
 
   String m_detailsBuffer;
+
+  Map<String, ImFont*> m_fontMap;
 };
 
 }

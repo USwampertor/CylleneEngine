@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyArgumentParser.h" />
     <ClInclude Include="include\cyColor.h" />
     <ClInclude Include="include\cyCrashHandler.h" />
     <ClInclude Include="include\cyDLLLoader.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="include\cyZiggurat.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\cyArgumentParser.cpp" />
     <ClCompile Include="source\cyCrashHandler.cpp" />
     <ClCompile Include="source\cyColor.cpp" />
     <ClCompile Include="source\cyCrashHandlerLinux.cpp" />

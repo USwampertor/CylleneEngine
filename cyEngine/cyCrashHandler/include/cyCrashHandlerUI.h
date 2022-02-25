@@ -9,5 +9,7 @@
 namespace CYLLENE_SDK {
 #if CY_PLATFORM == CY_PLATFORM_WIN32 
   using CrashHandlerUI = WindowsCrashHandlerUI;
+#else
+  using CrashHandlerUI = PlatformCrashHandlerUI;
 #endif
 }
