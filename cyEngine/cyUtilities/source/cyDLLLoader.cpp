@@ -6,7 +6,7 @@ namespace CYLLENE_SDK {
 
   // typedef void* (*PLUGIN_FUNCTION)();
   void*
-  DLLLoader::load(String path, String functionName) {
+  DLLLoader::load(const String& path, const String& functionName) {
     // PLUGIN_FUNCTION t_api;
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32 
@@ -20,10 +20,10 @@ namespace CYLLENE_SDK {
     Path p(libPath);
     HINSTANCE myDll = LoadLibrary(p.fullPath().c_str());
     if (!myDll) {
-      DWORD err = GetLastError();
-      std::cout << "Could not find dll at given path: " << path << std::endl;
-      std::cout << err << std::endl;
-      std::cout << "Press any key to continue...";
+      uint64 err = GetLastError();
+      String errorString = "Could not find dll at given path: " + path + "\nError code: " + Utils::toString(err);
+      std::cout << errorString << std::endl;
+      Logger::instance().logError(errorString);
       return nullptr;
     }
     std::cout << "Loading " << path << "..." << std::endl;
