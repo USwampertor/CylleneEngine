@@ -15,6 +15,7 @@
 #include <cyFileSystem.h>
 #include <cyUtilities.h>
 #include <cyArgumentParser.h>
+#include <cyVector2i.h>
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # include <cyWindows.h>
@@ -23,6 +24,7 @@
 #include <d3d11.h>
 #endif
 
+using namespace CYLLENE_SDK;
 // Data
 static ID3D11Device*            g_pd3dDevice            = NULL;
 static ID3D11DeviceContext*     g_pd3dDeviceContext     = NULL;
@@ -34,26 +36,32 @@ bool CreateDeviceD3D(HWND hWnd);
 void CleanupDeviceD3D();
 void CreateRenderTarget(); 
 void CleanupRenderTarget();
-void SendReport();
+void sendReport(const String& path);
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-using namespace CYLLENE_SDK;
+
+ImVec2
+toImvec2(Vector2i v) { return ImVec2(v.x, v.y); }
 
 int 
 main(int argc, char* argv[]) {
-#if _DEBUG
-  String dbgString = "-p CylleneDump20220224_185815.ccr";
-  ArgumentParser parser;
-  parser.m_argumentMap.clear();
-  parser.addArgument("-p");
-  parser.parse(dbgString);
-#else
+  // #if _DEBUG
+  //   String dbgString = "-p CylleneDump20220224_185815.ccr";
+  //   ArgumentParser parser;
+  //   parser.m_argumentMap.clear();
+  //   parser.addArgument("-p");
+  //   parser.parse(dbgString);
+  // #else
+  //   ArgumentParser parser;
+  //   parser.m_argumentMap.clear();
+  //   parser.addArgument("-p");
+  //   parser.parse(*argv);
+  // 
+  // #endif
   ArgumentParser parser;
   parser.m_argumentMap.clear();
   parser.addArgument("-p");
   parser.parse(*argv);
-
-#endif
 
   File crash;
   if (parser.getParameter("-p") != Utils::BLANK) {
@@ -63,6 +71,9 @@ main(int argc, char* argv[]) {
 
   }
 
+  Vector2i windowSize(1024, 620);
+  Vector2i windowPos(200, 100);
+  Vector2i buttonSize(450, 50);
   String windowTitle = "Cyllene Engine Crash Handler";
   WNDCLASSEX wc = { sizeof(WNDCLASSEX), 
                     CS_CLASSDC, 
@@ -88,15 +99,14 @@ main(int argc, char* argv[]) {
   HWND hwnd = ::CreateWindow(wc.lpszClassName, 
                              windowTitle.c_str(),
                              WS_POPUP         | 
-                             WS_THICKFRAME    | 
                              WS_SYSMENU       | 
                              WS_MAXIMIZEBOX   | 
-                             WS_OVERLAPPED |
+                             WS_OVERLAPPED    |
                              WS_MINIMIZEBOX   ,
-                             100, 
-                             100, 
-                             1024, 
-                             576, 
+                             windowPos.x, 
+                             windowPos.y, 
+                             windowSize.x, 
+                             windowSize.y, 
                              nullptr, 
                              nullptr, 
                              wc.hInstance, 
@@ -116,6 +126,7 @@ main(int argc, char* argv[]) {
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
+  ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   ImGuiIO& io = ImGui::GetIO(); 
   (void)io;
 
@@ -225,18 +236,20 @@ main(int argc, char* argv[]) {
   ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
   String fontPath       = FileSystem::getWorkingDirectory().fullPath() + "/Buran USSR.ttf";
-  ImFont* tinyUSSRfont  = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 10.0f);
-  ImFont* smallUSSRfont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 16.0f);
-  ImFont* bigUSSRfont   = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 30.0f);
+  ImFont* tinyUSSRfont  = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 12.0f);
+  ImFont* smallUSSRfont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 18.0f);
+  ImFont* bigUSSRfont   = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 34.0f);
 
   // Our state
   bool show_demo_window = true;
   bool show_another_window = false;
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.00f);
   char detailsBuffer[1024] = "";
 
   // Main loop
   bool done = false;
+  bool shouldDrag = false;
+  bool alwaysOpen = true;
   while (!done)
   {
     MSG msg;
@@ -256,26 +269,34 @@ main(int argc, char* argv[]) {
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
     
-    bool alwaysOpen = true;
     {
 
-      ImGui::SetNextWindowSize(ImVec2(1010, 562));
+      ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, io.DisplaySize.y));
       ImGui::SetNextWindowPos(ImVec2(0, 0));
       ImGui::PushFont(bigUSSRfont);
       if (ImGui::Begin("CYLLENE CRASH HANDLER",
-        &alwaysOpen,
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoCollapse)) {
-        if (ImGui::IsMouseDragging(0)) {
+                       &alwaysOpen,
+                       ImGuiWindowFlags_NoResize |
+                       ImGuiWindowFlags_NoMove |
+                       ImGuiWindowFlags_NoCollapse)) {
+
+        if (ImGui::IsMouseDown(0) && ImGui::GetMousePos().y < ImGui::GetFontSize()) {
+          shouldDrag = true;
+        }
+        else if ((!ImGui::IsMouseDown(0))) {
+          shouldDrag = false;
+        }
+
+        if (shouldDrag) {
           RECT rect;
           if (GetWindowRect(hwnd, &rect)) {
             MoveWindow(hwnd, 
                        rect.left +  ImGui::GetMouseDragDelta().x, 
                        rect.top +   ImGui::GetMouseDragDelta().y,
-                       1024, 
-                       576, 
+                       windowSize.x, 
+                       windowSize.y, 
                        true);
+
           }
         }
         ImGui::PopFont();
@@ -295,7 +316,7 @@ main(int argc, char* argv[]) {
                                               "Type what you were doing here",
                                               detailsBuffer,
                                               sizeof(detailsBuffer),
-                                              ImVec2(1000, ImGui::GetTextLineHeight() * 10),
+                                              ImVec2(ImGui::GetWindowContentRegionWidth(), ImGui::GetTextLineHeight() * 6),
                                               ImGuiInputTextFlags_AllowTabInput)) {
 
         }
@@ -309,7 +330,7 @@ main(int argc, char* argv[]) {
                                               "",
                                               strdup(crash.readFile().c_str()),
                                               sizeof(crash.readFile().c_str()),
-                                              ImVec2(1000, ImGui::GetTextLineHeight() * 18),
+                                              ImVec2(ImGui::GetWindowContentRegionWidth(), ImGui::GetTextLineHeight() * 20),
                                               ImGuiInputTextFlags_ReadOnly)) {
 
         }
@@ -317,13 +338,14 @@ main(int argc, char* argv[]) {
         ImGui::PopFont();
         ImGui::PushFont(bigUSSRfont);
         ImGui::Text("\n");
-        ImGui::Text("\n");
+        ImGui::Text("");
         ImGui::SameLine(50, 0);
-        if (ImGui::Button("Send Report", ImVec2(450, 50))) {
+        if (ImGui::Button("Send Report", toImvec2(buttonSize) )) {
+          sendReport(crash.path());
           done = true;
         }
-        ImGui::SameLine(0, 1018 - 1010);
-        if (ImGui::Button("Close", ImVec2(450, 50))) {
+        ImGui::SameLine(0, ImGui::GetWindowContentRegionWidth() - (2 * (50 + buttonSize.x)) );
+        if (ImGui::Button("Close", toImvec2(buttonSize))) {
           done = true;
         }
 
@@ -357,8 +379,12 @@ main(int argc, char* argv[]) {
 }
 
 void
-SendReport() {
-
+sendReport(const String& fileName) {
+  Utils::runCommand(String("curl --ssl-reqd --url 'smtps://smtp.gmail.com:465' "
+                           "--user 'mmillan@uartesdigitales.edu.mx:millan97' "
+                           "--mail-from 'mmillan@uartesdigitales.edu.mx' " 
+                           "--mail-rcpt 'jmmillan@uartesdigitales.edu.mx' " 
+                           "--upload-file") + fileName);
 }
 
 // Helper functions
