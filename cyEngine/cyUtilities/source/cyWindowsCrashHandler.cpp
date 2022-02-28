@@ -4,6 +4,7 @@
 # include <Psapi.h>
 
 //Disable warning in VS2015 that's not under my control
+// Thanks Prince
 #pragma warning(disable : 4091)
 #	include <DbgHelp.h>
 #pragma warning(default : 4091)
@@ -21,6 +22,8 @@
 namespace CYLLENE_SDK {
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
+
+  // This defines the name of the dump file
   static const char* s_MiniDumpName = "CylleneDump.dmp";
 
   uint32

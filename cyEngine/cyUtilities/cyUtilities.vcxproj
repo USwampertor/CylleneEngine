@@ -188,6 +188,7 @@
     <ClInclude Include="include\cyArgumentParser.h" />
     <ClInclude Include="include\cyColor.h" />
     <ClInclude Include="include\cyCrashHandler.h" />
+    <ClInclude Include="include\cyDinamicLibrary.h" />
     <ClInclude Include="include\cyDLLLoader.h" />
     <ClInclude Include="include\cyEulerHelpers.h" />
     <ClInclude Include="include\cyException.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="source\cyCrashHandler.cpp" />
     <ClCompile Include="source\cyColor.cpp" />
     <ClCompile Include="source\cyCrashHandlerLinux.cpp" />
+    <ClCompile Include="source\cyDynamicLibrary.cpp" />
     <ClCompile Include="source\cyWindowsCrashHandler.cpp" />
     <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyEulerHelpers.cpp" />

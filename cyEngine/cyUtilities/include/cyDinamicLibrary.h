@@ -7,7 +7,7 @@ namespace CYLLENE_SDK {
 
 
   namespace DYNLIBRESULT {
-    BETTER_ENUM(E, uint32, eLOADED = 0, eALREADYLOADED, eFAIL )
+    BETTER_ENUM(E, uint32, eSUCCESS = 0, eALREADYLOADED, eFAIL )
   }
 
   class DynamicLibrary {
@@ -26,7 +26,7 @@ namespace CYLLENE_SDK {
     unload();
 
     void*
-    loadSymbol();
+    loadSymbol(const String& symbol);
 
     const String&
     getName() const {

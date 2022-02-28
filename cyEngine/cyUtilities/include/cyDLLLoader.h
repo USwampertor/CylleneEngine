@@ -12,11 +12,7 @@
 #include "cyUtilitiesPrerequisites.h"
 #include "cyModule.h"
 
-#if CY_PLATFORM == CY_PLATFORM_WIN32
-# include "cyWindows.h"
-#elif CY_PLATFORM == CY_PLATFORM_LINUX
 
-#endif
 
 namespace CYLLENE_SDK {
   struct DLLLoader {
@@ -26,7 +22,7 @@ namespace CYLLENE_SDK {
     ~DLLLoader() = default;
 
     static void*
-    load(const String& path, const String& functionName = "create");
+    load(const String& path, const String& functionName = "create", bool isOSDll = true);
 
   };
 }

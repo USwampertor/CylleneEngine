@@ -120,6 +120,9 @@
     <ClInclude Include="include\cyArgumentParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyDinamicLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">
@@ -189,6 +192,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyArgumentParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyDynamicLibrary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

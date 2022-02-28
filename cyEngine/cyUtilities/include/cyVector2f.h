@@ -26,6 +26,7 @@ namespace CYLLENE_SDK {
 
     Vector2f(const Vector3f& other);
 
+    
     Vector2f(const Vector4f& other);
 
     ~Vector2f() = default;

@@ -25,7 +25,6 @@
     <ClInclude Include="include\cyWindowsCrashHandlerUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\imguiThemeEditor.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\cyPlaformCrashHandlerUI.cpp" />
     <ClCompile Include="src\cyWindowsCrashHandlerUI.cpp" />

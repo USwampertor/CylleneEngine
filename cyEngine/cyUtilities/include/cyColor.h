@@ -1,18 +1,53 @@
+/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+/**
+ * @file 	cyColor.h
+ * @author 	Marco "Swampy" Millan
+ * @date 	2022/02/28
+ * @brief A color object, you know, for coloring or holding color
+ *        information
+ * 
+ */
+/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
 #include "cyUtilitiesPrerequisites.h"
 
 
 namespace CYLLENE_SDK {
+  // Class forwarding
   class Vector3f;
   class Vector4f;
 
+  /*
+   *	@class HSV
+   *	@brief A HSV Color structure
+   */
   struct CY_UTILITY_EXPORT HSV
   {
+    /**
+     * @brief Default constructor
+     */
     HSV(const Vector3f& other);
+
+    /**
+     * @brief Default destructor
+     */
     HSV(const HSV& other);
+
   public:
+    
+    /**
+     * @brief H value corresponds to Hue
+     */
     float h;
+
+    /**
+     * @brief S value corresponds to Saturation
+     */
     float s;
+
+    /**
+     * @brief V value corresponds to, well, Value
+     */
     float v;
   };
 
@@ -33,12 +68,12 @@ namespace CYLLENE_SDK {
   public:
 
     /**
-    * Default constructor
+    * @brief Default constructor
     */
     Color() = default;
 
     /**
-     * Default constructor
+     * @brief Default constructor
      */
     ~Color() = default;
 
@@ -52,17 +87,17 @@ namespace CYLLENE_SDK {
     Color(float nr, float ng = 0, float nb = 0, float na = 1.0f);
 
     /**
-     * Constructor with a copy of a color
+     * @brief Constructor with a copy of a color
      */
     Color(const Color& copy);
 
     /**
-     * Constructor with a Vector 4
+     * @brief Constructor with a Vector 4
      */
     Color(const Vector4f& vector);
 
     /**
-     * Constructor with a Vector 3
+     * @brief Constructor with a Vector 3
      */
     Color(const Vector3f& vector);
 
@@ -166,6 +201,11 @@ namespace CYLLENE_SDK {
     static Color
     blend(Color& A, Color& B);
 
+    /*
+     *	@brief	  Creates a lerp between two colors
+     *	@param	  
+     *	@return
+     */
     static Color
     lerp(Color& A, Color& B);
 
