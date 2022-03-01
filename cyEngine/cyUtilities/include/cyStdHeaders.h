@@ -61,10 +61,18 @@
 namespace CYLLENE_SDK {
   using StringStream  = std::stringstream;
 
+  using IfStream = std::ifstream;
+
+  using OfStream = std::ofstream;
+
+  using FileBuffer = std::filebuf;
+
   template<typename T>
   using SharedPointer = std::shared_ptr<T>;
 
   using Mutex         = std::mutex;
+
+  using MutexLock     = std::unique_lock<Mutex>;
 
   using HighClock     = std::chrono::high_resolution_clock;
 
@@ -94,7 +102,7 @@ namespace CYLLENE_SDK {
   template<typename T>
   using NumericLimits = std::numeric_limits<T>;
 
-  using Exception     = std::exception;
+  using StdException     = std::exception;
 }
 
 
@@ -144,6 +152,7 @@ namespace CYLLENE_SDK {
 
   using String = std::string;
 
+  using WString = std::wstring;
 #else
   template<typename T, size_t N = 1>
   using Array = eastl::array<T, N>;
@@ -196,6 +205,7 @@ namespace CYLLENE_SDK {
 
   using String = eastl::string;
 
+  using WString = eastl::wstring;
 
 #endif
 

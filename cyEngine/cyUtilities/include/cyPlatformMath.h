@@ -6,10 +6,12 @@
 #include <cmath>
 #include <algorithm>
 
-#undef min
-#undef max
-#undef isinf
-#undef isnan
+#if CY_PLATFORM == CY_PLATFORM_WIN32
+# undef min
+# undef max
+# undef isinf
+# undef isnan
+#endif
 
 namespace CYLLENE_SDK {
 
@@ -507,7 +509,7 @@ namespace CYLLENE_SDK {
     template<typename T>
     static T
     max(T a, T b) {
-      return (a < b) ? a : b;
+      return (a > b) ? a : b;
 
       //return std::max(a, b);
     }
@@ -522,7 +524,7 @@ namespace CYLLENE_SDK {
     static T
     min(T a, T b) {
 
-      return (a > b) ? a : b;
+      return (a < b) ? a : b;
 
       //return std::min(a, b);
     }
@@ -805,12 +807,12 @@ namespace CYLLENE_SDK {
     static T
     fasttanh(T rad) {
       return (rad *
-        (135135.0f + Math::sqr(rad) *
-          (17325.0f + Math::sqr(rad) *
-            (378.0f + Math::sqr(rad))))) /
+        (135135.0f + PlatformMath::sqr(rad) *
+          (17325.0f + PlatformMath::sqr(rad) *
+            (378.0f + PlatformMath::sqr(rad))))) /
         135135.0f +
-        Math::sqr(rad) *
-        (62370.0f + Math::sqr(rad) * (3150.0f + Math::sqr(rad) * 28.0f));
+        PlatformMath::sqr(rad) *
+        (62370.0f + PlatformMath::sqr(rad) * (3150.0f + PlatformMath::sqr(rad) * 28.0f));
     }
 
     template<typename T>

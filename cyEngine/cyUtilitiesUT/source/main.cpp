@@ -10,13 +10,26 @@
 #include <cyMatrix4x4.h>
 #include <cyCrashHandler.h>
 #include <cyMath.h>
+#include <cyFileSystem.h>
+#include <cyRandom.h>
+#include <cyException.h>
+#include <cyLogger.h>
+#include <cyTime.h>
 
 using namespace CYLLENE_SDK;
 
 int32
 main() {
   CrashHandler::startUp();
-  Quaternion q;
+  CrashHandler::instance().init();
+  Random::init();
+  Random::init();
+
+  Logger::startUp();
+  Logger::instance().init();
+
+  Time::startUp();
+  Time::instance().init();
 
   try
   {
@@ -25,24 +38,26 @@ main() {
 #else
     printf("RELEASE\n");
 #endif
+    if (FileSystem::createFolder(FileSystem::getWorkingDirectory().fullPath() + "/Shaders")) {
+      FileSystem::createFile(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/MyShader.hlsl");
+    }
+    File shader = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/MyShader.hlsl");
+    if (shader.exists()) {
+      if (shader.isFile()) {
+        Path p(shader.path());
+        std::cout << p.extension() << std::endl;
+      }
+    }
 
-    float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
-    Quaternion worldRotation;
-    worldRotation.fromEuler(Euler(3.14159265f * 1.5f, 3.14159265f, 0.0f), 0);
-    printf("Quaternion:\n%s\n", worldRotation.toString().c_str());
+    std::cout << FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/DoesntExist.hlsl") << std::endl;
 
-    Matrix3x3 world3x3 = worldRotation.getRotationMatrix();
-    Matrix4x4 world(world3x3.m[0][0], world3x3.m[0][1], world3x3.m[0][2], 0.0f,
-                    world3x3.m[1][0], world3x3.m[1][1], world3x3.m[1][2], 0.0f,
-                    world3x3.m[2][0], world3x3.m[2][1], world3x3.m[2][2], 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f);
-    printf("Matrix:\n%s\n", world3x3.toString().c_str());
-
+    CY_EXCEPT(UnitTestException, "Test");
+    // library_throw("Test Exception");
   }
-  catch (const std::exception& e)
+  catch (const Exception& e)
   {
     std::cout << e.what();
-    CrashHandler::instance().createReport(e);
+    // library_handle_exception(e);
   }
   std::cout << "End of test..." << std::endl;
   return 0;
