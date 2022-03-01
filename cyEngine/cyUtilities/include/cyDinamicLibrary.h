@@ -10,7 +10,7 @@ namespace CYLLENE_SDK {
     BETTER_ENUM(E, uint32, eSUCCESS = 0, eALREADYLOADED, eFAIL )
   }
 
-  class DynamicLibrary {
+  class CY_UTILITY_EXPORT DynamicLibrary {
     DynamicLibrary(const String& libName) {
       m_name = libName;
       m_data = nullptr;
