@@ -10,18 +10,26 @@
 namespace CYLLENE_SDK {
   DYNLIBRESULT::E
   DynamicLibrary::load() {
+
 #if CY_PLATFORM == CY_PLATFORM_WIN32
-    m_data = static_cast<void*>(LoadLibrary(m_name.c_str()));
+    auto newData = static_cast<void*>(LoadLibrary(m_name.c_str()));
 #else
+    auto newData;
 #endif
-    if (!m_data) {
+    if (!newData) {
       uint64 err = GetLastError();
       String errorString = "Could not find dll at given path: " + m_name + "\nError code: " + Utils::toString(err);
       std::cout << errorString << std::endl;
       Logger::instance().logError(errorString, LOG_CHANNEL::E::eSYSTEM);
       return DYNLIBRESULT::E::eFAIL;
     }
-
+    if (m_data == newData) {
+      Logger::instance().logError("This library was already loaded", LOG_CHANNEL::E::eSYSTEM);
+      FreeLibrary(static_cast<HINSTANCE>(newData));
+      return DYNLIBRESULT::E::eALREADYLOADED;
+    }
+    m_data = newData;
+    FreeLibrary(static_cast<HINSTANCE>(newData));
     return DYNLIBRESULT::E::eSUCCESS;
 
   }

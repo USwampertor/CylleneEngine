@@ -12,12 +12,13 @@
 #endif
 
 #include "cyUtilitiesPrerequisites.h"
-#include "cyDLLLoader.h"
-#include "cyFileSystem.h"
-#include "cyMath.h"
-#include "cyLogger.h"
+
 #include "cyCrashHandler.h"
+#include "cyDLLLoader.h"
 #include "cyException.h"
+#include "cyFileSystem.h"
+#include "cyLogger.h"
+#include "cyMath.h"
 
 namespace CYLLENE_SDK {
 
