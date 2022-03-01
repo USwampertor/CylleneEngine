@@ -10,7 +10,10 @@
 
 #pragma once
 
+// External includes
 #include <better-enums/enum.h>
+
+// Essential includes
 #include "cyPlatformDefines.h"
 #include "cyPlatformTypes.h"
 #include "cyStdHeaders.h"
