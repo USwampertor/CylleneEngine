@@ -4,12 +4,15 @@
 #include <stdexcept>
 
 #include "cyUtilitiesPrerequisites.h"
+
+#include "cyCrashHandler.h"
 #include "cyStdHeaders.h"
 #include "cyUtilities.h"
 
-#include "cyCrashHandler.h"
 
 namespace CYLLENE_SDK {
+
+// Using namespaces
 using std::runtime_error;
 using std::is_base_of;
 

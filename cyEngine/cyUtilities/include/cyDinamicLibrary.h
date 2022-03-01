@@ -1,6 +1,16 @@
+/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+/**
+ * @file 	cyDinamicLibrary.h
+ * @author 	Marco "Swampy" Millan
+ * @date 	2022/03/01
+ * @brief 	An object to load libraries and get symbols from them
+ * 
+ */
+/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
+
 #include "cyFileSystem.h"
 
 namespace CYLLENE_SDK {

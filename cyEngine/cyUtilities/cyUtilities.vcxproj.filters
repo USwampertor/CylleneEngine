@@ -125,9 +125,6 @@
     <ClCompile Include="source\cyCrashHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyFileSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\cyLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
