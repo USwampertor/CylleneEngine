@@ -196,7 +196,6 @@
     <ClInclude Include="include\cyJSON.h" />
     <ClInclude Include="include\cyMath.h" />
     <ClInclude Include="include\cyMatrix4x4.h" />
-    <ClInclude Include="include\cyPhysics.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
     <ClInclude Include="include\cyPlatformUtilities.h" />
     <ClInclude Include="include\cyQuaternion.h" />
