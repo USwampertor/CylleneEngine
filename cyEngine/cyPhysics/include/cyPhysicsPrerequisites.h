@@ -1,4 +1,7 @@
 #pragma once
+
+#include <cyUtilitiesPrerequisites.h>
+
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # if CY_COMPILER == CY_COMPILER_MSVC
 #   if defined( CY_STATIC_LIB )
@@ -26,3 +29,6 @@
 # define CY_PHYSICS_EXPORT __attribute__ ((visibility ("default")))
 # define CY_PHYSICS_HIDDEN __attribute__ ((visibility ("hidden")))
 #endif
+
+
+

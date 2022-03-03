@@ -21,6 +21,15 @@
     <ClInclude Include="include\cyBox2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyPolygon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPhysics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPhysicsMathRemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyBox2D.cpp">
