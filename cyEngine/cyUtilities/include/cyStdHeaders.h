@@ -108,7 +108,9 @@ namespace CYLLENE_SDK {
   template<typename T>
   using NumericLimits = std::numeric_limits<T>;
 
-  using StdException     = std::exception;
+  using StdException  = std::exception;
+
+  using RunTimeError  = std::runtime_error;
 }
 
 

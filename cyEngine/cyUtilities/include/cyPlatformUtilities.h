@@ -58,7 +58,7 @@ public:
 
   static WString
   toWide(String str) {
-    std::wstring stemp = std::wstring(str.begin(), str.end());
+    WString stemp = WString(str.begin(), str.end());
     return stemp;
 
   }
