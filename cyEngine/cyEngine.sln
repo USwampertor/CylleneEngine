@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilitiesUT", "cyUtilitie
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCrashHandler", "cyCrashHandler\cyCrashHandler.vcxproj", "{15D9736F-94F7-4232-9D82-044FAE1E50BB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCore", "cyCore\cyCore.vcxproj", "{712121FB-6DCF-4907-A884-3D4E92C4064C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -44,6 +46,14 @@ Global
 		{15D9736F-94F7-4232-9D82-044FAE1E50BB}.Release|x64.Build.0 = Release|x64
 		{15D9736F-94F7-4232-9D82-044FAE1E50BB}.Release|x86.ActiveCfg = Release|Win32
 		{15D9736F-94F7-4232-9D82-044FAE1E50BB}.Release|x86.Build.0 = Release|Win32
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Debug|x64.ActiveCfg = Debug|x64
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Debug|x64.Build.0 = Debug|x64
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Debug|x86.ActiveCfg = Debug|Win32
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Debug|x86.Build.0 = Debug|Win32
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Release|x64.ActiveCfg = Release|x64
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Release|x64.Build.0 = Release|x64
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Release|x86.ActiveCfg = Release|Win32
+		{712121FB-6DCF-4907-A884-3D4E92C4064C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
