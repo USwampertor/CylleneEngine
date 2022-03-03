@@ -19,14 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\cyBox2D.h" />
     <ClInclude Include="include\cyPhysics.h" />
     <ClInclude Include="include\cyPhysicsMathRemap.h" />
     <ClInclude Include="include\cyPhysicsPrerequisites.h" />
     <ClInclude Include="include\cyPolygon.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\cyBox2D.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
