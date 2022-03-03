@@ -70,7 +70,13 @@ namespace CYLLENE_SDK {
   template<typename T>
   using SharedPointer = std::shared_ptr<T>;
 
+  template<typename T>
+  using UniquePointer = std::unique_ptr<T>;
+
   using Mutex         = std::mutex;
+
+  template<typename T>
+  using UniqueLock    = std::unique_lock<T>;
 
   using MutexLock     = std::unique_lock<Mutex>;
 
