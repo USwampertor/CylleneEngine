@@ -8,7 +8,7 @@ ArgumentParser::parse(const String& parameters) {
   for (auto argument : m_argumentMap) {
     if (parameters.find(argument.first) != String::npos) {
       String tmpString = Utils::BLANK;
-      for (int i = parameters.find(argument.first) + argument.first.length() + 1; i < parameters.length(); ++i) {
+      for (int32 i = static_cast<int32>(parameters.find(argument.first)) + argument.first.length() + 1; i < parameters.length(); ++i) {
         if (parameters[i] == '-') { break; }
         tmpString += parameters[i];
       }

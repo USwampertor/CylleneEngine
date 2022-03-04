@@ -548,7 +548,7 @@ namespace CYLLENE_SDK {
     popupErrorMessage(m_errorMessage, folderPath, p);
   }
 
-  int
+  int32
   CrashHandler::createReport(void* exception) const {
     EXCEPTION_POINTERS* exceptionData = static_cast<EXCEPTION_POINTERS*>(exception);
 

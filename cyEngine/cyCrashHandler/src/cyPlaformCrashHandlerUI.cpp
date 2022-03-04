@@ -29,7 +29,7 @@ namespace CYLLENE_SDK {
 
     /// 0 = FLAT APPEARENCE
     /// 1 = MORE "3D" LOOK
-    int is3D = 0;
+    int32 is3D = 0;
 
     style->Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);

@@ -17,8 +17,8 @@
 #endif
 
 using namespace CYLLENE_SDK;
-int
-main2(int argc, char* argv[]) {
+int32
+main2(int32 argc, char* argv[]) {
   CrashHandlerUI window(1024, 576);
   window.init(nullptr);
   while (!window.isDone()) {
