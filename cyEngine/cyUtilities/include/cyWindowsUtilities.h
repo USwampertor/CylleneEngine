@@ -30,12 +30,12 @@ struct CY_UTILITY_EXPORT WindowsUtils : public PlatformUtils
   
   static void
   open(const String& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
-    ShellExecute(nullptr, LPCSTR("open"), path.c_str(), parameters.c_str(), nullptr, showOption);
+    ShellExecuteA(nullptr, LPCSTR("open"), path.c_str(), parameters.c_str(), nullptr, showOption);
   }
   
   static void
   open(const Path& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
-    ShellExecute(nullptr, LPCSTR("open"), path.fullPath().c_str(), parameters.c_str(), nullptr, showOption);
+    ShellExecuteA(nullptr, LPCSTR("open"), path.fullPath().c_str(), parameters.c_str(), nullptr, showOption);
   }
 
 };
