@@ -27,9 +27,24 @@
     <ClInclude Include="include\cyResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyCodec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCodec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

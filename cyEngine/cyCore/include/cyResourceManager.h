@@ -1,13 +1,13 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
-
+#include "cyResource.h"
 #include <cyModule.h>
 
 
 namespace CYLLENE_SDK {
 
-class Resource;
+class Device;
 
 class ResourceManager : Module<ResourceManager>
 {
@@ -17,8 +17,22 @@ class ResourceManager : Module<ResourceManager>
 
   ~ResourceManager() = default;
 
+  void
+  init(Device* pDevice);
+
+  template<typename T = Resource>
+  SharedPointer<T>
+  load(const String& path, bool& wasSuccesful);
+
+  template<typename T = Resource>
+  SharedPointer<T>
+  create(String name, RESOURCE_TYPE::E type);
+
+  void
+  flush();
+
   bool
-  init();
+  canDecode(String path);
 
 };
 }

@@ -19,12 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyAsset.h" />
+    <ClInclude Include="include\cyCodec.h" />
     <ClInclude Include="include\cyComponent.h" />
     <ClInclude Include="include\cyCorePrerequisites.h" />
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
+    <ClInclude Include="include\cyShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyAsset.cpp" />
+    <ClCompile Include="src\cyCodec.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -119,7 +124,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilitiesd.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cppfsd.lib;cpplocated.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,7 +149,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cppfs.lib;cpplocate.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -165,7 +170,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilitiesd.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cppfsd.lib;cpplocated.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -190,7 +195,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cppfs.lib;cpplocate.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
