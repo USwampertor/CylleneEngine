@@ -205,7 +205,7 @@ public:
 #ifndef CY_EXCEPT
 # define CY_EXCEPT(type, desc)                                                \
 {                                                                             \
-  static_assert((is_base_of<StdException, type>::value),                      \
+  static_assert((is_base_of<Exception, type>::value),                         \
                 "Invalid exception type (" #type ") for CY_EXCEPT macro."     \
                 "It needs to derive from CYLLEME_SDK::Exception.");           \
   CrashHandler::instance().createReport(#type,                                \

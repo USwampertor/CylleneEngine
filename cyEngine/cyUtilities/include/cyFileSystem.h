@@ -36,10 +36,10 @@ struct CY_UTILITY_EXPORT FileSystem
   }
 
   static unsigned char*
-  openB(const String& fileName) {
+  openBinary(const String& fileName) {
     IfStream file;
     file.open(fileName, IfStream::binary | IfStream::in | IfStream::ate);
-    const int file_length = file.tellg();
+    const int32 file_length = static_cast<const int>(file.tellg());
 
     unsigned char* data = new unsigned char[file_length];
     file.seekg(file.beg);
