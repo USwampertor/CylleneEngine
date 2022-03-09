@@ -26,13 +26,30 @@ namespace CYLLENE_SDK {
 using Window      = SDL_Window;
 using WindowEvent = SDL_WindowEvent;
 
+
+  namespace WINDOW_INIT
+  {
+    BETTER_ENUM(E, uint32, 
+                eTIMER           = SDL_INIT_TIMER,
+                eAUDIO           = SDL_INIT_AUDIO,
+                eVIDEO           = SDL_INIT_VIDEO,
+                eJOYSTICK        = SDL_INIT_JOYSTICK,
+                eHAPTIC          = SDL_INIT_HAPTIC,
+                eGAMECONTROLLER  = SDL_INIT_GAMECONTROLLER,
+                eEVENTS          = SDL_INIT_EVENTS,
+                eSENSOR          = SDL_INIT_SENSOR,
+                eNOPARACHUTE     = SDL_INIT_NOPARACHUTE,
+                eEVERYTHING      = SDL_INIT_EVERYTHING);
+  }
+
+
 struct CY_CORE_EXPORT WindowSettings
 {
-  String name;
-  String title;
-  Vector2i position;
-  Vector2i size;
-  uint32 flags;
+  String    name;
+  String    title;
+  Vector2i  position;
+  Vector2i  size;
+  uint32    flags;
 };
 
 class CY_CORE_EXPORT WindowManager : public Module<WindowManager>
@@ -47,7 +64,7 @@ public:
   bool 
   init();
 
-  SharedPointer<Window> 
+  SharedPointer<Window*> 
   createWindow(const String& title,
                const int32& posX, 
                const int32& posY, 
@@ -55,22 +72,22 @@ public:
                const int32& height, 
                const int32& flags);
 
-  SharedPointer<Window> 
+  SharedPointer<Window*> 
   createWindow(const String& title,
                const Vector2i& pos, 
                const Vector2i& size, 
                const int32& flags);
 
-  SharedPointer<Window>
+  SharedPointer<Window*>
   createWindow(const WindowSettings& settings);
 
-  SharedPointer<Window>
+  SharedPointer<Window*>
   getWindow(const int32& window);
 
 
   void
   finish();
 
-  Vector<SharedPointer<Window>> m_windows;
+  Vector<SharedPointer<Window*>> m_windows;
 };
 }

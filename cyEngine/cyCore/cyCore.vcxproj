@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyAsset.cpp" />
+    <ClCompile Include="src\cyBaseUI.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />

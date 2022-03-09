@@ -8,11 +8,11 @@ namespace CYLLENE_SDK {
 
   namespace RESOURCE_TYPE {
     BETTER_ENUM(E, uint32, 
-      eNONE,
-      eMESH, 
-      eAUDIO, 
-      eTEXTURE,
-      eSHADER);
+                eNONE,
+                eMESH, 
+                eAUDIO, 
+                eTEXTURE,
+                eSHADER);
   }
   
 class CY_CORE_EXPORT Resource {

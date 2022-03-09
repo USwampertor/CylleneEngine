@@ -34,5 +34,7 @@ class ResourceManager : Module<ResourceManager>
   bool
   canDecode(String path);
 
+  Map<uint32, SharedPointer<Resource>> m_resources;
+
 };
 }
