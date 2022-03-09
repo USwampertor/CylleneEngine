@@ -5,7 +5,7 @@ namespace CYLLENE_SDK {
   bool 
   WindowManager::init() {
 
-    SDL_Init(WINDOW_INIT::E::VIDEO);
+    SDL_Init(WINDOW_INIT::E::eVIDEO);
     return true;
   }
 

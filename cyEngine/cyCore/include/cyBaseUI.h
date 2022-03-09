@@ -5,7 +5,7 @@
 #include <cyModule.h>
 
 namespace CYLLENE_SDK {
-class CY_CORE_EXPORT BaseUI : Module<BaseUI>
+class CY_CORE_EXPORT BaseUI : public Module<BaseUI>
 {
 public:
   BaseUI() = default;
