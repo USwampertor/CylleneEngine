@@ -128,7 +128,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilitiesd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL2d.lib;SDL2maind.lib;shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL2d.lib;SDL2maind.lib;shell32.lib;assimpd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -153,7 +153,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilities.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL2.lib;SDL2main.lib;shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL2.lib;SDL2main.lib;shell32.lib;assimp.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -174,7 +174,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilitiesd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL2d.lib;SDL2maind.lib;shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL2d.lib;SDL2maind.lib;shell32.lib;assimpd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -199,7 +199,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilities.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL2.lib;SDL2main.lib;shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL2.lib;SDL2main.lib;shell32.lib;assimp.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
