@@ -8,16 +8,21 @@ namespace CYLLENE_SDK {
 
   namespace RESOURCE_TYPE {
     BETTER_ENUM(E, uint32, 
-                eNONE,
+                eUNKNOWN,
                 eMESH, 
                 eAUDIO, 
                 eTEXTURE,
-                eSHADER);
+                eSHADER,
+                eRESOURCE);
   }
   
 class CY_CORE_EXPORT Resource {
 public:
   Resource() = default;
+
+  Resource(const Path& newFile, void* newData)
+    : m_filePath(newFile),
+      m_data(newData) {}
 
   virtual ~Resource() {}
 
@@ -41,4 +46,20 @@ private:
 
   Path m_filePath;
 };
+
+
+class CY_CORE_EXPORT MeshResource : public Resource {
+  
+  virtual RESOURCE_TYPE::E 
+  getType() override { return RESOURCE_TYPE::E::eMESH; }
+
+};
+
+class CY_CORE_EXPORT TextureResource : public Resource {
+  
+  virtual RESOURCE_TYPE::E 
+  getType() override { return RESOURCE_TYPE::E::eRESOURCE; }
+
+};
+
 }

@@ -23,8 +23,9 @@
 
 namespace CYLLENE_SDK {
 
-using Window      = SDL_Window;
-using WindowEvent = SDL_WindowEvent;
+using Window          = SDL_Window;
+using WindowEvent     = SDL_WindowEvent;
+using MessageBoxData  = SDL_MessageBoxData;
 
 
   namespace WINDOW_INIT
@@ -84,10 +85,24 @@ public:
   SharedPointer<Window*>
   getWindow(const int32& window);
 
-
   void
   finish();
 
   Vector<SharedPointer<Window*>> m_windows;
+
+  static int32
+  ShowWarningMessage( const String& title, const String& message) {
+    return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, title.c_str(), message.c_str(), nullptr);
+  }
+
+  static int32
+  ShowMessageBox(const MessageBoxData* data, int32* id) {
+    return 0;
+  }
+
+  static int32
+  ShowErrorMessage( const String& title, const String& message) {
+    return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
+  }
 };
 }

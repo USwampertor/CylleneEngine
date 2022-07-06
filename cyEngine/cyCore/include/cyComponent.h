@@ -18,8 +18,25 @@ class Component
 {
 public:
 
-  virtual COMPONENT_TYPE::E isType() = 0;
+  Component() = default;
 
-  COMPONENT_TYPE::E m_component;
+  virtual ~Component() = default;
+
+  virtual COMPONENT_TYPE::E isType() = 0;
 };
+
+class ModelComponent : public Component
+{
+public:
+
+  ModelComponent() = default;
+
+  ~ModelComponent() = default;
+
+  virtual COMPONENT_TYPE::E isType() override { return COMPONENT_TYPE::E::eMODEL; }
+
+  
+
+};
+
 }
