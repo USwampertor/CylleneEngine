@@ -11,20 +11,23 @@
 
 #pragma once
 
+// THIS IS BECAUSE OMNIVERSE HAS THE STUPID PYTHON LIBRARY
+#define HAVE_SNPRINTF 1;
+
+
 // This library allows us to connect to Nucleus
-#include <ov/OmniClient.h>
+#include <OmniClient.h>
 
 // This library gives us the ability for live synchronization and USD updates
-#include <ov/OmniUsdLive.h>
+#include <OmniUsdLive.h>
 
 // This libraries help us create USD objects and components
-#include <ov/pxr/usd/usd/common.h>
-#include <ov/pxr/usd/usd/stage.h>
-#include <ov/pxr/usd/usdGeom/mesh.h>
-#include <ov/pxr/usd/usdGeom/metrics.h>
+#include <pxr/usd/usd/common.h>
+#include <pxr/usd/usd/stage.h>
+#include <pxr/usd/usdGeom/mesh.h>
+#include <pxr/usd/usdGeom/metrics.h>
 
 #include <cyUtilitiesPrerequisites.h>
-
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
