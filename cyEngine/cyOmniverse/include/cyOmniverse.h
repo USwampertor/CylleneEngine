@@ -19,7 +19,7 @@
 namespace CYLLENE_SDK
 {
 
-namespace LIVEMODE
+namespace OMNILIVEMODE
 {
   BETTER_ENUM(E, uint32,
     eDEFAULT = 0,
@@ -27,7 +27,7 @@ namespace LIVEMODE
     eENABLED);
 }
 
-namespace OMNIVERSELOGLEVEL
+namespace OMNILOGLEVEL
 {
   BETTER_ENUM(E, uint32, 
               eDEBUG, // Extra chatty
@@ -37,7 +37,7 @@ namespace OMNIVERSELOGLEVEL
               eERROR); // Definite problem)
 }
 
-namespace FILESTATUS
+namespace OMNIFILESTATUS
 {
   BETTER_ENUM(E, uint32, 
     eFILESTATUSREADING,
@@ -48,7 +48,7 @@ namespace FILESTATUS
     eLIVEUPDATERECEIVED);
 }
 
-namespace CONNECTIONSTATUS
+namespace OMNICONNECTIONSTATUS
 {
   BETTER_ENUM(E, uint32,
     eCONNECTIONSTATUSCONNECTING,
@@ -130,7 +130,7 @@ public:
 
 
   bool
-  init(bool doLiveEdit, const OMNIVERSELOGLEVEL::E& omniverseLog);
+  init(bool doLiveEdit, const OMNILOGLEVEL::E& omniverseLog);
 
   virtual void
   onShutDown() override;
@@ -195,7 +195,7 @@ public:
   bool
   isDefaultLiveSyncEnabled();
 
-  const LIVEMODE::E&
+  const OMNILIVEMODE::E&
   isStageLiveSyncEnabled(const String& url);
 
   bool
@@ -205,10 +205,10 @@ public:
   setDefaultLiveSync(bool newStatus);
 
   void
-  setStageLiveSync(const String& url, const LIVEMODE::E& newStatus);
+  setStageLiveSync(const String& url, const OMNILIVEMODE::E& newStatus);
 
   void
-  setOVLog(const OMNIVERSELOGLEVEL::E& logLevel);
+  setOVLog(const OMNILOGLEVEL::E& logLevel);
 
   void
   waitForUpdates();

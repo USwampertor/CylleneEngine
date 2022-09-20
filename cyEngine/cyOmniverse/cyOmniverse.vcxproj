@@ -185,10 +185,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyLiveSessionConfigFile.cpp" />
+    <ClCompile Include="src\cyLiveSessionInfo.cpp" />
+    <ClCompile Include="src\cyOmniChannel.cpp" />
     <ClCompile Include="src\cyOmniverse.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyLiveSessionConfigFile.h" />
+    <ClInclude Include="include\cyLiveSessionInfo.h" />
+    <ClInclude Include="include\cyOmniChannel.h" />
     <ClInclude Include="include\cyOmniverse.h" />
     <ClInclude Include="include\cyOmniversePrerequisites.h" />
   </ItemGroup>

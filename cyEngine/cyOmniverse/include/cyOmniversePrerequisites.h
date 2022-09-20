@@ -14,18 +14,37 @@
 // THIS IS BECAUSE OMNIVERSE HAS THE STUPID PYTHON LIBRARY
 #define HAVE_SNPRINTF 1;
 
-
 // This library allows us to connect to Nucleus
 #include <OmniClient.h>
 
 // This library gives us the ability for live synchronization and USD updates
-#include <OmniUsdLive.h>
+// [OBSOLETE] VERSION 200 REMOVES THIS LIBRARY
+// #include <OmniUsdLive.h>
+// New version
+#include <OmniUsdResolver.h>
 
 // This libraries help us create USD objects and components
-#include <pxr/usd/usd/common.h>
+#include <pxr/base/gf/matrix4f.h>
+#include <pxr/base/gf/vec2f.h>
+#include <pxr/base/plug/registry.h>
 #include <pxr/usd/usd/stage.h>
+#include <pxr/usd/usd/prim.h>
+#include <pxr/usd/usd/primRange.h>
+#include <pxr/usd/usd/modelAPI.h>
+#include <pxr/usd/usdLux/distantLight.h>
+#include <pxr/usd/usdLux/domeLight.h>
+#include <pxr/usd/usdGeom/xform.h>
+#include <pxr/usd/usdGeom/cube.h>
+#include <pxr/usd/usdGeom/primvar.h>
 #include <pxr/usd/usdGeom/mesh.h>
 #include <pxr/usd/usdGeom/metrics.h>
+#include <pxr/usd/usdUtils/pipeline.h>
+#include <pxr/usd/usdUtils/sparseValueWriter.h>
+#include <pxr/usd/usdShade/shader.h>
+#include <pxr/usd/usdShade/material.h>
+#include <pxr/usd/usdShade/input.h>
+#include <pxr/usd/usdShade/output.h>
+#include <pxr/usd/usdShade/materialBindingAPI.h>
 
 #include <cyUtilitiesPrerequisites.h>
 

@@ -3,7 +3,7 @@
 namespace CYLLENE_SDK {
   
   bool
-  Omniverse::init(bool doLiveEdit, const OMNIVERSELOGLEVEL::E& omniverseLog) {
+  Omniverse::init(bool doLiveEdit, const OMNILOGLEVEL::E& omniverseLog) {
     // Register a function to be called whenever the library wants to print something to a log
     omniClientSetLogCallback(logCallback);
 
@@ -255,9 +255,9 @@ namespace CYLLENE_SDK {
     return omniUsdLiveGetDefaultEnabled();
   }
 
-  const LIVEMODE::E&
+  const OMNILIVEMODE::E&
   Omniverse::isStageLiveSyncEnabled(const String& url) {
-    return LIVEMODE::E::_from_integral(omniUsdLiveGetModeForUrl(url.c_str()));
+    return OMNILIVEMODE::E::_from_integral(omniUsdLiveGetModeForUrl(url.c_str()));
   }
 
   bool
@@ -271,12 +271,12 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Omniverse::setStageLiveSync(const String& url, const LIVEMODE::E& newStatus) {
+  Omniverse::setStageLiveSync(const String& url, const OMNILIVEMODE::E& newStatus) {
     omniUsdLiveSetModeForUrl(url.c_str(), static_cast<OmniUsdLiveMode>(newStatus._to_integral()));
   }
 
   void
-  Omniverse::setOVLog(const OMNIVERSELOGLEVEL::E& logLevel) {
+  Omniverse::setOVLog(const OMNILOGLEVEL::E& logLevel) {
     omniClientSetLogLevel(static_cast<OmniClientLogLevel>(logLevel._to_integral()));
   }
 
