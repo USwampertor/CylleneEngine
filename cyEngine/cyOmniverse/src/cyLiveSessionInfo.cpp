@@ -48,8 +48,8 @@ String LiveSessionInfo::GetSessionFolderPathForStage() {
 bool LiveSessionInfo::SetSessionName(const char* sessionName)
 {
   // Session names must start with an alphabetical character, but may contain alphanumeric, hyphen, or underscore characters.
-  std::regex re("^[a-zA-Z][a-zA-Z0-9_-]+");
-  std::cmatch match;
+  Regex re("^[a-zA-Z][a-zA-Z0-9_-]+");
+  CMatch match;
   if (std::regex_match(sessionName, match, re))
   {
     mSessionName.assign(sessionName);

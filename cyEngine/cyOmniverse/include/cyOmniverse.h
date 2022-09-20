@@ -10,6 +10,10 @@
 // #pragma once
 // 
 #include "cyOmniversePrerequisites.h"
+#include "cyOmniChannel.h"
+#include "cyLiveSessionInfo.h"
+#include "cyLiveSessionConfigFile.h"
+
 
 #include <cyModule.h>
 #include <cyLogger.h>
@@ -213,6 +217,22 @@ public:
   void
   waitForUpdates();
 
+  Vector<String>
+  findSessions(UsdStageRefPtr rootStage, 
+               LiveSessionInfo& liveSessionInfo);
+
+  void
+  createSession(UsdStageRefPtr rootStage, 
+                LiveSessionInfo& liveSessionInfo, 
+                const String& validSessionName);
+  
+  bool
+  endSession(UsdStageRefPtr rootStage, 
+             OmniChannel& channel, 
+             LiveSessionInfo& liveSessionInfo);
+
+
+
   String
   getVersion();
 
@@ -225,6 +245,7 @@ private:
   String          m_message;
   UsdStageRefPtr  m_stage;
   std::mutex      m_logMutex;
+  bool            m_liveEnabled;
 
 };
 }

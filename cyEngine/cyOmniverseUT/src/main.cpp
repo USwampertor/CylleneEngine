@@ -32,7 +32,7 @@ main(int argc, char* argv[]) {
   {
     String url = "omniverse://localhost/Projects/CylleneEngine/Test.usd";
     std::cout << Utils::format("%s", url.c_str()) << std::endl;
-    if (!Omniverse::instance().init(true, OMNIVERSELOGLEVEL::E::eVERBOSE)) {
+    if (!Omniverse::instance().init(true, OMNILOGLEVEL::E::eVERBOSE)) {
       CY_EXCEPT(UnitTestException, "Omniverse was not able to startup");
     }
     Omniverse::instance().createUSD(url);

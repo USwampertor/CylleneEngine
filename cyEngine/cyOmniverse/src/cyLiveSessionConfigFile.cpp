@@ -17,7 +17,7 @@ namespace CYLLENE_SDK {
           content && 
           userData) {
         toml::Value* tomlValuePtr = static_cast<toml::Value*>(userData);
-        std::istringstream ss(String((char*)content->buffer, content->size));
+        IStringStream ss(String((char*)content->buffer, content->size));
 
         toml::ParseResult pr = toml::parse(ss);
         if (!pr.valid()) {
@@ -59,7 +59,7 @@ namespace CYLLENE_SDK {
     // Add a version
     root.setChild(KeyToString(OMNIKEY::E::eVERSION), kCurrentVersion);
 
-    std::ostringstream oss;
+    OStringStream oss;
     root.write(&oss);
     OmniClientContent content = omniClientAllocContent(oss.str().length());
     std::memcpy(content.buffer, oss.str().c_str(), content.size);
@@ -88,8 +88,7 @@ namespace CYLLENE_SDK {
       std::getline(tokenStream, configMajorVersion, '.');
 
       // Get the _current_ major version
-      StringStream
-      std::istringstream tokenStream2(kCurrentVersion);
+      IStringStream tokenStream2(kCurrentVersion);
       String currentMajorVersion;
       std::getline(tokenStream2, currentMajorVersion, '.');
 

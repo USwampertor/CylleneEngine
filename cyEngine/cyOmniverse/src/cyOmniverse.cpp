@@ -138,7 +138,7 @@ namespace CYLLENE_SDK {
     m_stage->Save();
 
     if (isDefaultLiveSyncEnabled()) {
-      omniUsdLiveProcess();
+      omniClientLiveProcess();
     }
   }
 
@@ -155,9 +155,9 @@ namespace CYLLENE_SDK {
 
   void
   Omniverse::checkpointFile(const String& url, const String& comment) {
-    if (omniUsdLiveGetDefaultEnabled()) {
-      return;
-    }
+    // if (omniUsdLiveGetDefaultEnabled()) {
+    //   return;
+    // }
 
     bool bCheckpointsSupported = false;
     omniClientWait(omniClientGetServerInfo(url.c_str(), &bCheckpointsSupported,
@@ -252,12 +252,16 @@ namespace CYLLENE_SDK {
 
   bool
   Omniverse::isDefaultLiveSyncEnabled() {
-    return omniUsdLiveGetDefaultEnabled();
+    // return omniUsdLiveGetDefaultEnabled();
+    return m_liveEnabled;
   }
 
   const OMNILIVEMODE::E&
   Omniverse::isStageLiveSyncEnabled(const String& url) {
-    return OMNILIVEMODE::E::_from_integral(omniUsdLiveGetModeForUrl(url.c_str()));
+    // return OMNILIVEMODE::E::_from_integral(omniUsdLiveGetModeForUrl(url.c_str()));
+    return url.find_last_of(".live") != String::npos ? 
+      OMNILIVEMODE::E::eENABLED : 
+      OMNILIVEMODE::E::eDISABLED;
   }
 
   bool
@@ -267,12 +271,13 @@ namespace CYLLENE_SDK {
 
   void
   Omniverse::setDefaultLiveSync(bool newStatus) {
-    omniUsdLiveSetDefaultEnabled(newStatus);
+    // omniUsdLiveSetDefaultEnabled(newStatus);
+    m_liveEnabled = newStatus;
   }
 
   void
   Omniverse::setStageLiveSync(const String& url, const OMNILIVEMODE::E& newStatus) {
-    omniUsdLiveSetModeForUrl(url.c_str(), static_cast<OmniUsdLiveMode>(newStatus._to_integral()));
+    // omniUsdLiveSetModeForUrl(url.c_str(), static_cast<OmniUsdLiveMode>(newStatus._to_integral()));
   }
 
   void
@@ -282,7 +287,7 @@ namespace CYLLENE_SDK {
 
   void
   Omniverse::waitForUpdates() {
-    omniUsdLiveWaitForPendingUpdates();
+    omniClientLiveWaitForPendingUpdates();
   }
 
   String
