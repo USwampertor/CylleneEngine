@@ -20,6 +20,7 @@
 #include <limits>
 #include <memory>
 #include <mutex>
+#include <regex>
 #include <sstream>
 #include <type_traits>
 
@@ -60,6 +61,10 @@
 
 namespace CYLLENE_SDK {
   using StringStream  = std::stringstream;
+
+  using IStringStream = std::istringstream;
+
+  using OStringStream = std::ostringstream;
 
   using IfStream = std::ifstream;
 
@@ -111,6 +116,10 @@ namespace CYLLENE_SDK {
   using StdException  = std::exception;
 
   using RunTimeError  = std::runtime_error;
+
+  using Regex = std::regex;
+
+  using CMatch = std::cmatch;
 }
 
 
