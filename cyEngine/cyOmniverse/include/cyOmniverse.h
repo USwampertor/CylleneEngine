@@ -196,6 +196,9 @@ public:
   bool
   uploadMaterial(const String& materialPath, const String& destiny);
 
+  void
+  createMaterial();
+
   bool
   isDefaultLiveSyncEnabled();
 
@@ -231,7 +234,8 @@ public:
              OmniChannel& channel, 
              LiveSessionInfo& liveSessionInfo);
 
-
+  void
+  update(OmniChannel& channel);
 
   String
   getVersion();
