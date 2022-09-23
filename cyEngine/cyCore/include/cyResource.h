@@ -16,6 +16,13 @@ namespace CYLLENE_SDK {
                 eRESOURCE);
   }
   
+/**
+ * Resource
+ * Description:
+ * This is the object that will store information as in-engine object
+ * Sample usage:
+ *
+ */
 class CY_CORE_EXPORT Resource {
 public:
   Resource() = default;

@@ -34,10 +34,14 @@ public:
     return std::find(m_extensions.begin(), m_extensions.end(), path.extension()) != m_extensions.end();
   }
 
+  virtual Pair<Path, Resource>
+  load() = 0;
+
   virtual RESOURCE_TYPE::E 
   getResource() = 0;
 
   Vector<String> m_extensions;
+
 };
 
   
