@@ -120,6 +120,9 @@ namespace CYLLENE_SDK {
   using Regex = std::regex;
 
   using CMatch = std::cmatch;
+
+  template<typename T, typename A>
+  using Pair = std::pair<T, A>;
 }
 
 

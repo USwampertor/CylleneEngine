@@ -30,11 +30,11 @@ class Module
   static T&
   instance() {
     if (!isStartedUp()) {
-      Utils::ThrowException("Trying to access a module but it hasn't been started.");
+      Utils::throwException("Trying to access a module but it hasn't been started.");
     }
 
     if (isDestroyed()) {
-      Utils::ThrowException("Trying to access a destroyed module.");
+      Utils::throwException("Trying to access a destroyed module.");
     }
 
     return *_instance();
@@ -46,11 +46,11 @@ class Module
   static T*
   instancePtr() {
     if (!isStartedUp()) {
-      Utils::ThrowException("Trying to access a module but it hasn't been started.");
+      Utils::throwException("Trying to access a module but it hasn't been started.");
     }
 
     if (isDestroyed()) {
-      Utils::ThrowException("Trying to access a destroyed module.");
+      Utils::throwException("Trying to access a destroyed module.");
     }
 
     return _instance();
@@ -61,7 +61,7 @@ class Module
   static void
   startUp(Args&& ...args) {
     if (isStartedUp()) {
-      Utils::ThrowException("Trying to start an already started module.");
+      Utils::throwException("Trying to start an already started module.");
     }
 
     _instance() = cy_new<T>(std::forward<Args>(args)...);
@@ -77,12 +77,12 @@ class Module
       "Provided type isn't derived from type the Module is initialized with.");
 
     if (isStartedUp()) {
-      Utils::ThrowException("Trying to start an already started module.");
+      Utils::throwException("Trying to start an already started module.");
     }
 
     _instance() = cy_new<SubType>(std::forward<Args>(args)...);
     if (nullptr == _instance()) {
-      Utils::ThrowException("Instance failed to initialize");
+      Utils::throwException("Instance failed to initialize");
     }
     isStartedUp() = true;
 
@@ -92,11 +92,11 @@ class Module
   static void
   shutDown() {
     if (isDestroyed()) {
-      Utils::ThrowException("Trying to shut down an already shut down module.");
+      Utils::throwException("Trying to shut down an already shut down module.");
     }
 
     if (!isStartedUp()) {
-      Utils::ThrowException("Trying to shut down a module which was never started.");
+      Utils::throwException("Trying to shut down a module which was never started.");
     }
 
     static_cast<Module*>(_instance())->onShutDown();
@@ -114,7 +114,7 @@ class Module
   setModule(T* obj) {
     _instance() = obj;
     if (nullptr == _instance()) {
-      Utils::ThrowException("Instance failed to be set");
+      Utils::throwException("Instance failed to be set");
     }
     isStartedUp() = true;
   }
