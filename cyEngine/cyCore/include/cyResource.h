@@ -12,8 +12,7 @@ namespace CYLLENE_SDK {
                 eMESH, 
                 eAUDIO, 
                 eTEXTURE,
-                eSHADER,
-                eRESOURCE);
+                eSHADER);
   }
   
 /**
@@ -65,7 +64,7 @@ class CY_CORE_EXPORT MeshResource : public Resource {
 class CY_CORE_EXPORT TextureResource : public Resource {
   
   virtual RESOURCE_TYPE::E 
-  getType() override { return RESOURCE_TYPE::E::eRESOURCE; }
+  getType() override { return RESOURCE_TYPE::E::eTEXTURE; }
 
 };
 
