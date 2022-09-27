@@ -13,7 +13,7 @@ namespace CYLLENE_SDK {
     m_codecs.push_back(std::move(imageCodec));
     auto meshCodec = std::make_unique<MeshCodec>();
     m_codecs.push_back(std::move(meshCodec));
-
+    
 
   }
 
@@ -44,7 +44,7 @@ namespace CYLLENE_SDK {
     }
 
     auto type = getFormatType(p.extension());
-    int32 hashValue = std::hash(p.fullPath());
+    int32 hashValue = std::hash<String>{}(p.fullPath());
     // Check first if the file is actually valid for the engine
     File f;
     
@@ -59,17 +59,19 @@ namespace CYLLENE_SDK {
 
     SharedPointer<Resource> newResource = nullptr;
 
-    if (RESOURCE_TYPE::E::eMESH == type) {
-      newResource = std::make_shared<MeshResource>(p, reinterpret_cast<void*>(f.readFile()));
-    }
-    else if (RESOURCE_TYPE::E::eTEXTURE == type) {
-      newResource = std::make_shared<TextureResource>(p, reinterpret_cast<void*>(f.readFile()));
-    }
-    else {
-      return nullptr;
-    }
 
-    if (isReloading) {
+
+    // if (RESOURCE_TYPE::E::eMESH == type) {
+    //   newResource = std::make_shared<MeshResource>(p, reinterpret_cast<void*>(f.readFile()));
+    // }
+    // else if (RESOURCE_TYPE::E::eTEXTURE == type) {
+    //   newResource = std::make_shared<ImageResource>(p, reinterpret_cast<void*>(f.readFile()));
+    // }
+    // else {
+    //   return nullptr;
+    // }
+
+    if (!isReloading) {
       m_resources.insert(std::make_pair(hashValue, newResource));
     }
     else {
@@ -112,7 +114,9 @@ namespace CYLLENE_SDK {
 
   bool
   ResourceManager::resourceExists(const Path& hashValue) {
-    // return m_resources.find(static_cast<int32>(std::hash(hashValue)) != m_resources.end());
+    int32 h = std::hash<String>{}(hashValue.fullPath());
+
+    return m_resources.find(h) != m_resources.end();
     return false;
   }
 

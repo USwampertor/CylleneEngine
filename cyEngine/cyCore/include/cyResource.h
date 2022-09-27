@@ -26,9 +26,10 @@ class CY_CORE_EXPORT Resource {
 public:
   Resource() = default;
 
-  Resource(const Path& newFile, void* newData)
-    : m_filePath(newFile),
-      m_data(newData) {}
+  Resource(const Path& newFile, void* newData) {
+    m_filePath = newFile;
+    m_data = newData;
+  }
 
   virtual ~Resource() {}
 
@@ -47,7 +48,8 @@ public:
   const Path&
   getPath() { return m_filePath; }
 
-private:
+  protected:
+
   void* m_data;
 
   Path m_filePath;
@@ -56,13 +58,25 @@ private:
 
 class CY_CORE_EXPORT MeshResource : public Resource {
   
+public:
+  MeshResource(const Path& newFile, void* newData) {
+    m_filePath = newFile;
+    m_data = newData;
+  }
+
   virtual RESOURCE_TYPE::E 
   getType() override { return RESOURCE_TYPE::E::eMESH; }
 
 };
 
-class CY_CORE_EXPORT TextureResource : public Resource {
-  
+class CY_CORE_EXPORT ImageResource : public Resource {
+public:
+
+  ImageResource(const Path& newFile, void* newData) {
+    m_filePath = newFile;
+    m_data = newData;
+  }
+
   virtual RESOURCE_TYPE::E 
   getType() override { return RESOURCE_TYPE::E::eTEXTURE; }
 
