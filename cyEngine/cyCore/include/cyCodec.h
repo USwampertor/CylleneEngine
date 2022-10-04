@@ -25,6 +25,10 @@
 
 #include <cyFileSystem.h>
 
+#define IMGDEFAULTW 512
+#define IMGDEFAULTH 512
+#define IMGDEFAULTC 8*4
+
 
 namespace CYLLENE_SDK {
 
@@ -47,12 +51,17 @@ public:
     return std::find(m_fileExtensions.begin(), m_fileExtensions.end(), path.extension()) != m_fileExtensions.end();
   }
 
+  virtual SharedPointer<Resource>
+  load(Path pathToResource) = 0;
+
+  virtual SharedPointer<Resource>
+  create(Path pathToResource) = 0;
+
+  virtual SharedPointer<Resource>
+  create(Path pathToResource, void* data) = 0;
+
   virtual RESOURCE_TYPE::E 
   getResource() = 0;
-
-  template<typename T>
-  SharedPointer<T>
-  load(Path pathToResource) = 0;
 
   Vector<String> m_fileExtensions;
 
@@ -122,16 +131,21 @@ public:
   virtual RESOURCE_TYPE::E 
   getResource() override { return RESOURCE_TYPE::E::eTEXTURE; }
 
-  template<typename T>
-  SharedPointer<T>
+  virtual SharedPointer<Resource>
   load(Path pathToResource) override;
+
+  virtual SharedPointer<Resource>
+  create(Path pathToResource) override;
+
+  virtual SharedPointer<Resource>
+  create(Path pathToResource, void* data) override;
 };
 
-class CY_CORE_EXPORT MeshCodec : public Codec
+class CY_CORE_EXPORT ModelCodec : public Codec
 {
 public:
 
-  MeshCodec() {
+  ModelCodec() {
     m_fileExtensions = { 
       "fbx",
       "dae",
@@ -172,14 +186,19 @@ public:
     };
   }
 
-  virtual ~MeshCodec() = default;
+  virtual ~ModelCodec() = default;
 
   virtual RESOURCE_TYPE::E
-  getResource() override { return RESOURCE_TYPE::E::eMESH; }
+  getResource() override { return RESOURCE_TYPE::E::eMODEL; }
 
-  template<typename T>
-  SharedPointer<T>
+  virtual SharedPointer<Resource>
   load(Path pathToResource) override;
+
+  virtual SharedPointer<Resource>
+  create(Path pathToResource) override;
+  
+  virtual SharedPointer<Resource>
+  create(Path pathToResource, void* data) override;
 };
 
   
@@ -202,11 +221,17 @@ public:
   virtual RESOURCE_TYPE::E 
   getResource() override { return RESOURCE_TYPE::E::eAUDIO; }
 
-  template<typename T>
-  SharedPointer<T>
+  virtual SharedPointer<Resource>
   load(Path pathToResource) override;
+
+  virtual SharedPointer<Resource>
+  create(Path pathToResource) override;
+  
+  virtual SharedPointer<Resource>
+  create(Path pathToResource, void* data) override;
 };
 
-
-
 }
+
+
+

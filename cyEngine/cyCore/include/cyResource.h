@@ -9,7 +9,7 @@ namespace CYLLENE_SDK {
   namespace RESOURCE_TYPE {
     BETTER_ENUM(E, uint32, 
                 eUNKNOWN,
-                eMESH, 
+                eMODEL, 
                 eAUDIO, 
                 eTEXTURE,
                 eSHADER);
@@ -36,6 +36,9 @@ public:
   virtual RESOURCE_TYPE::E
   getType() = 0;
 
+  // virtual void
+  // initialize() = 0;
+
   const void* 
   getData() { return m_data; }
 
@@ -48,17 +51,27 @@ public:
   const Path&
   getPath() { return m_filePath; }
 
+  const bool
+  getIsDirty() { return isDirty; }
+
+  void
+  setIsDirty(const bool& newValue) { isDirty = newValue; }
+
+
   protected:
 
   void* m_data;
 
   Path m_filePath;
+
+  bool isDirty;
 };
 
 
 class CY_CORE_EXPORT MeshResource : public Resource {
   
 public:
+
   MeshResource(const Path& newFile, void* newData) {
     m_filePath = newFile;
     m_data = newData;
@@ -70,6 +83,7 @@ public:
 };
 
 class CY_CORE_EXPORT ImageResource : public Resource {
+
 public:
 
   ImageResource(const Path& newFile, void* newData) {

@@ -24,6 +24,8 @@
     <ClInclude Include="include\cyCodec.h" />
     <ClInclude Include="include\cyComponent.h" />
     <ClInclude Include="include\cyCorePrerequisites.h" />
+    <ClInclude Include="include\cyDefaultPrimitives.h" />
+    <ClInclude Include="include\cyImage.h" />
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
     <ClInclude Include="include\cyShader.h" />
