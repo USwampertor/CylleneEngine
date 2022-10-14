@@ -8,9 +8,6 @@
  */
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
-
-#pragma once
-
 // THIS IS BECAUSE OMNIVERSE HAS THE STUPID PYTHON LIBRARY
 #define HAVE_SNPRINTF 1;
 
@@ -47,6 +44,10 @@
 #include <pxr/usd/usdShade/materialBindingAPI.h>
 
 #include <cyUtilitiesPrerequisites.h>
+
+#include "cyOmniChannel.h"
+#include "cyLiveSessionInfo.h"
+#include "cyLiveSessionConfigFile.h"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

@@ -29,18 +29,18 @@ class LiveSessionConfigFile
 {
 public:
 
-  using KeyMap = Map<OMNIKEY::E, const char*>;
+  // using KeyMap = Map<OMNIKEY::E, const char*>;
   static constexpr const char* kCurrentVersion = "1.0";
 
   LiveSessionConfigFile() {};
   ~LiveSessionConfigFile() {};
 
   String 
-  GetSessionConfigValue(const char* sessionConfigFileUrl, OMNIKEY::E key);
+  GetSessionConfigValue(const String& sessionConfigFileUrl, OMNIKEY::E key);
   
   bool 
-  CreateSessionConfigFile(const char* sessionConfigFileUrl, 
-                          const LiveSessionConfigFile::KeyMap& keyMap);
+  CreateSessionConfigFile(const String& sessionConfigFileUrl, 
+                          const Map<OMNIKEY::E, const char*>& keyMap);
   
   String 
   GetSessionAdmin(const char* sessionConfigFileUrl);

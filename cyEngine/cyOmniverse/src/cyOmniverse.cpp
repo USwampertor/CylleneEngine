@@ -1,5 +1,8 @@
 #include "cyOmniverse.h"
 
+#include <cppUtils/primUtils.h>
+#include <cppUtils/xformUtils.h>
+
 namespace CYLLENE_SDK {
   
   bool
@@ -154,7 +157,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Omniverse::checkpointFile(const String& url, const String& comment) {
+  Omniverse::checkpointFile(const String& url, const String& comment, bool forceCheckpoint) {
     // if (omniUsdLiveGetDefaultEnabled()) {
     //   return;
     // }
@@ -172,11 +175,10 @@ namespace CYLLENE_SDK {
 
     if (bCheckpointsSupported)
     {
-      const bool bForceCheckpoint = true;
       omniClientWait(
         omniClientCreateCheckpoint(url.c_str(), 
                                    comment.c_str(), 
-                                   bForceCheckpoint, 
+                                   forceCheckpoint, 
                                    nullptr,
                                    [](void* userData, 
                                       OmniClientResult result, 
@@ -185,7 +187,6 @@ namespace CYLLENE_SDK {
 
       UniqueLock<Mutex> lk(m_logMutex);
       String message = Utils::format("Adding checkpoint comment <%s> to stage <%s>", comment, url);
-      std::cout << message << std::endl;
       Logger::instance().logDebug(message, LOG_CHANNEL::E::eSYSTEM);
 
     }
@@ -231,10 +232,10 @@ namespace CYLLENE_SDK {
 
   bool
   Omniverse::uploadFile(const String& filePath, const String& destiny) {
-    omniClientWait(omniClientCopy(filePath.c_str(), destiny.c_str(), copyCallback, nullptr));
+    omniClientWait(omniClientCopy(filePath.c_str(), destiny.c_str(), omniCopyCallback, nullptr));
     {
       UniqueLock<Mutex> lk(m_logMutex);
-      std::cout << "finished" << std::endl;
+      Logger::instance().logDebug(Utils::format("Finished copying file %s", filePath));
       return true;
     }
   }
@@ -248,6 +249,21 @@ namespace CYLLENE_SDK {
   Omniverse::uploadMaterial(const String& materialPath, const String& destiny) {
 
     return true;
+  }
+
+  MDLData
+  Omniverse::exportMDL(MDLInfo info) {
+    MDLData data;
+
+
+    return data;
+  }
+
+  MDLInfo
+  Omniverse::importMDL(MDLData data) {
+    MDLInfo info;
+
+    return info;
   }
 
   bool
@@ -288,6 +304,183 @@ namespace CYLLENE_SDK {
   void
   Omniverse::waitForUpdates() {
     omniClientLiveWaitForPendingUpdates();
+  }
+
+  bool
+  Omniverse::isSessionNameValid(const String& newSessionName) {
+    return m_liveSessionInfo.SetSessionName(newSessionName.c_str());
+  }
+
+  Vector<String>
+  Omniverse::getSessions() {
+    String sessionFolderForStage = m_liveSessionInfo.GetSessionFolderPathForStage();
+    Vector<String> sessions = m_liveSessionInfo.GetLiveSessionList();
+
+    // Get the live layer from the live stage
+    SdfLayerHandle liveLayer = m_stage->GetRootLayer();
+
+    // Construct the layers so that we can join the session
+    m_stage->GetSessionLayer()->InsertSubLayerPath(liveLayer->GetIdentifier());
+    m_stage->SetEditTarget(UsdEditTarget(liveLayer));
+    return sessions;
+  }
+
+  bool
+  Omniverse::joinSession(const String& sessionName) {
+    m_liveSessionInfo.SetSessionName(sessionName.c_str());
+
+
+    LiveSessionConfigFile sessionConfig;
+    std::string tomlUrl = m_liveSessionInfo.GetLiveSessionTomlUrl();
+    if (!sessionConfig.IsVersionCompatible(tomlUrl.c_str())) {
+      String actualVersion = sessionConfig.GetSessionConfigValue(tomlUrl.c_str(), OMNIKEY::E::eVERSION);
+      String message = 
+        Utils::format("The session config TOML file version is not compatible. \nExpected: %s Actual: %s",
+                      LiveSessionConfigFile::kCurrentVersion, actualVersion);
+      Logger::instance().log(message);
+      return false;
+    }
+
+    String liveSessionUrl = m_liveSessionInfo.GetLiveSessionUrl();
+    m_stage = UsdStage::Open(liveSessionUrl);
+
+    // Get the live layer from the live stage
+    SdfLayerHandle liveLayer = m_stage->GetRootLayer();
+
+    // Construct the layers so that we can join the session
+    m_stage->GetSessionLayer()->InsertSubLayerPath(liveLayer->GetIdentifier());
+    m_stage->SetEditTarget(UsdEditTarget(liveLayer));
+    return true;
+  }
+
+  bool
+  Omniverse::createSession(const String& newSessionName) {
+    
+    if (!isSessionNameValid(newSessionName)) {
+
+      String message =
+        Utils::format(
+"Session name %s \n\
+Session names must start with an alphabetical character \
+but may contain alphanumeric, hyphen, or underscore characters.", newSessionName);
+      Logger::instance().logError(message);
+      return false;
+    }
+
+    // Make sure that this session doesn't already exist (don't overwrite/stomp it)
+    if (m_liveSessionInfo.DoesSessionExist()) {
+      Logger::instance().logError(Utils::format("Session config file already exists at %s", 
+                                  m_liveSessionInfo.GetLiveSessionTomlUrl()));
+      return false;
+    }
+
+    // Create the session config file 
+    Map<OMNIKEY::E, const char*> keyMap;
+    std::string stageUrl = m_liveSessionInfo.GetStageUrl();
+    std::string connectedUserName = getActiveUsername(stageUrl.c_str());
+    keyMap[OMNIKEY::E::eADMIN] = connectedUserName.c_str();
+    keyMap[OMNIKEY::E::eSTAGEURL] = stageUrl.c_str();
+    keyMap[OMNIKEY::E::eMODE] = "default";
+    LiveSessionConfigFile sessionConfig;
+
+    if (!sessionConfig.CreateSessionConfigFile(m_liveSessionInfo.GetLiveSessionTomlUrl().c_str(), keyMap))
+    {
+      Utils::format("Unable to create session config file: %s", 
+                    m_liveSessionInfo.GetLiveSessionTomlUrl());
+      return false;
+    }
+
+    // Create the new root.live file to be the stage's edit target
+    String liveSessionUrl = m_liveSessionInfo.GetLiveSessionUrl();
+    m_stage = UsdStage::CreateNew(liveSessionUrl);
+
+    // Get the live layer from the live stage
+    SdfLayerHandle liveLayer = m_stage->GetRootLayer();
+
+    // Construct the layers so that we can join the session
+    m_stage->GetSessionLayer()->InsertSubLayerPath(liveLayer->GetIdentifier());
+    m_stage->SetEditTarget(UsdEditTarget(liveLayer));
+  } 
+  
+  bool
+  Omniverse::endSession(const OMNIMERGEOPTIONS::E& mergeOption) {
+    
+    LiveSessionConfigFile sessionConfig;
+    String sessionAdmin = sessionConfig.GetSessionAdmin(m_liveSessionInfo.GetLiveSessionTomlUrl().c_str());
+    String currentUser = getActiveUsername(m_liveSessionInfo.GetStageUrl().c_str());
+    if (sessionAdmin != currentUser)
+    {
+      Logger::instance().logError(Utils::format("You [%s] are not the session admin [%s]. Stopping merge", 
+                                                currentUser, 
+                                                sessionAdmin));
+      return false;
+    }
+
+    // Gather the latest changes from the live stage
+    omniClientLiveProcess();
+
+    // Send a MERGE_STARTED channel message
+    m_omniChannel.SendChannelMessage(OMNIMESSAGETYPE::E::eMERGESTARTED);
+
+    // Create a checkpoint on the live layer (don't force if no changes)
+    // Create a checkpoint on the root layer (don't force if no changes)
+    std::string comment("Pre-merge for " + m_liveSessionInfo.GetSessionName() + " session");
+    checkpointFile(m_liveSessionInfo.GetLiveSessionUrl(), comment.c_str(), false);
+    checkpointFile(m_liveSessionInfo.GetStageUrl(), comment.c_str(), false);
+
+    return OMNIMERGEOPTIONS::E::eNOMERGE ? true : mergeSession(mergeOption);
+  }
+
+  bool
+  Omniverse::mergeSession(const OMNIMERGEOPTIONS::E& mergeOption) {
+    if (OMNIMERGEOPTIONS::E::eNEWLAYER ==  mergeOption)
+    {
+      // Inject a new layer in the same folder as the root with the session name into the root stage (rootStageName_sessionName_edits.usd)
+      String stageName = m_liveSessionInfo.GetStageFileName();
+      String stageFolder = m_liveSessionInfo.GetStageFolderUrl();
+      String sessionName = m_liveSessionInfo.GetSessionName();
+      String newLayerUrl = stageFolder + "/" + stageName + "_" + sessionName + ".usd";
+      
+      Logger::instance().logDebug(
+        Utils::format("Merging session changes to %s and inserting as a sublayer in the root layer.", 
+                      newLayerUrl));
+      
+      // TODO: SOLVE THIS
+      // primUtils::MergeLiveLayerToNewLayer(m_stage->GetEditTarget().GetLayer(),
+      //                                     m_stage->GetRootLayer(), 
+      //                                     newLayerUrl.c_str());
+    }
+    else if (OMNIMERGEOPTIONS::E::eROOTLAYER == mergeOption)
+    {
+      // Merge the live deltas to the root layer
+      // This does not clear the source layer --- we'll do that after checkpointing it
+      
+      // TODO: SOLVE THIS
+      // primUtils::MergeLiveLayerToRoot(m_stage->GetEditTarget().GetLayer(), 
+      //                                 m_stage->GetRootLayer());
+    }
+
+    // Create a checkpoint on the root layer while saving it
+    String postComment("Post-merge for " + m_liveSessionInfo.GetSessionName() + " session");
+    Logger::instance().logDebug(postComment);
+    omniUsdResolverSetCheckpointMessage(postComment.c_str());
+    m_stage->GetRootLayer()->Save();
+    omniUsdResolverSetCheckpointMessage("");
+
+    // Clear and save the live layer
+    // We shouldn't need to save this live layer, there's a bug somewhere between the 
+    // USD resolver, client library, or Nucleus server.  If we don't the contents won't
+    // be cleared.
+    m_stage->GetEditTarget().GetLayer()->Clear();
+    m_stage->GetEditTarget().GetLayer()->Save();
+
+    // Remove the .live layer from the session layer
+    m_stage->GetSessionLayer()->GetSubLayerPaths().clear();
+
+    // Send a MERGE_FINISHED channel message
+    m_omniChannel.SendChannelMessage(OMNIMESSAGETYPE::E::eMERGEFINISHED);
+
+    return true;
   }
 
   String

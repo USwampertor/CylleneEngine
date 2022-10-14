@@ -2,7 +2,7 @@
 #include <toml/toml.h>
 
 namespace CYLLENE_SDK {
-  String LiveSessionConfigFile::GetSessionConfigValue(const char* sessionConfigFileUrl, 
+  String LiveSessionConfigFile::GetSessionConfigValue(const String& sessionConfigFileUrl, 
                                                       OMNIKEY::E key) {
     String retStr("");
     toml::Value tomlValue;
@@ -31,7 +31,7 @@ namespace CYLLENE_SDK {
     };
 
     // Read the file from Nucleus
-    omniClientWait(omniClientReadFile(sessionConfigFileUrl, &tomlValue, readFileCallback));
+    omniClientWait(omniClientReadFile(sessionConfigFileUrl.c_str(), &tomlValue, readFileCallback));
 
     // We should verify that the version is compatible here...
 
@@ -48,7 +48,7 @@ namespace CYLLENE_SDK {
   }
 
   bool 
-  LiveSessionConfigFile::CreateSessionConfigFile(const char* sessionConfigFileUrl, 
+  LiveSessionConfigFile::CreateSessionConfigFile(const String& sessionConfigFileUrl,
                                                  const Map<OMNIKEY::E, const char*>& keyMap) {
     bool bFileWriteSuccess = false;
     toml::Value root((toml::Table()));
@@ -63,14 +63,13 @@ namespace CYLLENE_SDK {
     root.write(&oss);
     OmniClientContent content = omniClientAllocContent(oss.str().length());
     std::memcpy(content.buffer, oss.str().c_str(), content.size);
-    omniClientWait(omniClientWriteFile(
-      sessionConfigFileUrl,
-      &content,
-      &bFileWriteSuccess,
-      [](void* userData, OmniClientResult result) noexcept {
-        bool* success = static_cast<bool*>(userData);
-        *success = (result == OmniClientResult::eOmniClientResult_Ok);
-      }));
+    omniClientWait(omniClientWriteFile(sessionConfigFileUrl.c_str(),
+                                       &content,
+                                       &bFileWriteSuccess,
+                                       [](void* userData, OmniClientResult result) noexcept {
+                                          bool* success = static_cast<bool*>(userData);
+                                          *success = (result == OmniClientResult::eOmniClientResult_Ok);
+                                       }));
 
     return bFileWriteSuccess;
   }

@@ -26,7 +26,7 @@ main(int argc, char* argv[]) {
   Logger::instance().init();
   Time::startUp();
   Time::instance().init();
-
+  // 
   Omniverse::startUp();
   try
   {
@@ -43,5 +43,11 @@ main(int argc, char* argv[]) {
   }
   std::cout << "End of test..." << std::endl;
   Omniverse::shutDown();
+
+  Logger::instance().dump();
+  CrashHandler::shutDown();
+  Logger::shutDown();
+  Time::shutDown();
+
   return 0;
 }

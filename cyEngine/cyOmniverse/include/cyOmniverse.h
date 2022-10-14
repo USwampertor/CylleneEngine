@@ -10,18 +10,55 @@
 // #pragma once
 // 
 #include "cyOmniversePrerequisites.h"
-#include "cyOmniChannel.h"
-#include "cyLiveSessionInfo.h"
-#include "cyLiveSessionConfigFile.h"
-
 
 #include <cyModule.h>
 #include <cyLogger.h>
 #include <cyFileSystem.h>
+
+
+// #include "cyPrimUtils.h"
+// #include "cyXformUtils.h"
 // 
 
 namespace CYLLENE_SDK
 {
+
+class Material;
+
+//TODO: Add more flexibility to this so Materials are easier to Use
+struct MDLTextureInfo
+{
+
+
+};
+
+struct CY_OMNIVERSE_EXPORT MDLInfo
+{
+  String id;
+  String name;
+  String description;
+  String version;
+  String author;
+  
+  Vector<String> keyWords;
+  String diffuse;
+  String normal;
+  String albedo;
+  String metal;
+  String orm;
+  String roughness;
+  String emissive;
+  String ao;
+};
+
+struct CY_OMNIVERSE_EXPORT MDLData
+{
+  String id;
+  String name;
+  String path;
+  void* data;
+};
+
 
 namespace OMNILIVEMODE
 {
@@ -52,6 +89,14 @@ namespace OMNIFILESTATUS
     eLIVEUPDATERECEIVED);
 }
 
+namespace OMNIMERGEOPTIONS
+{
+  BETTER_ENUM(E, uint32, 
+    eNEWLAYER,
+    eROOTLAYER,
+    eNOMERGE)
+}
+
 namespace OMNICONNECTIONSTATUS
 {
   BETTER_ENUM(E, uint32,
@@ -61,10 +106,37 @@ namespace OMNICONNECTIONSTATUS
     eCONNECTIONSTATUSDISCONNECT);
 }
 
+class CY_OMNIVERSE_EXPORT ChannelUpdate
+{
+  public:
+    ChannelUpdate() = default;
+    ~ChannelUpdate() = default;
+
+    ChannelUpdate(int updatePeriodMs)
+      : mUpdatePeriodMs(updatePeriodMs),
+        mStopped(false) {}
+
+    void run() {
+      while (!mStopped) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(mUpdatePeriodMs));
+        for (OmniChannel* channel : mChannels) {
+          channel->Update();
+        }
+      }
+    }
+
+    int mUpdatePeriodMs;
+    bool mStopped;
+    Vector<OmniChannel*> mChannels;
+};
+
 
 class CY_OMNIVERSE_EXPORT Omniverse : public Module<Omniverse> {
 public:
   
+  Omniverse() = default;
+  ~Omniverse() = default;
+
   static void
   omniClientCallback(void* userData,
                      const char* url,
@@ -95,8 +167,29 @@ public:
   }
 
   static void
-  copyCallback() {
+  omniCopyCallback() {
 
+  }
+
+  static void
+  omniMergeCallback(OMNIMESSAGETYPE::E messageType, 
+                    void* userData, 
+                    const char* userName, 
+                    const char* appName) {
+    // Just a note that userData is available for context
+    String* existingStage = static_cast<String*>(userData);
+    String message = Utils::format("Channel Callback: %s %s - %s", 
+                                   OmniChannelMessage::MessageTypeToStringType(messageType), 
+                                   userName, 
+                                   appName);
+    std::cout << message;
+    Logger::instance().logDebug(message);
+    if (messageType == OMNIMESSAGETYPE::E::eMERGESTARTED||
+        messageType == OMNIMESSAGETYPE::E::eMERGEFINISHED)
+    {
+      std::cout << "Exiting since a merge is happening in another client" << std::endl;
+      Omniverse::instance().m_stageMerged = true;
+    }
   }
   
   static void
@@ -176,7 +269,7 @@ public:
   saveToUSD(const String& fileName);
 
   void
-  checkpointFile(const String& url, const String& comment);
+  checkpointFile(const String& url, const String& comment, bool forceCheckpoint = true);
 
   String
   getActiveUsername(const String& stageUrl);
@@ -195,6 +288,12 @@ public:
 
   bool
   uploadMaterial(const String& materialPath, const String& destiny);
+
+  MDLData
+  exportMDL(MDLInfo info);
+
+  MDLInfo
+  importMDL(MDLData data);
 
   bool
   isDefaultLiveSyncEnabled();
@@ -217,21 +316,23 @@ public:
   void
   waitForUpdates();
 
+  bool
+  isSessionNameValid(const String& newSessionName);
+  
   Vector<String>
-  findSessions(UsdStageRefPtr rootStage, 
-               LiveSessionInfo& liveSessionInfo);
+  getSessions();
 
-  void
-  createSession(UsdStageRefPtr rootStage, 
-                LiveSessionInfo& liveSessionInfo, 
-                const String& validSessionName);
+  bool
+  joinSession(const String& sessionName);
+
+  bool
+  createSession(const String& newSessionName);
   
   bool
-  endSession(UsdStageRefPtr rootStage, 
-             OmniChannel& channel, 
-             LiveSessionInfo& liveSessionInfo);
+  endSession(const OMNIMERGEOPTIONS::E& mergeOption);
 
-
+  bool
+  mergeSession(const OMNIMERGEOPTIONS::E& mergeOption);
 
   String
   getVersion();
@@ -242,10 +343,17 @@ public:
 private:
   // bool            m_doLiveEdit = true;
   bool            m_omniverseLogEnabled = false;
-  String          m_message;
-  UsdStageRefPtr  m_stage;
-  std::mutex      m_logMutex;
   bool            m_liveEnabled;
+  bool            m_stageMerged;
 
+  String          m_message;
+  std::mutex      m_logMutex;
+
+  UsdStageRefPtr  m_stage;
+  OmniChannel     m_omniChannel;
+  LiveSessionInfo m_liveSessionInfo;
+
+  // std::thread m_channelUpdateThread;
+  ChannelUpdate m_channelUpdater;
 };
 }
