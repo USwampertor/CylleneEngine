@@ -1,8 +1,8 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
-#include "cyPlatformMath.h"
 
+#include "cyPlatformMath.h"
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # include "cyWindowsMath.h"
 #endif

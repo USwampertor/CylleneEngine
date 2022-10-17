@@ -9,36 +9,37 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
 
-#include "cyUtilitiesPrerequisites.h"
-#include "cyStdHeaders.h"
 #include <rapidjson/document.h>
-#include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
+#include "cyUtilitiesPrerequisites.h"
+
+#include "cyStdHeaders.h"
 
 namespace CYLLENE_SDK {
-  // using JSON = rapidjson::Document;
-  using JSONValue = rapidjson::Value;
+// using JSON = rapidjson::Document;
+using JSONValue = rapidjson::Value;
 
-  class JSON : public rapidjson::Document
-  {
-  public:
-    std::string
-    stringify() {
-      rapidjson::StringBuffer buffer;
-      rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-      Accept(writer);
-      return buffer.GetString();
+class JSON : public rapidjson::Document
+{
+public:
+  std::string
+  stringify() {
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    Accept(writer);
+    return buffer.GetString();
      
-    }
+  }
 
-    std::string
-    prettyString() {
-      rapidjson::StringBuffer buffer;
-      rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-      Accept(writer);
-      return buffer.GetString();
-    }
-  };
+  std::string
+  prettyString() {
+    rapidjson::StringBuffer buffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+    Accept(writer);
+    return buffer.GetString();
+  }
+};
 }

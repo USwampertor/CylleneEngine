@@ -23,7 +23,7 @@ public:
   template<typename ... Args>
   static String format(const String& format, Args ... args) {
     int32 size_s = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
-    if (size_s <= 0) { ThrowRuntimeError("Error during formatting."); }
+    if (size_s <= 0) { throwRuntimeError("Error during formatting."); }
     auto size = static_cast<size_t>(size_s);
     auto buf = std::make_unique<char[]>(size);
     std::snprintf(buf.get(), size, format.c_str(), args ...);
@@ -32,7 +32,7 @@ public:
 
 
   static String
-    timeFormat(const TM& toformat, const String& format) {
+  timeFormat(const TM& toformat, const String& format) {
     char buffer[128];
     std::strftime(buffer, sizeof(buffer), format.c_str(), &toformat);
     return String(buffer);
@@ -45,12 +45,12 @@ public:
   }
 
   static void 
-  ThrowException(const String& message) {
+  throwException(const String& message) {
     throw::std::exception(message.c_str());
   }
 
   static void 
-  ThrowRuntimeError(const String& message) {
+  throwRuntimeError(const String& message) {
     throw::std::runtime_error(message.c_str());
   }
 
@@ -58,9 +58,17 @@ public:
 
   static WString
   toWide(String str) {
-    std::wstring stemp = std::wstring(str.begin(), str.end());
+    WString stemp = WString(str.begin(), str.end());
     return stemp;
 
   }
+
+  template<typename T, typename A>
+  static Pair<T, A>
+  makePair(T value1, A value2) {
+    return std::make_pair(value1, value2);
+  }
+
+
 };
 }

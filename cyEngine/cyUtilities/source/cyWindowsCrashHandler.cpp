@@ -12,12 +12,13 @@
 #endif
 
 #include "cyUtilitiesPrerequisites.h"
-#include "cyDLLLoader.h"
-#include "cyFileSystem.h"
-#include "cyMath.h"
-#include "cyLogger.h"
+
 #include "cyCrashHandler.h"
+#include "cyDLLLoader.h"
 #include "cyException.h"
+#include "cyFileSystem.h"
+#include "cyLogger.h"
+#include "cyMath.h"
 
 namespace CYLLENE_SDK {
 
@@ -547,7 +548,7 @@ namespace CYLLENE_SDK {
     popupErrorMessage(m_errorMessage, folderPath, p);
   }
 
-  int
+  int32
   CrashHandler::createReport(void* exception) const {
     EXCEPTION_POINTERS* exceptionData = static_cast<EXCEPTION_POINTERS*>(exception);
 

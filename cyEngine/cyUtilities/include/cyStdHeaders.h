@@ -20,6 +20,7 @@
 #include <limits>
 #include <memory>
 #include <mutex>
+#include <regex>
 #include <sstream>
 #include <type_traits>
 
@@ -61,6 +62,10 @@
 namespace CYLLENE_SDK {
   using StringStream  = std::stringstream;
 
+  using IStringStream = std::istringstream;
+
+  using OStringStream = std::ostringstream;
+
   using IfStream = std::ifstream;
 
   using OfStream = std::ofstream;
@@ -70,7 +75,13 @@ namespace CYLLENE_SDK {
   template<typename T>
   using SharedPointer = std::shared_ptr<T>;
 
+  template<typename T>
+  using UniquePointer = std::unique_ptr<T>;
+
   using Mutex         = std::mutex;
+
+  template<typename T>
+  using UniqueLock    = std::unique_lock<T>;
 
   using MutexLock     = std::unique_lock<Mutex>;
 
@@ -102,7 +113,16 @@ namespace CYLLENE_SDK {
   template<typename T>
   using NumericLimits = std::numeric_limits<T>;
 
-  using StdException     = std::exception;
+  using StdException  = std::exception;
+
+  using RunTimeError  = std::runtime_error;
+
+  using Regex = std::regex;
+
+  using CMatch = std::cmatch;
+
+  template<typename T, typename A>
+  using Pair = std::pair<T, A>;
 }
 
 

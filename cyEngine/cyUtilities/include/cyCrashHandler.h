@@ -10,10 +10,11 @@
 
 #pragma once
 
-#include "cyModule.h"
 #include "cyUtilitiesPrerequisites.h"
-#include "cyFileSystem.h"
+
 #include "cyException.h"
+#include "cyFileSystem.h"
+#include "cyModule.h"
 
 #define CY_MAX_STACKTRACE_DEPTH 200
 #define CY_MAX_STACKTRACE_NAME_BYTES 1024
@@ -31,7 +32,7 @@ namespace CYLLENE_SDK
     void
     init();
 
-    int
+    int32
     createReport(void* exception) const;
 
     void

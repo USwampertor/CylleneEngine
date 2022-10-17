@@ -108,7 +108,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib;shell32.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;shell32.lib;user32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -133,7 +133,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib;shell32.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfs.lib;cpplocate.lib;shell32.lib;user32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -154,7 +154,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;luad.lib;luacd.lib;liquidfund.lib;shell32.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfsd.lib;cpplocated.lib;shell32.lib;user32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -179,7 +179,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cppfs.lib;cpplocate.lib;lua.lib;luac.lib;liquidfun.lib;shell32.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppfs.lib;cpplocate.lib;shell32.lib;user32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -230,7 +230,6 @@
     <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyEulerHelpers.cpp" />
     <ClCompile Include="source\cyException.cpp" />
-    <ClCompile Include="source\cyFileSystem.cpp" />
     <ClCompile Include="source\cyLogger.cpp" />
     <ClCompile Include="source\cyMatrix2x2.cpp" />
     <ClCompile Include="source\cyMatrix3x3.cpp" />

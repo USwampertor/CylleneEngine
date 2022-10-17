@@ -25,7 +25,7 @@ public:
 
   WindowsCrashHandlerUI() = default;
 
-  WindowsCrashHandlerUI(int newWidth = 1024, int newHeight = 576) {
+  WindowsCrashHandlerUI(int32 newWidth = 1024, int32 newHeight = 576) {
     m_width = newWidth;
     m_height = newHeight;
     m_hwnd = {};
