@@ -48,9 +48,9 @@ class PlatformCrashHandlerUI
   bool
   isDone() { return m_done; }
 
-  int m_width = 0;
+  int32 m_width = 0;
 
-  int m_height = 0;
+  int32 m_height = 0;
 
   bool m_done = false;
 

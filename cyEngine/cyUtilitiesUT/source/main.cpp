@@ -15,11 +15,10 @@
 #include <cyException.h>
 #include <cyLogger.h>
 #include <cyTime.h>
-
 using namespace CYLLENE_SDK;
 
 int32
-main() {
+main(int argc, const char* argv[]) {
   CrashHandler::startUp();
   CrashHandler::instance().init();
   Random::init();
@@ -50,14 +49,11 @@ main() {
     }
 
     std::cout << FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/DoesntExist.hlsl") << std::endl;
-
-    CY_EXCEPT(UnitTestException, "Test");
-    // library_throw("Test Exception");
+    CY_EXCEPT(UnitTestException, "This is part of the test");
   }
   catch (const Exception& e)
   {
     std::cout << e.what();
-    // library_handle_exception(e);
   }
   std::cout << "End of test..." << std::endl;
   return 0;

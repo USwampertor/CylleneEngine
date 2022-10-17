@@ -32,7 +32,7 @@ namespace CYLLENE_SDK
     void
     init();
 
-    int
+    int32
     createReport(void* exception) const;
 
     void

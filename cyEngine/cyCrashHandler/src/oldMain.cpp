@@ -128,11 +128,11 @@ void theme_generator() {
   if (ImGui::Button("Export")) {
     ImGui::LogToTTY();
     ImGui::LogText("ImVec4* colors = ImGui::GetStyle().Colors;\n");
-    for (int i = 0; i < ImGuiCol_COUNT; i++) {
+    for (int32 i = 0; i < ImGuiCol_COUNT; i++) {
       const ImVec4& col = style.Colors[i];
       const char* name = ImGui::GetStyleColorName(i);
       ImGui::LogText("colors[ImGuiCol_%s]%*s= ImVec4(%.2ff, %.2ff, %.2ff, %.2ff);\n",
-        name, 23 - (int)strlen(name), "", col.x, col.y, col.z, col.w);
+        name, 23 - (int32)strlen(name), "", col.x, col.y, col.z, col.w);
     }
     ImGui::LogFinish();
   }
@@ -159,8 +159,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 ImVec2
 toImvec2(Vector2i v) { return ImVec2(v.x, v.y); }
 
-int 
-main(int argc, char* argv[]) {
+int32
+main(int32 argc, char* argv[]) {
   #if _DEBUG
     String dbgString = "-p CylleneDump20220224_185815.ccr";
     ArgumentParser parser;
@@ -255,7 +255,7 @@ main(int argc, char* argv[]) {
 
   /// 0 = FLAT APPEARENCE
   /// 1 = MORE "3D" LOOK
-  int is3D = 0;
+  int32 is3D = 0;
 
   style->Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
   style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -361,7 +361,7 @@ main(int argc, char* argv[]) {
   bool show_another_window = false;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.00f);
   char detailsBuffer[1024] = "";
-  int size = crash.readFile().length();
+  int32 size = crash.readFile().length();
   char crashDetails[2048];
   strcpy(crashDetails, crash.readFile().c_str());
   // Main loop
