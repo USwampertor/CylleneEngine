@@ -353,7 +353,7 @@ private:
   OmniChannel     m_omniChannel;
   LiveSessionInfo m_liveSessionInfo;
 
-  // std::thread m_channelUpdateThread;
+  std::thread m_channelUpdateThread;
   ChannelUpdate m_channelUpdater;
 };
 }
