@@ -272,7 +272,7 @@ namespace CYLLENE_SDK {
     return m_liveEnabled;
   }
 
-  const OMNILIVEMODE::E&
+  const OMNILIVEMODE::E
   Omniverse::isStageLiveSyncEnabled(const String& url) {
     // return OMNILIVEMODE::E::_from_integral(omniUsdLiveGetModeForUrl(url.c_str()));
     return url.find_last_of(".live") != String::npos ? 
@@ -400,6 +400,7 @@ but may contain alphanumeric, hyphen, or underscore characters.", newSessionName
     // Construct the layers so that we can join the session
     m_stage->GetSessionLayer()->InsertSubLayerPath(liveLayer->GetIdentifier());
     m_stage->SetEditTarget(UsdEditTarget(liveLayer));
+    return true;
   } 
   
   bool

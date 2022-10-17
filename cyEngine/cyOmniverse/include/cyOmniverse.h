@@ -141,6 +141,7 @@ public:
   omniClientCallback(void* userData,
                      const char* url,
                      OmniClientConnectionStatus status) noexcept {
+    String* existingStage = static_cast<String*>(userData);
     if (!Omniverse::isStartedUp()) {
       Logger::instance().logError(
         String("Omniverse Module was not started! This function should be called after"), 
@@ -152,9 +153,10 @@ public:
     {
       UniqueLock<Mutex> lk(Omniverse::instance().m_logMutex);
 
-      String connectionStatus = Utils::format("Connection Status: %s [%s]", 
+      String connectionStatus = Utils::format("Connection Status: %s [%s] %s", 
                                               omniClientGetConnectionStatusString(status), 
-                                              url);
+                                              url,
+                                              existingStage);
       std::cout << connectionStatus << std::endl;
       Logger::instance().logDebug(connectionStatus, LOG_CHANNEL::E::eSYSTEM);
     }
@@ -178,10 +180,11 @@ public:
                     const char* appName) {
     // Just a note that userData is available for context
     String* existingStage = static_cast<String*>(userData);
-    String message = Utils::format("Channel Callback: %s %s - %s", 
+    String message = Utils::format("Channel Callback: %s %s - %s at stage %s", 
                                    OmniChannelMessage::MessageTypeToStringType(messageType), 
                                    userName, 
-                                   appName);
+                                   appName,
+                                   existingStage);
     std::cout << message;
     Logger::instance().logDebug(message);
     if (messageType == OMNIMESSAGETYPE::E::eMERGESTARTED||
@@ -219,7 +222,11 @@ public:
               const char* message) noexcept {
     UniqueLock<Mutex> lk(Omniverse::instance().m_logMutex);
     if (Omniverse::instance().m_omniverseLogEnabled) {
-      Logger::instance().logError(message, LOG_CHANNEL::E::eSYSTEM);
+
+      if (OmniClientLogLevel::eOmniClientLogLevel_Error == level) {
+        Logger::instance().logError(Utils::format("%s at thread %s at component %s", message, threadName, component), LOG_CHANNEL::E::eSYSTEM);
+      }
+
       printf(message);
       Omniverse::instance().m_message = message;
     }
@@ -298,7 +305,7 @@ public:
   bool
   isDefaultLiveSyncEnabled();
 
-  const OMNILIVEMODE::E&
+  const OMNILIVEMODE::E
   isStageLiveSyncEnabled(const String& url);
 
   bool
