@@ -116,7 +116,7 @@ namespace CYLLENE_SDK {
 
   Vector2i
   Random::getVector2i(float thickness) {
-    return getNormVector2i() * thickness;
+    return getNormVector2i() * static_cast<int32>(thickness);
   }
 
   Vector2f
