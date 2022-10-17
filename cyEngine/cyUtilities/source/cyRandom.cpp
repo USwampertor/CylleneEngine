@@ -116,18 +116,18 @@ namespace CYLLENE_SDK {
 
   Vector2i
   Random::getVector2i(float thickness) {
-    return Vector2i();
+    return getNormVector2i() * thickness;
   }
 
   Vector2f
   Random::getVector2f(float thickness) {
-    return Vector2f();
+    return getNormVector2f() * thickness;
 
   }
 
   Vector3f
   Random::getVector3f(float thickness) {
-    return Vector3f();
+    return getNormVector3f() * thickness;
 
   }
 }
