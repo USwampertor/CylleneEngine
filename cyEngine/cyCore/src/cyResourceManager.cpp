@@ -3,6 +3,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include "cyCodec.h"
 #include "cyResourceManager.h"
 #include "cyWindow.h"
 
@@ -11,9 +12,9 @@ namespace CYLLENE_SDK {
   ResourceManager::init(Device* pDevice) {
     auto imageCodec = std::make_unique<ImageCodec>();
     m_codecs.push_back(std::move(imageCodec));
-    auto meshCodec = std::make_unique<MeshCodec>();
+    auto meshCodec = std::make_unique<ModelCodec>();
     m_codecs.push_back(std::move(meshCodec));
-
+    
 
   }
 
@@ -44,7 +45,7 @@ namespace CYLLENE_SDK {
     }
 
     auto type = getFormatType(p.extension());
-    int32 hashValue = std::hash(p.fullPath());
+    int32 hashValue = std::hash<String>{}(p.fullPath());
     // Check first if the file is actually valid for the engine
     File f;
     
@@ -57,34 +58,43 @@ namespace CYLLENE_SDK {
       f = FileSystem::open(p.fullPath());
     }
 
-    SharedPointer<Resource> newResource = nullptr;
+    SharedPointer<T> newResource = std::static_pointer_cast<T>(getCodec(type)->load(p));
 
-    if (RESOURCE_TYPE::E::eMESH == type) {
-      newResource = std::make_shared<MeshResource>(p, reinterpret_cast<void*>(f.readFile()));
-    }
-    else if (RESOURCE_TYPE::E::eTEXTURE == type) {
-      newResource = std::make_shared<TextureResource>(p, reinterpret_cast<void*>(f.readFile()));
-    }
-    else {
-      return nullptr;
-    }
-
-    if (isReloading) {
+    if (!isReloading) {
       m_resources.insert(std::make_pair(hashValue, newResource));
     }
     else {
       m_resources[hashValue] = newResource;
     }
 
-    
+    return newResource;
   }
 
   template<typename T>
   SharedPointer<T>
-  ResourceManager::create(const String& name) {
+  ResourceManager::create(const String& name, const RESOURCE_TYPE::E& type ) {
+    SharedPointer<T> newResource = std::static_pointer_cast<T>(getCodec(type)->create(name));
+    return newResource;
+  }
+
+  template<typename T>
+  SharedPointer<T>
+  ResourceManager::create(const String& name, const RESOURCE_TYPE::E& type, void* data ) {
+    SharedPointer<T> newResource = std::static_pointer_cast<T>(getCodec(type)->create(name));
+    return newResource;
+  }
+
+  void
+  ResourceManager::createPrimitives() {
+    // Create 3D Objects
+    create<MeshResource>("primitives/Box", RESOURCE_TYPE::E::eMESH);
+    create<MeshResource>("primitives/Sphere", RESOURCE_TYPE::E::eMESH);
+    create<MeshResource>("primitives/Plane", RESOURCE_TYPE::E::eMESH);
+    create<MeshResource>("primitives/Cylinder", RESOURCE_TYPE::E::eMESH);
+
+    create<MeshResource>("primitives/defaultTexture", RESOURCE_TYPE::E::eTEXTURE);
 
 
-    return nullptr;
   }
 
   void
@@ -112,16 +122,29 @@ namespace CYLLENE_SDK {
 
   bool
   ResourceManager::resourceExists(const Path& hashValue) {
-    // return m_resources.find(static_cast<int32>(std::hash(hashValue)) != m_resources.end());
-    return false;
+    int32 h = std::hash<String>{}(hashValue.fullPath());
+
+    return m_resources.find(h) != m_resources.end();
   }
 
-  void
-  processNode(aiNode* node, const aiScene* scene) {
-    uint32 meshNum = 0;
-    for (meshNum = 0; meshNum < scene->mNumMeshes; ++meshNum) {
-      aiMesh* mesh = scene->mMeshes[node->mMeshes[meshNum]];
+  // void
+  // processNode(aiNode* node, const aiScene* scene) {
+  //   uint32 meshNum = 0;
+  //   for (meshNum = 0; meshNum < scene->mNumMeshes; ++meshNum) {
+  //     aiMesh* mesh = scene->mMeshes[node->mMeshes[meshNum]];
+  //   }
+  // }
+
+  SharedPointer<Codec>
+  ResourceManager::getCodec(const RESOURCE_TYPE::E& resType) {
+    for (int32 i = 0; i < m_codecs.size(); ++i)
+    {
+      if (resType == m_codecs[i]->getResource()) {
+        return m_codecs[i];
+      }
     }
+    return nullptr;
   }
+
 
 }

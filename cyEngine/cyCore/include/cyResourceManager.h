@@ -1,6 +1,5 @@
 #pragma once
 
-#include "cyCodec.h"
 #include "cyCorePrerequisites.h"
 #include "cyResource.h"
 #include <cyModule.h>
@@ -9,8 +8,9 @@
 namespace CYLLENE_SDK {
 
 class Device;
+class Codec;
 
-class ResourceManager : Module<ResourceManager>
+class CY_CORE_EXPORT ResourceManager : Module<ResourceManager>
 {
  public:
 
@@ -27,7 +27,14 @@ class ResourceManager : Module<ResourceManager>
 
   template<typename T = Resource>
   SharedPointer<T>
-  create(const String& name);
+  create(const String& name, const RESOURCE_TYPE::E& type);
+
+  template<typename T = Resource>
+  SharedPointer<T>
+  create(const String& name, const RESOURCE_TYPE::E& type, void* data);
+
+  void
+  createPrimitives();
 
   void
   flush();
@@ -41,9 +48,13 @@ class ResourceManager : Module<ResourceManager>
   bool
   resourceExists(const Path& path);
 
+  SharedPointer<Codec>
+  getCodec(const RESOURCE_TYPE::E& resType);
+
+
   Map<uint32, SharedPointer<Resource>> m_resources;
 
-  Vector<UniquePointer<Codec>> m_codecs;
+  Vector<SharedPointer<Codec>> m_codecs;
 
 };
 }
