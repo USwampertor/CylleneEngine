@@ -10,7 +10,7 @@ namespace CYLLENE_SDK {
 class Device;
 class Codec;
 
-class CY_CORE_EXPORT ResourceManager : Module<ResourceManager>
+class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 {
  public:
 

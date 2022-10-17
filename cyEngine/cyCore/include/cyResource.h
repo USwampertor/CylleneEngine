@@ -78,7 +78,7 @@ public:
   }
 
   virtual RESOURCE_TYPE::E 
-  getType() override { return RESOURCE_TYPE::E::eMESH; }
+  getType() override { return RESOURCE_TYPE::E::eMODEL; }
 
 };
 

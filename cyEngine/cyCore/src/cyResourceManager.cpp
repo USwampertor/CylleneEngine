@@ -87,10 +87,10 @@ namespace CYLLENE_SDK {
   void
   ResourceManager::createPrimitives() {
     // Create 3D Objects
-    create<MeshResource>("primitives/Box", RESOURCE_TYPE::E::eMESH);
-    create<MeshResource>("primitives/Sphere", RESOURCE_TYPE::E::eMESH);
-    create<MeshResource>("primitives/Plane", RESOURCE_TYPE::E::eMESH);
-    create<MeshResource>("primitives/Cylinder", RESOURCE_TYPE::E::eMESH);
+    create<MeshResource>("primitives/Box", RESOURCE_TYPE::E::eMODEL);
+    create<MeshResource>("primitives/Sphere", RESOURCE_TYPE::E::eMODEL);
+    create<MeshResource>("primitives/Plane", RESOURCE_TYPE::E::eMODEL);
+    create<MeshResource>("primitives/Cylinder", RESOURCE_TYPE::E::eMODEL);
 
     create<MeshResource>("primitives/defaultTexture", RESOURCE_TYPE::E::eTEXTURE);
 

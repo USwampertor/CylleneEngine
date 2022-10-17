@@ -81,8 +81,24 @@ ModelCodec::create(Path pathToResource) {
 }
 
 SharedPointer<Resource>
+ModelCodec::create(Path pathToResource, void* data) {
+  return SharedPointer<Resource>(new ImageResource(pathToResource, data));
+}
+
+SharedPointer<Resource>
 AudioCodec::load(Path pathToResource) {
   return nullptr;
+}
+
+
+SharedPointer<Resource>
+AudioCodec::create(Path pathToResource) {
+  return nullptr;
+}
+
+SharedPointer<Resource>
+AudioCodec::create(Path pathToResource, void* data) {
+  return SharedPointer<Resource>(new ImageResource(pathToResource, data));
 }
 
 }

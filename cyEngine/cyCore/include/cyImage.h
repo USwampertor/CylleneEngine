@@ -46,11 +46,11 @@ public:
 
   uint32 m_width;
   uint32 m_height;
-
-  union {
-    float Vector<Vector<Pixel<T>>> m_m;
-    float Vector<Pixel<T>> m_v;
-  };
+  Vector<Pixel<T>> m_v;
+  // union {
+  //   float Vector<Vector<Pixel<T>>> m_m;
+  //   float Vector<Pixel<T>> m_v;
+  // };
 
 };
 
