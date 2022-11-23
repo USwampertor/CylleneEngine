@@ -40,7 +40,7 @@ struct CY_OMNIVERSE_EXPORT MDLInfo
   String version;
   String author;
   
-  Vector<String> keyWords;
+  Vector<String> keywords;
   String diffuse;
   String normal;
   String albedo;
@@ -56,7 +56,7 @@ struct CY_OMNIVERSE_EXPORT MDLData
   String id;
   String name;
   String path;
-  void* data;
+  String data;
 };
 
 
@@ -354,6 +354,7 @@ private:
   bool            m_stageMerged;
 
   String          m_message;
+  String          m_serverIP;
   std::mutex      m_logMutex;
 
   UsdStageRefPtr  m_stage;

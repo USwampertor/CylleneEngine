@@ -256,6 +256,107 @@ namespace CYLLENE_SDK {
     MDLData data;
 
 
+    String materialTemplate =
+      "\
+mdl 1.4; \n\n\
+import ::OmniPBR::OmniPBR; \n\
+import ::anno::author; \n\
+import ::anno::description; \n\
+import ::anno::display_name; \n\
+import ::anno::key_words; \n\
+import ::anno::version; \n\
+import ::tex::gamma_mode; \n\
+import ::state::normal; \n\
+\n";
+    materialTemplate +=
+      "export material " + info.id + "(*) \n\
+[[ \n\
+    ::anno::display_name(\"" + info.name + "\"), \n\
+    ::anno::description(\"" + info.description + "\"), \n\
+    ::anno::version(1, 0, 0, \"\"), \n\
+    ::anno::author(\"" + info.author + "\"), \n\
+    ::anno::key_words(string[](";
+
+    for (int i = 0; i < info.keywords.size(); ++i) {
+      materialTemplate += "\"" + info.keywords[i] + "\"";
+      if (i != info.keywords.size() - 1) {
+        materialTemplate += ",";
+      }
+    }
+    // omni", "PBR", "omniverse", "generic"
+
+    materialTemplate += ")) \n\
+]] \n\
+ = ::OmniPBR::OmniPBR( \n\
+    diffuse_color_constant: color(0.200000003f, 0.200000003f, 0.200000003f), \n\
+    diffuse_texture: texture_2d(" +
+      (info.diffuse.empty() ?
+        "" :
+        ("\"" + info.diffuse + "\" /* tag 2828, version 6332211 */, ::tex::gamma_srgb")) +
+      "), \n\
+    albedo_desaturation: 0.f, \n\
+    albedo_add: 0.f, \n\
+    albedo_brightness: 1.f, \n\
+    diffuse_tint: color(1.f, 1.f, 1.f), \n\
+    reflection_roughness_constant: 0.5f, \n\
+    reflection_roughness_texture_influence: 1.f, \n\
+    reflectionroughness_texture: texture_2d(" +
+
+      (info.roughness.empty() ?
+        "" :
+        ("\"" + info.roughness + "\" /* tag 2830, version 596885211 */, ::tex::gamma_linear")) +
+      "), \n\
+    metallic_constant: 0.f,\n\
+    metallic_texture_influence: 1.f, \n\
+    metallic_texture: texture_2d(" +
+      (info.metal.empty() ?
+        "" :
+        ("\"" + info.metal + "\" /* tag 2830, version 596885211 */, ::tex::gamma_linear")) +
+      "), \n\
+    specular_level: 0.5f, \n\
+    enable_ORM_texture: true, \n\
+    ORM_texture: texture_2d(" +
+      (info.orm.empty() ?
+        "" :
+        ("\"" + info.orm + "\" /* tag 2830, version 596885211 */, ::tex::gamma_linear")) +
+      "), \n\
+    ao_to_diffuse: 0.f, \n\
+    ao_texture: texture_2d(" +
+      (info.ao.empty() ?
+        "" :
+        ("\"" + info.ao + "\" /* tag 2830, version 596885211 */, ::tex::gamma_linear")) +
+      "), \n\
+    enable_emission: false, \n\
+    emissive_color: color(1.f, 0.100000001f, 0.100000001f), \n\
+    emissive_mask_texture: texture_2d(" +
+      (info.emissive.empty() ?
+        "" :
+        ("\"" + info.emissive + "\" /* tag 2828, version 6332211 */, ::tex::gamma_srgb")) +
+      "), \n\
+    emissive_intensity: 40.f, \n\
+    bump_factor: 1.f, \n\
+    normalmap_texture: texture_2d(" +
+      (info.normal.empty() ?
+        "" :
+        ("\"" + info.normal + "\" /* tag 2832, version 3494456508 */, ::tex::gamma_linear")) +
+      "), \n\
+    detail_bump_factor: 0.300000012f, \n\
+    detail_normalmap_texture: texture_2d(), \n\
+    project_uvw: false, \n\
+    world_or_object: false, \n\
+    uv_space_index: 0, \n\
+    texture_translate: float2(0.f), \n\
+    texture_rotate: 0.f, \n\
+    texture_scale: float2(1.f), \n\
+    detail_texture_translate: float2(0.f), \n\
+    detail_texture_rotate: 0.f, \n\
+    detail_texture_scale: float2(1.f)); \n\
+";
+    data.id = info.id;
+    data.name = info.name;
+    data.path = Utils::format("omniverse://%s/Projects/Materials/", m_serverIP);
+    data.data = materialTemplate;
+
     return data;
   }
 
