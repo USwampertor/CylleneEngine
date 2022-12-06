@@ -134,6 +134,7 @@ public:
   }
 
   virtual ~ImageCodec() {
+    // Should be called when shutting down everything
     FreeImage_DeInitialise();
   }
 
