@@ -14,7 +14,8 @@ namespace CYLLENE_SDK {
     m_codecs.push_back(std::move(imageCodec));
     auto meshCodec = std::make_unique<ModelCodec>();
     m_codecs.push_back(std::move(meshCodec));
-    
+    auto shaderCodec = std::make_unique<ShaderCodec>();
+    m_codecs.push_back(std::move(shaderCodec));
 
   }
 

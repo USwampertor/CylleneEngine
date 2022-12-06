@@ -96,4 +96,19 @@ public:
 
 };
 
+class CY_CORE_EXPORT ShaderResource : public Resource {
+
+public:
+
+  ShaderResource(const Path& newFile, void* newData) {
+    m_filePath = newFile;
+    m_data = newData;
+  }
+
+  virtual RESOURCE_TYPE::E
+  getType() override { return RESOURCE_TYPE::E::eSHADER; }
+
+  bool isBlob;
+};
+
 }

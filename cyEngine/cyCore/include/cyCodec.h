@@ -16,6 +16,8 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 
+#include <cyLogger.h>
+
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 #include <Windows.h>
 #undef min
@@ -51,14 +53,19 @@ public:
     return std::find(m_fileExtensions.begin(), m_fileExtensions.end(), path.extension()) != m_fileExtensions.end();
   }
 
-  virtual SharedPointer<Resource>
-  load(Path pathToResource) = 0;
+  bool
+  loadErrorMessage(const Path& pathToFile) {
+    Logger::instance().logError(Utils::format("The file at path %s cannot be loaded", pathToFile.fullPath()));
+  }
 
   virtual SharedPointer<Resource>
-  create(Path pathToResource) = 0;
+  load(const Path& pathToResource) = 0;
 
   virtual SharedPointer<Resource>
-  create(Path pathToResource, void* data) = 0;
+  create(const Path& pathToResource) = 0;
+
+  virtual SharedPointer<Resource>
+  create(const Path& pathToResource, void* data) = 0;
 
   virtual RESOURCE_TYPE::E 
   getResource() = 0;
@@ -126,19 +133,21 @@ public:
     FreeImage_Initialise();
   }
 
-  virtual ~ImageCodec() = default;
+  virtual ~ImageCodec() {
+    FreeImage_DeInitialise();
+  }
 
   virtual RESOURCE_TYPE::E 
   getResource() override { return RESOURCE_TYPE::E::eTEXTURE; }
 
   virtual SharedPointer<Resource>
-  load(Path pathToResource) override;
+  load(const Path& pathToResource) override;
 
   virtual SharedPointer<Resource>
-  create(Path pathToResource) override;
+  create(const Path& pathToResource) override;
 
   virtual SharedPointer<Resource>
-  create(Path pathToResource, void* data) override;
+  create(const Path& pathToResource, void* data) override;
 };
 
 class CY_CORE_EXPORT ModelCodec : public Codec
@@ -192,15 +201,47 @@ public:
   getResource() override { return RESOURCE_TYPE::E::eMODEL; }
 
   virtual SharedPointer<Resource>
-  load(Path pathToResource) override;
+  load(const Path& pathToResource) override;
 
   virtual SharedPointer<Resource>
-  create(Path pathToResource) override;
+  create(const Path& pathToResource) override;
   
   virtual SharedPointer<Resource>
-  create(Path pathToResource, void* data) override;
+  create(const Path& pathToResource, void* data) override;
 };
 
+class CY_CORE_EXPORT ShaderCodec : public Codec
+{
+public:
+
+
+  ShaderCodec() {
+    m_fileExtensions = {
+      "txt",
+      "hlsl",
+      "glsl",
+      "rqsl",
+      "blob"
+    };
+  }
+
+  virtual ~ShaderCodec() {
+    FreeImage_DeInitialise();
+  }
+
+  virtual RESOURCE_TYPE::E
+  getResource() override { return RESOURCE_TYPE::E::eSHADER; }
+
+  virtual SharedPointer<Resource>
+  load(const Path& pathToResource) override;
+
+  virtual SharedPointer<Resource>
+  create(const Path& pathToResource) override;
+
+  virtual SharedPointer<Resource>
+  create(const Path& pathToResource, void* data) override;
+
+};
   
 class CY_CORE_EXPORT AudioCodec : public Codec
 {
@@ -222,13 +263,13 @@ public:
   getResource() override { return RESOURCE_TYPE::E::eAUDIO; }
 
   virtual SharedPointer<Resource>
-  load(Path pathToResource) override;
+  load(const Path& pathToResource) override;
 
   virtual SharedPointer<Resource>
-  create(Path pathToResource) override;
+  create(const Path& pathToResource) override;
   
   virtual SharedPointer<Resource>
-  create(Path pathToResource, void* data) override;
+  create(const Path& pathToResource, void* data) override;
 };
 
 }
