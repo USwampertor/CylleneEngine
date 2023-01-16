@@ -26,9 +26,10 @@
     <ClInclude Include="include\cyCorePrerequisites.h" />
     <ClInclude Include="include\cyDefaultPrimitives.h" />
     <ClInclude Include="include\cyImage.h" />
+    <ClInclude Include="include\cyMesh.h" />
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
-    <ClInclude Include="include\cyShader.h" />
+    <ClInclude Include="include\cyVertex.h" />
     <ClInclude Include="include\cyWindow.h" />
   </ItemGroup>
   <ItemGroup>

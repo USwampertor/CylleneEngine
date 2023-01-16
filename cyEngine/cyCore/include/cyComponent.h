@@ -10,6 +10,7 @@ namespace CYLLENE_SDK {
                 eTRANSFORM,
                 eMODEL,
                 eAUDIOSOURCE,
+                eSHADER,
                 eCOLLIDER3D,
                 eCOLLIDER2D);
   }
@@ -36,6 +37,20 @@ public:
   virtual COMPONENT_TYPE::E isType() override { return COMPONENT_TYPE::E::eMODEL; }
 
   
+
+};
+
+class ShaderComponent : public Component
+{
+public:
+
+  ShaderComponent() = default;
+
+  ~ShaderComponent() = default;
+
+  virtual COMPONENT_TYPE::E isType() override { return COMPONENT_TYPE::E::eSHADER; }
+
+
 
 };
 

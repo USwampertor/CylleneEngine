@@ -27,9 +27,6 @@
     <ClInclude Include="include\cyResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -46,6 +43,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
