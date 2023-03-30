@@ -53,7 +53,7 @@ public:
     return std::find(m_fileExtensions.begin(), m_fileExtensions.end(), path.extension()) != m_fileExtensions.end();
   }
 
-  bool
+  void
   loadErrorMessage(const Path& pathToFile) {
     Logger::instance().logError(Utils::format("The file at path %s cannot be loaded", pathToFile.fullPath()));
   }

@@ -11,10 +11,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilitiesUT", "cyUtilitie
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCrashHandler", "cyCrashHandler\cyCrashHandler.vcxproj", "{15D9736F-94F7-4232-9D82-044FAE1E50BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+		{712121FB-6DCF-4907-A884-3D4E92C4064C} = {712121FB-6DCF-4907-A884-3D4E92C4064C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCore", "cyCore\cyCore.vcxproj", "{712121FB-6DCF-4907-A884-3D4E92C4064C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCoreUT", "cyCoreUT\cyCoreUT.vcxproj", "{755814E3-2041-406B-80CB-BFFB97DF0695}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+		{712121FB-6DCF-4907-A884-3D4E92C4064C} = {712121FB-6DCF-4907-A884-3D4E92C4064C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
