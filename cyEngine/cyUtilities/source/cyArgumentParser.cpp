@@ -3,11 +3,18 @@
 
 namespace CYLLENE_SDK {
 
+
+void
+ArgumentParser::parse(const int& argc, char* argv[])
+{
+
+}
+
 void
 ArgumentParser::parse(const String& parameters) {
-  for (auto argument : m_argumentMap) {
+  for (auto argument : m_flagMap) {
     if (parameters.find(argument.first) != String::npos) {
-      String tmpString = Utils::BLANK;
+      String tmpString = Utils::BLANKSTRING;
       for (int32 i = static_cast<int32>(parameters.find(argument.first)) + 
              static_cast<int32>(argument.first.length() + 1); 
            i < static_cast<int32>(parameters.length()); 
@@ -15,26 +22,26 @@ ArgumentParser::parse(const String& parameters) {
         if (parameters[i] == '-') { break; }
         tmpString += parameters[i];
       }
-      m_argumentMap[argument.first] = tmpString;
+      m_flagMap[argument.first] = tmpString;
     }
   }
 }
 
 bool
-ArgumentParser::addArgument(const String& newArgument) {
-  if (m_argumentMap.find(newArgument) == m_argumentMap.end()) {
-    m_argumentMap.insert(std::make_pair(newArgument, Utils::BLANK));
+ArgumentParser::addFlag(const String& newFlag) {
+  if (m_flagMap.find(newFlag) == m_flagMap.end()) {
+    m_flagMap.insert(std::make_pair(newFlag, Utils::BLANKSTRING));
     return true;
   }
   return false;
 }
 
 String
-ArgumentParser::getParameter(const String& parameter) {
-  if (m_argumentMap.find(parameter) != m_argumentMap.end()) {
-    return m_argumentMap[parameter];
+ArgumentParser::getFlagValue(const String& flag) {
+  if (m_flagMap.find(flag) != m_flagMap.end()) {
+    return m_flagMap[flag];
   }
-  return Utils::BLANK;
+  return Utils::BLANKSTRING;
 }
 
 }

@@ -22,6 +22,7 @@
 #include <mutex>
 #include <regex>
 #include <sstream>
+#include <thread>
 #include <type_traits>
 
 
@@ -87,7 +88,13 @@ namespace CYLLENE_SDK {
 
   using HighClock     = std::chrono::high_resolution_clock;
 
+  using RecursiveLock = std::unique_lock<std::recursive_mutex>;
+
+  using RecursiveMutex = std::recursive_mutex;
+
   using SteadyClock   = std::chrono::steady_clock;
+
+  using StreamSize    = std::streamsize;
 
   using SystemClock   = std::chrono::system_clock;
 
@@ -123,6 +130,14 @@ namespace CYLLENE_SDK {
 
   template<typename T, typename A>
   using Pair = std::pair<T, A>;
+
+  template<typename T, typename A>
+  using Tuple = std::tuple<T, A>;
+
+  using Thread = std::thread;
+
+  template<typename T>
+  using WeakPointer = std::weak_ptr<T>;
 }
 
 
@@ -204,24 +219,24 @@ namespace CYLLENE_SDK {
     using PriorityQueue = eastl::priority_queue<T, B, A>;
 
   template<typename KEY,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using Set = eastl::set<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+  using Set = eastl::set<KEY, B, A>;
 
   template<typename KEY,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using MultiSet = eastl::multiset<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+  using MultiSet = eastl::multiset<KEY, B, A>;
 
   template<typename KEY, typename T,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using Map = eastl::map<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+   using Map = eastl::map<KEY, B, A>;
 
   template<typename KEY, typename T,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using MultiMap = eastl::multimap<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+  using MultiMap = eastl::multimap<KEY, B, A>;
 
   using String = eastl::string;
 
