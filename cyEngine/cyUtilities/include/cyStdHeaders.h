@@ -21,7 +21,6 @@
 #include <limits>
 #include <memory>
 #include <mutex>
-#include <regex>
 #include <sstream>
 #include <thread>
 #include <type_traits>
@@ -128,10 +127,6 @@ namespace CYLLENE_SDK {
   using StdException  = std::exception;
 
   using RunTimeError  = std::runtime_error;
-
-  using Regex = std::regex;
-
-  using CMatch = std::cmatch;
 
   template<typename T, typename A>
   using Pair = std::pair<T, A>;

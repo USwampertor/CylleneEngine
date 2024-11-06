@@ -12,6 +12,7 @@
 
 #include "cyUtilitiesPrerequisites.h"
 
+#include "cyRegex.h"
 #include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
@@ -43,7 +44,7 @@ class CY_UTILITY_EXPORT ArgumentParser
    *  @return   nothing
    */
   void
-  parse(const int& argc, char* argv[]);
+  parse(const int& argc, const char* argv[]);
 
   
   /*
@@ -57,13 +58,21 @@ class CY_UTILITY_EXPORT ArgumentParser
   parse(const String& parameters);
 
   /*
-   *	@brief	  Adds an argument to the map of arguments to check while parsing
-   *	@param	  const String& newArgument the new argument to add
+   *	@brief	  Adds a flag to the map of flags to check while parsing
+   *	@param	  const String& newFlag the new flag to add
    *	@return   true if the insertion was successful, false if there was already 
-   *            that argument in the map
+   *            that flag in the map
    */
   bool
   addFlag(const String& newFlag);
+
+  /*
+   *	@brief	  Adds an value to the map of flags
+   *	@param	  const String& newParameter the new value to add
+   *	@return   nothing
+   */
+  void
+  setFlagValue(const String& flag, const String& newParameter);
 
 
   /*
@@ -72,8 +81,8 @@ class CY_UTILITY_EXPORT ArgumentParser
    *	@return   the information binded to the keyword, if none, it will return
    *            a blank string
    */
-  String
-  getFlagValue(const String& flag);
+  const Vector<String>&
+  getFlagValues(const String& flag);
 
   /*
    *	@brief		Checks if there is a defined flag in the flag map
@@ -87,7 +96,9 @@ class CY_UTILITY_EXPORT ArgumentParser
   /**
    * @brief the map that holds the keywords with the arguments passed
    */
-  Map<String, String> m_flagMap;
+  Map<String, Vector<String>> m_flagMap;
 
+
+  
 };
 }

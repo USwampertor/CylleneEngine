@@ -129,6 +129,9 @@
     <ClInclude Include="include\cyRegex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">
@@ -207,6 +210,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyFileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

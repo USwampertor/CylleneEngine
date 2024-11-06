@@ -4,6 +4,7 @@
 
 #include <conio.h>
 
+#include <cyArgumentParser.h>
 #include <cyCrashHandler.h>
 #include <cyEvent.h>
 #include <cyException.h>
@@ -52,6 +53,18 @@ main(int argc, const char* argv[]) {
       if (shader.isFile()) {
         Path p(shader.path());
         std::cout << p.extension() << std::endl;
+      }
+    }
+
+    ArgumentParser parser;
+
+    parser.parse(argc, argv);
+
+    for (auto& flag : parser.m_flagMap)
+    {
+      for (auto& value : flag.second)
+      {
+        std::cout << value << std::endl;
       }
     }
 
