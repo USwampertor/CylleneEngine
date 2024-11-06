@@ -120,4 +120,14 @@ ArgumentParser::getFlagValues(const String& flag) {
   return {};
 }
 
+bool
+ArgumentParser::removeFlag(const String& flag)
+{
+  if (m_flagMap.find(flag) != m_flagMap.end()) {
+    m_flagMap.erase(m_flagMap.find(flag));
+    return true;
+  }
+  return false;
+}
+
 }
