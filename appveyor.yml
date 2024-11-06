@@ -2,8 +2,9 @@ version: 1.0.{build}
 image: Visual Studio 2019
 environment:
   ## CYLLENE_DEPENDENCIES: $(SolutionDir)CylleneDependencies/
-    CYLLENE_DEPENDENCIES: C:/projects/cylleneengine/cyEngine/CylleneDependencies/
+    CYLLENE_DEPENDENCIES: C:/projects/dependencies/CylleneDependencies/
 install:
+  - git clone https://github.com/USwampertor/CylleneDependencies.git C:/projects/dependencies/
   - git submodule update --init --recursive
 build:
   verbosity: minimal
