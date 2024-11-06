@@ -33,7 +33,7 @@ main(int argc, const char* argv[]) {
   Time::startUp();
   Time::instance().init();
 
-  Logger::instance().log("test", 
+  Logger::instance().log("TEST", 
     LOG_VERBOSITY::E::eDEFAULT, 
     LOG_CHANNEL::E::eDEFAULT, 
     LOG_OUTPUT::E::eSPLASH | LOG_OUTPUT::E::eSCREEN);
