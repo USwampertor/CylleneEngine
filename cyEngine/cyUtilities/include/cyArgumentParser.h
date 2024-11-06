@@ -86,12 +86,20 @@ class CY_UTILITY_EXPORT ArgumentParser
 
   /*
    *	@brief		Checks if there is a defined flag in the flag map
-   *	@param	  const String& parameter the keyWord to find
+   *	@param	  const String& flag the keyWord to find
    *	@return   the information binded to the keyword, if none, it will return
    *            a blank string
    */
   bool
   hasFlag(const String& flag);
+
+  /*
+   *	@brief		Removes a flag from the map
+   *	@param	  const String& flag the keyWord to find
+   *	@return   true if the flag was existing already
+   */
+  bool
+  removeFlag(const String& flag);
 
   /**
    * @brief the map that holds the keywords with the arguments passed
