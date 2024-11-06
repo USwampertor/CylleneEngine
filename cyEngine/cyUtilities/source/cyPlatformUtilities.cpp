@@ -1,5 +1,5 @@
 #include "cyPlatformUtilities.h"
 
 namespace CYLLENE_SDK {
-  const String PlatformUtils::BLANK = String("");
+  const String PlatformUtils::BLANKSTRING = String("");
 }

@@ -11,14 +11,14 @@
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # include <cyWindows.h>
-#include <imgui/imgui_impl_win32.h>
-#include <imgui/imgui_impl_dx11.h>
-#include <d3d11.h>
+# include <imgui/imgui_impl_win32.h>
+# include <imgui/imgui_impl_dx11.h>
+# include <d3d11.h>
 #endif
 
 using namespace CYLLENE_SDK;
 int32
-main2(int32 argc, char* argv[]) {
+main(int32 argc, char* argv[]) {
   CrashHandlerUI window(1024, 576);
   window.init(nullptr);
   while (!window.isDone()) {

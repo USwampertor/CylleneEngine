@@ -54,7 +54,7 @@ public:
     throw::std::runtime_error(message.c_str());
   }
 
-  static const String BLANK;
+  static const String BLANKSTRING;
 
   static WString
   toWide(String str) {

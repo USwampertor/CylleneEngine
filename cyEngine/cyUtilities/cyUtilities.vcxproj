@@ -191,6 +191,7 @@
     <ClInclude Include="include\cyDinamicLibrary.h" />
     <ClInclude Include="include\cyDLLLoader.h" />
     <ClInclude Include="include\cyEulerHelpers.h" />
+    <ClInclude Include="include\cyEvent.h" />
     <ClInclude Include="include\cyException.h" />
     <ClInclude Include="include\cyFileSystem.h" />
     <ClInclude Include="include\cyJSON.h" />
@@ -198,8 +199,11 @@
     <ClInclude Include="include\cyMatrix4x4.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
     <ClInclude Include="include\cyPlatformUtilities.h" />
+    <ClInclude Include="include\cyPoint.h" />
     <ClInclude Include="include\cyQuaternion.h" />
     <ClInclude Include="include\cyRandom.h" />
+    <ClInclude Include="include\cyRegex.h" />
+    <ClInclude Include="include\cyThread.h" />
     <ClInclude Include="include\cyTime.h" />
     <ClInclude Include="include\cyLogger.h" />
     <ClInclude Include="include\cyMemoryAllocator.h" />
@@ -226,6 +230,11 @@
     <ClCompile Include="source\cyColor.cpp" />
     <ClCompile Include="source\cyCrashHandlerLinux.cpp" />
     <ClCompile Include="source\cyDynamicLibrary.cpp" />
+    <ClCompile Include="source\cyEvent.cpp" />
+    <ClCompile Include="source\cyFileSystem.cpp" />
+    <ClCompile Include="source\cyPoint.cpp" />
+    <ClCompile Include="source\cyRegex.cpp" />
+    <ClCompile Include="source\cyThread.cpp" />
     <ClCompile Include="source\cyWindowsCrashHandler.cpp" />
     <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyEulerHelpers.cpp" />

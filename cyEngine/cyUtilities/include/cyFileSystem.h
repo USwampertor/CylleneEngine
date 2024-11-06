@@ -157,4 +157,14 @@ struct CY_UTILITY_EXPORT FileSystem
     return Path(cpplocate::roamingDir(getExecutablePath().baseName()));
   }
 };
+
+struct FileExt
+{
+  static String JSON;
+  static String SCENE;
+  static String PACKAGE;
+  static String ASSET;
+};
+
+
 }
