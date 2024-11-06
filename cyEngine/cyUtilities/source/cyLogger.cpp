@@ -61,22 +61,29 @@ namespace CYLLENE_SDK {
   void 
   Logger::log(const String& message, 
               const LOG_VERBOSITY::E& type, 
-              const LOG_CHANNEL::E& channel) {
+              const LOG_CHANNEL::E& channel,
+              const Bitset<5>& output) {
     m_logStack.push_back(Log(message, type, channel));
   }
 
   void
-  Logger::logDebug(const String& message, const LOG_CHANNEL::E& channel) {
+  Logger::logDebug(const String& message, 
+                   const LOG_CHANNEL::E& channel,
+                   const Bitset<5>& output) {
     m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eDEBUG, channel));
   }
 
   void
-  Logger::logWarning(const String& message, const LOG_CHANNEL::E& channel) {
+  Logger::logWarning(const String& message, 
+                     const LOG_CHANNEL::E& channel,
+                     const Bitset<5>& output) {
     m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eWARNING, channel));
   }
 
   void
-  Logger::logError(const String& message, const LOG_CHANNEL::E& channel) {
+  Logger::logError(const String& message, 
+                   const LOG_CHANNEL::E& channel,
+                   const Bitset<5>& output) {
     m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eERROR, channel));
   }
 

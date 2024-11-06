@@ -4,17 +4,19 @@
 
 #include <conio.h>
 
+#include <cyCrashHandler.h>
+#include <cyEvent.h>
+#include <cyException.h>
+#include <cyFileSystem.h>
 #include <cyJSON.h>
-#include <cyQuaternion.h>
+#include <cyLogger.h>
+#include <cyMath.h>
 #include <cyMatrix3x3.h>
 #include <cyMatrix4x4.h>
-#include <cyCrashHandler.h>
-#include <cyMath.h>
-#include <cyFileSystem.h>
 #include <cyRandom.h>
-#include <cyException.h>
-#include <cyLogger.h>
+#include <cyQuaternion.h>
 #include <cyTime.h>
+
 using namespace CYLLENE_SDK;
 
 int32
@@ -29,6 +31,11 @@ main(int argc, const char* argv[]) {
 
   Time::startUp();
   Time::instance().init();
+
+  Logger::instance().log("test", 
+    LOG_VERBOSITY::E::eDEFAULT, 
+    LOG_CHANNEL::E::eDEFAULT, 
+    LOG_OUTPUT::E::eSPLASH | LOG_OUTPUT::E::eSCREEN);
 
   try
   {

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <bitset>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -61,6 +62,10 @@
 #endif
 
 namespace CYLLENE_SDK {
+
+  template<std::size_t N>
+  using Bitset = std::bitset<N>;
+
   using StringStream  = std::stringstream;
 
   using IStringStream = std::istringstream;

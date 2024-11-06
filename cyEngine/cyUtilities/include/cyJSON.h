@@ -49,15 +49,16 @@ using JSONStringBuffer = rapidjson::StringBuffer;
 class JSONDocument : public rapidjson::Document
 {
 public:
-  const String
+
+  const CYLLENE_SDK::String
   stringify() {
     JSONStringBuffer buffer;
     JSONWriter<JSONStringBuffer> writer(buffer);
     Accept(writer);
     return buffer.GetString();
   }
-
-  const String
+  
+  const CYLLENE_SDK::String
   prettyString() {
     JSONStringBuffer buffer;
     JSONPrettyWriter<JSONStringBuffer> writer(buffer);
