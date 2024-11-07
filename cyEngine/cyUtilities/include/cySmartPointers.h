@@ -16,10 +16,10 @@ template <typename T>
 class SmartPtr;
 
 template <typename T>
-class CyPtr {
+class WeePtr {
 public:
   // Constructor - gets the pointer from a UniquePointer
-  explicit CyPtr(SmartPtr<T>& uniquePtr) : m_ptr(uniquePtr.get()) {}
+  explicit WeePtr(SmartPtr<T>& uniquePtr) : m_ptr(uniquePtr.get()) {}
 
   // Accessors to use the weak pointer safely
   T* get() const { return m_ptr; }
@@ -73,8 +73,8 @@ public:
   }
 
   // Method to create a WeakPointer
-  CyPtr<T> ptr() {
-    return CyPtr<T>(*this);
+  WeePtr<T> ptr() {
+    return WeePtr<T>(*this);
   }
 
   template <typename U>
