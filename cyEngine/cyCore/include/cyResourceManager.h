@@ -7,7 +7,7 @@
 #include <cyEvent.h>
 #include <cyJSON.h>
 #include <cyModule.h>
-
+#include <cyUtilities.h>
 
 namespace CYLLENE_SDK {
 
@@ -23,25 +23,33 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   ~ResourceManager() = default;
 
   virtual void
-  onStartUp() override {
-  
+  onStartUp() override;
+
+  template<typename T, 
+           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+  SharedPointer<T> 
+  create(const String& assetName) {
+    RESOURCE_TYPE::E type = T::staticType();
+    String realName = Utils::format("%s_%s", type._to_string(), assetName.c_str());
   }
 
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
   SharedPointer<T> 
-  create(const String& assetName);
-
-  template<typename T, 
-           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
-  SharedPointer<T> 
-  load(const String& assetName);
+  load(const String& assetName) {
+    
+  }
 
   void 
-  deserialize(const JSONValue& resources);
+  deserialize(const JSONValue& resources) {
+    
+  }
 
   JSONDocument 
-  serialize();
+  serialize() {
+    JSONDocument d;
+    return d;
+  }
 
 //   void
 //   init(/*Device* pDevice*/);

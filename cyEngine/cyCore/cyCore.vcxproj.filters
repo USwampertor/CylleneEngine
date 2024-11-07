@@ -51,6 +51,9 @@
     <ClInclude Include="include\cyVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyEngineAssets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">

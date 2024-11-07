@@ -8,6 +8,17 @@
 #include "cyWindow.h"
 
 namespace CYLLENE_SDK {
+
+
+void
+ResourceManager::onStartUp() {
+  // Create Engine Icons and other default resources
+}
+
+
+
+
+
 //   void
 //   ResourceManager::init(/*Device* pDevice*/) {
 //     auto imageCodec = std::make_unique<TextureCodec>();
