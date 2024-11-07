@@ -31,6 +31,10 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   create(const String& assetName) {
     RESOURCE_TYPE::E type = T::staticType();
     String realName = Utils::format("%s_%s", type._to_string(), assetName.c_str());
+    if (m_resources.find(Hash<String>()(realName)) != m_resources.end())
+    {
+      // return  REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
+    }
   }
 
   template<typename T, 
