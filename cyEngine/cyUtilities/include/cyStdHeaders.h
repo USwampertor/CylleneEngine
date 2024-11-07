@@ -23,6 +23,7 @@
 #include <mutex>
 #include <sstream>
 #include <thread>
+#include <unordered_set>
 #include <type_traits>
 
 
@@ -138,6 +139,12 @@ namespace CYLLENE_SDK {
   using Tuple = std::tuple<T, A>;
 
   using Thread = std::thread;
+
+  template<class Key,
+           class Hash = std::hash<Key>,
+           class KeyEqual = std::equal_to<Key>,
+           class Allocator = std::allocator<Key>>
+  using UnorderedSet = std::unordered_set<Key, Hash, KeyEqual, Allocator>;
 
   template<typename T>
   using WeakPointer = std::weak_ptr<T>;

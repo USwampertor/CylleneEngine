@@ -203,6 +203,7 @@
     <ClInclude Include="include\cyQuaternion.h" />
     <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyRegex.h" />
+    <ClInclude Include="include\cySmartPointers.h" />
     <ClInclude Include="include\cyThread.h" />
     <ClInclude Include="include\cyTime.h" />
     <ClInclude Include="include\cyLogger.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="source\cyFileSystem.cpp" />
     <ClCompile Include="source\cyPoint.cpp" />
     <ClCompile Include="source\cyRegex.cpp" />
+    <ClCompile Include="source\cySmartPointers.cpp" />
     <ClCompile Include="source\cyThread.cpp" />
     <ClCompile Include="source\cyWindowsCrashHandler.cpp" />
     <ClCompile Include="source\cyDLLLoader.cpp" />
