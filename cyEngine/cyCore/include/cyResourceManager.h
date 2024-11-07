@@ -1,7 +1,11 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
+
 #include "cyResource.h"
+
+#include <cyEvent.h>
+#include <cyJSON.h>
 #include <cyModule.h>
 
 
@@ -18,43 +22,71 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   ~ResourceManager() = default;
 
-  void
-  init(Device* pDevice);
+  virtual void
+  onStartUp() override {
+  
+  }
 
-  template<typename T = Resource>
-  SharedPointer<T>
-  load(const String& path, bool& wasSuccesful);
+  template<typename T, 
+           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+  SharedPointer<T> 
+  create(const String& assetName);
 
-  template<typename T = Resource>
-  SharedPointer<T>
-  create(const String& name, const RESOURCE_TYPE::E& type);
+  template<typename T, 
+           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+  SharedPointer<T> 
+  load(const String& assetName);
 
-  template<typename T = Resource>
-  SharedPointer<T>
-  create(const String& name, const RESOURCE_TYPE::E& type, void* data);
+  void 
+  deserialize(const JSONValue& resources);
 
-  void
-  createPrimitives();
+  JSONDocument 
+  serialize();
 
-  void
-  flush();
+//   void
+//   init(/*Device* pDevice*/);
+// 
+//   template<typename T = Resource>
+//   SharedPointer<T>
+//   load(const String& path, bool& wasSuccesful);
+// 
+//   template<typename T = Resource>
+//   SharedPointer<T>
+//   create(const String& name, const RESOURCE_TYPE::E& type);
+// 
+//   template<typename T = Resource>
+//   SharedPointer<T>
+//   create(const String& name, const RESOURCE_TYPE::E& type, void* data);
+// 
+//   void
+//   createPrimitives();
+// 
+//   void
+//   flush();
+// 
+//   bool
+//   canDecode(const String& path);
+// 
+//   RESOURCE_TYPE::E
+//   getFormatType(const String& path);
+// 
+//   bool
+//   resourceExists(const Path& path);
+// 
+//   SharedPointer<Codec>
+//   getCodec(const RESOURCE_TYPE::E& resType);
 
-  bool
-  canDecode(const String& path);
 
-  RESOURCE_TYPE::E
-  getFormatType(const String& path);
-
-  bool
-  resourceExists(const Path& path);
-
-  SharedPointer<Codec>
-  getCodec(const RESOURCE_TYPE::E& resType);
-
-
-  Map<uint32, SharedPointer<Resource>> m_resources;
+  Map<SizeT, SharedPointer<Resource>> m_resources;
 
   Vector<SharedPointer<Codec>> m_codecs;
 
+  Event<void> m_resourceLoaded;
+
+  Event<void> m_resourceCreated;
+
+  Event<void> m_resourcesSerialized;
+
+  Event<void> m_resourcesDeserialized;
 };
 }

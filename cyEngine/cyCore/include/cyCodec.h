@@ -16,31 +16,42 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 
+#include <cyFileSystem.h>
 #include <cyLogger.h>
 
-#if CY_PLATFORM == CY_PLATFORM_WIN32
-#include <Windows.h>
-#undef min
-#undef max
-#endif
+// #if CY_PLATFORM == CY_PLATFORM_WIN32
+// #include <Windows.h>
+// #undef min
+// #undef max
+// #endif
+
 #include <FreeImage/FreeImage.h>
 
-#include <cyFileSystem.h>
-
-#define IMGDEFAULTW 512
-#define IMGDEFAULTH 512
-#define IMGDEFAULTC 8*4
-
+// #define IMGDEFAULTW 512
+// #define IMGDEFAULTH 512
+// #define IMGDEFAULTC 8*4
 
 namespace CYLLENE_SDK {
+
+// class Resource;
 
 class CY_CORE_EXPORT Codec
 {
 public:
 
-  Codec() = default;
+  Codec(const RESOURCE_TYPE::E& type) : m_type(type) {}
+  // Codec() = default;
 
   virtual ~Codec() = default;
+
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    CY_ASSERT(true && "IMPLEMENT THIS");
+    return RESOURCE_TYPE::E::eUNKNOWN;
+  }
+
+  const RESOURCE_TYPE::E& 
+  getType() { return m_type; }
 
   bool
   canDecode(const String& path) {
@@ -50,112 +61,115 @@ public:
 
   bool
   canDecode(const Path& path) {
-    return std::find(m_fileExtensions.begin(), m_fileExtensions.end(), path.extension()) != m_fileExtensions.end();
+    return std::find(m_fileExtensions.begin(), 
+                     m_fileExtensions.end(), 
+                     path.extension()) != m_fileExtensions.end();
   }
 
   void
   loadErrorMessage(const Path& pathToFile) {
-    Logger::instance().logError(Utils::format("The file at path %s cannot be loaded", pathToFile.fullPath()));
+    Logger::instance().logError(Utils::format("The file at path %s cannot be loaded", 
+                                              pathToFile.fullPath()));
   }
 
   virtual SharedPointer<Resource>
-  load(const Path& pathToResource) = 0;
+  decode(const File& f) = 0;
 
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource) = 0;
+  // virtual SharedPointer<Resource>
+  // load(const Path& pathToResource) = 0;
+  // 
+  // virtual SharedPointer<Resource>
+  // create(const Path& pathToResource) = 0;
+  // 
+  // virtual SharedPointer<Resource>
+  // create(const Path& pathToResource, void* data) = 0;
 
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource, void* data) = 0;
-
-  virtual RESOURCE_TYPE::E 
-  getResource() = 0;
-
+protected:
+  
   Vector<String> m_fileExtensions;
 
-  Vector<String> m_engineExtensions;
+  // Vector<String> m_engineExtensions;
 
+private:
+  
+  RESOURCE_TYPE::E m_type = RESOURCE_TYPE::E::eUNKNOWN;
 };
 
-namespace IMGEXT {
-  BETTER_ENUM(E, int32,
-              UNKNOWN = -1,
-              BMP     = 0,
-              ICO     = 1,
-              JPEG    = 2,
-              JNG     = 3,
-              KOALA   = 4,
-              LBM     = 5,
-              IFF     = LBM,
-              MNG     = 6,
-              PBM     = 7,
-              PBMRAW  = 8,
-              PCD     = 9,
-              PCX     = 10,
-              PGM     = 11,
-              PGMRAW  = 12,
-              PNG     = 13,
-              PPM     = 14,
-              PPMRAW  = 15,
-              RAS     = 16,
-              TARGA   = 17,
-              TIFF    = 18,
-              WBMP    = 19,
-              PSD     = 20,
-              CUT     = 21,
-              XBM     = 22,
-              XPM     = 23,
-              DDS     = 24,
-              GIF     = 25,
-              HDR     = 26,
-              FAXG3   = 27,
-              SGI     = 28,
-              EXR     = 29,
-              J2K     = 30,
-              JP2     = 31,
-              PFM     = 32,
-              PICT    = 33,
-              RAW     = 34,
-              WEBP    = 35,
-              JXR     = 36);
-}
+  namespace IMGEXT {
+    BETTER_ENUM(E, int32,
+                UNKNOWN = -1,
+                BMP     = 0,
+                ICO     = 1,
+                JPEG    = 2,
+                JNG     = 3,
+                KOALA   = 4,
+                LBM     = 5,
+                IFF     = LBM,
+                MNG     = 6,
+                PBM     = 7,
+                PBMRAW  = 8,
+                PCD     = 9,
+                PCX     = 10,
+                PGM     = 11,
+                PGMRAW  = 12,
+                PNG     = 13,
+                PPM     = 14,
+                PPMRAW  = 15,
+                RAS     = 16,
+                TARGA   = 17,
+                TIFF    = 18,
+                WBMP    = 19,
+                PSD     = 20,
+                CUT     = 21,
+                XBM     = 22,
+                XPM     = 23,
+                DDS     = 24,
+                GIF     = 25,
+                HDR     = 26,
+                FAXG3   = 27,
+                SGI     = 28,
+                EXR     = 29,
+                J2K     = 30,
+                JP2     = 31,
+                PFM     = 32,
+                PICT    = 33,
+                RAW     = 34,
+                WEBP    = 35,
+                JXR     = 36);
+  }
 
-class CY_CORE_EXPORT ImageCodec : public Codec
+class CY_CORE_EXPORT TextureCodec : public Codec
 {
 public:
 
 
-  ImageCodec() {
+  TextureCodec() : Codec(TextureCodec::staticType()) {
     for (auto extension : IMGEXT::E::_names()) {
       m_fileExtensions.push_back(extension);
     }
-
     // Should be called once
     FreeImage_Initialise();
   }
 
-  virtual ~ImageCodec() {
+  virtual ~TextureCodec() {
     // Should be called when shutting down everything
     FreeImage_DeInitialise();
   }
 
-  virtual RESOURCE_TYPE::E 
-  getResource() override { return RESOURCE_TYPE::E::eTEXTURE; }
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    return RESOURCE_TYPE::E::eTEXTURE;
+  }
 
   virtual SharedPointer<Resource>
-  load(const Path& pathToResource) override;
-
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource) override;
-
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource, void* data) override;
+  decode(const File& f) override;
 };
 
 class CY_CORE_EXPORT ModelCodec : public Codec
 {
 public:
 
-  ModelCodec() {
+  ModelCodec() : Codec(ModelCodec::staticType()) {
     m_fileExtensions = { 
       "fbx",
       "dae",
@@ -192,37 +206,32 @@ public:
       "xml",
       "blend",
       "mesh"
-
     };
   }
 
   virtual ~ModelCodec() = default;
 
-  virtual RESOURCE_TYPE::E
-  getResource() override { return RESOURCE_TYPE::E::eMODEL; }
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    return RESOURCE_TYPE::E::eMODEL;
+  }
 
   virtual SharedPointer<Resource>
-  load(const Path& pathToResource) override;
-
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource) override;
-  
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource, void* data) override;
+  decode(const File& f) override;
 };
 
 class CY_CORE_EXPORT ShaderCodec : public Codec
 {
 public:
 
-
-  ShaderCodec() {
+  ShaderCodec() : Codec(ShaderCodec::staticType()) {
     m_fileExtensions = {
       "txt",
       "hlsl",
       "glsl",
       "rqsl",
-      "blob"
+      "blob",
+      "frag",
     };
   }
 
@@ -230,17 +239,13 @@ public:
     FreeImage_DeInitialise();
   }
 
-  virtual RESOURCE_TYPE::E
-  getResource() override { return RESOURCE_TYPE::E::eSHADER; }
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    return RESOURCE_TYPE::E::eSHADER;
+  }
 
   virtual SharedPointer<Resource>
-  load(const Path& pathToResource) override;
-
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource) override;
-
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource, void* data) override;
+  decode(const File& f) override;
 
 };
   
@@ -248,7 +253,7 @@ class CY_CORE_EXPORT AudioCodec : public Codec
 {
 public:
 
-  AudioCodec() {
+  AudioCodec() : Codec(AudioCodec::staticType()) {
     m_fileExtensions = {
       "wav", 
       "mp3", 
@@ -260,17 +265,13 @@ public:
 
   virtual ~AudioCodec() = default;
 
-  virtual RESOURCE_TYPE::E 
-  getResource() override { return RESOURCE_TYPE::E::eAUDIO; }
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    return RESOURCE_TYPE::E::eAUDIO;
+  }
 
   virtual SharedPointer<Resource>
-  load(const Path& pathToResource) override;
-
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource) override;
-  
-  virtual SharedPointer<Resource>
-  create(const Path& pathToResource, void* data) override;
+  decode(const File& f) override;
 };
 
 }

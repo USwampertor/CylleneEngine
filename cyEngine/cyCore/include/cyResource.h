@@ -12,7 +12,11 @@ namespace CYLLENE_SDK {
                 eMODEL, 
                 eAUDIO, 
                 eTEXTURE,
-                eSHADER);
+                eSHADER,
+                eATLAS,
+                eFONT,
+                eSCENE,
+                eANIMATION);
   }
   
 /**
@@ -23,18 +27,28 @@ namespace CYLLENE_SDK {
  *
  */
 class CY_CORE_EXPORT Resource {
-public:
+ public:
   Resource() = default;
 
-  Resource(const Path& newFile, void* newData) {
-    m_filePath = newFile;
-    m_data = newData;
-  }
+  Resource(const Path& newFile, void* newData)
+    : m_filePath(newFile),
+      m_data(newData),
+      m_isDirty(false) {}
+
+  Resource(const RESOURCE_TYPE::E& type)
+    : m_type(type),
+      m_data(nullptr),
+      m_isDirty(false) {}
 
   virtual ~Resource() {}
 
-  virtual RESOURCE_TYPE::E
-  getType() = 0;
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    CY_ASSERT(true && "IMPLEMENT THIS");  
+    return RESOURCE_TYPE::E::eUNKNOWN;
+  }
+
+  const RESOURCE_TYPE::E& getType() { return m_type; }
 
   // virtual void
   // initialize() = 0;
@@ -52,19 +66,21 @@ public:
   getPath() { return m_filePath; }
 
   const bool
-  getIsDirty() { return isDirty; }
+  getIsDirty() { return m_isDirty; }
 
   void
-  setIsDirty(const bool& newValue) { isDirty = newValue; }
+  setIsDirty(const bool& newValue) { m_isDirty = newValue; }
 
 
-  protected:
+ protected:
 
   void* m_data;
 
   Path m_filePath;
 
-  bool isDirty;
+  bool m_isDirty;
+
+  RESOURCE_TYPE::E m_type = RESOURCE_TYPE::E::eUNKNOWN;
 };
 
 
@@ -72,27 +88,30 @@ class CY_CORE_EXPORT MeshResource : public Resource {
   
 public:
 
-  MeshResource(const Path& newFile, void* newData) {
-    m_filePath = newFile;
-    m_data = newData;
-  }
+  MeshResource() : Resource(MeshResource::staticType()) {}
+  
+  MeshResource(const Path& newFile, void* newData) 
+    : Resource(newFile, newData) {}
 
-  virtual RESOURCE_TYPE::E 
-  getType() override { return RESOURCE_TYPE::E::eMODEL; }
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    return RESOURCE_TYPE::E::eMODEL; 
+  }
 
 };
 
-class CY_CORE_EXPORT ImageResource : public Resource {
+class CY_CORE_EXPORT TextureResource : public Resource {
 
 public:
 
-  ImageResource(const Path& newFile, void* newData) {
-    m_filePath = newFile;
-    m_data = newData;
-  }
+  TextureResource() : Resource(TextureResource::staticType()) {}
 
-  virtual RESOURCE_TYPE::E 
-  getType() override { return RESOURCE_TYPE::E::eTEXTURE; }
+  TextureResource(const Path& newFile, void* newData)
+    : Resource(newFile, newData) {}
+
+  static RESOURCE_TYPE::E staticType() {
+    return RESOURCE_TYPE::E::eTEXTURE; 
+  }
 
 };
 
@@ -100,15 +119,15 @@ class CY_CORE_EXPORT ShaderResource : public Resource {
 
 public:
 
-  ShaderResource(const Path& newFile, void* newData) {
-    m_filePath = newFile;
-    m_data = newData;
+  ShaderResource() : Resource(ShaderResource::staticType()) {}
+
+  ShaderResource(const Path& newFile, void* newData)
+    : Resource(newFile, newData), m_isBlob(false) {}
+
+  static RESOURCE_TYPE::E staticType() {
+    return RESOURCE_TYPE::E::eSHADER;
   }
-
-  virtual RESOURCE_TYPE::E
-  getType() override { return RESOURCE_TYPE::E::eSHADER; }
-
-  bool isBlob;
+  bool m_isBlob;
 };
 
 }

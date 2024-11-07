@@ -9,6 +9,8 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
 
+#define RAPIDJSON_HAS_STDSTRING 1
+
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
 #include <rapidjson/filewritestream.h>
@@ -22,7 +24,6 @@
 
 #include "cyStdHeaders.h"
 
-#define RAPIDJSON_HAS_STDSTRING 1
 
 namespace CYLLENE_SDK {
 
