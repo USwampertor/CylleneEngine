@@ -90,6 +90,9 @@ namespace CYLLENE_SDK {
 
   using MutexLock     = std::unique_lock<Mutex>;
 
+  template<typename T>
+  using Hash          = std::hash<T>;
+
   using HighClock     = std::chrono::high_resolution_clock;
 
   using RecursiveLock = std::unique_lock<std::recursive_mutex>;
