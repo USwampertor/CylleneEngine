@@ -3,6 +3,7 @@
 #include "cyStdHeaders.h"
 #include "cyMemoryAllocator.h"
 #include "cyModule.h"
+#include "cyPlatformDefines.h"
 
 namespace CYLLENE_SDK
 {
@@ -12,7 +13,7 @@ public:
   virtual ~ManagedPtr() = default;
   friend class SmartPointers;
 protected:
-  int m_counter;
+  uint32 m_counter;
 };
 
 template <typename T>
@@ -21,11 +22,6 @@ class SmartPtr;
 template <typename T>
 class SmallPtr {
 public:
-  // Constructor - gets the pointer from a UniquePointer
-  // explicit SmallPtr(SmartPtr<T>& uniquePtr) 
-  //   : m_ptr(uniquePtr.get()) {
-  //   ++uniquePtr->m_counter;
-  // }
 
   explicit SmallPtr(SmartPtr<T>& uniquePtr)
     : m_ref(uniquePtr) {
@@ -33,6 +29,13 @@ public:
   }
 
   ~SmallPtr() { --m_ref.m_counter; }
+
+  SmallPtr& operator=(SmartPtr& other)
+  {
+    --m_ref.m_counter;
+    m_ref = other;
+    ++m_ref.m_counter;
+  }
 
   // Accessors to use the weak pointer safely
   // T* get() const { return m_ptr; }
@@ -158,10 +161,10 @@ public:
   }
 
   template <typename T, typename... Args>
-  T* create(Args ... args) {
+  SmartPtr<T> create(Args ... args) {
     SmartPtr<T>* newPtr = new SmartPtr<T>(std::forward<Args>(args)...);
     pointers.insert(newPtr);
-    return newPtr->get();
+    return *newPtr;
   }
   
     
@@ -198,10 +201,15 @@ SharedPointer<T> MakeSharedObject(Args ... args) {
 }
 
 template <typename T, typename... Args>
+SmartPtr<T> MakeSmartObject(Args ... args) {
+  CY_ASSERT(!SmartPointers::isStarted() && "Smart Pointer Manager was not started");
+  return SmartPointers::instance().create<T>(std::forward<Args>(args)...);
+}
+
+template <typename T, typename... Args>
 T* MakeObject(Args&&... args) {
-  return SmartPointers::isStarted() ? 
-    SmartPointers::instance().create<T>(std::forward<Args>(args)...) : 
-    nullptr;
+  CY_ASSERT(!SmartPointers::isStarted() && "Smart Pointer Manager was not started");
+  return SmartPointers::instance().create<T>(std::forward<Args>(args)...).get();
 }
 
 #define CY_MAKEUNIQUE(T, ...) std::make_unique<T>(__VA_ARGS__)
@@ -209,6 +217,8 @@ T* MakeObject(Args&&... args) {
 #define CY_MAKESHARED(T, ...) std::make_shared<T>(__VA_ARGS__)
 
 #define CY_MAKEOBJECT(T, ...) MakeObject<T>(_VA_ARGS__)
+
+#define CY_MAKESMART(T, ...) MakeSmartObject<T>(__VA_ARGS__)
 
 #define REINTERPRETPOINTER(T, ...) std::reinterpret_pointer_cast<T>(__VA_ARGS__)
 
