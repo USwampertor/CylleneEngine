@@ -32,19 +32,19 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   create(const String& assetName) {
     RESOURCE_TYPE::E type = T::staticType();
     String realName = Utils::format("%s_%s", type._to_string(), assetName.c_str());
-    if (m_resources.find(Hash<String>()(realName)) != m_resources.end())
-    {
+    if (m_resources.find(Hash<String>()(realName)) != m_resources.end()) {
       return REINTERPRETSMART(T, m_resources.at(Hash<String>()(realName)));
-      // return  REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
     }
-    T* newResource = MakeObject<T>();
+    SmartPtr<T> newResource = MakeSmartObject<T>();
     newResource->m_name = assetName;
+    m_resources.insert(Utils::makePair(Hash<String>()(realName), newResource));
+    return newResource;
   }
 
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
-  SharedPointer<T> 
-  load(const String& assetName) {
+  SmartPtr<T> 
+  load(const String& assetPath) {
     
   }
 

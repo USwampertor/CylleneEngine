@@ -5,26 +5,39 @@
 
 namespace CYLLENE_SDK {
 
-  SharedPointer<Resource>
-  TextureCodec::decode(const File& f) {
-    // FreeImage_Load();
-    return nullptr;
-  }
-
-  SharedPointer<Resource>
-  ModelCodec::decode(const File& f) {
-    return nullptr;
-  }
-
-  SharedPointer<Resource>
-  ShaderCodec::decode(const File& f) {
-    return nullptr;
-  }
-
-  SharedPointer<Resource>
-  AudioCodec::decode(const File& f) {
-    return nullptr;
-  }
+  // SmartPtr<Resource>
+  // TextureCodec::decode(const File& f) {
+  //   
+  //   // SmartPtr<Resource> newResource;
+  //   // return newResource;
+  //   return nullptr;
+  // }
+  // 
+  // SmartPtr<Resource>
+  // ModelCodec::decode(const File& f) {
+  //   
+  //   // SmartPtr<Resource> newResource;
+  //   // reinterpret_smart_cast<MeshResource>(newResource);
+  //   // reinterpret_cast<SmartPtr<MeshResource>*>(&newResource);
+  //   // return newResource;
+  //   return nullptr;
+  // }
+  // 
+  // SmartPtr<Resource>
+  // ShaderCodec::decode(const File& f) {
+  //   
+  //   // SmartPtr<Resource> newResource;
+  //   // return newResource;
+  //   return nullptr;
+  // }
+  // 
+  // SmartPtr<Resource>
+  // AudioCodec::decode(const File& f) {
+  //   
+  //   // SmartPtr<Resource> newResource;
+  //   // return newResource;
+  //   return nullptr;
+  // }
 
 // SharedPointer<Resource>
 // TextureCodec::load(const Path& pathToResource) {

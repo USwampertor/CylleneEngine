@@ -18,6 +18,7 @@
 
 #include <cyFileSystem.h>
 #include <cyLogger.h>
+#include <cySmartPointers.h>
 
 // #if CY_PLATFORM == CY_PLATFORM_WIN32
 // #include <Windows.h>
@@ -72,8 +73,8 @@ public:
                                               pathToFile.fullPath()));
   }
 
-  virtual SharedPointer<Resource>
-  decode(const File& f) = 0;
+  // virtual SmartPtr<Resource>
+  // decode(const File& f) = 0;
 
   // virtual SharedPointer<Resource>
   // load(const Path& pathToResource) = 0;
@@ -161,8 +162,8 @@ public:
     return RESOURCE_TYPE::E::eTEXTURE;
   }
 
-  virtual SharedPointer<Resource>
-  decode(const File& f) override;
+  // virtual SmartPtr<Resource>
+  // decode(const File& f) override;
 };
 
 class CY_CORE_EXPORT ModelCodec : public Codec
@@ -216,8 +217,8 @@ public:
     return RESOURCE_TYPE::E::eMODEL;
   }
 
-  virtual SharedPointer<Resource>
-  decode(const File& f) override;
+  // virtual SmartPtr<Resource>
+  // decode(const File& f) override;
 };
 
 class CY_CORE_EXPORT ShaderCodec : public Codec
@@ -244,8 +245,8 @@ public:
     return RESOURCE_TYPE::E::eSHADER;
   }
 
-  virtual SharedPointer<Resource>
-  decode(const File& f) override;
+  // virtual SmartPtr<Resource>
+  // decode(const File& f) override;
 
 };
   
@@ -270,8 +271,8 @@ public:
     return RESOURCE_TYPE::E::eAUDIO;
   }
 
-  virtual SharedPointer<Resource>
-  decode(const File& f) override;
+  // virtual SmartPtr<Resource>
+  // decode(const File& f) override;
 };
 
 }

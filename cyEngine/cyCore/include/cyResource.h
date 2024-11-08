@@ -135,4 +135,19 @@ public:
   bool m_isBlob;
 };
 
+
+class CY_CORE_EXPORT AudioResource : public Resource {
+
+public:
+
+  AudioResource() : Resource(AudioResource::staticType()) {}
+
+  AudioResource(const Path& newFile, void* newData)
+    : Resource(newFile, newData) {}
+
+  static RESOURCE_TYPE::E staticType() {
+    return RESOURCE_TYPE::E::eAUDIO;
+  }
+};
+
 }
