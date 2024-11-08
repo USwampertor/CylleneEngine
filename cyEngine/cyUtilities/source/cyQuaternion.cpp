@@ -320,6 +320,7 @@ namespace CYLLENE_SDK {
     y3 = mult1 * y1 + mult2 * y2;
     z3 = mult1 * z1 + mult2 * z2;
 
+    // TODO: WTF I DONT LIKE THIS
     return *new Quaternion(w3, x3, y3, z3);
 
 
