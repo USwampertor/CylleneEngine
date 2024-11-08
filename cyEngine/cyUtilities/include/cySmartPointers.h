@@ -30,7 +30,7 @@ public:
 
   ~SmallPtr() { --m_ref.m_counter; }
 
-  SmallPtr& operator=(SmartPtr& other)
+  SmallPtr& operator=(SmartPtr<T>& other)
   {
     --m_ref.m_counter;
     m_ref = other;
