@@ -18,7 +18,9 @@ namespace CYLLENE_SDK {
                 eSCENE,
                 eANIMATION);
   }
-  
+
+class ResourceManager;
+
 /**
  * Resource
  * Description:
@@ -71,12 +73,15 @@ class CY_CORE_EXPORT Resource {
   void
   setIsDirty(const bool& newValue) { m_isDirty = newValue; }
 
+  friend class ResourceManager;
 
  protected:
 
   void* m_data;
 
   Path m_filePath;
+
+  String m_name;
 
   bool m_isDirty;
 

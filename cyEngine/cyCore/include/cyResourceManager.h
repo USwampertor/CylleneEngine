@@ -7,6 +7,7 @@
 #include <cyEvent.h>
 #include <cyJSON.h>
 #include <cyModule.h>
+#include <cySmartPointers.h>
 #include <cyUtilities.h>
 
 namespace CYLLENE_SDK {
@@ -27,14 +28,17 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
-  SharedPointer<T> 
+  SmartPtr<T> 
   create(const String& assetName) {
     RESOURCE_TYPE::E type = T::staticType();
     String realName = Utils::format("%s_%s", type._to_string(), assetName.c_str());
     if (m_resources.find(Hash<String>()(realName)) != m_resources.end())
     {
+      return REINTERPRETSMART(T, m_resources.at(Hash<String>()(realName)));
       // return  REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
     }
+    T* newResource = MakeObject<T>();
+    newResource->m_name = assetName;
   }
 
   template<typename T, 
@@ -89,7 +93,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 //   getCodec(const RESOURCE_TYPE::E& resType);
 
 
-  Map<SizeT, SharedPointer<Resource>> m_resources;
+  Map<SizeT, SmartPtr<Resource>> m_resources;
 
   Vector<SharedPointer<Codec>> m_codecs;
 
