@@ -12,10 +12,6 @@
 #include "cyCorePrerequisites.h"
 #include "cyResource.h"
 
-#include <assimp/Importer.hpp>      // C++ importer interface
-#include <assimp/scene.h>           // Output data structure
-#include <assimp/postprocess.h>     // Post processing flags
-
 #include <cyFileSystem.h>
 #include <cyLogger.h>
 #include <cySmartPointers.h>
@@ -25,7 +21,9 @@
 // #undef min
 // #undef max
 // #endif
+ 
 
+// Image/Texture decoding
 #include <FreeImage/FreeImage.h>
 
 // #define IMGDEFAULTW 512

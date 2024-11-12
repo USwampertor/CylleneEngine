@@ -3,11 +3,29 @@
 #include "cyImage.h"
 #include "cyResource.h"
 
+// Model decoding
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
+
+// Sound decoding
+
+
+// Shader decoding
+
+
 namespace CYLLENE_SDK {
 
   SharedPointer<Resource>
   TextureCodec::decode(const File& f) {
     
+    IMGEXT::E format;
+
+    for (IMGEXT::E acceptedFormats : IMGEXT::E::_values()) {
+
+    }
+    FreeImage_Load(, f.path().c_str());
+
     SharedPointer<Resource> newResource;
     return newResource;
     // return nullptr;
@@ -17,7 +35,7 @@ namespace CYLLENE_SDK {
   ModelCodec::decode(const File& f) {
     
     SharedPointer<Resource> newResource;
-    reinterpret_cast<SharedPointer<MeshResource>*>(&newResource);
+    REINTERPRETPOINTER(MeshResource, newResource);
     return newResource;
     // return nullptr;
   }
