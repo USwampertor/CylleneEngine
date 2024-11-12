@@ -58,16 +58,16 @@ namespace CYLLENE_SDK {
     uint32 seed = 0;
     RANDOM_METHOD::E method = RANDOM_METHOD::E::_from_integral(m_method);
 
-    switch (+method) {
-    case RANDOM_METHOD::E::eZIGGURAT:
+    switch (method) {
+    case +RANDOM_METHOD::E::eZIGGURAT:
       seed = m_ziggurat.m_generator();
       f = m_ziggurat.r4_uni(seed);
-    case RANDOM_METHOD::E::eMT:
       break;
+    case +RANDOM_METHOD::E::eMT:
       break;
-    case RANDOM_METHOD::E::eBBS:
+    case +RANDOM_METHOD::E::eBBS:
       break;
-    case RANDOM_METHOD::E::eMSM:
+    case +RANDOM_METHOD::E::eMSM:
       break;
     }
 
