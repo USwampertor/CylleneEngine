@@ -61,7 +61,6 @@ TEST_CASE("[module] testing module startup") {
   CHECK(Logger::isStarted());
   Time::startUp();
   CHECK(Time::isStarted());
-
 }
 
 TEST_CASE("[random] testing random module") {
@@ -101,6 +100,10 @@ TEST_CASE("[random] testing random module") {
   }
   Time::instance().update();
   MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
+}
+
+TEST_CASE("[pointers] Testing smart pointers") {
+  
 }
 
 // Old main

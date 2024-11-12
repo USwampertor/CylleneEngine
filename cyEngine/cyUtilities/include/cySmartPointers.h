@@ -85,14 +85,14 @@ public:
   // Move semantics
   SmartPtr(SmartPtr&& other) noexcept 
     : m_ptr(other.m_ptr) {
-    m_counter = m_ptr.getCounter();
+    m_counter = other.getCounter();
     other.m_ptr = nullptr;
   }
 
   SmartPtr& operator=(SmartPtr&& other) noexcept {
     if (this != &other) {
       delete m_ptr;
-      m_ptr = other.m_ptr;
+      m_ptr = other.getCounter();
       other.m_ptr = nullptr;
     }
     return *this;
