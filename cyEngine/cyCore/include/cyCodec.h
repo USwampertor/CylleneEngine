@@ -73,7 +73,7 @@ public:
                                               pathToFile.fullPath()));
   }
 
-  virtual SmartPtr<Resource>
+  virtual SharedPointer<Resource>
   decode(const File& f) = 0;
 
   // virtual SharedPointer<Resource>
@@ -162,7 +162,7 @@ public:
     return RESOURCE_TYPE::E::eTEXTURE;
   }
 
-  virtual SmartPtr<Resource>
+  virtual SharedPointer<Resource>
   decode(const File& f) override;
 };
 
@@ -217,7 +217,7 @@ public:
     return RESOURCE_TYPE::E::eMODEL;
   }
 
-  virtual SmartPtr<Resource>
+  virtual SharedPointer<Resource>
   decode(const File& f) override;
 };
 
@@ -245,7 +245,7 @@ public:
     return RESOURCE_TYPE::E::eSHADER;
   }
 
-  virtual SmartPtr<Resource>
+  virtual SharedPointer<Resource>
   decode(const File& f) override;
 
 };
@@ -271,7 +271,7 @@ public:
     return RESOURCE_TYPE::E::eAUDIO;
   }
 
-  virtual SmartPtr<Resource>
+  virtual SharedPointer<Resource>
   decode(const File& f) override;
 };
 

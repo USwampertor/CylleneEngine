@@ -5,35 +5,35 @@
 
 namespace CYLLENE_SDK {
 
-  SmartPtr<Resource>
+  SharedPointer<Resource>
   TextureCodec::decode(const File& f) {
     
-    SmartPtr<Resource> newResource;
+    SharedPointer<Resource> newResource;
     return newResource;
     // return nullptr;
   }
   
-  SmartPtr<Resource>
+  SharedPointer<Resource>
   ModelCodec::decode(const File& f) {
     
-    SmartPtr<Resource> newResource;
-    reinterpret_cast<SmartPtr<MeshResource>*>(&newResource);
+    SharedPointer<Resource> newResource;
+    reinterpret_cast<SharedPointer<MeshResource>*>(&newResource);
     return newResource;
     // return nullptr;
   }
   
-  SmartPtr<Resource>
+  SharedPointer<Resource>
   ShaderCodec::decode(const File& f) {
     
-    SmartPtr<Resource> newResource;
+    SharedPointer<Resource> newResource;
     return newResource;
     // return nullptr;
   }
   
-  SmartPtr<Resource>
+  SharedPointer<Resource>
   AudioCodec::decode(const File& f) {
     
-    SmartPtr<Resource> newResource;
+    SharedPointer<Resource> newResource;
     return newResource;
     // return nullptr;
   }
