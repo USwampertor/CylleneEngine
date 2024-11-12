@@ -1,5 +1,6 @@
 #include "cyColor.h"
 
+#include "cyUtilities.h"
 #include "cyVector3f.h"
 #include "cyVector4f.h"
 
@@ -15,6 +16,10 @@ namespace CYLLENE_SDK {
       s(other.y),
       v(other.z) {}
 
+  String
+  HSV::toString() {
+    return Utils::format("(H: %2.2f, S: %2.2f, V: %2.2f)", h, s, v);
+  }
 
 
   Color::Color(float nr, float ng, float nb, float na) 
@@ -67,6 +72,11 @@ namespace CYLLENE_SDK {
                  this->g * other.g,
                  this->b * other.b,
                  this->a * other.a);
+  }
+
+  String
+  Color::toString() {
+    return Utils::format("(R: %2.2f, G: %2.2f, B: %2.2f, A: %2.2f)", r, g, b, a);
   }
 
   const Color Color::AZURE    = Color(240.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);

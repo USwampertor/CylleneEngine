@@ -14,17 +14,19 @@
 
 
 namespace CYLLENE_SDK {
+
 // Class forwarding
 class Vector3f;
 class Vector4f;
 
 /*
-  *	@class HSV
-  *	@brief A HSV Color structure
-  */
+ *	@class HSV
+ *	@brief A HSV Color structure
+ */
 struct CY_UTILITY_EXPORT HSV
 {
  public:
+
   /**
     * @brief Default constructor
     */
@@ -34,6 +36,14 @@ struct CY_UTILITY_EXPORT HSV
     * @brief Default destructor
     */
   HSV(const HSV& other);
+
+
+  /**
+   * @brief Returns the HSV object into a string
+   * @return String with values "H: XXX S: XXX V: XXX"
+   */
+  String
+  toString();
 
  public:
     
@@ -53,32 +63,22 @@ struct CY_UTILITY_EXPORT HSV
   float v;
 };
 
-struct CY_UTILITY_EXPORT sRGBA
-{
- public:
-  sRGBA(const Vector4f& other);
-  sRGBA(const sRGBA& other);
-};
+using sRGBA = Vector4f;
 
-struct CY_UTILITY_EXPORT RGBA
-{
- public:
-  RGBA(const Vector4f& other);
-  RGBA(const RGBA& other);
-};
+using RGBA = Vector4f;
   
 class CY_UTILITY_EXPORT Color
 {
  public:
 
-  /**
-  * @brief Default constructor
-  */
+  /*
+   * @brief Default constructor
+   */
   Color() = default;
 
-  /**
-    * @brief Default constructor
-    */
+  /*
+   * @brief Default constructor
+   */
   ~Color() = default;
 
   /**
@@ -226,11 +226,11 @@ class CY_UTILITY_EXPORT Color
   setColorLinear(float nr, float ng, float nb, float na = 1.0f);
 
   /**
-    * @brief Sets a color based in (R, G, B, A)
-    * @param uint32 R
-    * @param uint32 G
-    * @param uint32 B
-    * @param uint32 A
+    * @brief Sets a color based in (R, G, B, A) from 0 to 255
+    * @param uint32 R red color
+    * @param uint32 G green color
+    * @param uint32 B blue color
+    * @param uint32 A alpha transparency
     * @return
     *
     */
@@ -296,7 +296,6 @@ class CY_UTILITY_EXPORT Color
     */
   String
   toString();
-
 
   static const Color AZURE;
   static const Color BLACK;

@@ -123,9 +123,6 @@
     <ClInclude Include="include\cyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyPoint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyRegex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -133,6 +130,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cySmartPointers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyRNG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -209,9 +215,6 @@
     <ClCompile Include="source\cyEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyPoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\cyRegex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -222,6 +225,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cySmartPointers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -195,14 +195,16 @@
     <ClInclude Include="include\cyException.h" />
     <ClInclude Include="include\cyFileSystem.h" />
     <ClInclude Include="include\cyJSON.h" />
+    <ClInclude Include="include\cyLine.h" />
     <ClInclude Include="include\cyMath.h" />
     <ClInclude Include="include\cyMatrix4x4.h" />
+    <ClInclude Include="include\cyPlane.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
     <ClInclude Include="include\cyPlatformUtilities.h" />
-    <ClInclude Include="include\cyPoint.h" />
     <ClInclude Include="include\cyQuaternion.h" />
     <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyRegex.h" />
+    <ClInclude Include="include\cyRNG.h" />
     <ClInclude Include="include\cySmartPointers.h" />
     <ClInclude Include="include\cyThread.h" />
     <ClInclude Include="include\cyTime.h" />
@@ -233,7 +235,8 @@
     <ClCompile Include="source\cyDynamicLibrary.cpp" />
     <ClCompile Include="source\cyEvent.cpp" />
     <ClCompile Include="source\cyFileSystem.cpp" />
-    <ClCompile Include="source\cyPoint.cpp" />
+    <ClCompile Include="source\cyLine.cpp" />
+    <ClCompile Include="source\cyPlane.cpp" />
     <ClCompile Include="source\cyRegex.cpp" />
     <ClCompile Include="source\cySmartPointers.cpp" />
     <ClCompile Include="source\cyThread.cpp" />

@@ -112,7 +112,7 @@ ArgumentParser::setFlagValue(const String& flag, const String& newParameter)
   }
 }
 
-const Vector<String>&
+const Vector<String>
 ArgumentParser::getFlagValues(const String& flag) {
   if (m_flagMap.find(flag) != m_flagMap.end()) {
     return m_flagMap[flag];

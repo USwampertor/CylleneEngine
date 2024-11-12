@@ -37,6 +37,7 @@ namespace CYLLENE_SDK {
   const String CrashHandler::m_errorMessage = "A fatal error has occurred comrade!";
   void
   CrashHandler::init() {
+
   }
 
   Path

@@ -12,6 +12,12 @@
 
 namespace CYLLENE_SDK
 {
+
+  void
+  Time::onStartUp() {
+    Time::instance().init();
+  }
+
   void 
   Time::init() {
     m_timer = HighClock::now();

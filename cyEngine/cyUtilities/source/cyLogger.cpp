@@ -42,6 +42,11 @@ namespace CYLLENE_SDK {
     return toReturn;
   }
 
+  void 
+  Logger::onStartUp() {
+    Logger::instance().init();
+  }
+
   void
   Logger::init() {
     m_logStack.clear();
@@ -63,28 +68,28 @@ namespace CYLLENE_SDK {
               const LOG_VERBOSITY::E& type, 
               const LOG_CHANNEL::E& channel,
               const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, type, channel));
+    m_logStack.push_back(Log(message, type, channel, output));
   }
 
   void
   Logger::logDebug(const String& message, 
                    const LOG_CHANNEL::E& channel,
                    const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eDEBUG, channel));
+    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eDEBUG, channel, output));
   }
 
   void
   Logger::logWarning(const String& message, 
                      const LOG_CHANNEL::E& channel,
                      const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eWARNING, channel));
+    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eWARNING, channel, output));
   }
 
   void
   Logger::logError(const String& message, 
                    const LOG_CHANNEL::E& channel,
                    const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eERROR, channel));
+    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eERROR, channel, output));
   }
 
   void

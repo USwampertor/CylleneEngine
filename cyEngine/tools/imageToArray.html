@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Header File</title>
+</head>
+<body>
+    <input type="file" id="imageInput" accept="image/*">
+    <button id="saveButton">Save as .h File</button>
+    <h3>Generated Header File Content:</h3>
+    <pre id="headerPreview"></pre>
+    
+    <script>
+        document.getElementById('imageInput').addEventListener('change', handleImageUpload);
+        document.getElementById('saveButton').addEventListener('click', saveAsHeaderFile);
+
+        let uint8Array;
+        let variableName;
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Get the file name without the extension and use it as the variable name
+            variableName = file.name.split('.')[0].replace(/[^a-zA-Z0-9_]/g, '_'); // Sanitize for valid C++ identifier
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => convertToUint8Array(img);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function convertToUint8Array(img) {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            uint8Array = new Uint8Array(imageData.data.buffer);
+            alert("Image converted to Uint8Array successfully!");
+            displayHeaderContent();
+        }
+
+        function displayHeaderContent() {
+            if (!uint8Array || !variableName) return;
+
+            // Generate the header content with dynamic variable name
+            let headerContent = `#ifndef ${variableName.toUpperCase()}_H\n#define ${variableName.toUpperCase()}_H\n\n#include <cstdint>\n\n`;
+            headerContent += `const uint8_t ${variableName}[] = {`;
+
+            // Convert Uint8Array data to comma-separated hex values
+            uint8Array.forEach((byte, index) => {
+                headerContent += `0x${byte.toString(16).padStart(2, '0')}`;
+                if (index < uint8Array.length - 1) headerContent += ', ';
+            });
+
+            headerContent += `};\n\nconst size_t ${variableName}Size = ${uint8Array.length};\n\n#endif // ${variableName.toUpperCase()}_H\n`;
+
+            // Display in the <pre> element
+            document.getElementById('headerPreview').textContent = headerContent;
+        }
+
+        function saveAsHeaderFile() {
+            if (!uint8Array || !variableName) {
+                alert("Please load an image first.");
+                return;
+            }
+
+            // Generate the .h file content (same as displayHeaderContent)
+            let headerContent = `#ifndef ${variableName.toUpperCase()}_H\n#define ${variableName.toUpperCase()}_H\n\n#include <cstdint>\n\n`;
+            headerContent += `const uint8_t ${variableName}[] = {`;
+
+            uint8Array.forEach((byte, index) => {
+                headerContent += `0x${byte.toString(16).padStart(2, '0')}`;
+                if (index < uint8Array.length - 1) headerContent += ', ';
+            });
+
+            headerContent += `};\n\nconst size_t ${variableName}Size = ${uint8Array.length};\n\n#endif // ${variableName.toUpperCase()}_H\n`;
+
+            // Create a Blob and save as a .h file
+            const blob = new Blob([headerContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${variableName}.h`;
+            link.click();
+
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
