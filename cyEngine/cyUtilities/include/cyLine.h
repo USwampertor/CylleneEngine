@@ -1,20 +1,20 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
-#include "cyUtilities.h"
 #include "cyVector3f.h"
 
 namespace CYLLENE_SDK
 {
 
-class CY_UTILITY_EXPORT Point
+class Line
 {
-  Point() = default;
-  
-  ~Point() = default;
+private:
 
+  Vector3f m_a;
 
+  Vector3f m_b;
 };
 
 }
+
 

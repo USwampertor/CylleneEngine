@@ -138,6 +138,12 @@
     <ClInclude Include="include\cyRNG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyPlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyLine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">
@@ -225,6 +231,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cySmartPointers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
