@@ -19,7 +19,19 @@ namespace CYLLENE_SDK {
   SharedPointer<Resource>
   TextureCodec::decode(const File& f) {
     
-    
+    Path p(f.path());
+
+    int32 format = -1;
+
+    for (IMGEXT::E v : IMGEXT::E::_values()) {
+      String strExt = v._to_string();
+      if (p.extension() == strExt) {
+        
+        format = v._to_integral();
+        break;
+      }
+    }
+
     FreeImage_Load(FREE_IMAGE_FORMAT::FIF_DDS, f.path().c_str());
 
     SharedPointer<Resource> newResource;
