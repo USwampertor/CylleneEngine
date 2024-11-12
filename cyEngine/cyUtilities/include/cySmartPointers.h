@@ -11,8 +11,14 @@ namespace CYLLENE_SDK
 class ManagedPtr {
 public:
   virtual ~ManagedPtr() = default;
+  
+  uint32& 
+  getCounter();
+  
   friend class SmartPointers;
+
 protected:
+  
   uint32 m_counter;
 };
 
@@ -41,7 +47,8 @@ public:
   // T* get() const { return m_ptr; }
 
   // Checks if the object still exists
-  bool expired() const { return m_ref.get() == nullptr; }
+  bool 
+  expired() const { return m_ref.get() == nullptr; }
 
   // Dereference operator for easy access
   T& operator*() const { return *m_ref.get(); }
@@ -78,7 +85,7 @@ public:
   // Move semantics
   SmartPtr(SmartPtr&& other) noexcept 
     : m_ptr(other.m_ptr) {
-    m_counter = m_ptr.m_counter;
+    m_counter = m_ptr.getCounter();
     other.m_ptr = nullptr;
   }
 
@@ -97,13 +104,15 @@ public:
   
   // TODO: Check this as it should be restricted who can access this function
 
-  void reset(T* newPtr = nullptr) {
+  void 
+  reset(T* newPtr = nullptr) {
     delete m_ptr;
     m_ptr = newPtr;
   }
 
   // Method to create a WeakPointer
-  SmallPtr<T> ptr() {
+  SmallPtr<T> 
+  ptr() {
     return SmallPtr<T>(*this);
   }
 
@@ -123,9 +132,11 @@ private:
 // reinterpret_pointer_cast function
 template <typename U, typename T>
 SmartPtr<U> reinterpret_smart_cast(SmartPtr<T>&& uptr) {
-  U* castedPtr = reinterpret_cast<U*>(uptr.get());
-  uptr.ptr = nullptr;  // Release the ownership from the original pointer
-  return SmartPtr<U>(castedPtr); // Return the new UniquePointer with casted type
+  // U* castedPtr = reinterpret_cast<U*>(uptr.get());
+  // uptr.ptr = nullptr;  // Release the ownership from the original pointer
+  // return SmartPtr<U>(castedPtr); // Return the new UniquePointer with casted type
+  // TODO: Check iof this is the correct thing to do
+  return *reinterpret_cast<SmartPtr<U>*>(&uptr);
 }
 
 
@@ -140,14 +151,16 @@ public:
   // Store a UniquePointer and return the raw pointer
   // Not really fond of this one but hey, the better way to store smart pointers the better
   template <typename T>
-  T* store(SmartPtr<T>&& uniquePtr) {
+  T* 
+  store(SmartPtr<T>&& uniquePtr) {
     SmartPtr<T>* newPtr = new SmartPtr<T>(std::move(uniquePtr));
     pointers.insert(newPtr);
     return newPtr->get();
   }
 
   // Garbage collection to clean up dangling pointers
-  void cleanup() {
+  void 
+  cleanup() {
     int32 size = 0;
     for (auto ptr : pointers) {
       if (ptr->m_counter <= 1) {
@@ -162,7 +175,8 @@ public:
   }
 
   template <typename T, typename... Args>
-  SmartPtr<T> create(Args ... args) {
+  SmartPtr<T> 
+  create(Args ... args) {
     SmartPtr<T>* newPtr = new SmartPtr<T>(std::forward<Args>(args)...);
     pointers.insert(newPtr);
     return *newPtr;
@@ -171,7 +185,8 @@ public:
     
   // Optional: Remove a specific pointer if needed
   template <typename T>
-  void remove(T* rawPtr) {
+  void 
+  remove(T* rawPtr) {
     for (auto it = pointers.begin(); it != pointers.end(); ++it) {
       if (*it == rawPtr) {
         delete* it;
