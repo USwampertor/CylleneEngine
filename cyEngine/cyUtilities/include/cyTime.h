@@ -51,7 +51,6 @@ namespace CYLLENE_SDK {
     toString(const String& format)
     {
       return Utils::timeFormat(*this, format);
-      // return "";
     }
   };
 

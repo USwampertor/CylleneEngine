@@ -19,13 +19,20 @@
 #include <cySmartPointers.h>
 #include <cyTime.h>
 
+// Defining values for unit testing
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest/doctest.h>
 
+// Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
 
-
+/*
+ *	@brief  Unit Testing main for Utilities
+ *	@param  int argc - amount of arguments
+ *	@param  char* argv[] - arguments
+ *  @return	int32 should return 0 if everything went a ok
+ */
 int32
 main(int argc, char* argv[])
 {
@@ -45,8 +52,7 @@ main(int argc, char* argv[])
 }
 
 TEST_CASE("[module] testing module startup") {
-  // Random::init();
-
+  MESSAGE("Starting up needed modules for engine");
   CrashHandler::startUp();
   CHECK(CrashHandler::isStarted());
   SmartPointers::startUp();
@@ -59,25 +65,45 @@ TEST_CASE("[module] testing module startup") {
 }
 
 TEST_CASE("[random] testing random module") {
+  MESSAGE("Check how much time does it take to create 1000000 numbers for each type");
   Random::init();
+
+
   float value = 0.0f;
+  
+  Time::instance().update();
   for (int i = 0; i < 1000000; ++i) {
     value = Random::get<float>();
   }
+  Time::instance().update();
+  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
+
+  Time::instance().update();
   for (int i = 0; i < 1000000; ++i) {
     value = Random::getNormalized();
     CHECK(value <= 1.0f);
   }
+  Time::instance().update();
+  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
+  
+  Time::instance().update();
   for (int i = 0; i < 1000000; ++i) {
     value = Random::getRanged<float>(876.0f, 1000.0f);
     CHECK((value <= 1000.0f && value >= 876.0f));
   }
+  Time::instance().update();
+  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
+  
+  Time::instance().update();
   for (int i = 0; i < 1000000; ++i) {
-    value = Random::getRanged<uint32>(0, 10);
+    value = static_cast<float>(Random::getRanged<uint32>(0, 10));
     CHECK((value <= 10));
   }
+  Time::instance().update();
+  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
 }
 
+// Old main
 /*
 int32
 main(int argc, const char* argv[]) {

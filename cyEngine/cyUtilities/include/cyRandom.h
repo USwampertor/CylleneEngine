@@ -88,7 +88,7 @@ public:
   static T
   getRanged(const T& min, const T& max) {
     CY_ASSERT(max > min);
-    const float range = max - min;
+    const float range = static_cast<float>(max - min);
     constexpr static float minimum = 0e-5f;
     float value = getNormalized() * (static_cast<float>(range) - minimum);
     return min + static_cast<T>(value);

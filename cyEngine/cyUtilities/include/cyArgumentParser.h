@@ -16,14 +16,15 @@
 #include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
-  /*
-   *	@class  ArgumentParser
-   *	@brief  An object that you can use to map parameters and actions and parse 
-   *          execution parameters.
-   */
+/*
+ *	@class  ArgumentParser
+ *	@brief  An object that you can use to map parameters and actions and parse 
+ *          execution parameters.
+ */
 class CY_UTILITY_EXPORT ArgumentParser
 {
  public:
+
   /**
    * Default constructor
    */
@@ -81,7 +82,7 @@ class CY_UTILITY_EXPORT ArgumentParser
    *	@return   the information binded to the keyword, if none, it will return
    *            a blank string
    */
-  const Vector<String>&
+  const Vector<String>
   getFlagValues(const String& flag);
 
   /*
@@ -106,7 +107,6 @@ class CY_UTILITY_EXPORT ArgumentParser
    */
   Map<String, Vector<String>> m_flagMap;
 
-
-  
 };
+
 }

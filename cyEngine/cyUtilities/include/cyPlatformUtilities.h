@@ -22,7 +22,7 @@ public:
 
   template<typename ... Args>
   static String format(const String& format, Args ... args) {
-    int32 size_s = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+    int32 size_s = std::snprintf(nullptr, 0, format.c_str(), std::forward<Args>(args)...) + 1; // Extra space for '\0'
     if (size_s <= 0) { throwRuntimeError("Error during formatting."); }
     auto size = static_cast<size_t>(size_s);
     auto buf = std::make_unique<char[]>(size);

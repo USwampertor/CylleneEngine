@@ -201,7 +201,6 @@
     <ClInclude Include="include\cyPlane.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
     <ClInclude Include="include\cyPlatformUtilities.h" />
-    <ClInclude Include="include\cyPoint.h" />
     <ClInclude Include="include\cyQuaternion.h" />
     <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyRegex.h" />
@@ -238,7 +237,6 @@
     <ClCompile Include="source\cyFileSystem.cpp" />
     <ClCompile Include="source\cyLine.cpp" />
     <ClCompile Include="source\cyPlane.cpp" />
-    <ClCompile Include="source\cyPoint.cpp" />
     <ClCompile Include="source\cyRegex.cpp" />
     <ClCompile Include="source\cySmartPointers.cpp" />
     <ClCompile Include="source\cyThread.cpp" />
