@@ -107,6 +107,9 @@ class CY_UTILITY_EXPORT Logger : public Module<Logger>
 {
 public:
 
+  virtual void
+  onStartUp() override;
+
   void
   init();
 

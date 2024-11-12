@@ -16,27 +16,71 @@
 #include <cyMatrix4x4.h>
 #include <cyRandom.h>
 #include <cyQuaternion.h>
+#include <cySmartPointers.h>
 #include <cyTime.h>
+
+#define DOCTEST_CONFIG_IMPLEMENT
+#include <doctest/doctest.h>
 
 using namespace CYLLENE_SDK;
 
+
+
+int32
+main(int argc, char* argv[])
+{
+  doctest::Context context;
+
+  context.applyCommandLine(argc, argv);
+
+  int32 res = context.run();
+
+  if (context.shouldExit()) {
+    return res;
+  }
+
+  context.clearFilters();
+
+  return res + EXIT_SUCCESS;
+}
+
+TEST_CASE("[module] testing module startup") {
+  // Random::init();
+
+  CrashHandler::startUp();
+  CHECK(CrashHandler::isStarted());
+  SmartPointers::startUp();
+  CHECK(CrashHandler::isStarted());
+  Logger::startUp();
+  CHECK(Logger::isStarted());
+  Time::startUp();
+  CHECK(Time::isStarted());
+
+}
+
+TEST_CASE("[random] testing random module") {
+  Random::init();
+  float value = 0.0f;
+  for (int i = 0; i < 1000000; ++i) {
+    value = Random::get<float>();
+  }
+  for (int i = 0; i < 1000000; ++i) {
+    value = Random::getNormalized();
+    CHECK(value <= 1.0f);
+  }
+  for (int i = 0; i < 1000000; ++i) {
+    value = Random::getRanged<float>(876.0f, 1000.0f);
+    CHECK((value <= 1000.0f && value >= 876.0f));
+  }
+  for (int i = 0; i < 1000000; ++i) {
+    value = Random::getRanged<uint32>(0, 10);
+    CHECK((value <= 10));
+  }
+}
+
+/*
 int32
 main(int argc, const char* argv[]) {
-  CrashHandler::startUp();
-  CrashHandler::instance().init();
-  Random::init();
-  Random::init();
-
-  Logger::startUp();
-  Logger::instance().init();
-
-  Time::startUp();
-  Time::instance().init();
-
-  Logger::instance().log("TEST", 
-    LOG_VERBOSITY::E::eDEFAULT, 
-    LOG_CHANNEL::E::eDEFAULT, 
-    LOG_OUTPUT::E::eSPLASH | LOG_OUTPUT::E::eSCREEN);
 
   try
   {
@@ -45,36 +89,20 @@ main(int argc, const char* argv[]) {
 #else
     printf("RELEASE\n");
 #endif
-    if (FileSystem::createFolder(FileSystem::getWorkingDirectory().fullPath() + "/Shaders")) {
-      FileSystem::createFile(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/MyShader.hlsl");
+    if (!initModules()) {
+      CY_EXCEPT(UnitTestException, "Modules did not initialize");
     }
-    File shader = FileSystem::open(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/MyShader.hlsl");
-    if (shader.exists()) {
-      if (shader.isFile()) {
-        Path p(shader.path());
-        std::cout << p.extension() << std::endl;
-      }
-    }
-
-    ArgumentParser parser;
-
-    parser.parse(argc, argv);
-
-    for (auto& flag : parser.m_flagMap)
-    {
-      for (auto& value : flag.second)
-      {
-        std::cout << value << std::endl;
-      }
-    }
-
-    std::cout << FileSystem::exists(FileSystem::getWorkingDirectory().fullPath() + "/Shaders/DoesntExist.hlsl") << std::endl;
-    CY_EXCEPT(UnitTestException, "This is part of the test");
+    Logger::instance().log("TEST", 
+                           LOG_VERBOSITY::E::eDEFAULT, 
+                           LOG_CHANNEL::E::eDEFAULT, 
+                           LOG_OUTPUT::E::eSPLASH | LOG_OUTPUT::E::eSCREEN);
   }
-  catch (const Exception& e)
+  catch (Exception e)
   {
     std::cout << e.what();
   }
-  std::cout << "End of test..." << std::endl;
+  std::cout << "End of CyUtilities unit test..." << std::endl;
   return 0;
 }
+*/
+

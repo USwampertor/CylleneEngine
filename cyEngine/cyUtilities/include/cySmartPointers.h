@@ -60,8 +60,9 @@ class SmartPtr : public ManagedPtr {
 public:
 
   explicit SmartPtr(T* p = nullptr) 
-    : m_ptr(p), 
-      m_counter(1) {}
+    : m_ptr(p) {
+      m_counter = 1;
+  }
   
   ~SmartPtr() { 
     m_counter = 0; 
@@ -76,8 +77,8 @@ public:
 
   // Move semantics
   SmartPtr(SmartPtr&& other) noexcept 
-    : m_ptr(other.m_ptr),
-      m_counter(other->m_counter) {
+    : m_ptr(other.m_ptr) {
+    m_counter = m_ptr.m_counter;
     other.m_ptr = nullptr;
   }
 

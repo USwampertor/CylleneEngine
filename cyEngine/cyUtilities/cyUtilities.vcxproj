@@ -203,6 +203,7 @@
     <ClInclude Include="include\cyQuaternion.h" />
     <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyRegex.h" />
+    <ClInclude Include="include\cyRNG.h" />
     <ClInclude Include="include\cySmartPointers.h" />
     <ClInclude Include="include\cyThread.h" />
     <ClInclude Include="include\cyTime.h" />

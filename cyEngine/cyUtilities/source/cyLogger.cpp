@@ -42,6 +42,11 @@ namespace CYLLENE_SDK {
     return toReturn;
   }
 
+  void 
+  Logger::onStartUp() {
+    Logger::instance().init();
+  }
+
   void
   Logger::init() {
     m_logStack.clear();

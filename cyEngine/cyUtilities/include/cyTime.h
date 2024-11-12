@@ -63,6 +63,9 @@ namespace CYLLENE_SDK {
 
     ~Time() = default;
 
+    virtual void
+    onStartUp() override;
+
     void 
     init();
 
