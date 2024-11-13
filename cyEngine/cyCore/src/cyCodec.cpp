@@ -2,6 +2,7 @@
 #include "cyDefaultPrimitives.h"
 #include "cyImage.h"
 #include "cyResource.h"
+#include "cyResourceManager.h"
 
 // Model decoding
 #include <assimp/Importer.hpp>      // C++ importer interface
@@ -25,34 +26,65 @@ namespace CYLLENE_SDK {
 
     for (IMGEXT::E v : IMGEXT::E::_values()) {
       String strExt = v._to_string();
-      if (p.extension() == strExt) {
+      if (Utils::toLowerCase(p.extension()) == Utils::toLowerCase(strExt)) {
         
         format = v._to_integral();
         break;
       }
     }
+    CY_ASSERT(format != -1 && "You should first check if this codec is able to decode a format");
+    void* data = FreeImage_Load(static_cast<FREE_IMAGE_FORMAT>(format), f.path().c_str());
 
-    FreeImage_Load(FREE_IMAGE_FORMAT::FIF_DDS, f.path().c_str());
-
-    SharedPointer<Resource> newResource;
-    return newResource;
+    // TODO: Extract file path starting from our project folder path so name includes this
+    SharedPointer<TextureResource> newResource = 
+      ResourceManager::instance().create<TextureResource>(p.baseName());
+    newResource->setData(data);
+    newResource->m_textureFormat = format;
+    return REINTERPRETPOINTER(Resource, newResource);
     // return nullptr;
   }
   
   SharedPointer<Resource>
   ModelCodec::decode(const File& f) {
-    
-    SharedPointer<Resource> newResource;
-    REINTERPRETPOINTER(MeshResource, newResource);
-    return newResource;
+
+    Path p(f.path());
+
+    SharedPointer<MeshResource> newResource = 
+      ResourceManager::instance().create<MeshResource>(p.baseName());
+
+    Assimp::Importer importer;
+
+    const aiScene* pScene = importer.ReadFile(f.path(), aiProcess_Triangulate |
+                                                        aiProcess_ConvertToLeftHanded);
+
+    if (pScene == nullptr) {
+      return REINTERPRETPOINTER(MeshResource, newResource);
+    }
+
+    return REINTERPRETPOINTER(Resource, newResource);
     // return nullptr;
   }
   
   SharedPointer<Resource>
   ShaderCodec::decode(const File& f) {
+
+    // Create a copy so there is no dangling pointers
+    Path p(f.path());
+    String tmp = f.readFile();
     
-    SharedPointer<Resource> newResource;
-    return newResource;
+    // This is a temporal hack which SHOULD work
+    void* data = reinterpret_cast<void*>(tmp.c_str()[0]);
+    
+    // auto tmpPointer = new ShaderResource(pathToResource, data);
+    // return SharedPointer<Resource>(tmpPointer);
+    // 
+    // delete(data);
+
+    SharedPointer<ShaderResource> newResource =
+      ResourceManager::instance().create<ShaderResource>(p.baseName());
+
+    newResource->m_isBlob = p.extension().compare(".blob") == 0;
+    return REINTERPRETPOINTER(Resource, newResource);
     // return nullptr;
   }
   

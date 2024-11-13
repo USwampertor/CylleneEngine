@@ -35,7 +35,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     if (m_resources.find(Hash<String>()(realName)) != m_resources.end()) {
       return REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
     }
-    SharedPointer<T> newResource = MakeSmartObject<T>();
+    SharedPointer<T> newResource = MakeSharedObject<T>();
     newResource->m_name = assetName;
     m_resources.insert(Utils::makePair(Hash<String>()(realName), newResource));
     return newResource;

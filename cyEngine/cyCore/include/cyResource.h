@@ -73,6 +73,11 @@ class CY_CORE_EXPORT Resource {
   void
   setIsDirty(const bool& newValue) { m_isDirty = newValue; }
 
+  void
+  setData(void* data) {
+    m_data = data;
+  }
+
   friend class ResourceManager;
 
  protected:
@@ -96,7 +101,9 @@ public:
   MeshResource() : Resource(MeshResource::staticType()) {}
   
   MeshResource(const Path& newFile, void* newData) 
-    : Resource(newFile, newData) {}
+    : Resource(newFile, newData) {
+    m_type = MeshResource::staticType();
+  }
 
   static RESOURCE_TYPE::E 
   staticType() { 
@@ -112,12 +119,15 @@ public:
   TextureResource() : Resource(TextureResource::staticType()) {}
 
   TextureResource(const Path& newFile, void* newData)
-    : Resource(newFile, newData) {}
+    : Resource(newFile, newData) {
+    m_type = TextureResource::staticType();
+  }
 
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eTEXTURE; 
   }
-
+public:
+  uint32 m_textureFormat;
 };
 
 class CY_CORE_EXPORT ShaderResource : public Resource {
@@ -127,7 +137,9 @@ public:
   ShaderResource() : Resource(ShaderResource::staticType()) {}
 
   ShaderResource(const Path& newFile, void* newData)
-    : Resource(newFile, newData), m_isBlob(false) {}
+    : Resource(newFile, newData), m_isBlob(false) {
+    m_type = ShaderResource::staticType();
+  }
 
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eSHADER;
@@ -143,7 +155,9 @@ public:
   AudioResource() : Resource(AudioResource::staticType()) {}
 
   AudioResource(const Path& newFile, void* newData)
-    : Resource(newFile, newData) {}
+    : Resource(newFile, newData) {
+    m_type = AudioResource::staticType();
+  }
 
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eAUDIO;
