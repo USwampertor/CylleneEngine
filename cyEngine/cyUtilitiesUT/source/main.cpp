@@ -20,8 +20,7 @@
 #include <cyTime.h>
 
 // Defining values for unit testing
-#define DOCTEST_CONFIG_IMPLEMENT
-#include <doctest/doctest.h>
+#include <cyUnitTesting.h>
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -61,6 +60,13 @@ TEST_CASE("[module] testing module startup") {
   CHECK(Logger::isStarted());
   Time::startUp();
   CHECK(Time::isStarted());
+}
+
+TEST_CASE("[benchmark] Testing benchmark system") {
+  uint64 x = 1;
+  BENCHMARK("test", [&]() {
+    DONOTOPTIMIZE(x += 1);
+  });
 }
 
 TEST_CASE("[random] testing random module") {
