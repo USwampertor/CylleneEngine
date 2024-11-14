@@ -21,6 +21,9 @@ namespace CYLLENE_SDK {
 
 class ResourceManager;
 
+
+// TODO: Maybe move each resource to its corresponding file
+
 /**
  * Resource
  * Description:

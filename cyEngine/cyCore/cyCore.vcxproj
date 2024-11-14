@@ -26,10 +26,12 @@
     <ClInclude Include="include\cyCorePrerequisites.h" />
     <ClInclude Include="include\cyDefaultPrimitives.h" />
     <ClInclude Include="include\cyEngineAssets.h" />
+    <ClInclude Include="include\cyGarbageCollector.h" />
     <ClInclude Include="include\cyImage.h" />
     <ClInclude Include="include\cyMesh.h" />
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
+    <ClInclude Include="include\cyTransform.h" />
     <ClInclude Include="include\cyVertex.h" />
     <ClInclude Include="include\cyWindow.h" />
   </ItemGroup>
@@ -37,6 +39,7 @@
     <ClCompile Include="src\cyAsset.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />
+    <ClCompile Include="src\cyGarbageCollector.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />
   </ItemGroup>

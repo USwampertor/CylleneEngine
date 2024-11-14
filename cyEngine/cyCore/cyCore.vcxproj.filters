@@ -54,6 +54,12 @@
     <ClInclude Include="include\cyEngineAssets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyGarbageCollector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -69,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyBaseUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyGarbageCollector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
