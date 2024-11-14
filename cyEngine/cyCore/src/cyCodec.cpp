@@ -85,15 +85,13 @@ namespace CYLLENE_SDK {
 
     newResource->m_isBlob = p.extension().compare(".blob") == 0;
     return REINTERPRETPOINTER(Resource, newResource);
-    // return nullptr;
   }
   
   SharedPointer<Resource>
   AudioCodec::decode(const File& f) {
     
-    SharedPointer<Resource> newResource;
-    return newResource;
-    // return nullptr;
+    SharedPointer<AudioResource> newResource;
+    return REINTERPRETPOINTER(Resource, newResource);
   }
 
 // SharedPointer<Resource>

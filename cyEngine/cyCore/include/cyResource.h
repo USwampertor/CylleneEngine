@@ -128,6 +128,9 @@ public:
   }
 public:
   uint32 m_textureFormat;
+  uint32 m_width;
+  uint32 m_height;
+  uint32 m_colorFormat;
 };
 
 class CY_CORE_EXPORT ShaderResource : public Resource {
