@@ -141,6 +141,9 @@
     <ClInclude Include="include\cyLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyUnitTesting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">
