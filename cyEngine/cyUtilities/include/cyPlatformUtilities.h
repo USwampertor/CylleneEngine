@@ -105,6 +105,37 @@ public:
   }
 
   /*
+   *	@brief  Converts a string to lowercase
+   *	@param  const String& str the string to turn into lowercase
+   *  @return	a copy of the string but in lowercase
+   */
+  static String
+  toLowerCase(const String& str) {
+    String copy = str;
+    std::transform(copy.begin(), 
+                   copy.end(), 
+                   copy.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return copy;
+  }
+  
+  /*
+   *	@brief  Converts a string to lowercase
+   *	@param  const String& str the string to turn into lowercase
+   *  @return	a copy of the string but in lowercase
+   */
+  static String
+  toUpperCase(const String& str) {
+    String copy = str;
+    std::transform(copy.begin(), 
+                   copy.end(), 
+                   copy.begin(),
+                   [](unsigned char c) { return std::toupper(c); });
+    return copy;
+  }
+
+
+  /*
    *	@brief  Creates a pair with given parameters. This is a wrapper for std::make_pair
    *	@param  T value1 value 1 from the pair
    *	@param  T value2 value 2 from the pair
