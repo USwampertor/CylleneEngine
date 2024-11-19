@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyApp.h" />
     <ClInclude Include="include\cyAsset.h" />
     <ClInclude Include="include\cyBaseUI.h" />
     <ClInclude Include="include\cyCodec.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="include\cyEngineAssets.h" />
     <ClInclude Include="include\cyGarbageCollector.h" />
     <ClInclude Include="include\cyImage.h" />
+    <ClInclude Include="include\cyMaterial.h" />
     <ClInclude Include="include\cyMesh.h" />
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
@@ -36,10 +38,12 @@
     <ClInclude Include="include\cyWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyApp.cpp" />
     <ClCompile Include="src\cyAsset.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />
     <ClCompile Include="src\cyGarbageCollector.cpp" />
+    <ClCompile Include="src\cyMaterial.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />
   </ItemGroup>

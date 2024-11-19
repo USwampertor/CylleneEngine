@@ -45,7 +45,12 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
   SharedPointer<T>
   load(const String& assetPath) {
-    
+    RESOURCE_TYPE::E type = T::staticType();
+
+    if (RESOURCE_TYPE::E::eMODEL == type) {
+
+    }
+
   }
 
   void 
@@ -57,6 +62,30 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   serialize() {
     JSONDocument d;
     return d;
+  }
+
+  template<typename T, 
+           typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
+  UniquePointer<T>&
+  getCodec() {
+    RESOURCE_TYPE::E type = T::staticType();
+
+    for (int i = 0; i < m_codecs.size(); ++i) {
+      if (m_codecs[i]->getType() == type) {
+        return REINTERPRETPOINTER(T, m_codecs[i]);
+      }
+    }
+  }
+
+  template<typename T, 
+           typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
+  UniquePointer<T>&
+  getCodec(const RESOURCE_TYPE::E& type) {
+    for (int i = 0; i < m_codecs.size(); ++i) {
+      if (m_codecs[i]->getType() == type) {
+        return REINTERPRETPOINTER(T, m_codecs[i]);
+      }
+    }
   }
 
 //   void

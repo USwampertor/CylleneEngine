@@ -13,6 +13,9 @@ namespace CYLLENE_SDK {
 void
 ResourceManager::onStartUp() {
   // Create Engine Icons and other default resources
+  m_codecs.push_back(MakeUniqueObject<ModelCodec>());
+  m_codecs.push_back(MakeUniqueObject<TextureCodec>());
+  m_codecs.push_back(MakeUniqueObject<ShaderCodec>());
 }
 
 

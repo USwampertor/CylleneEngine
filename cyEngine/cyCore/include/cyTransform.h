@@ -18,16 +18,17 @@
 #include <cyQuaternion.h>
 
 
-class Transform : public Component
+class TransformComponent : public Component
 {
-  Transform() {
-    reset();
-  }
+  TransformComponent() : Component(TransformComponent::staticType()) {}
 
-  Transform(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot)
+
+  TransformComponent(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot)
     : m_position(newPos),
       m_scale(newSc),
-      m_rotation(newRot) {}
+      m_rotation(newRot) {
+    m_type = TransformComponent::staticType();
+  }
 
   Vector3f&
   getPosition() {
@@ -78,16 +79,16 @@ class Transform : public Component
   }
 
   void
-  setTransform(const Transform& other) {
+  setTransform(const TransformComponent& other) {
     setTransform(other.)
   }
 
-  WeakPointer<Transform>&
+  WeakPointer<TransformComponent>&
   getParent() {
     return !m_parent.expired() ? m_parent : {};
   }
 
-  Vector<WeakPointer<Transform>>&
+  Vector<WeakPointer<TransformComponent>>&
   getChildren() {
     return m_children;
   }
@@ -120,6 +121,9 @@ class Transform : public Component
     m_rotation  = { 0,0,0,1 };
   }
 
+  virtual COMPONENT_TYPE::E staticType() override { return COMPONENT_TYPE::E::eTRANSFORM; }
+
+
 private:
 
   Vector3f m_position;
@@ -128,7 +132,7 @@ private:
 
   Quaternion m_rotation;
 
-  WeakPointer<Transform> m_parent;
+  WeakPointer<TransformComponent> m_parent;
 
-  Vector<WeakPointer<Transform>> m_children;
+  Vector<WeakPointer<TransformComponent>> m_children;
 };

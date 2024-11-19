@@ -1,5 +1,6 @@
 #pragma once
 #include "cyCorePrerequisites.h"
+#include <cyEvent.h>
 
 namespace CYLLENE_SDK {
 
@@ -23,6 +24,7 @@ namespace CYLLENE_SDK {
                 eLIGHT2DSPOT,
                 eLIGHT2DSPRITE,
                 eLIGHT2DGLOBAL,
+                eMATERIAL,
                 eMODEL,
                 eSHADER,
                 eSPRITE,
@@ -36,16 +38,28 @@ public:
 
   Component() = default;
 
+  Component(const COMPONENT_TYPE::E& type) : m_type(type) {}
+
   virtual ~Component() = default;
 
   virtual COMPONENT_TYPE::E staticType() = 0;
+
+  virtual void Update(const float& delta) = 0;
+
+public:
+
+  Event<void> m_onUpdate;
+
+private:
+
+  COMPONENT_TYPE::E m_type;
 };
 
 class ModelComponent : public Component
 {
 public:
 
-  ModelComponent() = default;
+  ModelComponent() : Component(ModelComponent::staticType()) {}
 
   ~ModelComponent() = default;
 
@@ -56,7 +70,7 @@ class ShaderComponent : public Component
 {
 public:
 
-  ShaderComponent() = default;
+  ShaderComponent() : Component(ShaderComponent::staticType()) {}
 
   ~ShaderComponent() = default;
 

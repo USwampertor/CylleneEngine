@@ -64,6 +64,12 @@ namespace CYLLENE_SDK {
     return REINTERPRETPOINTER(Resource, newResource);
     // return nullptr;
   }
+
+  void
+  ModelCodec::loadCylleneModel(const File& f) {
+    // Loads our file type
+  }
+
   
   SharedPointer<Resource>
   ShaderCodec::decode(const File& f) {

@@ -217,6 +217,10 @@ public:
 
   virtual SharedPointer<Resource>
   decode(const File& f) override;
+
+  void
+  loadCylleneModel(const File& f);
+
 };
 
 class CY_CORE_EXPORT ShaderCodec : public Codec
