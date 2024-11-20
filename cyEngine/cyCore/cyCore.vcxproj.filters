@@ -66,6 +66,12 @@
     <ClInclude Include="include\cyApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyBeing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyClassRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -90,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyBeing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyClassRegister.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

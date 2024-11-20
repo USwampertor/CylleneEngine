@@ -22,6 +22,8 @@
     <ClInclude Include="include\cyApp.h" />
     <ClInclude Include="include\cyAsset.h" />
     <ClInclude Include="include\cyBaseUI.h" />
+    <ClInclude Include="include\cyBeing.h" />
+    <ClInclude Include="include\cyClassRegister.h" />
     <ClInclude Include="include\cyCodec.h" />
     <ClInclude Include="include\cyComponent.h" />
     <ClInclude Include="include\cyCorePrerequisites.h" />
@@ -41,6 +43,8 @@
     <ClCompile Include="src\cyApp.cpp" />
     <ClCompile Include="src\cyAsset.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
+    <ClCompile Include="src\cyBeing.cpp" />
+    <ClCompile Include="src\cyClassRegister.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />
     <ClCompile Include="src\cyGarbageCollector.cpp" />
     <ClCompile Include="src\cyMaterial.cpp" />
