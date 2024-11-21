@@ -72,6 +72,12 @@
     <ClInclude Include="include\cyClassRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyGameMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -102,6 +108,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyClassRegister.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyGameMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

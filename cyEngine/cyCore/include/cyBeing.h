@@ -12,6 +12,8 @@
 
 #pragma once
 #include "cyCorePrerequisites.h"
+
+#include "cyClassRegister.h"
 #include "cyComponent.h"
 
 namespace CYLLENE_SDK
@@ -22,14 +24,16 @@ namespace CYLLENE_SDK
  *          are Being child classes
  *
  */
-class Being
+class CY_CORE_EXPORT Being
 {
+
+  BODY();
+
 public:
   /**
    * Default Constructor
    */
   Being() = default;
-
 
 private:
 
@@ -38,6 +42,8 @@ private:
   Map<COMPONENT_TYPE::E, SharedPointer<Component>> m_components;
 
 };
+
+REGISTER_CLASS(Being);
 
 }
 

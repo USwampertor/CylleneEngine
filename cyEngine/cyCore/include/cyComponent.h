@@ -32,7 +32,7 @@ namespace CYLLENE_SDK {
                 eTRANSFORM);
   }
   
-class Component
+class CY_CORE_EXPORT Component
 {
 public:
 
@@ -55,7 +55,7 @@ private:
   COMPONENT_TYPE::E m_type;
 };
 
-class ModelComponent : public Component
+class CY_CORE_EXPORT ModelComponent : public Component
 {
 public:
 
@@ -66,7 +66,7 @@ public:
   virtual COMPONENT_TYPE::E staticType() override { return COMPONENT_TYPE::E::eMODEL; }
 };
 
-class ShaderComponent : public Component
+class CY_CORE_EXPORT ShaderComponent : public Component
 {
 public:
 

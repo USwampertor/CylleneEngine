@@ -18,7 +18,7 @@
 #include <cyQuaternion.h>
 
 
-class TransformComponent : public Component
+class CY_CORE_EXPORT TransformComponent : public Component
 {
   TransformComponent() : Component(TransformComponent::staticType()) {}
 

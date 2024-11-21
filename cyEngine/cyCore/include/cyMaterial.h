@@ -24,7 +24,7 @@
 
 namespace CYLLENE_SDK {
 
-class MaterialComponent : public Component
+class CY_CORE_EXPORT MaterialComponent : public Component
 {
   MaterialComponent() : Component(MaterialComponent::staticType()) {}
 

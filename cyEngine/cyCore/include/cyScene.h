@@ -12,15 +12,40 @@
 
 #include "cyCorePrerequisites.h"
 
+#include "cyBeing.h"
+#include "cyGameMode.h"
+
+#include <cyJSON.h>
+#include <cyVector2f.h>
+
 namespace CYLLENE_SDK {
+
+struct SceneSettings
+{
+  Vector2f m_gravity;
+  UniquePointer<GameMode> m_gameMode;
+};
 
 /*
  *	@class	Scene
  *	@brief	
  *
  */
-class Scene
+class CY_CORE_EXPORT Scene
 {
+public:
+  Scene() = default;
+  ~Scene() = default;
+
+  Scene(const String& name);
+
+private:
+
+  String m_name;
+  UniquePointer<SceneSettings> m_settings;
+  Vector<SharedPointer<Being>> m_beings;
+
+  Vector<SharedPointer<Being>> m_toRemove;
 };
 
 }
