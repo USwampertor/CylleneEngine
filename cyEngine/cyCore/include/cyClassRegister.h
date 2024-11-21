@@ -13,6 +13,8 @@
 #include "cyCorePrerequisites.h"
 #include "cySmartPointers.h"
 
+#include <iostream>
+
 namespace CYLLENE_SDK
 {
 
@@ -47,14 +49,15 @@ public:
     }
 
 // Define as much variables that should exist in all Being classes
-#define BODY()                                          \
-public:                                                 \
-  static String getClassName() {                        \
-    String fullFunction = __PRETTY_FUNCTION__;          \
-    auto start = fullFunction.find(" ") + 1;            \
-    auto end = fullFunction.find("::getClassName");     \
-    return fullFunction.substr(start, end - start);     \
-  }
+#define BODY()                                                      \
+public:                                                             \
+    static std::string getClassName() {                             \
+        std::string fullFunction = __PRETTY_FUNCTION__;             \
+        auto start = fullFunction.find("CYLLENE_SDK::") + 1;                    \
+        auto end = fullFunction.find("::getClassName");             \
+        std::string toReturn = fullFunction.substr(start, end - start); \
+        return toReturn; \
+    }
 
 }
 
