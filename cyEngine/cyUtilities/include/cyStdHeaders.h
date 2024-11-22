@@ -24,6 +24,7 @@
 #include <sstream>
 #include <thread>
 #include <unordered_set>
+#include <unordered_map>
 #include <type_traits>
 
 
@@ -145,6 +146,13 @@ namespace CYLLENE_SDK {
            class KeyEqual = std::equal_to<Key>,
            class Allocator = std::allocator<Key>>
   using UnorderedSet = std::unordered_set<Key, Hash, KeyEqual, Allocator>;
+
+  template<typename Key, 
+           typename Value, 
+           typename Hash = std::hash<Key>, 
+           typename KeyEqual = std::equal_to<Key>,
+           typename Allocator = std::allocator<std::pair<const Key, Value>>>
+  using UnorderedMap = std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>;
 
   template<typename T>
   using WeakPointer = std::weak_ptr<T>;
