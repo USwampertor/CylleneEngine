@@ -12,6 +12,7 @@
 #include <cyBeing.h>
 #include <cyCoreUTPrerequisites.h>
 #include <cyCrashHandler.h>
+#include <cyGameMode.h>
 #include <cyLogger.h>
 #include <cyTime.h>
 #include <cyUnitTesting.h>
@@ -40,7 +41,6 @@ main(int32 argc, char* argv[]) {
 }
 
 TEST_CASE("[module] testing module startup") {
-  MESSAGE("Starting up needed modules for engine");
   CrashHandler::startUp();
   CHECK(CrashHandler::isStarted());
   SmartPointers::startUp();
@@ -51,7 +51,9 @@ TEST_CASE("[module] testing module startup") {
   CHECK(Time::isStarted());
 }
 
+#define CLASSNAME(x) #x
+
 TEST_CASE("[Being] Creation of beings") {
-  Being b;
-  MESSAGE(Being::getClassName());
+  CHECK(Being::getClassName() == CLASSNAME(Being));
+  CHECK(GameMode::getClassName() == CLASSNAME(GameMode));
 }

@@ -51,11 +51,11 @@ public:
 // Define as much variables that should exist in all Being classes
 #define BODY()                                                      \
 public:                                                             \
-    static std::string getClassName() {                             \
-        std::string fullFunction = __PRETTY_FUNCTION__;             \
-        auto start = fullFunction.find("CYLLENE_SDK::") + 1;                    \
+    static const String getClassName() {                             \
+        String fullFunction = __PRETTY_FUNCTION__;             \
+        auto start = fullFunction.find("CYLLENE_SDK::");                    \
         auto end = fullFunction.find("::getClassName");             \
-        std::string toReturn = fullFunction.substr(start, end - start); \
+        String toReturn = fullFunction.substr(start + 13, end - (start + 13)); \
         return toReturn; \
     }
 
