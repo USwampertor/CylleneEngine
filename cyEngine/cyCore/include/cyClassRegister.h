@@ -49,14 +49,16 @@ public:
     }
 
 // Define as much variables that should exist in all Being classes
-#define BODY()                                                      \
-public:                                                             \
-    static const String getClassName() {                             \
-        String fullFunction = __PRETTY_FUNCTION__;             \
-        auto start = fullFunction.find("CYLLENE_SDK::");                    \
-        auto end = fullFunction.find("::getClassName");             \
-        String toReturn = fullFunction.substr(start + 13, end - (start + 13)); \
-        return toReturn; \
+#define BODY()                                                                \
+public:                                                                       \
+    static const String getClassName() {                                      \
+        String fullFunction = __PRETTY_FUNCTION__;                            \
+        String prefix = "CYLLENE_SDK::";                                      \
+        auto start = fullFunction.find(prefix);                               \
+        auto end = fullFunction.find("::getClassName");                       \
+        String toReturn = fullFunction.substr(start + prefix.size(),          \
+                                              end - (start + prefix.size())); \
+        return toReturn;                                                      \
     }
 
 }
