@@ -19,11 +19,15 @@
 #include <cyVector2f.h>
 #include <cyWindow.h>
 
+#include <iostream>
+
 
 using namespace CYLLENE_SDK;
 
 int32
 main(int32 argc, char* argv[]) {
+
+  std::cout << "Starting Core Unit Test" << std::endl;
 
   doctest::Context context;
 
