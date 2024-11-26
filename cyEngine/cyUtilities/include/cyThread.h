@@ -35,7 +35,7 @@ public:
   template<typename F, typename ... Args>
   SharedPointer<Thread>
   create(F&& f, Args ... args) {
-    m_threads.push_back(MakeSharedObject<Thread>(f, std::forward<Args>(args)...));
+    m_threads.push_back(makeSharedPtr<Thread>(f, std::forward<Args>(args)...));
     return m_threads.back();
   }
 
