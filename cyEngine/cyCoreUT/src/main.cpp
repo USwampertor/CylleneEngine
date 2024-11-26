@@ -60,4 +60,7 @@ TEST_CASE("[module] testing module startup") {
 TEST_CASE("[Being] Creation of beings") {
   CHECK(Being::getClassName() == CLASSNAME(Being));
   CHECK(GameMode::getClassName() == CLASSNAME(GameMode));
+
+  SharedPointer<Being> b1 = ClassRegister::createBeing("Being");
+  SharedPointer<Being> b2 = ClassRegister::createBeing<Being>();
 }
