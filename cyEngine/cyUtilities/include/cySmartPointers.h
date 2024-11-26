@@ -207,34 +207,34 @@ private:
 // FUNCTIONS
 
 template <typename T, typename... Args>
-UniquePointer<T> MakeUniqueObject(Args ... args) {
+UniquePointer<T> makeUniquePtr(Args ... args) {
   return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-SharedPointer<T> MakeSharedObject(Args ... args) {
+SharedPointer<T> makeSharedPtr(Args ... args) {
   return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-SmartPtr<T> MakeSmartObject(Args ... args) {
+SmartPtr<T> makeSmartPtr(Args ... args) {
   CY_ASSERT(!SmartPointers::isStarted() && "Smart Pointer Manager was not started");
   return SmartPointers::instance().create<T>(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-T* MakeObject(Args&&... args) {
+T* makePtr(Args&&... args) {
   CY_ASSERT(!SmartPointers::isStarted() && "Smart Pointer Manager was not started");
   return SmartPointers::instance().create<T>(std::forward<Args>(args)...).get();
 }
 
-#define CY_MAKEUNIQUE(T, ...) std::make_unique<T>(__VA_ARGS__)
+#define CY_MAKEUNIQUE(T, ...) makeUniquePtr<T>(__VA_ARGS__)
 
-#define CY_MAKESHARED(T, ...) std::make_shared<T>(__VA_ARGS__)
+#define CY_MAKESHARED(T, ...) makeSharedPtr<T>(__VA_ARGS__)
 
-#define CY_MAKEOBJECT(T, ...) MakeObject<T>(_VA_ARGS__)
+#define CY_MAKEOBJECT(T, ...) makePtr<T>(_VA_ARGS__)
 
-#define CY_MAKESMART(T, ...) MakeSmartObject<T>(__VA_ARGS__)
+#define CY_MAKESMART(T, ...) makeSmartPtr<T>(__VA_ARGS__)
 
 #define REINTERPRETPOINTER(T, ...) std::reinterpret_pointer_cast<T>(__VA_ARGS__)
 
