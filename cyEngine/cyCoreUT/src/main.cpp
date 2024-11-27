@@ -18,6 +18,7 @@
 #include <cyUnitTesting.h>
 #include <cyVector2f.h>
 #include <cyWindow.h>
+#include <cyTransform.h>
 
 #include <iostream>
 
@@ -63,4 +64,6 @@ TEST_CASE("[Being] Creation of beings") {
 
   SharedPointer<Being> b1 = ClassRegister::createBeing("Being");
   SharedPointer<Being> b2 = ClassRegister::createBeing<Being>();
+  b1->setName("b1");
+  b1->createComponent<TransformComponent>();
 }

@@ -58,7 +58,8 @@ public:
 
 #define REGISTER_CLASS(beingClassName) \
     namespace { \
-        const bool registered_##beingClassName = (ClassRegister::registerBeing(#beingClassName, []() -> SharedPointer<Being> { return  MakeSharedObject<Being>(); }), true); \
+        const bool registered_##beingClassName = \
+          (ClassRegister::registerBeing(#beingClassName, []() -> SharedPointer<Being> { return  makeSharedPtr<Being>(); }), true); \
     }
 
 // Define as much variables that should exist in all Being classes

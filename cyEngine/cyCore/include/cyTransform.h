@@ -13,22 +13,26 @@
 #include "cyCorePrerequisites.h"
 #include "cyComponent.h"
 
-#include <cyVector2f.h>
+#include <cyVector3f.h>
 #include <cyEulerHelpers.h>
 #include <cyQuaternion.h>
+#include <cyUtilities.h>
 
+namespace CYLLENE_SDK {
 
 class CY_CORE_EXPORT TransformComponent : public Component
 {
-  TransformComponent() : Component(TransformComponent::staticType()) {}
+public:
+  // TransformComponent() : Component(TransformComponent::staticType()) {}
 
 
-  TransformComponent(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot)
-    : m_position(newPos),
-      m_scale(newSc),
-      m_rotation(newRot) {
-    m_type = TransformComponent::staticType();
-  }
+  TransformComponent(const Vector3f& position = Vector3f::ZERO,
+                     const Vector3f& scale = Vector3f::ONE,
+                     const Quaternion& rotation = Quaternion(0, 0, 0, 1))
+    : Component(TransformComponent::staticType()),
+      m_position(position),
+      m_scale(scale),
+      m_rotation(rotation) {}
 
   Vector3f&
   getPosition() {
@@ -80,12 +84,13 @@ class CY_CORE_EXPORT TransformComponent : public Component
 
   void
   setTransform(const TransformComponent& other) {
-    setTransform(other.)
+    setTransform(other.m_position, other.m_scale, other.m_rotation);
   }
 
   WeakPointer<TransformComponent>&
   getParent() {
-    return !m_parent.expired() ? m_parent : {};
+    // TODO: Check if parent is still valid
+    return m_parent;
   }
 
   Vector<WeakPointer<TransformComponent>>&
@@ -94,12 +99,12 @@ class CY_CORE_EXPORT TransformComponent : public Component
   }
 
   void
-  translate(const Vector3f delta) {
+  translate(const Vector3f& delta) {
     m_position += delta;
   }
 
   void 
-  scale(const Vector3f delta) {
+  scale(const Vector3f& delta) {
     m_scale += delta;
   }
 
@@ -109,7 +114,7 @@ class CY_CORE_EXPORT TransformComponent : public Component
   }
 
   void
-  rotate(const Vector3f deltaAngles) {
+  rotate(const Vector3f& deltaAngles) {
     Euler e(deltaAngles);
     m_rotation += Quaternion(e, 0);
   }
@@ -121,18 +126,27 @@ class CY_CORE_EXPORT TransformComponent : public Component
     m_rotation  = { 0,0,0,1 };
   }
 
-  virtual COMPONENT_TYPE::E staticType() override { return COMPONENT_TYPE::E::eTRANSFORM; }
+  static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eTRANSFORM; }
 
+  virtual const String 
+  toString() override {
+    String toReturn;
+
+    return toReturn;
+  }
 
 private:
 
   Vector3f m_position;
   
   Vector3f m_scale;
-
+  
   Quaternion m_rotation;
 
   WeakPointer<TransformComponent> m_parent;
-
+  
   Vector<WeakPointer<TransformComponent>> m_children;
 };
+
+}
+

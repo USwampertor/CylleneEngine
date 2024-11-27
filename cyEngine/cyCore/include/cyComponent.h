@@ -1,8 +1,11 @@
 #pragma once
 #include "cyCorePrerequisites.h"
+
 #include <cyEvent.h>
 
 namespace CYLLENE_SDK {
+
+  class Being;
 
   namespace COMPONENT_TYPE
   {
@@ -38,21 +41,36 @@ public:
 
   Component() = default;
 
-  Component(const COMPONENT_TYPE::E& type) : m_type(type) {}
+  Component(const COMPONENT_TYPE::E& type) : m_type(type) { }
 
   virtual ~Component() = default;
 
-  virtual COMPONENT_TYPE::E staticType() = 0;
+  void setOwner(Being* owner) {
+    m_owner = owner;
+  }
 
-  virtual void Update(const float& delta) = 0;
+  const COMPONENT_TYPE::E& getType() { return m_type; }
+
+  virtual COMPONENT_TYPE::E staticType() { 
+    CY_ASSERT(true && "IMPLEMENT THIS"); 
+    return COMPONENT_TYPE::E::eNONE;
+  }
+
+  virtual void 
+  update(const float& delta) {}
+
+  virtual const String
+  toString() = 0;
 
 public:
 
   Event<void> m_onUpdate;
 
-private:
+protected:
 
-  COMPONENT_TYPE::E m_type;
+  COMPONENT_TYPE::E m_type = COMPONENT_TYPE::E::eNONE;
+
+  Being* m_owner = nullptr;
 };
 
 class CY_CORE_EXPORT ModelComponent : public Component
@@ -63,7 +81,7 @@ public:
 
   ~ModelComponent() = default;
 
-  virtual COMPONENT_TYPE::E staticType() override { return COMPONENT_TYPE::E::eMODEL; }
+  virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eMODEL; }
 };
 
 class CY_CORE_EXPORT ShaderComponent : public Component
@@ -74,7 +92,7 @@ public:
 
   ~ShaderComponent() = default;
 
-  virtual COMPONENT_TYPE::E staticType() override { return COMPONENT_TYPE::E::eSHADER; }
+  virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eSHADER; }
 };
 
 }
