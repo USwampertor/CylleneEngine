@@ -435,4 +435,10 @@ namespace CYLLENE_SDK {
 
   const Vector3f Vector3f::FRONT  = Vector3f(0.0f, 0.0f, 1.0f);
 
+  const Vector3f Vector3f::LEFT   = Vector3f(-1.0f, 0.0f, 0.0f);
+
+  const Vector3f Vector3f::DOWN   = Vector3f(0.0f, -1.0f, 0.0f);
+
+  const Vector3f Vector3f::BACK   = Vector3f(0.0f, 0.0f, -1.0f);
+
 }

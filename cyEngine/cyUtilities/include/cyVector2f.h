@@ -467,34 +467,44 @@ namespace CYLLENE_SDK {
   public:
 
     /**
-     * vauVector2 with all values 0
+     * Vector2 with all values 0
      */
     static const Vector2f ZERO;
 
     /**
-     * vauVector2 with all values 1
+     * Vector2 with all values 1
      */
     static const Vector2f ONE;
 
     /**
-     * vauVector2 with x value 1
+     * Vector2 with x value 1
      */
     static const Vector2f ONEX;
 
     /**
-     * vauVector2 with y value 1
+     * Vector2 with y value 1
      */
     static const Vector2f ONEY;
 
     /**
-     * vauVector2 with y value 1. This is our right in our world
+     * Vector2 with y value 1. This is our right in our world
      */
     static const Vector2f UP;
 
     /**
-     * vauVector2 with x value 1. This is our up in our world
+     * Vector2 with x value 1. This is our up in our world
      */
     static const Vector2f RIGHT;
+
+    /**
+     * Vector2 with y value -1. This is our right in our world
+     */
+    static const Vector2f DOWN;
+
+    /**
+     * Vector2 with x value -1. This is our up in our world
+     */
+    static const Vector2f LEFT;
 
     /**
      * Member declaration

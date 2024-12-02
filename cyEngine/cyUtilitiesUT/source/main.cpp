@@ -15,9 +15,13 @@
 #include <cyMatrix3x3.h>
 #include <cyMatrix4x4.h>
 #include <cyRandom.h>
-#include <cyQuaternion.h>
 #include <cySmartPointers.h>
 #include <cyTime.h>
+#include <cyQuaternion.h>
+#include <cyVector2i.h>
+#include <cyVector2f.h>
+#include <cyVector3f.h>
+#include <cyVector4f.h>
 
 // Defining values for unit testing
 #include <cyUnitTesting.h>
@@ -51,7 +55,6 @@ main(int argc, char* argv[])
 }
 
 TEST_CASE("[module] testing module startup") {
-  MESSAGE("Starting up needed modules for engine");
   CrashHandler::startUp();
   CHECK(CrashHandler::isStarted());
   SmartPointers::startUp();
@@ -70,7 +73,6 @@ TEST_CASE("[benchmark] Testing benchmark system") {
 }
 
 TEST_CASE("[random] testing random module") {
-  MESSAGE("Check how much time does it take to create 1000000 numbers for each type");
   Random::init();
 
 
@@ -81,7 +83,6 @@ TEST_CASE("[random] testing random module") {
     value = Random::get<float>();
   }
   Time::instance().update();
-  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
 
   Time::instance().update();
   for (int i = 0; i < 1000000; ++i) {
@@ -89,7 +90,6 @@ TEST_CASE("[random] testing random module") {
     CHECK(value <= 1.0f);
   }
   Time::instance().update();
-  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
   
   Time::instance().update();
   for (int i = 0; i < 1000000; ++i) {
@@ -97,7 +97,6 @@ TEST_CASE("[random] testing random module") {
     CHECK((value <= 1000.0f && value >= 876.0f));
   }
   Time::instance().update();
-  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
   
   Time::instance().update();
   for (int i = 0; i < 1000000; ++i) {
@@ -105,12 +104,89 @@ TEST_CASE("[random] testing random module") {
     CHECK((value <= 10));
   }
   Time::instance().update();
-  MESSAGE(Utils::format("%2.10f", Time::instance().deltaTime()));
+}
+
+TEST_CASE("[math] Testing fast math functions") {
+  
+  float sin = 0.0f;
+
+  float fastSin = 0.0f;
+  
+  Benchmark b;
+
+  b.run("sin", [&]() {
+    sin = Math::sin(1.0f);
+    DONOTOPTIMIZE(sin);
+  });
+
+  b.run("fast sin", [&]() {
+    fastSin = Math::fastsin(1.0f);
+    DONOTOPTIMIZE(fastSin);
+  });
+
+  CHECK(sin == fastSin);
+
+  float cos = 0.0f;
+
+  float fastCos = 0.0f;
+
+  b.run("cos", [&]() {
+    cos = Math::cos(0.0f);
+    DONOTOPTIMIZE(cos);
+  });
+
+  b.run("fast cos", [&]() {
+    fastCos = Math::fastcos(0.0f);
+    DONOTOPTIMIZE(fastCos);
+  });
+
+  CHECK(cos == fastCos);
+
+  float tan = 0.0f;
+
+  float fastTan = 0.0f;
+
+  b.run("tan", [&]() {
+    cos = Math::tan(0.0f);
+    DONOTOPTIMIZE(tan);
+  });
+
+  b.run("fast tan", [&]() {
+    fastCos = Math::fasttan(0.0f);
+    DONOTOPTIMIZE(fastTan);
+  });
+
+  CHECK(tan == fastTan);
+
 }
 
 TEST_CASE("[pointers] Testing smart pointers") {
   
 }
+
+TEST_CASE("[vector2i] Testing vector2 functionality") {
+  Vector2i v(0, 0);
+  CHECK(v[0] == 0);
+}
+
+TEST_CASE("[vector2f] Testing vector2 functionality") {
+
+}
+
+TEST_CASE("[vector3f] Testing vector5 functionality") {
+
+}
+
+TEST_CASE("[vector4f] Testing vector4 functionality") {
+
+}
+
+TEST_CASE("[quaternion] Testing quaternion functionality") {
+
+}
+
+
+
 
 // Old main
 /*
