@@ -528,6 +528,21 @@ namespace CYLLENE_SDK {
      */
     static const Vector3f FRONT;
 
+    /**
+     * Vector3 that has x value -1
+     */
+    static const Vector3f LEFT;
+
+    /**
+     * Vector3 with y value -1
+     */
+    static const Vector3f DOWN;
+
+    /**
+     * Vector3 with z value -1
+     */
+    static const Vector3f BACK;
+
   public:
 
     /**

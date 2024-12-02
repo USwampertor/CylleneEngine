@@ -531,5 +531,7 @@ namespace CYLLENE_SDK {
     return Utils::format("(%2.2f, %2.2f, %2.2f, %2.2f)", x, y, z, w);
   }
 
+  const Quaternion
+  Quaternion::IDENTITY = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
 }

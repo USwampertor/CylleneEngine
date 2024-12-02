@@ -514,34 +514,49 @@ public:
   static const Vector4f ONEX;
 
   /**
-    * Vector4 that has y value at 1
-    */
+   * Vector4 that has y value at 1
+   */
   static const Vector4f ONEY;
 
   /**
-    * Vector4 that has z value at 1
-    */
+   * Vector4 that has z value at 1
+   */
   static const Vector4f ONEZ;
 
   /**
-    * Vector4 that has w value at 1
-    */
+   * Vector4 that has w value at 1
+   */
   static const Vector4f ONEW;
 
   /**
-    * Vector4 that has x value 1
-    */
+   * Vector4 that has x value 1
+   */
   static const Vector4f RIGHT;
 
   /**
-    * Vector4 with y value 1
-    */
+   * Vector4 with y value 1
+   */
   static const Vector4f UP;
 
   /**
-    * Vector4 with z value 1
-    */
+   * Vector4 with z value 1
+   */
   static const Vector4f FRONT;
+
+  /**
+   * Vector4 that has x value -1
+   */
+  static const Vector4f LEFT;
+  
+  /**
+   * Vector4 with y value -1
+   */
+  static const Vector4f DOWN;
+
+  /**
+   * Vector4 with z value -1
+   */
+  static const Vector4f BACK;
 
 public:
   float x;

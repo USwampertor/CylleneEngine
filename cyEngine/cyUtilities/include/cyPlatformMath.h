@@ -668,10 +668,10 @@ namespace CYLLENE_SDK {
     static T
     fastcos(T rad) {
       return (1 -
-        (pow(rad, 2) / 2) +
-        (pow(rad, 4) / 24) -
-        (pow(rad, 6) / 720) +
-        (pow(rad, 8) / 40320));
+              (std::pow(rad, 2) * 0.5000000000f ) +
+              (std::pow(rad, 4) * 0.0416666666f ) -
+              (std::pow(rad, 6) * 0.0013888888f ) +
+              (std::pow(rad, 8) * 0.0000248015f ));
     }
 
     /**
@@ -683,11 +683,19 @@ namespace CYLLENE_SDK {
     template<typename T>
     static T
     fastsin(T rad) {
-      return (rad -
-        (pow(rad, 3) / 6) +
-        (pow(rad, 5) / 120) -
-        (pow(rad, 7) / 5040) +
-        (pow(rad, 9) / 362880));
+      
+      return (rad - 
+              (std::pow(rad, 3)  * 0.1666666666f ) +
+              (std::pow(rad, 5)  * 0.0083333333f ) -
+              (std::pow(rad, 7)  * 0.0001984126f ) +
+              (std::pow(rad, 9)  * 0.0000027557f ) -
+              (std::pow(rad, 11) * 0.0000000250f ));
+      
+      // return (rad -
+      //   (static_cast<double>(pow(rad, 3.0f)) / static_cast<double>(6.0f))     +
+      //   (static_cast<double>(pow(rad, 5.0f)) / static_cast<double>(120.0f))   -
+      //   (static_cast<double>(pow(rad, 7.0f)) / static_cast<double>(5040.0f))  +
+      //   (static_cast<double>(pow(rad, 9.0f)) / static_cast<double>(362880.0f)));
     }
 
     /**
@@ -700,10 +708,17 @@ namespace CYLLENE_SDK {
     static T
     fasttan(T rad) {
       return (rad -
-        (pow(rad, 3) * 2 / 6) +
-        (pow(rad, 5) * 16 / 120) -
-        (pow(rad, 7) * 272 / 5040) +
-        (pow(rad, 9) * 7936 / 362880));
+              (std::pow(rad, 3) * 0.3333333333f ) +
+              (std::pow(rad, 5) * 0.1333333333f ) -
+              (std::pow(rad, 7) * 0.0539682539f ) +
+              (std::pow(rad, 9) * 0.0218694885f ));
+
+
+//       return (rad -
+//               (std::pow(rad, 3) * 2 / 6) +
+//               (std::pow(rad, 5) * 16 / 120) -
+//               (std::pow(rad, 7) * 272 / 5040) +
+//               (std::pow(rad, 9) * 7936 / 362880));
     }
 
     /**

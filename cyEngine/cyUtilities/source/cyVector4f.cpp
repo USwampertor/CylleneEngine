@@ -470,8 +470,14 @@ namespace CYLLENE_SDK {
   
   const Vector4f Vector4f::RIGHT  = Vector4f(1.0f, 0.0f, 0.0f, 1.0f);
   
-  const Vector4f Vector4f::UP     = Vector4f(0.0f, 1.0f, 0.1f, 1.0f);
+  const Vector4f Vector4f::UP     = Vector4f(0.0f, 1.0f, 0.0f, 1.0f);
   
-  const Vector4f Vector4f::FRONT  = Vector4f(0.0f, 0.0F, 1.0f, 1.0f);
+  const Vector4f Vector4f::FRONT  = Vector4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+  const Vector4f Vector4f::LEFT   = Vector4f(-1.0f, 0.0f, 0.0f, 1.0f);
+  
+  const Vector4f Vector4f::DOWN   = Vector4f(0.0f, -1.0f, 0.0f, 1.0f);
+  
+  const Vector4f Vector4f::BACK   = Vector4f(0.0f, 0.0f, -1.0f, 1.0f);
 
 }
