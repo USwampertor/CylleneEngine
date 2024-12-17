@@ -12,6 +12,7 @@
 #include <cyBeing.h>
 #include <cyCoreUTPrerequisites.h>
 #include <cyCrashHandler.h>
+#include <cyFileSystem.h>
 #include <cyGameMode.h>
 #include <cyLogger.h>
 #include <cyTime.h>
@@ -19,6 +20,8 @@
 #include <cyVector2f.h>
 #include <cyWindow.h>
 #include <cyTransform.h>
+#include <cyResourceManager.h>
+#include <cyTexture.h>
 
 #include <iostream>
 
@@ -54,11 +57,13 @@ TEST_CASE("[module] testing module startup") {
   CHECK(Logger::isStarted());
   Time::startUp();
   CHECK(Time::isStarted());
+  ResourceManager::startUp();
+  CHECK(ResourceManager::isStarted());
 }
 
 #define CLASSNAME(x) #x
 
-TEST_CASE("[Being] Creation of beings") {
+TEST_CASE("[being] Creation of beings") {
   CHECK(Being::getClassName() == CLASSNAME(Being));
   CHECK(GameMode::getClassName() == CLASSNAME(GameMode));
 
@@ -67,3 +72,18 @@ TEST_CASE("[Being] Creation of beings") {
   b1->setName("b1");
   b1->createComponent<TransformComponent>();
 }
+
+TEST_CASE("[resource] Creation of textures") {
+
+  Path workingPath = FileSystem::getWorkingDirectory();
+  File testImage = FileSystem::open(workingPath.fullPath() + "/../resources/gizmo.png");
+  if (testImage.isFile() && testImage.exists()) {
+    std::cout << testImage.path() << std::endl;
+    SharedPointer<TextureResource> r = ResourceManager::instance().loadFromPath<TextureResource>(testImage.path());
+    CHECK(r->m_metadata.m_width == 32);
+    CHECK(r->m_metadata.m_height == 32);
+    CHECK(r->m_metadata.m_textureFormat == (+IMGEXT::E::PNG)._to_integral());
+  }
+
+}
+

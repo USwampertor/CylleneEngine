@@ -3,7 +3,6 @@
 #include "cyCorePrerequisites.h"
 #include <cyFileSystem.h>
 
-
 namespace CYLLENE_SDK {
 
   namespace RESOURCE_TYPE {
@@ -19,10 +18,9 @@ namespace CYLLENE_SDK {
                 eANIMATION);
   }
 
+// Forward declaration
 class ResourceManager;
 
-
-// TODO: Maybe move each resource to its corresponding file
 
 /**
  * Resource
@@ -35,14 +33,12 @@ class CY_CORE_EXPORT Resource {
  public:
   Resource() = default;
 
-  Resource(const Path& newFile, void* newData)
+  Resource(const Path& newFile)
     : m_filePath(newFile),
-      m_data(newData),
       m_isDirty(false) {}
 
   Resource(const RESOURCE_TYPE::E& type)
     : m_type(type),
-      m_data(nullptr),
       m_isDirty(false) {}
 
   virtual ~Resource() {}
@@ -58,8 +54,8 @@ class CY_CORE_EXPORT Resource {
   // virtual void
   // initialize() = 0;
 
-  const void* 
-  getData() { return m_data; }
+  // const void* 
+  // getData() { return m_data; }
 
   const String& 
   getName() { return m_filePath.baseName(); }
@@ -76,16 +72,37 @@ class CY_CORE_EXPORT Resource {
   void
   setIsDirty(const bool& newValue) { m_isDirty = newValue; }
 
-  void
-  setData(void* data) {
-    m_data = data;
-  }
+  /**
+   * template<typename Args...> 
+   * void 
+   * setData(Args...) = 0;
+   * 
+   * // TextureResource
+   * void
+   * setData(Args...) override {
+   *  // Assert there is colors and metadata in that order
+   *  // m_colors = colors;
+   *  // m_metadata = metadata;
+   * }
+   * 
+   * 
+   * i.e. implementation
+   * // foo.cpp
+   * Ptr<TextureResource> r = MakePtr<TextureResource>;
+   * Ptr<TextureResource> r = ResourceManager::instance().create<TextureResource>();
+   * r.setData(MyDataBuffer, myDataMetadata);
+   * 
+   */
+
+  // virtual void
+  // fromMemory(void*) = 0;
+
+  virtual void
+  setData(void* data) = 0;
 
   friend class ResourceManager;
 
  protected:
-
-  void* m_data;
 
   Path m_filePath;
 
@@ -94,80 +111,6 @@ class CY_CORE_EXPORT Resource {
   bool m_isDirty;
 
   RESOURCE_TYPE::E m_type = RESOURCE_TYPE::E::eUNKNOWN;
-};
-
-
-class CY_CORE_EXPORT MeshResource : public Resource {
-  
-public:
-
-  MeshResource() : Resource(MeshResource::staticType()) {}
-  
-  MeshResource(const Path& newFile, void* newData) 
-    : Resource(newFile, newData) {
-    m_type = MeshResource::staticType();
-  }
-
-  static RESOURCE_TYPE::E 
-  staticType() { 
-    return RESOURCE_TYPE::E::eMODEL; 
-  }
-
-};
-
-class CY_CORE_EXPORT TextureResource : public Resource {
-
-public:
-
-  TextureResource() : Resource(TextureResource::staticType()) {}
-
-  TextureResource(const Path& newFile, void* newData)
-    : Resource(newFile, newData) {
-    m_type = TextureResource::staticType();
-  }
-
-  static RESOURCE_TYPE::E staticType() {
-    return RESOURCE_TYPE::E::eTEXTURE; 
-  }
-public:
-  uint32 m_textureFormat;
-  uint32 m_width;
-  uint32 m_height;
-  uint32 m_colorFormat;
-};
-
-class CY_CORE_EXPORT ShaderResource : public Resource {
-
-public:
-
-  ShaderResource() : Resource(ShaderResource::staticType()) {}
-
-  ShaderResource(const Path& newFile, void* newData)
-    : Resource(newFile, newData), m_isBlob(false) {
-    m_type = ShaderResource::staticType();
-  }
-
-  static RESOURCE_TYPE::E staticType() {
-    return RESOURCE_TYPE::E::eSHADER;
-  }
-  bool m_isBlob;
-};
-
-
-class CY_CORE_EXPORT AudioResource : public Resource {
-
-public:
-
-  AudioResource() : Resource(AudioResource::staticType()) {}
-
-  AudioResource(const Path& newFile, void* newData)
-    : Resource(newFile, newData) {
-    m_type = AudioResource::staticType();
-  }
-
-  static RESOURCE_TYPE::E staticType() {
-    return RESOURCE_TYPE::E::eAUDIO;
-  }
 };
 
 }

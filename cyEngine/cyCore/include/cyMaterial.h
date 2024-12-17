@@ -17,7 +17,7 @@
 #include "cyComponent.h"
 #include "cyMatrix3x3.h"
 #include "cyMatrix4x4.h"
-#include "cyResource.h"
+#include "cyShader.h"
 #include "cyVector2f.h"
 #include "cyVector3f.h"
 #include "cyVector4f.h"
@@ -150,6 +150,9 @@ private:
 
   void
   setShaderValues();
+
+  void
+  getShaderValues();
 
 private:
 

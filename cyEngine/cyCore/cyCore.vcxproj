@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="include\cyApp.h" />
     <ClInclude Include="include\cyAsset.h" />
+    <ClInclude Include="include\cyAudio.h" />
+    <ClInclude Include="include\cyAudioAPI.h" />
     <ClInclude Include="include\cyBaseUI.h" />
     <ClInclude Include="include\cyBeing.h" />
     <ClInclude Include="include\cyClassRegister.h" />
@@ -31,12 +33,17 @@
     <ClInclude Include="include\cyEngineAssets.h" />
     <ClInclude Include="include\cyGameMode.h" />
     <ClInclude Include="include\cyGarbageCollector.h" />
+    <ClInclude Include="include\cyGraphicsAPI.h" />
     <ClInclude Include="include\cyImage.h" />
     <ClInclude Include="include\cyMaterial.h" />
     <ClInclude Include="include\cyMesh.h" />
+    <ClInclude Include="include\cyPlugin.h" />
+    <ClInclude Include="include\cyPluginManager.h" />
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
     <ClInclude Include="include\cyScene.h" />
+    <ClInclude Include="include\cyShader.h" />
+    <ClInclude Include="include\cyTexture.h" />
     <ClInclude Include="include\cyTransform.h" />
     <ClInclude Include="include\cyVertex.h" />
     <ClInclude Include="include\cyWindow.h" />
@@ -44,15 +51,22 @@
   <ItemGroup>
     <ClCompile Include="src\cyApp.cpp" />
     <ClCompile Include="src\cyAsset.cpp" />
+    <ClCompile Include="src\cyAudio.cpp" />
+    <ClCompile Include="src\cyAudioAPI.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
     <ClCompile Include="src\cyBeing.cpp" />
     <ClCompile Include="src\cyClassRegister.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />
     <ClCompile Include="src\cyGameMode.cpp" />
     <ClCompile Include="src\cyGarbageCollector.cpp" />
+    <ClCompile Include="src\cyGraphicsAPI.cpp" />
     <ClCompile Include="src\cyMaterial.cpp" />
+    <ClCompile Include="src\cyPlugin.cpp" />
+    <ClCompile Include="src\cyPluginManager.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyScene.cpp" />
+    <ClCompile Include="src\cyShader.cpp" />
+    <ClCompile Include="src\cyTexture.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

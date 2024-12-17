@@ -55,14 +55,16 @@ public:
   bool
   canDecode(const String& path) {
     Path p(path);
-    return canDecode(p);
+    bool cd = canDecode(p);
+    return cd;
   }
 
   bool
   canDecode(const Path& path) {
+    String ext = path.extension().substr(1);
     return std::find(m_fileExtensions.begin(), 
                      m_fileExtensions.end(), 
-                     path.extension()) != m_fileExtensions.end();
+                     ext) != m_fileExtensions.end();
   }
 
   void
@@ -71,7 +73,7 @@ public:
                                               pathToFile.fullPath()));
   }
 
-  virtual SharedPointer<Resource>
+  virtual void*
   decode(const File& f) = 0;
 
   // virtual SharedPointer<Resource>
@@ -144,7 +146,7 @@ public:
 
   TextureCodec() : Codec(TextureCodec::staticType()) {
     for (auto extension : IMGEXT::E::_names()) {
-      m_fileExtensions.push_back(extension);
+      m_fileExtensions.push_back(Utils::toLowerCase(extension));
     }
     // Should be called once
     FreeImage_Initialise();
@@ -160,7 +162,7 @@ public:
     return RESOURCE_TYPE::E::eTEXTURE;
   }
 
-  virtual SharedPointer<Resource>
+  virtual void*
   decode(const File& f) override;
 };
 
@@ -215,7 +217,7 @@ public:
     return RESOURCE_TYPE::E::eMODEL;
   }
 
-  virtual SharedPointer<Resource>
+  virtual void*
   decode(const File& f) override;
 
   void
@@ -247,7 +249,7 @@ public:
     return RESOURCE_TYPE::E::eSHADER;
   }
 
-  virtual SharedPointer<Resource>
+  virtual void*
   decode(const File& f) override;
 
 };
@@ -273,7 +275,7 @@ public:
     return RESOURCE_TYPE::E::eAUDIO;
   }
 
-  virtual SharedPointer<Resource>
+  virtual void*
   decode(const File& f) override;
 };
 

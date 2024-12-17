@@ -2,13 +2,17 @@
 
 #include "cyCorePrerequisites.h"
 
+
 #include "cyResource.h"
+#include "cyCodec.h"
+#include "cyTexture.h"
 
 #include <cyEvent.h>
 #include <cyJSON.h>
 #include <cyModule.h>
 #include <cySmartPointers.h>
 #include <cyUtilities.h>
+#include <cyLogger.h>
 
 namespace CYLLENE_SDK {
 
@@ -28,15 +32,23 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
-  SharedPointer<T> 
-  create(const String& assetName) {
+  String 
+  generateResourceID(const String& assetName) {
     RESOURCE_TYPE::E type = T::staticType();
     String realName = Utils::format("%s_%s", type._to_string(), assetName.c_str());
+    return realName;
+  }
+
+  template<typename T, 
+           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+  SharedPointer<T> 
+  create(const String& assetPath) {
+    String realName = generateResourceID<T>(assetPath);
     if (m_resources.find(Hash<String>()(realName)) != m_resources.end()) {
       return REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
     }
     SharedPointer<T> newResource = makeSharedPtr<T>();
-    newResource->m_name = assetName;
+    newResource->m_name = assetPath;
     m_resources.insert(Utils::makePair(Hash<String>()(realName), newResource));
     return newResource;
   }
@@ -44,14 +56,43 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
   SharedPointer<T>
-  load(const String& assetPath) {
-    RESOURCE_TYPE::E type = T::staticType();
+  loadFromPath(const String& assetPath) {
 
-    if (RESOURCE_TYPE::E::eMODEL == type) {
+    File f = FileSystem::open(assetPath);
 
+    if (!f.exists()) {
+      // Throw error as this file does not even exist
+      // Better create a new resource in that case
+      return nullptr;
     }
 
+    RESOURCE_TYPE::E type = T::staticType();
+
+    SharedPointer<Codec> codec;
+    codec = getCodec<Codec>(type);
+    
+    if (!codec->canDecode(assetPath)) {
+      // Throw error as this type of file is not compatible with the resource
+      // being instanced
+      Logger::instance().logError(Utils::format("Cannot decode %s as resource %s", 
+                                                assetPath.c_str(), 
+                                                type._to_string()));
+      return nullptr;
+    }
+    SharedPointer<TextureResource> newResource = create<TextureResource>(assetPath);
+    newResource->setData(codec->decode(f));
+    return REINTERPRETPOINTER(T, newResource);
   }
+
+  template<typename T,
+           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>,
+           typename... Args>
+  SharedPointer<T>
+  loadFromMemory(Args...) {
+
+  }
+
+  
 
   void 
   deserialize(const JSONValue& resources) {
@@ -64,29 +105,29 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     return d;
   }
 
+  // template<typename T, 
+  //          typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
+  // SharedPointer<T>&
+  // getCodec() {
+  //   RESOURCE_TYPE::E type = T::staticType();
+  // 
+  //   if (m_codecs.find(type._to_string()) != m_codecs.end()) {
+  //     return REINTERPRETPOINTER(T, m_codecs[type._to_string()]);
+  //   }
+  // 
+  // }
+
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
-  UniquePointer<T>&
-  getCodec() {
-    RESOURCE_TYPE::E type = T::staticType();
-
-    for (int i = 0; i < m_codecs.size(); ++i) {
-      if (m_codecs[i]->getType() == type) {
-        return REINTERPRETPOINTER(T, m_codecs[i]);
-      }
-    }
-  }
-
-  template<typename T, 
-           typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
-  UniquePointer<T>&
+  SharedPointer<T>
   getCodec(const RESOURCE_TYPE::E& type) {
-    for (int i = 0; i < m_codecs.size(); ++i) {
-      if (m_codecs[i]->getType() == type) {
-        return REINTERPRETPOINTER(T, m_codecs[i]);
-      }
+
+    if (m_codecs.find(type._to_string()) != m_codecs.end()) {
+      return REINTERPRETPOINTER(T, m_codecs[type._to_string()]);
     }
+
   }
+
 
 //   void
 //   init(/*Device* pDevice*/);
@@ -124,7 +165,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   Map<SizeT, SharedPointer<Resource>> m_resources;
 
-  Vector<UniquePointer<Codec>> m_codecs;
+  Map<String, SharedPointer<Codec>> m_codecs;
 
   Event<void> m_resourceLoaded;
 
