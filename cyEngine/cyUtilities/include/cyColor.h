@@ -30,6 +30,8 @@ struct CY_UTILITY_EXPORT HSV
   /**
     * @brief Default constructor
     */
+  HSV() = default;
+
   HSV(const Vector3f& other);
 
   /**
@@ -148,7 +150,7 @@ class CY_UTILITY_EXPORT Color
     *
     */
   Color
-  operator*(const Color& other);
+  operator*(const Color& other) const;
 
   /**
     * @brief Operator + overload to sum two colors
@@ -157,7 +159,7 @@ class CY_UTILITY_EXPORT Color
     *
     */
   Color
-  operator+(const Color& other);
+  operator+(const Color& other) const;
 
   /**
     * @brief Operator - overload to get the difference of two colors
@@ -166,7 +168,7 @@ class CY_UTILITY_EXPORT Color
     *
     */
   Color
-  operator-(const Color& other);
+  operator-(const Color& other) const;
 
   /**
     * @brief Operator / overload to get the division between two colors
@@ -175,7 +177,15 @@ class CY_UTILITY_EXPORT Color
     *
     */
   Color
-  operator/(const float& other);
+  operator/(const float& other) const;
+
+  /*
+   *	@brief  Operator == overload to check if two colors are the same
+   *	@param	Color& other color to check
+   *  @return	true if both colors rgba are each one less than epsilon
+   */
+  bool
+  operator==(const Color& other) const;
 
   /**
     * @brief
@@ -183,8 +193,8 @@ class CY_UTILITY_EXPORT Color
     * @return
     *
     */
-  static void
-  HSVToRGBA(const Color& hsv);
+  static Color
+  fromHSV(const HSV& hsv);
 
   /**
     * @brief
@@ -192,8 +202,8 @@ class CY_UTILITY_EXPORT Color
     * @return
     *
     */
-  static void
-  RGBAToHSV(const Color& hsv);
+  static HSV
+  toHSV(const Color& color);
 
   /**
     * @brief Blends two colors
@@ -203,7 +213,7 @@ class CY_UTILITY_EXPORT Color
     *
     */
   static Color
-  blend(Color& A, Color& B);
+  blend(const Color& A, const Color& B);
 
   /*
     *	@brief	  Creates a lerp between two colors
@@ -211,7 +221,7 @@ class CY_UTILITY_EXPORT Color
     *	@return
     */
   static Color
-  lerp(Color& A, Color& B);
+  lerp(const Color& A, const Color& B, const float& t);
 
   /**
     * @brief Sets a color based in (R, G, B, A)
@@ -223,7 +233,10 @@ class CY_UTILITY_EXPORT Color
     *
     */
   void
-  setColorLinear(float nr, float ng, float nb, float na = 1.0f);
+  setFloat(const float& nr, 
+           const float& ng, 
+           const float& nb, 
+           const float& na = 1.0f);
 
   /**
     * @brief Sets a color based in (R, G, B, A) from 0 to 255
@@ -235,31 +248,28 @@ class CY_UTILITY_EXPORT Color
     *
     */
   void
-  setColor(uint32 nr, uint32 ng, uint32 nb, uint32 na = 255);
+  setUint(const uint32& nr, 
+          const uint32& ng, 
+          const uint32& nb, 
+          const uint32& na = 255);
 
   /**
-    * @brief Sets a color based in (R, G, B, A)
-    * @param uint32 R
-    * @param uint32 G
-    * @param uint32 B
-    * @param uint32 A
+    * @brief Sets a color based in (R, G, B)
+    * @param Vector3f the RGB
     * @return
     *
     */
   void
-  setColorVector(Vector3f);
+  setFromVector3(const Vector3f& v3);
 
   /**
     * @brief Sets a color based in (R, G, B, A)
-    * @param uint32 R
-    * @param uint32 G
-    * @param uint32 B
-    * @param uint32 A
+    * @param Vector4f the RGBA
     * @return
     *
     */
   void
-  setColorVector(Vector4f);
+  setFromVector4(const Vector4f& v4);
 
   /**
     * @brief Returns the color as a vector3 in RGB format
@@ -280,15 +290,6 @@ class CY_UTILITY_EXPORT Color
   toVector4();
 
   /**
-    * @brief Returns the color as a Vector in RGBA format
-    * @param
-    * @return a Vector(R, G, B, A) in float (0.0f - 1.0f)
-    *
-    */
-  Vector4f
-  toVectorLinear();
-
-  /**
     * @brief Returns a string with the information of the color
     * @param
     * @return a String with (R: XXX, G: XXX, B: XXX, A: XXX)
@@ -296,6 +297,15 @@ class CY_UTILITY_EXPORT Color
     */
   String
   toString();
+
+  uint32
+  toHexValue();
+
+  void
+  fromHex(const uint32& hexValue);
+
+  String
+  toHexString();
 
   static const Color AZURE;
   static const Color BLACK;
@@ -311,6 +321,11 @@ class CY_UTILITY_EXPORT Color
   static const Color VIOLET;
   static const Color WHITE;
   static const Color YELLOW;
+  static const Color MISSING;
+
+  static constexpr float Int2Linear = 1.0f / 255.0f;
+  static constexpr float Linear2Int = 255.0f;
+
 
  public:
 

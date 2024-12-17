@@ -6,6 +6,7 @@
 
 #include <cyArgumentParser.h>
 #include <cyCrashHandler.h>
+#include <cyColor.h>
 #include <cyEvent.h>
 #include <cyException.h>
 #include <cyFileSystem.h>
@@ -185,6 +186,18 @@ TEST_CASE("[quaternion] Testing quaternion functionality") {
 
 }
 
+TEST_CASE("[color] Testing color to hex") {
+  Color c1;
+  c1.setUint(33, 127, 63, 127);
+  uint32 hex1 = c1.toHexValue();
+  CHECK(hex1 == 0x217f3f7f);
+  Color comp1;
+  comp1.fromHex(hex1);
+  CHECK(c1 == comp1);
+  Color c2;
+  c2.setFloat(0, 0, 0, 1);
+  CHECK(c2.toHexValue() == 0x000000ff);
+}
 
 
 
