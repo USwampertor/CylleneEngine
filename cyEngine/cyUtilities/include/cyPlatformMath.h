@@ -31,7 +31,7 @@ namespace CYLLENE_SDK {
     template<typename T>
     static T
     degToRad(T degree) {
-      return (degree * RADIAN);
+      return (degree * RAD2DEG);
     }
 
     /**
@@ -43,7 +43,7 @@ namespace CYLLENE_SDK {
     template<typename T>
     static T
     radToDeg(T rad) {
-      return (rad * DEGREE);
+      return (rad * DEG2RAD);
     }
 
     /**
@@ -865,12 +865,12 @@ namespace CYLLENE_SDK {
     /**
      * Equivalent degrees of 1 rad
      */
-    static const float DEGREE;
+    static const float DEG2RAD;
 
     /**
      * Equivalent radians of 1 Degree
      */
-    static const float RADIAN;
+    static const float RAD2DEG;
 
     /**
      * A little number. Used for floating precision
