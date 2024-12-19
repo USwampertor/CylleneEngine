@@ -10,33 +10,46 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
+
+#include <cyColor.h>
 #include <cyVector2f.h>
 #include <cyVector3f.h>
 #include <cyVector4f.h>
 
 
 namespace CYLLENE_SDK {
-struct CY_CORE_EXPORT Vertex {
 
+/*
+ *	@class  Vertex
+ *	@brief	A vertex is a point in space, that can contain information for 
+ *          meshes such as uv, position, normal, tangent, binormal, color,
+ *          bones, and weights.
+ *
+ */
+struct CY_CORE_EXPORT Vertex {
+public:
+  /**
+   * Default constructor
+   */
   Vertex() {
     m_uv        = Vector2f::ZERO;
     m_position  = Vector3f::ZERO;
     m_normal    = Vector3f::ZERO;
     m_tangent   = Vector3f::ZERO;
     m_binormal  = Vector3f::ZERO;
-    m_color     = Vector3f::ZERO;
+    m_color     = Color::CLEAR;
     m_boneIDs[0] = m_boneIDs[1] = m_boneIDs[2] = m_boneIDs[3] = 0;
     m_boneWeights[0] = m_boneWeights[1] = m_boneWeights[2] = m_boneWeights[3] = 0.0f;
   }
 
-  Vertex(Vector3f position, 
-         Vector3f color, 
-         Vector3f normal, 
-         Vector3f tangent, 
-         Vector3f binormal, 
-         Vector2f uv,
-         int32 boneIDs[4],
-         float boneweights[4])
+  Vertex(const Vector3f& position, 
+         const Vector3f& normal, 
+         const Vector3f& tangent, 
+         const Vector3f& binormal, 
+         const Vector2f& uv,
+         const Color& color, 
+         const int32& boneIDs[4],
+         const float& boneweights[4])
     : m_position(position),
       m_color(color),
       m_normal(normal),
@@ -51,16 +64,44 @@ struct CY_CORE_EXPORT Vertex {
 
 public:
 
+  /**
+   * The position in 3d space
+   */
   Vector3f m_position;
-  Vector3f m_normal;
-  Vector3f m_tangent;
-  Vector3f m_binormal;
-  Vector3f m_color;
 
+  /**
+   * The normal vector towards where its pointing
+   */
+  Vector3f m_normal;
+
+  /**
+   * The tangent of the vertex
+   */
+  Vector3f m_tangent;
+
+  /**
+   * The binormal of the vertex
+   */
+  Vector3f m_binormal;
+
+  /**
+   * The color associated with this vertex
+   */
+  Color    m_color;
+
+  /**
+   * The UV associated with this vertex
+   */
   Vector2f m_uv;
 
+  /**
+   * An array of up to 4 bones that can be associated with this vertex
+   */
   int32 m_boneIDs[4];
 
+  /**
+   * How much the bones associated with this vertex can modify it
+   */
   float m_boneWeights[4];
 
 };

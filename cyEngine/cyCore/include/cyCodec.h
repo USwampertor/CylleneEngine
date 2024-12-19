@@ -38,8 +38,10 @@ class CY_CORE_EXPORT Codec
 {
 public:
 
+  /**
+   * Codec defining the type it is based on the resource it can load
+   */
   Codec(const RESOURCE_TYPE::E& type) : m_type(type) {}
-  // Codec() = default;
 
   virtual ~Codec() = default;
 

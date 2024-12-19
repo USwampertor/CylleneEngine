@@ -10,11 +10,6 @@ public:
 
   AudioResource() : Resource(AudioResource::staticType()) {}
 
-  AudioResource(const Path& newFile)
-    : Resource(newFile) {
-    m_type = AudioResource::staticType();
-  }
-
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eAUDIO;
   }

@@ -72,6 +72,9 @@ namespace CYLLENE_SDK {
       }
     }
 
+
+
+
     // Check for metadata
     
     // TODO: Extract file path starting from our project folder path so name includes this
@@ -87,11 +90,11 @@ namespace CYLLENE_SDK {
      * 
      */
 
-    std::tuple<TextureMetaData, const Color*> tupleData = std::make_tuple(metadata, colorData.data());
+    std::tuple<TextureMetaData, Vector<Color>>* tupleData = new std::tuple<TextureMetaData, Vector<Color>>(metadata, colorData);
     // newResource->setData(&tupleData);
     // newResource->m_metadata = metadata;
     // return REINTERPRETPOINTER(Resource, newResource);
-    return reinterpret_cast<void*>(&tupleData);
+    return reinterpret_cast<void*>(tupleData);
   }
   
   void*

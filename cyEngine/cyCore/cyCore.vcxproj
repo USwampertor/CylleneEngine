@@ -61,6 +61,7 @@
     <ClCompile Include="src\cyGarbageCollector.cpp" />
     <ClCompile Include="src\cyGraphicsAPI.cpp" />
     <ClCompile Include="src\cyMaterial.cpp" />
+    <ClCompile Include="src\cyMesh.cpp" />
     <ClCompile Include="src\cyPlugin.cpp" />
     <ClCompile Include="src\cyPluginManager.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />

@@ -12,20 +12,26 @@ public:
 
   ShaderResource() : Resource(ShaderResource::staticType()) {}
 
-  ShaderResource(const Path& newFile)
-    : Resource(newFile), m_isBlob(false) {
-    m_type = ShaderResource::staticType();
-  }
-
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eSHADER;
   }
 
+  virtual void*
+  getData() override;
+
   virtual void
-  setData(void*) override {
+  setData(void* data) override;
 
-  }
+public:
 
+  /**
+   * The text that makes up the shader
+   */
+  String m_data;
+
+  /**
+   * if its a blob of data
+   */
   bool m_isBlob;
 };
 }

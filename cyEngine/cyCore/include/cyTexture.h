@@ -6,12 +6,37 @@
 
 namespace CYLLENE_SDK {
 
+/*
+ *	@class	TextureMetaData
+ *	@brief	The information of the image like bits per pixel, format, size and color
+ *
+ */
 struct CY_CORE_EXPORT TextureMetaData {
 public:
+
+  /**
+   * Texture format
+   */
   uint32 m_textureFormat;
+
+  /**
+   * Width of the texture
+   */
   uint32 m_width;
+
+  /**
+   * Height of the texture
+   */
   uint32 m_height;
+
+  /**
+   * format of the color
+   */
   uint32 m_colorFormat;
+
+  /**
+   * bits per pixel
+   */
   uint32 m_bpp;
 };
 
@@ -21,34 +46,39 @@ public:
 
   TextureResource() : Resource(TextureResource::staticType()) {}
 
-  TextureResource(const Path& newFile)
-    : Resource(newFile) {
-    m_type = TextureResource::staticType();
-  }
-
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eTEXTURE; 
   }
 
-  virtual void
-  fromMemory(void* pixels, uint32 width, uint32 height);
+  virtual void*
+  getData() override;
 
   virtual void
-  setData(void* data) override {
-    auto tupleData = static_cast<std::tuple<TextureMetaData, const Color*>*>(data);
-    m_metadata = std::get<0>(*tupleData);
+  setData(void* data) override;
 
-    for (uint32 i = 0; i < m_metadata.m_width * m_metadata.m_height; ++i) {
-      m_pixels.push_back(std::get<1>(*tupleData)[i]);
-    }
-
-  }
+  /*
+   *	@brief	loads an image from a vector<Color> array of data and image size
+   *	@param	const Vector<Color>& the pixels of the image
+   *	@param	const uint32& width
+   *	@param	const uint32& height
+   */
+  void
+  fromMemory(const Vector<Color>& pixels, 
+             const uint32& width, 
+             const uint32& height);
 
 public:
+
+  /**
+   * The metadata of the image
+   */
   TextureMetaData m_metadata;
+
+  /**
+   * pixels that make up the image
+   */
   Vector<Color> m_pixels;
 };
-
 
 }
 
