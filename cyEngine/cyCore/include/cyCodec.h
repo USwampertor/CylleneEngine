@@ -22,15 +22,19 @@
 // #undef max
 // #endif
  
-
-// Image/Texture decoding
-#include <FreeImage/FreeImage.h>
-
 // #define IMGDEFAULTW 512
 // #define IMGDEFAULTH 512
 // #define IMGDEFAULTC 8*4
+// 
+// class aiNode;
+// class aiScene;
+// class aiMesh;
+// 
 
 namespace CYLLENE_SDK {
+
+class ModelResource;
+class MeshResource;
 
 // class Resource;
 
@@ -146,18 +150,9 @@ class CY_CORE_EXPORT TextureCodec : public Codec
 public:
 
 
-  TextureCodec() : Codec(TextureCodec::staticType()) {
-    for (auto extension : IMGEXT::E::_names()) {
-      m_fileExtensions.push_back(Utils::toLowerCase(extension));
-    }
-    // Should be called once
-    FreeImage_Initialise();
-  }
+  TextureCodec();
 
-  virtual ~TextureCodec() {
-    // Should be called when shutting down everything
-    FreeImage_DeInitialise();
-  }
+  virtual ~TextureCodec() override;
 
   static RESOURCE_TYPE::E 
   staticType() { 
@@ -222,9 +217,6 @@ public:
   virtual void*
   decode(const File& f) override;
 
-  void
-  loadCylleneModel(const File& f);
-
 };
 
 class CY_CORE_EXPORT ShaderCodec : public Codec
@@ -243,7 +235,7 @@ public:
   }
 
   virtual ~ShaderCodec() {
-    FreeImage_DeInitialise();
+
   }
 
   static RESOURCE_TYPE::E 

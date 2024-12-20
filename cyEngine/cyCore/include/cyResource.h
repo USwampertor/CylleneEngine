@@ -8,14 +8,16 @@ namespace CYLLENE_SDK {
   namespace RESOURCE_TYPE {
     BETTER_ENUM(E, uint32, 
                 eUNKNOWN,
-                eMODEL, 
-                eAUDIO, 
-                eTEXTURE,
-                eSHADER,
+                eANIMATION,
                 eATLAS,
+                eAUDIO, 
                 eFONT,
+                eMATERIAL,
+                eMESH,
+                eMODEL,
                 eSCENE,
-                eANIMATION);
+                eSHADER,
+                eTEXTURE);
   }
 
 // Forward declaration

@@ -27,7 +27,6 @@ namespace CYLLENE_SDK {
                 eLIGHT2DSPOT,
                 eLIGHT2DSPRITE,
                 eLIGHT2DGLOBAL,
-                eMATERIAL,
                 eMODEL,
                 eSHADER,
                 eSPRITE,
@@ -72,27 +71,27 @@ protected:
 
   Being* m_owner = nullptr;
 };
-
-class CY_CORE_EXPORT ModelComponent : public Component
-{
-public:
-
-  ModelComponent() : Component(ModelComponent::staticType()) {}
-
-  ~ModelComponent() = default;
-
-  virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eMODEL; }
-};
-
-class CY_CORE_EXPORT ShaderComponent : public Component
-{
-public:
-
-  ShaderComponent() : Component(ShaderComponent::staticType()) {}
-
-  ~ShaderComponent() = default;
-
-  virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eSHADER; }
-};
+// 
+// class CY_CORE_EXPORT ModelComponent : public Component
+// {
+// public:
+// 
+//   ModelComponent() : Component(ModelComponent::staticType()) {}
+// 
+//   ~ModelComponent() = default;
+// 
+//   virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eMODEL; }
+// };
+// 
+// class CY_CORE_EXPORT ShaderComponent : public Component
+// {
+// public:
+// 
+//   ShaderComponent() : Component(ShaderComponent::staticType()) {}
+// 
+//   ~ShaderComponent() = default;
+// 
+//   virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eSHADER; }
+// };
 
 }

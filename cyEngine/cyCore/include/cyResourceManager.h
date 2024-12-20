@@ -79,6 +79,10 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
                                                 type._to_string()));
       return nullptr;
     }
+
+    //TODO: Check for projectDir root and make paths relative
+    // i.e C:/Foo/Bar/image.png -> /ProjectDir/SelectedFolder/image.png
+
     SharedPointer<TextureResource> newResource = create<TextureResource>(assetPath);
     newResource->setData(codec->decode(f));
     return REINTERPRETPOINTER(T, newResource);

@@ -40,6 +40,7 @@ public:
     m_color     = Color::CLEAR;
     m_boneIDs[0] = m_boneIDs[1] = m_boneIDs[2] = m_boneIDs[3] = 0;
     m_boneWeights[0] = m_boneWeights[1] = m_boneWeights[2] = m_boneWeights[3] = 0.0f;
+    m_customData[0] = m_customData[1] = m_customData[2] = m_customData[3] = -1;
   }
 
   Vertex(const Vector3f& position, 
@@ -48,8 +49,8 @@ public:
          const Vector3f& binormal, 
          const Vector2f& uv,
          const Color& color, 
-         const int32& boneIDs[4],
-         const float& boneweights[4])
+         const int32 boneIDs[4],
+         const float boneweights[4])
     : m_position(position),
       m_color(color),
       m_normal(normal),
@@ -59,6 +60,8 @@ public:
         for (int i = 0; i < 4; ++i) {
           m_boneIDs[i]      = boneIDs[i];
           m_boneWeights[i]  = boneweights[i];
+          m_customData[i]   = -1;
+
         }
       }
 
@@ -103,6 +106,12 @@ public:
    * How much the bones associated with this vertex can modify it
    */
   float m_boneWeights[4];
+
+  /**
+   * Extra custom data to set in a vertex if you wish for specific shader info
+   * See: https://graphics.pixar.com/library/ToonRendering/paper.pdf
+   */
+  int32 m_customData[4];
 
 };
 }

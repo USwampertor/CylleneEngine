@@ -37,12 +37,14 @@
     <ClInclude Include="include\cyImage.h" />
     <ClInclude Include="include\cyMaterial.h" />
     <ClInclude Include="include\cyMesh.h" />
+    <ClInclude Include="include\cyModel.h" />
     <ClInclude Include="include\cyPlugin.h" />
     <ClInclude Include="include\cyPluginManager.h" />
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
     <ClInclude Include="include\cyScene.h" />
     <ClInclude Include="include\cyShader.h" />
+    <ClInclude Include="include\cySkeleton.h" />
     <ClInclude Include="include\cyTexture.h" />
     <ClInclude Include="include\cyTransform.h" />
     <ClInclude Include="include\cyVertex.h" />
@@ -62,11 +64,13 @@
     <ClCompile Include="src\cyGraphicsAPI.cpp" />
     <ClCompile Include="src\cyMaterial.cpp" />
     <ClCompile Include="src\cyMesh.cpp" />
+    <ClCompile Include="src\cyModel.cpp" />
     <ClCompile Include="src\cyPlugin.cpp" />
     <ClCompile Include="src\cyPluginManager.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyScene.cpp" />
     <ClCompile Include="src\cyShader.cpp" />
+    <ClCompile Include="src\cySkeleton.cpp" />
     <ClCompile Include="src\cyTexture.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />
   </ItemGroup>
@@ -148,7 +152,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_CORE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CY_CORE_EXPORTS; ASSIMP_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
@@ -171,7 +175,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_CORE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CY_CORE_EXPORTS; ASSIMP_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
@@ -194,7 +198,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_CORE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CY_CORE_EXPORTS; ASSIMP_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>
@@ -217,7 +221,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>CY_CORE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CY_CORE_EXPORTS; ASSIMP_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/</AdditionalIncludeDirectories>

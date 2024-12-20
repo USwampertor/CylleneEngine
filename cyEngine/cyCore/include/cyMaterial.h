@@ -14,9 +14,9 @@
 
 #include "cyCorePrerequisites.h"
 
-#include "cyComponent.h"
 #include "cyMatrix3x3.h"
 #include "cyMatrix4x4.h"
+#include "cyResource.h"
 #include "cyShader.h"
 #include "cyVector2f.h"
 #include "cyVector3f.h"
@@ -24,10 +24,18 @@
 
 namespace CYLLENE_SDK {
 
-class CY_CORE_EXPORT MaterialComponent : public Component
+class CY_CORE_EXPORT MaterialResource : public Resource
 {
-  MaterialComponent() : Component(MaterialComponent::staticType()) {}
+public:
+  MaterialResource() : Resource(MaterialResource::staticType()) {}
 
+  static RESOURCE_TYPE::E staticType() { return RESOURCE_TYPE::E::eMATERIAL; }
+
+  virtual void*
+  getData() override;
+
+  virtual void
+  setData(void* data) override;
 
   /*
    *	@brief	Sets a value in the material, setting it as well in the shader
@@ -144,7 +152,6 @@ class CY_CORE_EXPORT MaterialComponent : public Component
   void
   loadShader(const SharedPointer<ShaderResource>& newShader);
 
-  virtual COMPONENT_TYPE::E staticType() override { return COMPONENT_TYPE::E::eMATERIAL; }
   
 private:
 

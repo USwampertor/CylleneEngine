@@ -2,12 +2,14 @@
 
 namespace CYLLENE_SDK {
 
+  void*
+  MaterialResource::getData() {
+    return nullptr;
+  }
 
-template <typename T>
-void
-MaterialComponent::setValue(const String& flag, const T& newValue) {
-  
-}
+  void
+  MaterialResource::setData(void* data) {
 
+  }
 
 }
