@@ -13,6 +13,7 @@
 #include "cyVertex.h"
 
 #include <cyJSON.h>
+#include <cyStdHeaders.h>
 
 // Sound decoding
 
@@ -203,8 +204,8 @@ ModelCodec::decode(const File& f) {
   Assimp::Importer importer;
 
   uint32 assimpFlags = aiProcessPreset_TargetRealtime_MaxQuality |
-                        aiProcess_Triangulate |
-                        aiProcess_ConvertToLeftHanded;
+                       aiProcess_Triangulate |
+                       aiProcess_ConvertToLeftHanded;
 
   auto scene = importer.ReadFile(f.path(), assimpFlags);
 
@@ -257,23 +258,109 @@ ModelCodec::decode(const File& f) {
   d.SetObject();
   JSONDocument::AllocatorType& allocator = d.GetAllocator();
 
-  JSONValue jsonMeshes(rapidjson::kArrayType);
 
   // meshes
+  JSONValue jsonMeshes(rapidjson::kArrayType);
   for (uint32 i = 0; i < model.m_meshes.size(); ++i) {
     JSONValue jsonMesh(rapidjson::kObjectType);
 
     // vertices
+    JSONValue jsonVertices(rapidjson::kArrayType);
     for (uint32 j = 0; j < model.m_meshes[i]->m_vertexBuffer.size(); ++j) {
-        
-    }
+      // vertex
+      JSONValue jsonVertex(rapidjson::kObjectType);
 
+      JSONValue jsonPos(rapidjson::kArrayType);
+      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.x, allocator);
+      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.y, allocator);
+      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.z, allocator);
+      jsonVertex.AddMember("position", jsonPos, allocator);
+    
+
+
+      JSONValue jsonUV(rapidjson::kArrayType);
+      jsonUV.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_uv.x, allocator);
+      jsonUV.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_uv.y, allocator);
+      jsonVertex.AddMember("uv", jsonUV, allocator);
+
+
+      JSONValue jsonNormal(rapidjson::kArrayType);
+      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.x, allocator);
+      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.y, allocator);
+      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.z, allocator);
+      jsonVertex.AddMember("normal", jsonNormal, allocator);
+
+      JSONValue jsonTangent(rapidjson::kArrayType);
+      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.x, allocator);
+      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.y, allocator);
+      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.z, allocator);
+      jsonVertex.AddMember("tangent", jsonTangent, allocator);
+
+      JSONValue jsonBinormal(rapidjson::kArrayType);
+      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.x, allocator);
+      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.y, allocator);
+      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.z, allocator);
+      jsonVertex.AddMember("binormal", jsonBinormal, allocator);
+
+      JSONValue jsonColor(rapidjson::kArrayType);
+      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.r, allocator);
+      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.g, allocator);
+      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.b, allocator);
+      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.a, allocator);
+      jsonVertex.AddMember("color", jsonColor, allocator);
+
+      JSONValue jsonBoneIDs(rapidjson::kArrayType);
+      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[0], allocator);
+      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[1], allocator);
+      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[2], allocator);
+      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[3], allocator);
+      jsonVertex.AddMember("boneIDs", jsonBoneIDs, allocator);
+    
+      JSONValue jsonBoneWeights(rapidjson::kArrayType);
+      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[0], allocator);
+      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[1], allocator);
+      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[2], allocator);
+      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[3], allocator);
+      jsonVertex.AddMember("boneWeights", jsonBoneWeights, allocator);
+
+      JSONValue jsonCustomData(rapidjson::kArrayType);
+      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[0], allocator);
+      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[1], allocator);
+      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[2], allocator);
+      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[3], allocator);
+      jsonVertex.AddMember("customData", jsonCustomData, allocator);
+
+      jsonVertices.PushBack(jsonVertex, allocator);
+    }
+    jsonMesh.AddMember("vertices", jsonVertices, allocator);
+
+    // indices
+    JSONValue jsonIndices(rapidjson::kArrayType);
+    for (uint32 j = 0; j < model.m_meshes[i]->m_indexBuffer.size(); ++j) {
+      jsonIndices.PushBack(model.m_meshes[i]->m_indexBuffer[j], allocator);
+    }
+    jsonMesh.AddMember("indices", jsonIndices, allocator);
+
+    // material
+
+    // bones
+
+    // animations
+    jsonMeshes.PushBack(jsonMesh, allocator);
   }
 
+  d.AddMember("meshes", jsonMeshes, allocator);
 
   // create a blob from our resources
+  OfStream ofs(Utils::format("%s/%s.cym", 
+                             f.parentDirectory().path().c_str(), 
+                             f.fileName().c_str()).c_str());
+  JSONOStream os(ofs);
+  JSONWriter<JSONOStream> writer(os);
+  d.Accept(writer);
 
-  return nullptr;
+
+  return reinterpret_cast<void*>(&d);
 }
 
 
