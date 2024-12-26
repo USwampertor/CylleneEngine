@@ -22,6 +22,8 @@
 #include <cyTransform.h>
 #include <cyResourceManager.h>
 #include <cyTexture.h>
+#include <cyModel.h>
+#include <cyMesh.h>
 
 #include <iostream>
 
@@ -85,5 +87,17 @@ TEST_CASE("[resource] Creation of textures") {
     CHECK(r->m_metadata.m_textureFormat == (+IMGEXT::E::PNG)._to_integral());
   }
 
+}
+
+TEST_CASE("[resource] Creation of models") {
+  Path workingPath = FileSystem::getWorkingDirectory();
+  File testModel = FileSystem::open(workingPath.fullPath() + "/../resources/cube.fbx");
+  if (testModel.isFile() && testModel.exists()) {
+    std::cout << testModel.path() << std::endl;
+    SharedPointer<ModelResource> r = ResourceManager::instance().loadFromPath<ModelResource>(testModel.path());
+    CHECK(r->m_meshes.size() == 1);
+    CHECK((r->m_meshes[0])->m_vertexBuffer.size() == 24);
+    CHECK((r->m_meshes[0])->m_indexBuffer.size() == 36);
+  }
 }
 

@@ -59,6 +59,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   loadFromPath(const String& assetPath) {
 
     File f = FileSystem::open(assetPath);
+    Path p(f.path());
 
     if (!f.exists()) {
       // Throw error as this file does not even exist
@@ -83,7 +84,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     //TODO: Check for projectDir root and make paths relative
     // i.e C:/Foo/Bar/image.png -> /ProjectDir/SelectedFolder/image.png
 
-    SharedPointer<TextureResource> newResource = create<TextureResource>(assetPath);
+    SharedPointer<T> newResource = create<T>(p.baseName());
     newResource->setData(codec->decode(f));
     return REINTERPRETPOINTER(T, newResource);
   }
@@ -96,6 +97,17 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   }
 
+  template<typename T,
+           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+  /*
+   *	@brief	loads an asset based on the relative location in the project
+   *	@param		
+   *  @return	
+   */
+  SharedPointer<T>
+  loadAsset(const String& projectPath) {
+
+  }
   
 
   void 

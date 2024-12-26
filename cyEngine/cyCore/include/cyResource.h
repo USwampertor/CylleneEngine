@@ -16,12 +16,15 @@ namespace CYLLENE_SDK {
                 eMESH,
                 eMODEL,
                 eSCENE,
+                eSCRIPT,
                 eSHADER,
                 eTEXTURE);
   }
 
 // Forward declaration
 class ResourceManager;
+class Codec;
+class ModelCodec;
 
 
 /**
@@ -41,12 +44,23 @@ class CY_CORE_EXPORT Resource {
 
   /*
    *	@brief Resource defining the type of object this can be
-   *	@param 
+   *	@param const RESOURCE_TYPE::E& type the type the resource is
    *  @return	
    */
   Resource(const RESOURCE_TYPE::E& type)
     : m_type(type),
       m_isDirty(false) {}
+
+  /*
+   *	@brief	
+   *	@param		
+   *  @return	
+   */
+  Resource(const RESOURCE_TYPE::E& type, const Path& path)
+    : m_type(type),
+      m_isDirty(false),
+      m_filePath(path),
+      m_name(path.fullPath()) {}
 
   /**
    * virtual destructor
@@ -148,6 +162,9 @@ class CY_CORE_EXPORT Resource {
    * Resource Manager can access the protected data
    */
   friend class ResourceManager;
+
+  friend class Codec;
+  friend class ModelCodec;
 
  protected:
 

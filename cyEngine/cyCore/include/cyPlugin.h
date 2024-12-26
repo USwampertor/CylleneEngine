@@ -11,16 +11,13 @@ public:
 
   virtual ~Plugin() {}
 
-  static uint64 m_id;
-  static String m_name;
-  static String m_company;
-  static String m_description; 
+  uint64 m_id;
+  String m_name;
+  String m_company;
+  String m_description; 
 
-  virtual bool
-  initialize() = 0;
-
-  virtual bool
-  uninitialize() = 0;
+  virtual void*
+  initializePlugin() = 0;
 
 };
 

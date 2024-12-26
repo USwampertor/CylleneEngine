@@ -120,7 +120,7 @@ TextureCodec::decode(const File& f) {
   
 void
 processMesh(MeshResource& m, aiMesh* node) {
-    
+
   // Vertices
   for (uint32 i = 0; i < node->mNumVertices; ++i) {
     Vertex v;
@@ -163,14 +163,15 @@ processMesh(MeshResource& m, aiMesh* node) {
 
     m.m_vertexBuffer.push_back(v);
 
-    // Indices
-    for (uint32 f = 0; f < node->mNumFaces; ++f) {
-      aiFace face = node->mFaces[f];
-      for (uint32 j = 0; j < face.mNumIndices; ++j) {
-        m.m_indexBuffer.push_back(face.mIndices[j]);
-      }
-    }
 
+  }
+  
+  // Indices
+  for (uint32 f = 0; f < node->mNumFaces; ++f) {
+    aiFace face = node->mFaces[f];
+    for (uint32 j = 0; j < face.mNumIndices; ++j) {
+      m.m_indexBuffer.push_back(face.mIndices[j]);
+    }
   }
 }
 
@@ -180,9 +181,16 @@ processNode(ModelResource& m, aiNode* node, const aiScene* scene) {
   uint32 i = 0;
   for (i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    m.m_meshes.push_back(ResourceManager::instance().create<MeshResource>("// TODO: PUT A NAME HERE"));
+    m.m_meshes.push_back(makeSharedPtr<MeshResource>());
     processMesh(*m.m_meshes.back().get(), mesh);
+    m.m_hasSkeleton = false;
     if (mesh->HasBones()) { m.m_hasSkeleton = true; }
+    if (scene->HasMaterials()) {
+
+      m.m_meshes.back()->m_material = makeSharedPtr<MaterialResource>();
+      aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
+      
+    }
   }
 
   for (i = 0; i < node->mNumChildren; ++i) {
@@ -199,7 +207,23 @@ ModelCodec::decode(const File& f) {
   // SharedPointer<MeshResource> newResource = 
   //   ResourceManager::instance().create<MeshResource>(p.baseName());
 
+  // Check if we are importing a Cyllene Engine Model or a "any other format" model
+
+  if (Utils::toLowerCase(p.extension().substr(1)) == "cym") {
+    // We are using our format. we can just load the json
+
+    // TODO: Check if the asset actually is inside a model and not any other resource
+    
+    JSONDocument cylleneModel;
+    cylleneModel.Parse(f.readFile());
+    return reinterpret_cast<void*>(&cylleneModel);
+  }
+
+
   ModelResource model;
+  reinterpret_cast<Resource*>(&model)->m_name = p.fullPath().c_str();
+  reinterpret_cast<Resource*>(&model)->m_filePath = p;
+  
 
   Assimp::Importer importer;
 
@@ -257,7 +281,7 @@ ModelCodec::decode(const File& f) {
   JSONDocument d;
   d.SetObject();
   JSONDocument::AllocatorType& allocator = d.GetAllocator();
-
+  d.AddMember("type", "model", allocator);
 
   // meshes
   JSONValue jsonMeshes(rapidjson::kArrayType);
@@ -359,8 +383,7 @@ ModelCodec::decode(const File& f) {
   JSONWriter<JSONOStream> writer(os);
   d.Accept(writer);
 
-
-  return reinterpret_cast<void*>(&d);
+  return reinterpret_cast<void*>(new String(d.stringify()));
 }
 
 
