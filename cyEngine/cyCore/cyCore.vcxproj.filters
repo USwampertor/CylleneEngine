@@ -105,6 +105,9 @@
     <ClInclude Include="include\cySkeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -171,6 +174,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cySkeleton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

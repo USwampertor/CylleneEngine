@@ -43,6 +43,7 @@
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
     <ClInclude Include="include\cyScene.h" />
+    <ClInclude Include="include\cyScript.h" />
     <ClInclude Include="include\cyShader.h" />
     <ClInclude Include="include\cySkeleton.h" />
     <ClInclude Include="include\cyTexture.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="src\cyPluginManager.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyScene.cpp" />
+    <ClCompile Include="src\cyScript.cpp" />
     <ClCompile Include="src\cyShader.cpp" />
     <ClCompile Include="src\cySkeleton.cpp" />
     <ClCompile Include="src\cyTexture.cpp" />
