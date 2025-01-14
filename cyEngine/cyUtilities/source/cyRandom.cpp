@@ -14,32 +14,22 @@ namespace CYLLENE_SDK {
 
   uint32 Random::m_seed[4] = { 0,0,0,0 };
 
+  uint32 Random::m_method = 0;
+
+  Ziggurat Random::m_ziggurat = {};
+
   void
-  Random::set(uint32 newSeed) {
-    m_seed[0] = newSeed;
-    m_seed[1] = newSeed * 0xA89F234B + 1; // Arbitrary random numbers
-    m_seed[2] = newSeed * 0x81D1A5F4 + 1;
-    m_seed[3] = newSeed * 0x912FF1AD + 1;
-  }
+  Random::set(const uint32& newSeed) {
+//     m_seed[0] = newSeed;
+//     m_seed[1] = newSeed * 0xA89F234B + 1; // Arbitrary random numbers
+//     m_seed[2] = newSeed * 0x81D1A5F4 + 1;
+//     m_seed[3] = newSeed * 0x912FF1AD + 1;
 
-  uint32
-  Random::get() {
-    /* Algorithm "xor128" from p. 5 of Marsaglia, "Xorshift RNGs" */
-    uint32 t = m_seed[3];
-
-    uint32 s = m_seed[0];  /* Perform a contrived 32-bit shift. */
-    m_seed[3] = m_seed[2];
-    m_seed[2] = m_seed[1];
-    m_seed[1] = s;
-
-    t ^= t << 11;
-    t ^= t >> 8;
-    m_seed[0] = t ^ s ^ (s >> 19);
-    return m_seed[0];
+    m_ziggurat.m_generator = { newSeed };
   }
 
   float
-  Random::getRangeFloat(float min, float max) {
+  Random::getRangeFloat(const float& min, const float& max) {
     CY_ASSERT(max > min);
     const float range = max - min + 1;
     constexpr static float minimum = 0e-5f;
@@ -47,7 +37,7 @@ namespace CYLLENE_SDK {
   }
 
   int32
-  Random::getRangeInt32(int32 min, int32 max) {
+  Random::getRangeInt32(const int32& min, const int32& max) {
     CY_ASSERT(max > min);
     const int32 range = max - min + 1;
     constexpr static float minimum = 0e-5f;
@@ -55,8 +45,7 @@ namespace CYLLENE_SDK {
   }
 
   uint32
-  Random::getRangeUint32(uint32 max) {
-    uint32 min = 0;
+  Random::getRangeUint32(const uint32& min, const uint32& max) {
     CY_ASSERT(max > min);
     constexpr static float minimum = 0e-5f;
     return static_cast<uint32>(getNormalized() * (static_cast<float>(max + 1)));
@@ -64,7 +53,24 @@ namespace CYLLENE_SDK {
 
   float
   Random::getNormalized() {
-    float f = static_cast<float>(get() & 0x007FFFFF) / 8388607.0f;
+    // TODO: Simplify this
+    float f = 0.0f;
+    uint32 seed = 0;
+    RANDOM_METHOD::E method = RANDOM_METHOD::E::_from_integral(m_method);
+
+    switch (method) {
+    case +RANDOM_METHOD::E::eZIGGURAT:
+      seed = m_ziggurat.m_generator();
+      f = m_ziggurat.r4_uni(seed);
+      break;
+    case +RANDOM_METHOD::E::eMT:
+      break;
+    case +RANDOM_METHOD::E::eBBS:
+      break;
+    case +RANDOM_METHOD::E::eMSM:
+      break;
+    }
+
     return f;
   }
 
@@ -115,20 +121,25 @@ namespace CYLLENE_SDK {
   }
 
   Vector2i
-  Random::getVector2i(float thickness) {
+  Random::getVector2i(const float& thickness) {
     return getNormVector2i() * static_cast<int32>(thickness);
   }
 
   Vector2f
-  Random::getVector2f(float thickness) {
+  Random::getVector2f(const float& thickness) {
     return getNormVector2f() * thickness;
 
   }
 
   Vector3f
-  Random::getVector3f(float thickness) {
+  Random::getVector3f(const float& thickness) {
     return getNormVector3f() * thickness;
 
+  }
+
+  void
+  Random::changeMethod(const RANDOM_METHOD::E& method /* = 0 */) {
+    m_method = method._to_integral();
   }
 }
 

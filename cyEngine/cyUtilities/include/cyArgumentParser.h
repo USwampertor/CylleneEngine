@@ -12,17 +12,19 @@
 
 #include "cyUtilitiesPrerequisites.h"
 
+#include "cyRegex.h"
 #include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
-  /*
-   *	@class  ArgumentParser
-   *	@brief  An object that you can use to map parameters and actions and parse 
-   *          execution parameters.
-   */
+/*
+ *	@class  ArgumentParser
+ *	@brief  An object that you can use to map parameters and actions and parse 
+ *          execution parameters.
+ */
 class CY_UTILITY_EXPORT ArgumentParser
 {
  public:
+
   /**
    * Default constructor
    */
@@ -32,6 +34,19 @@ class CY_UTILITY_EXPORT ArgumentParser
    * Default destructor
    */
   ~ArgumentParser() = default;
+
+  /*
+   *	@brief		This function parses the information passed as a string.
+   *            Internally, for each parameter that finds, it will fill the
+   *            parameter map with the information passed on the params.
+   *            This override is to simulate the main entry parameters
+   *	@param		const int& amount of parameters
+   *	@param		char* argv[] the string of arguments
+   *  @return   nothing
+   */
+  void
+  parse(const int& argc, const char* argv[]);
+
   
   /*
    *	@brief		This function parses the information passed as a string.
@@ -44,13 +59,21 @@ class CY_UTILITY_EXPORT ArgumentParser
   parse(const String& parameters);
 
   /*
-   *	@brief	  Adds an argument to the map of arguments to check while parsing
-   *	@param	  const String& newArgument the new argument to add
+   *	@brief	  Adds a flag to the map of flags to check while parsing
+   *	@param	  const String& newFlag the new flag to add
    *	@return   true if the insertion was successful, false if there was already 
-   *            that argument in the map
+   *            that flag in the map
    */
   bool
-  addArgument(const String& newArgument);
+  addFlag(const String& newFlag);
+
+  /*
+   *	@brief	  Adds an value to the map of flags
+   *	@param	  const String& newParameter the new value to add
+   *	@return   nothing
+   */
+  void
+  setFlagValue(const String& flag, const String& newParameter);
 
 
   /*
@@ -59,13 +82,31 @@ class CY_UTILITY_EXPORT ArgumentParser
    *	@return   the information binded to the keyword, if none, it will return
    *            a blank string
    */
-  String
-  getParameter(const String& parameter);
+  const Vector<String>
+  getFlagValues(const String& flag);
+
+  /*
+   *	@brief		Checks if there is a defined flag in the flag map
+   *	@param	  const String& flag the keyWord to find
+   *	@return   the information binded to the keyword, if none, it will return
+   *            a blank string
+   */
+  bool
+  hasFlag(const String& flag);
+
+  /*
+   *	@brief		Removes a flag from the map
+   *	@param	  const String& flag the keyWord to find
+   *	@return   true if the flag was existing already
+   */
+  bool
+  removeFlag(const String& flag);
 
   /**
    * @brief the map that holds the keywords with the arguments passed
    */
-  Map<String, String> m_argumentMap;
+  Map<String, Vector<String>> m_flagMap;
 
 };
+
 }

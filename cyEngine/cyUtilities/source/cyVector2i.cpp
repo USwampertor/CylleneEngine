@@ -374,4 +374,8 @@ namespace CYLLENE_SDK {
   const Vector2i Vector2i::UP     = Vector2i(0, 1);
   
   const Vector2i Vector2i::RIGHT  = Vector2i(1, 0);
+  
+  const Vector2i Vector2i::DOWN   = Vector2i(0, -1);
+  
+  const Vector2i Vector2i::LEFT   = Vector2i(-1, 0);
 }

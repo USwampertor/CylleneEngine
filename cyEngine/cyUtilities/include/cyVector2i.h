@@ -493,6 +493,16 @@ namespace CYLLENE_SDK {
     static const Vector2i RIGHT;
 
     /**
+     * vauVector2 with y value -1. This is our right in our world
+     */
+    static const Vector2i DOWN;
+
+    /**
+     * vauVector2 with x value -1. This is our up in our world
+     */
+    static const Vector2i LEFT;
+
+    /**
      * Member declaration
      */
 

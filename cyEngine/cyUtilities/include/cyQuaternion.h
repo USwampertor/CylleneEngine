@@ -378,6 +378,8 @@ namespace CYLLENE_SDK {
     String
     toString() const;
 
+    static const Quaternion
+    IDENTITY;
 
   public:
 
