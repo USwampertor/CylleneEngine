@@ -75,10 +75,37 @@ namespace CYLLENE_SDK {
                  this->a * other.a);
   }
 
-  //Operator +
-  //Operator -
-  //Operator /
-  //Operator ==
+  Color
+  Color::operator*(const float& other) const {
+    return Color(this->r * other,
+                 this->g * other,
+                 this->b * other,
+                 this->a * other);
+  }
+
+  Color
+  Color::operator/(const float& other) const {
+    return Color(this->r / other,
+                 this->g / other,
+                 this->b / other,
+                 this->a / other);
+  }
+
+  Color
+  Color::operator+(const Color& other) const {
+    return Color(this->r + other.r,
+                 this->g + other.g,
+                 this->b + other.b,
+                 this->a + other.a);
+  }
+
+  Color
+  Color::operator-(const Color& other) const {
+    return Color(this->r - other.r,
+                 this->g - other.g,
+                 this->b - other.b,
+                 this->a - other.a);
+  }
 
   bool
   Color::operator==(const Color& other) const {
@@ -88,8 +115,14 @@ namespace CYLLENE_SDK {
            Math::isNearSame(a, other.a);
   }
 
-  /*
-  */
+  void
+  Color::saturate() {
+    r = r > 1.0f ? 1.0f : r;
+    g = g > 1.0f ? 1.0f : g;
+    b = b > 1.0f ? 1.0f : b;
+    a = a > 1.0f ? 1.0f : a;
+  }
+
   Color
   Color::fromHSV(const HSV& hsv) {
     double      hh, p, q, t, ff;

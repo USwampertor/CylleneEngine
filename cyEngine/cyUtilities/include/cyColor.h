@@ -153,6 +153,15 @@ class CY_UTILITY_EXPORT Color
   operator*(const Color& other) const;
 
   /**
+    * @brief Operator * overload to multiply two colors
+    * @param Color& other color to combine
+    * @return the combination of the two colors
+    *
+    */
+  Color
+  operator*(const float& other) const;
+
+  /**
     * @brief Operator + overload to sum two colors
     * @param Color& other color to sum
     * @return the combination of the two colors
@@ -187,8 +196,17 @@ class CY_UTILITY_EXPORT Color
   bool
   operator==(const Color& other) const;
 
+
+  /*
+   *	@brief	if the color is higher than 1, it clamps it down
+   *	@param		
+   *  @return	
+   */
+  void
+  saturate();
+
   /**
-    * @brief
+    * @brief Converts a HSV to a color
     * @param Vector3 HSV value
     * @return
     *
