@@ -48,6 +48,7 @@
     <ClInclude Include="include\cySkeleton.h" />
     <ClInclude Include="include\cyTexture.h" />
     <ClInclude Include="include\cyTransform.h" />
+    <ClInclude Include="include\cyTriangle.h" />
     <ClInclude Include="include\cyVertex.h" />
     <ClInclude Include="include\cyWindow.h" />
   </ItemGroup>
@@ -63,6 +64,7 @@
     <ClCompile Include="src\cyGameMode.cpp" />
     <ClCompile Include="src\cyGarbageCollector.cpp" />
     <ClCompile Include="src\cyGraphicsAPI.cpp" />
+    <ClCompile Include="src\cyImage.cpp" />
     <ClCompile Include="src\cyMaterial.cpp" />
     <ClCompile Include="src\cyMesh.cpp" />
     <ClCompile Include="src\cyModel.cpp" />
@@ -74,6 +76,7 @@
     <ClCompile Include="src\cyShader.cpp" />
     <ClCompile Include="src\cySkeleton.cpp" />
     <ClCompile Include="src\cyTexture.cpp" />
+    <ClCompile Include="src\cyTriangle.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

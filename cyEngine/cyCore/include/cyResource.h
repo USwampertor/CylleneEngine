@@ -12,6 +12,7 @@ namespace CYLLENE_SDK {
                 eATLAS,
                 eAUDIO, 
                 eFONT,
+                eIMAGE,
                 eMATERIAL,
                 eMESH,
                 eMODEL,

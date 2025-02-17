@@ -145,18 +145,18 @@ private:
               JXR     = 36);
   }
 
-class CY_CORE_EXPORT TextureCodec : public Codec
+class CY_CORE_EXPORT ImageCodec : public Codec
 {
 public:
 
 
-  TextureCodec();
+  ImageCodec();
 
-  virtual ~TextureCodec() override;
+  virtual ~ImageCodec() override;
 
   static RESOURCE_TYPE::E 
   staticType() { 
-    return RESOURCE_TYPE::E::eTEXTURE;
+    return RESOURCE_TYPE::E::eIMAGE;
   }
 
   virtual void*

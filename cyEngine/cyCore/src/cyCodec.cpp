@@ -33,7 +33,7 @@
 namespace CYLLENE_SDK {
 
 
-TextureCodec::TextureCodec() : Codec(TextureCodec::staticType()) {
+ImageCodec::ImageCodec() : Codec(ImageCodec::staticType()) {
   for (auto extension : IMGEXT::E::_names()) {
     m_fileExtensions.push_back(Utils::toLowerCase(extension));
   }
@@ -41,13 +41,13 @@ TextureCodec::TextureCodec() : Codec(TextureCodec::staticType()) {
   FreeImage_Initialise();
 }
 
-TextureCodec::~TextureCodec() {
+ImageCodec::~ImageCodec() {
   // Should be called when shutting down everything
   FreeImage_DeInitialise();
 }
 
 void*
-TextureCodec::decode(const File& f) {
+ImageCodec::decode(const File& f) {
     
   Path p(f.path());
 
@@ -65,15 +65,15 @@ TextureCodec::decode(const File& f) {
   CY_ASSERT(format != -1 && "You should first check if this codec is able to decode a format");
 
     
-  TextureMetaData metadata;
+  ImageMetadata metadata;
 
   void* data                = FreeImage_Load(static_cast<FREE_IMAGE_FORMAT>(format), 
                                               f.path().c_str());
   metadata.m_width          = FreeImage_GetWidth(reinterpret_cast<FIBITMAP*>(data));
   metadata.m_height         = FreeImage_GetHeight(reinterpret_cast<FIBITMAP*>(data));
   metadata.m_bpp            = FreeImage_GetBPP(reinterpret_cast<FIBITMAP*>(data));
-  metadata.m_textureFormat  = format;
-  metadata.m_colorFormat    = FreeImage_GetColorType(reinterpret_cast<FIBITMAP*>(data));
+  metadata.m_format         = format;
+  metadata.m_colortype      = FreeImage_GetColorType(reinterpret_cast<FIBITMAP*>(data));
 
   Vector<Color> colorData(metadata.m_height * metadata.m_width);
 
@@ -111,7 +111,7 @@ TextureCodec::decode(const File& f) {
     * 
     */
 
-  std::tuple<TextureMetaData, Vector<Color>>* tupleData = new std::tuple<TextureMetaData, Vector<Color>>(metadata, colorData);
+  std::tuple<ImageMetadata, Vector<Color>>* tupleData = new std::tuple<ImageMetadata, Vector<Color>>(metadata, colorData);
   // newResource->setData(&tupleData);
   // newResource->m_metadata = metadata;
   // return REINTERPRETPOINTER(Resource, newResource);

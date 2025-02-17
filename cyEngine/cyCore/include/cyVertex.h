@@ -32,11 +32,11 @@ public:
    * Default constructor
    */
   Vertex() {
-    m_uv        = Vector2f::ZERO;
     m_position  = Vector3f::ZERO;
     m_normal    = Vector3f::ZERO;
     m_tangent   = Vector3f::ZERO;
     m_binormal  = Vector3f::ZERO;
+    m_uv        = Vector2f::ZERO;
     m_color     = Color::CLEAR;
     m_boneIDs[0] = m_boneIDs[1] = m_boneIDs[2] = m_boneIDs[3] = 0;
     m_boneWeights[0] = m_boneWeights[1] = m_boneWeights[2] = m_boneWeights[3] = 0.0f;
@@ -44,13 +44,13 @@ public:
   }
 
   Vertex(const Vector3f& position, 
-         const Vector3f& normal, 
-         const Vector3f& tangent, 
-         const Vector3f& binormal, 
-         const Vector2f& uv,
-         const Color& color, 
-         const int32 boneIDs[4],
-         const float boneweights[4])
+         const Vector3f& normal = Vector3f::ZERO, 
+         const Vector3f& tangent = Vector3f::ZERO, 
+         const Vector3f& binormal = Vector3f::ZERO, 
+         const Vector2f& uv = Vector2f::ZERO,
+         const Color& color = Color::CLEAR, 
+         const int32 boneIDs[4] = {0},
+         const float boneweights[4] = {0})
     : m_position(position),
       m_color(color),
       m_normal(normal),
@@ -113,7 +113,13 @@ public:
    */
   int32 m_customData[4];
 
+
+  static const Vertex ZERO;
+
 };
+
+const Vertex ZERO = Vertex(Vector3f(0, 0, 0));
+
 }
 
 
