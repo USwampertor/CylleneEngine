@@ -125,7 +125,7 @@ namespace CYLLENE_SDK {
 
   Color
   Color::fromHSV(const HSV& hsv) {
-    double      hh, p, q, t, ff;
+    float      hh, p, q, t, ff;
     long        i;
     Color       out;
 
@@ -142,9 +142,9 @@ namespace CYLLENE_SDK {
     hh /= 60.0;
     i = static_cast<long>(hh);
     ff = hh - i;
-    p = hsv.v * (1.0 -  hsv.s);
-    q = hsv.v * (1.0 - (hsv.s * ff));
-    t = hsv.v * (1.0 - (hsv.s * (1.0 - ff)));
+    p = hsv.v * static_cast<float>((1.0 -  hsv.s));
+    q = hsv.v * static_cast<float>((1.0 - (hsv.s * ff)));
+    t = hsv.v * static_cast<float>((1.0 - (hsv.s * (1.0 - ff))));
 
     switch (i) {
       case 0:
@@ -196,18 +196,18 @@ namespace CYLLENE_SDK {
 
     out.v = max;                                // v
     delta = max - min;
-    if (delta < 0.00001) {
-      out.s = 0;
-      out.h = 0; // undefined, maybe nan?
+    if (delta < 0.00001f) {
+      out.s = 0.0f;
+      out.h = 0.0f; // undefined, maybe nan?
       return out;
     }
-    if (max > 0.0) { // NOTE: if Max is == 0, this divide would cause a crash
+    if (max > 0.0f) { // NOTE: if Max is == 0, this divide would cause a crash
       out.s = (delta / max);                  // s
     }
     else {
       // if max is 0, then r = g = b = 0              
       // s = 0, h is undefined
-      out.s = 0.0;
+      out.s = 0.0f;
       out.h = NAN;                            // its now undefined
       return out;
     }
@@ -216,15 +216,15 @@ namespace CYLLENE_SDK {
     } 
     else {
       if (color.g >= max) {
-        out.h = 2.0 + (color.b - color.r) / delta;  // between cyan & yellow
+        out.h = 2.0f + (color.b - color.r) / delta;  // between cyan & yellow
       }
       else {
-        out.h = 4.0 + (color.r - color.g) / delta;  // between magenta & cyan
+        out.h = 4.0f + (color.r - color.g) / delta;  // between magenta & cyan
       }
     }
     out.h *= 60.0;                              // degrees
     if (out.h < 0.0)
-      out.h += 360.0;
+      out.h += 360.0f;
     return out;
   }
 
@@ -339,7 +339,7 @@ namespace CYLLENE_SDK {
   String
   Color::toHexString() {
     uint32 hex = toHexValue();
-    return Utils::format("#%x");
+    return Utils::format("#%x", hex);
   }
 
   const Color Color::BLACK    = Color(0.00f, 0.00f, 0.00f, 1.00f);

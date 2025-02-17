@@ -394,7 +394,7 @@ namespace CYLLENE_SDK {
     template<typename T>
     static T
     mod(T number, T denom) {
-      return number % denom;
+      return std::fmod(number, denom);
     }
 
     /**
@@ -407,7 +407,7 @@ namespace CYLLENE_SDK {
     template<typename T>
     static T
     fmod(T number, T denom) {
-      return std::fmod(number, denom);
+      return std::fmodf(number, denom);
     }
 
     /**
