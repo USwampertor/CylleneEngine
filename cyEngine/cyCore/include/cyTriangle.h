@@ -14,7 +14,7 @@ public:
     _m = other._m;
   }
 
-  Triangle(const Vertex& a, const Vertex& b = Vertex::ZERO, const Vertex& c = Vertex::ZERO) {
+  Triangle(const Vertex& a, const Vertex& b, const Vertex& c) {
     _m.v0 = a;
     _m.v1 = b;
     _m.v2 = c;
@@ -23,8 +23,6 @@ public:
   Vertex
   getBarycenter(const Vertex& p);
 
-  Vector<Triangle>
-  getTopAndBottom();
 
 public:
 

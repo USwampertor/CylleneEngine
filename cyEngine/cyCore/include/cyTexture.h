@@ -89,13 +89,13 @@ public:
   setImage(const SharedPointer<ImageResource>&  img);
 
   Color
-  sample(float& u, 
-         float& v, 
+  sample(float u, 
+         float v, 
          const TEXTUREMODE::E& mode = TEXTUREMODE::E::eCLAMP,
          const SAMPLERFILTER::E& sampler = SAMPLERFILTER::E::ePOINT);
 
   Color
-  sample(Vector2f& uv, 
+  sample(Vector2f uv, 
          const TEXTUREMODE::E& mode = TEXTUREMODE::E::eCLAMP,
          const SAMPLERFILTER::E& sampler = SAMPLERFILTER::E::ePOINT);
 

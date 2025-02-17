@@ -118,8 +118,6 @@ public:
 
 };
 
-const Vertex ZERO = Vertex(Vector3f(0, 0, 0));
-
 }
 
 

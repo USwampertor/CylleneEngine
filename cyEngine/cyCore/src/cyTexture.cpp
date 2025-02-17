@@ -51,8 +51,8 @@ TextureResource::setImage(const SharedPointer<ImageResource>& img) {
 }
 
 Color
-TextureResource::sample(float& u, 
-                        float& v, 
+TextureResource::sample(float u, 
+                        float v, 
                         const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
                         const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
   adjustTextureAddress(u, v, mode);
@@ -93,7 +93,7 @@ TextureResource::sample(float& u,
 }
 
 Color
-TextureResource::sample(Vector2f& uv, 
+TextureResource::sample(Vector2f uv, 
                         const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
                         const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
   return sample(uv.x, uv.y, mode, sampler);
