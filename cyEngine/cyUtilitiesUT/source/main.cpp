@@ -73,6 +73,11 @@ TEST_CASE("[benchmark] Testing benchmark system") {
   });
 }
 
+TEST_CASE("[math] Modf") {
+  CHECK(3 == Math::mod(3, 4));
+  CHECK(0 != Math::mod(3, 4));
+}
+
 TEST_CASE("[random] testing random module") {
   Random::init();
 
