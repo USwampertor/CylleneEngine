@@ -307,6 +307,9 @@ class CY_UTILITY_EXPORT Color
   Vector4f
   toVector4();
 
+  float
+  toGrey();
+
   /**
     * @brief Returns a string with the information of the color
     * @param

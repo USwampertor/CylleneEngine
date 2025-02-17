@@ -313,6 +313,11 @@ namespace CYLLENE_SDK {
     return Vector4f(r, g, b, a);
   }
 
+  float
+  Color::toGrey() {
+    return (0.299f * r + 0.587f * g + 0.114f * b);
+  }
+
   String
   Color::toString() {
     return Utils::format("(R: %2.2f, G: %2.2f, B: %2.2f, A: %2.2f)", r, g, b, a);
