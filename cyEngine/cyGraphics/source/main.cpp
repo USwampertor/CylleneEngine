@@ -545,6 +545,7 @@ initGL(CYLLENE_SDK::String basepath,
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 
     // Compile vertex source
+    printf("Compiling vertex shader from path: %s\n", VSFile.path().c_str());
     glCompileShader(vertexShader);
 
     // Check vertex shader for errors
@@ -575,6 +576,7 @@ initGL(CYLLENE_SDK::String basepath,
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 
     // Compile fragment source
+    printf("Compiling fragment shader from path: %s\n", PSFile.path().c_str());
     glCompileShader(fragmentShader);
 
     // Check fragment shader for errors
@@ -606,7 +608,8 @@ initGL(CYLLENE_SDK::String basepath,
 
   // Get vertex position attribute location
   {
-    gVertexPosition2D = glGetAttribLocation(gProgramID, "LVertexPos");
+    gVertexPosition2D = 0;
+    glBindAttribLocation(gProgramID, gVertexPosition2D, "LVertexPos");
     if (gVertexPosition2D == -1) {
       printf("LVertexPos is not a valid glsl program variable!\n");
       return false;
@@ -615,7 +618,8 @@ initGL(CYLLENE_SDK::String basepath,
 
   // Get vertex texcoord attribute location
   {
-    gUV = glGetAttribLocation(gProgramID, "LVertexUV");
+    gUV = 1;
+    glBindAttribLocation(gProgramID, gUV, "LVertexUV");
     if (gUV == -1) {
       printf("LVertexUV is not a valid glsl program variable!\n");
       return false;
@@ -624,7 +628,8 @@ initGL(CYLLENE_SDK::String basepath,
 
   // Get vertex color attribute location
   {
-    gVertexColor = glGetAttribLocation(gProgramID, "LVertexColor");
+    gVertexColor = 2;
+    glBindAttribLocation(gProgramID, gVertexColor, "LVertexColor");
     if (gVertexColor == -1) {
       printf("LVertexColor is not a valid glsl program variable!\n");
       return false;
