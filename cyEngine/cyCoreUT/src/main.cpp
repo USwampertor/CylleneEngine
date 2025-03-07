@@ -9,6 +9,15 @@
  */
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
+// #define SDL_MAIN_USE_CALLBACKS 1
+#include <iostream>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+
+#ifdef CreateWindow
+# undef CreateWindow
+#endif // CreateWindow
+
 #include <cyBeing.h>
 #include <cyCoreUTPrerequisites.h>
 #include <cyCrashHandler.h>
@@ -28,8 +37,6 @@
 #include <cyVector2f.h>
 #include <cyVertex.h>
 
-#include <iostream>
-#include <SDL3/SDL.h>
 
 using namespace CYLLENE_SDK;
 
@@ -37,44 +44,44 @@ using namespace CYLLENE_SDK;
 using ManualShader = std::function<Color(float, float)>;
 
 
-Vertex rotateVertex(const Vertex& v,
+Vector3f rotateVertex(const Vector3f& v,
   float angleX,
   float angleY,
   float angleZ,
   float cx,
   float cy,
   float cz) {
-  Vertex result = v;
+  Vector3f result = v;
 
-  result.m_position.x -= cx;
-  result.m_position.y -= cy;
-  result.m_position.z -= cz;
+  result.x -= cx;
+  result.y -= cy;
+  result.z -= cz;
 
   float cosX = cos(angleX);
   float sinX = sin(angleX);
-  float y = result.m_position.y * cosX - result.m_position.z * sinX;
-  float z = result.m_position.y * sinX + result.m_position.z * cosX;
-  result.m_position.y = y;
-  result.m_position.z = z;
+  float y = result.y * cosX - result.z * sinX;
+  float z = result.y * sinX + result.z * cosX;
+  result.y = y;
+  result.z = z;
 
   float cosY = cos(angleY);
   float sinY = sin(angleY);
-  float x = result.m_position.x * cosY + result.m_position.z * sinY;
-  z = -result.m_position.x * sinY + result.m_position.z * cosY;
-  result.m_position.x = x;
-  result.m_position.z = z;
+  float x = result.x * cosY + result.z * sinY;
+  z = -result.x * sinY + result.z * cosY;
+  result.x = x;
+  result.z = z;
 
   float cosZ = cos(angleZ);
   float sinZ = sin(angleZ);
-  x = result.m_position.x * cosZ - result.m_position.y * sinZ;
-  y = result.m_position.x * sinZ + result.m_position.y * cosZ;
-  result.m_position.x = x;
-  result.m_position.y = y;
+  x = result.x * cosZ - result.y * sinZ;
+  y = result.x * sinZ + result.y * cosZ;
+  result.x = x;
+  result.y = y;
 
   // Translate back
-  result.m_position.x += cx;
-  result.m_position.y += cy;
-  result.m_position.z += cz;
+  result.x += cx;
+  result.y += cy;
+  result.z += cz;
 
   return result;
 }
@@ -546,15 +553,13 @@ main(int32 argc, char* argv[]) {
 
     return normal;
   };
-
-  // Initialize SDL3
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
     return -1;
   }
 
-  // Create an SDL3 window
-  SDL_Window* window = SDL_CreateWindow("SDL3 Window", 1920, 1080, SDL_WINDOW_OPENGL);
+  // Create an SDL3 window with OpenGL support
+  SDL_Window* window = SDL_CreateWindow("SDL3 Window", 1920, 1080, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (!window) {
     std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
     SDL_Quit();
@@ -588,13 +593,13 @@ main(int32 argc, char* argv[]) {
     // Rotate the cube
     angleX += 0.1f;
     angleY += 0.1f;
-    angleZ += 0.1f;
+    // angleZ += 0.1f;
 
     for (const auto& tri : cubeFaces) {
       Triangle rotatedTri(
-        rotateVertex(tri._m.v0, angleX, angleY, angleZ, 650, 650, -150),
-        rotateVertex(tri._m.v1, angleX, angleY, angleZ, 650, 650, -150),
-        rotateVertex(tri._m.v2, angleX, angleY, angleZ, 650, 650, -150)
+        rotateVertex(tri._m.v0.m_position, angleX, angleY, angleZ, 650, 650, -150),
+        rotateVertex(tri._m.v1.m_position, angleX, angleY, angleZ, 650, 650, -150),
+        rotateVertex(tri._m.v2.m_position, angleX, angleY, angleZ, 650, 650, -150)
       );
 
       Vector3f v0v1 = rotatedTri._m.v1.m_position - rotatedTri._m.v0.m_position;
@@ -607,7 +612,7 @@ main(int32 argc, char* argv[]) {
       //triangle is facing forwards
       if (intensity > 0) {
         // Draw the triangle
-        fillTriangle(rotatedTri, imgScreen, texPShader);
+        fillTriangle(rotatedTri, imgScreen, uvPShader);
       }
 
     }

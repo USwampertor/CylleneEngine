@@ -16,12 +16,19 @@ mirrorCoord(int32 coord, int32 max) {
 
 void*
 ImageResource::getData() {
-  return nullptr;
+  std::tuple<ImageMetadata, Vector<Color>>* tupleData = 
+    new std::tuple<ImageMetadata, Vector<Color>>(m_metadata, 
+                                                   m_pixels);
+  return reinterpret_cast<void*>(tupleData);
 }
 
 void
 ImageResource::setData(void* data) {
-
+  auto* tupleData = static_cast<std::tuple<ImageMetadata, Vector<Color>>*>(data);
+  m_metadata = std::get<0>(*tupleData);
+  m_pixels = std::get<1>(*tupleData);
+  // ??? Should this be done?
+  delete data;
 }
 
 void

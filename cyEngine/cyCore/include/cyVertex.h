@@ -49,8 +49,8 @@ public:
          const Vector3f& binormal = Vector3f::ZERO, 
          const Vector2f& uv = Vector2f::ZERO,
          const Color& color = Color::CLEAR, 
-         const int32 boneIDs[4] = {0},
-         const float boneweights[4] = {0})
+         const Array<int32_t, 4>& boneIDs = {0,0,0,0},
+         const Array<float, 4>& boneweights = {0.0f, 0.0f, 0.0f, 0.0f})
     : m_position(position),
       m_color(color),
       m_normal(normal),
