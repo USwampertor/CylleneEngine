@@ -80,26 +80,26 @@ namespace CYLLENE_SDK {
   using FileBuffer = std::filebuf;
 
   template<typename T>
-  using SharedPointer = std::shared_ptr<T>;
+  using SPtr = std::shared_ptr<T>;
 
   template<typename T>
-  using UniquePointer = std::unique_ptr<T>;
+  using UPtr = std::unique_ptr<T>;
 
   using Mutex         = std::mutex;
 
   template<typename T>
-  using UniqueLock    = std::unique_lock<T>;
+  using ULock    = std::unique_lock<T>;
 
-  using MutexLock     = std::unique_lock<Mutex>;
+  using MULock     = ULock<Mutex>;
 
   template<typename T>
   using Hash          = std::hash<T>;
 
   using HighClock     = std::chrono::high_resolution_clock;
 
-  using RecursiveLock = std::unique_lock<std::recursive_mutex>;
+  using RMutex = std::recursive_mutex;
 
-  using RecursiveMutex = std::recursive_mutex;
+  using RMULock = ULock<RMutex>;
 
   using SteadyClock   = std::chrono::steady_clock;
 
@@ -155,7 +155,7 @@ namespace CYLLENE_SDK {
   using UnorderedMap = std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>;
 
   template<typename T>
-  using WeakPointer = std::weak_ptr<T>;
+  using WPtr = std::weak_ptr<T>;
 }
 
 

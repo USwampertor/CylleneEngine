@@ -33,7 +33,7 @@ public:
    *  @return	a SharedPointer<Thread> that is already saved in the manager
    */
   template<typename F, typename ... Args>
-  SharedPointer<Thread>
+  SPtr<Thread>
   create(F&& f, Args ... args) {
     m_threads.push_back(makeSharedPtr<Thread>(f, std::forward<Args>(args)...));
     return m_threads.back();
@@ -44,7 +44,7 @@ private:
   /**
    * The vector of threads
    */
-  Vector<SharedPointer<Thread>> m_threads;
+  Vector<SPtr<Thread>> m_threads;
 };
 
 /*

@@ -207,12 +207,12 @@ private:
 // FUNCTIONS
 
 template <typename T, typename... Args>
-UniquePointer<T> makeUniquePtr(Args ... args) {
+UPtr<T> makeUniquePtr(Args ... args) {
   return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-SharedPointer<T> makeSharedPtr(Args ... args) {
+SPtr<T> makeSharedPtr(Args ... args) {
   return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
