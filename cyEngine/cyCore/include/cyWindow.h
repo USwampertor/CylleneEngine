@@ -19,28 +19,33 @@
 #include <cyVector3f.h>
 #include <cyVector4f.h>
 
-#include <SDL2/SDL.h>
+#define SDL_MAIN_USE_CALLBACKS 0
+#include <SDL3/SDL.h>
+
+#ifdef CreateWindow
+# undef CreateWindow
+#endif // CreateWindow
+
 
 namespace CYLLENE_SDK {
 
 using Window          = SDL_Window;
 using WindowEvent     = SDL_WindowEvent;
 using MessageBoxData  = SDL_MessageBoxData;
+using WindowRenderer  = SDL_Renderer;
 
 
   namespace WINDOW_INIT
   {
     BETTER_ENUM(E, uint32, 
-                eTIMER           = SDL_INIT_TIMER,
-                eAUDIO           = SDL_INIT_AUDIO,
-                eVIDEO           = SDL_INIT_VIDEO,
-                eJOYSTICK        = SDL_INIT_JOYSTICK,
-                eHAPTIC          = SDL_INIT_HAPTIC,
-                eGAMECONTROLLER  = SDL_INIT_GAMECONTROLLER,
-                eEVENTS          = SDL_INIT_EVENTS,
-                eSENSOR          = SDL_INIT_SENSOR,
-                eNOPARACHUTE     = SDL_INIT_NOPARACHUTE,
-                eEVERYTHING      = SDL_INIT_EVERYTHING);
+                eAUDIO    = SDL_INIT_AUDIO,
+                eVIDEO    = SDL_INIT_VIDEO,
+                eJOYSTICK = SDL_INIT_JOYSTICK,
+                eHAPTIC   = SDL_INIT_HAPTIC,
+                eGAMEPAD  = SDL_INIT_GAMEPAD,
+                eEVENTS   = SDL_INIT_EVENTS,
+                eSENSOR   = SDL_INIT_SENSOR,
+                eCAMERA   = SDL_INIT_CAMERA);
   }
 
 
@@ -67,15 +72,12 @@ public:
 
   SharedPointer<Window*> 
   createWindow(const String& title,
-               const int32& posX, 
-               const int32& posY, 
                const int32& width, 
                const int32& height, 
                const int32& flags);
 
   SharedPointer<Window*> 
   createWindow(const String& title,
-               const Vector2i& pos, 
                const Vector2i& size, 
                const int32& flags);
 

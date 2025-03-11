@@ -11,15 +11,11 @@ namespace CYLLENE_SDK {
 
   SharedPointer<Window*> 
   WindowManager::createWindow(const String& title,
-                              const int32& posX, 
-                              const int32& posY, 
                               const int32& width, 
                               const int32& height, 
                               const int32& flags) {
     SharedPointer<Window*> newWindow = 
       std::make_shared<Window*>(SDL_CreateWindow(title.c_str(),
-                                                 posX, 
-                                                 posY, 
                                                  width, 
                                                  height, 
                                                  flags));
@@ -34,17 +30,14 @@ namespace CYLLENE_SDK {
 
   SharedPointer<Window*> 
   WindowManager::createWindow(const String& title,
-                              const Vector2i& pos, 
                               const Vector2i& size, 
                               const int32& flags) {
-    return createWindow(title, pos.x, pos.y, size.x, size.y, flags);
+    return createWindow(title, size.x, size.y, flags);
   }
 
   SharedPointer<Window*>
   WindowManager::createWindow(const WindowSettings& settings) {
     return createWindow(settings.title, 
-                        settings.position.x, 
-                        settings.position.y, 
                         settings.size.x, 
                         settings.size.y, 
                         settings.flags);
