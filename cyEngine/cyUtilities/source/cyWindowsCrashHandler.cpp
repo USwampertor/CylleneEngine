@@ -530,7 +530,7 @@ namespace CYLLENE_SDK {
                              const String& strFile,
                              uint32 nLine) const {
     //Win32 debug methods are not thread safe
-    MutexLock lock(m_data->mutex);
+    MULock lock(m_data->mutex);
 
     logErrorAndStackTrace(type, strDescription, strFunction, strFile, nLine);
     Logger::instance().dump();
@@ -553,7 +553,7 @@ namespace CYLLENE_SDK {
     EXCEPTION_POINTERS* exceptionData = static_cast<EXCEPTION_POINTERS*>(exception);
 
     //Win32 debug methods are not thread safe
-    MutexLock lock(m_data->mutex);
+    MULock lock(m_data->mutex);
 
     loadPSAPISymbols();
     loadSymbols();
