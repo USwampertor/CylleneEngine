@@ -80,6 +80,7 @@
     <ClCompile Include="src\cyShader.cpp" />
     <ClCompile Include="src\cySkeleton.cpp" />
     <ClCompile Include="src\cyTexture.cpp" />
+    <ClCompile Include="src\cyTransform.cpp" />
     <ClCompile Include="src\cyTriangle.cpp" />
     <ClCompile Include="src\cyVertex.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />
