@@ -23,12 +23,13 @@ namespace CYLLENE_SDK {
 class CY_CORE_EXPORT TransformComponent : public Component
 {
 public:
+  
   // TransformComponent() : Component(TransformComponent::staticType()) {}
 
 
   TransformComponent(const Vector3f& position = Vector3f::ZERO,
                      const Vector3f& scale = Vector3f::ONE,
-                     const Quaternion& rotation = Quaternion(0, 0, 0, 1))
+                     const Quaternion& rotation = Quaternion::IDENTITY)
     : Component(TransformComponent::staticType()),
       m_position(position),
       m_scale(scale),
@@ -87,13 +88,17 @@ public:
     setTransform(other.m_position, other.m_scale, other.m_rotation);
   }
 
-  WeakPointer<TransformComponent>&
+  void
+  setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir);
+
+
+  WPtr<TransformComponent>&
   getParent() {
     // TODO: Check if parent is still valid
     return m_parent;
   }
 
-  Vector<WeakPointer<TransformComponent>>&
+  Vector<WPtr<TransformComponent>>&
   getChildren() {
     return m_children;
   }
@@ -121,9 +126,9 @@ public:
 
   void
   reset() {
-    m_position  = { 0,0,0 };
-    m_scale     = { 0,0,0 };
-    m_rotation  = { 0,0,0,1 };
+    m_position  = Vector3f::ZERO;
+    m_scale     = Vector3f::ONE;
+    m_rotation  = Quaternion::IDENTITY;
   }
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eTRANSFORM; }
@@ -131,6 +136,11 @@ public:
   virtual const String 
   toString() override {
     String toReturn;
+
+    toReturn = Utils::format("%s \n %s \n %s", 
+                             m_position.toString().c_str(), 
+                             m_rotation.toString().c_str(),
+                             m_scale.toString().c_str());
 
     return toReturn;
   }
@@ -143,9 +153,9 @@ private:
   
   Quaternion m_rotation;
 
-  WeakPointer<TransformComponent> m_parent;
+  WPtr<TransformComponent> m_parent;
   
-  Vector<WeakPointer<TransformComponent>> m_children;
+  Vector<WPtr<TransformComponent>> m_children;
 };
 
 }

@@ -19,14 +19,14 @@ namespace CYLLENE_SDK {
                 eCOLLIDER2D,
                 eCOLLIDER3D,
                 eLIGHTAMBIENT,
+                eLIGHT2DFREEFORM,
+                eLIGHT2DGLOBAL,
+                eLIGHT2DSPOT,
+                eLIGHT2DSPRITE,
                 eLIGHT3DAREA,
                 eLIGHT3DDIRECTIONAL,
                 eLIGHT3DPOINT,
                 eLIGHT3DSPOT,
-                eLIGHT2DFREEFORM,
-                eLIGHT2DSPOT,
-                eLIGHT2DSPRITE,
-                eLIGHT2DGLOBAL,
                 eMODEL,
                 eSHADER,
                 eSPRITE,
@@ -44,7 +44,8 @@ public:
 
   virtual ~Component() = default;
 
-  void setOwner(Being* owner) {
+  void 
+  setOwner(Being* owner) {
     m_owner = owner;
   }
 

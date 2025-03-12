@@ -50,12 +50,12 @@ public:
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value>>
   void 
-  addComponent(SharedPointer<T>& component) {
+  addComponent(SPtr<T>& component) {
     // Is there already a component like this?
     COMPONENT_TYPE::E type = T::staticType();
     if (m_components.find(type) == m_components.end()) {
       // There is no component like this, se we should be able to add it
-      component->setParent(this);
+      component->setOwner(this);
       m_components.insert(Utils::makePair(type, component));
     }
   }
@@ -151,7 +151,7 @@ private:
   /**
    * The components that has the Being
    */
-  Map<COMPONENT_TYPE::E, SharedPointer<Component>> m_components;
+  Map<COMPONENT_TYPE::E, SPtr<Component>> m_components;
 
   bool m_isActive;
 

@@ -23,7 +23,7 @@ namespace CYLLENE_SDK {
 struct SceneSettings
 {
   Vector2f m_gravity;
-  UniquePointer<GameMode> m_gameMode;
+  UPtr<GameMode> m_gameMode;
 };
 
 /*
@@ -42,10 +42,10 @@ public:
 private:
 
   String m_name;
-  UniquePointer<SceneSettings> m_settings;
-  Vector<SharedPointer<Being>> m_beings;
+  UPtr<SceneSettings> m_settings;
+  Vector<SPtr<Being>> m_beings;
 
-  Vector<SharedPointer<Being>> m_toRemove;
+  Vector<SPtr<Being>> m_toRemove;
 };
 
 }

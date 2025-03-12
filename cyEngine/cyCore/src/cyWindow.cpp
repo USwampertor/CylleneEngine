@@ -1,20 +1,25 @@
 #include "cyWindow.h"
+#include "cyLogger.h"
 
 namespace CYLLENE_SDK {
   
   bool 
   WindowManager::init() {
 
-    SDL_Init(WINDOW_INIT::E::eVIDEO);
+    if (!SDL_Init(WINDOW_INIT::E::eVIDEO)) {
+      String errorStr = Utils::format("Error initializing SDL: %s", SDL_GetError());
+      Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+      return false;
+    }
     return true;
   }
 
-  SharedPointer<Window*> 
+  SPtr<Window*> 
   WindowManager::createWindow(const String& title,
                               const int32& width, 
                               const int32& height, 
                               const int32& flags) {
-    SharedPointer<Window*> newWindow = 
+    SPtr<Window*> newWindow = 
       std::make_shared<Window*>(SDL_CreateWindow(title.c_str(),
                                                  width, 
                                                  height, 
@@ -28,14 +33,14 @@ namespace CYLLENE_SDK {
     return newWindow;
   }
 
-  SharedPointer<Window*> 
+  SPtr<Window*> 
   WindowManager::createWindow(const String& title,
                               const Vector2i& size, 
                               const int32& flags) {
     return createWindow(title, size.x, size.y, flags);
   }
 
-  SharedPointer<Window*>
+  SPtr<Window*>
   WindowManager::createWindow(const WindowSettings& settings) {
     return createWindow(settings.title, 
                         settings.size.x, 
@@ -43,7 +48,7 @@ namespace CYLLENE_SDK {
                         settings.flags);
   }
   
-  SharedPointer<Window*>
+  SPtr<Window*>
   WindowManager::getWindow(const int32& window) {
     return m_windows[window];
   }

@@ -82,13 +82,13 @@ public:
   virtual void*
   decode(const File& f) = 0;
 
-  // virtual SharedPointer<Resource>
+  // virtual SPtr<Resource>
   // load(const Path& pathToResource) = 0;
   // 
-  // virtual SharedPointer<Resource>
+  // virtual SPtr<Resource>
   // create(const Path& pathToResource) = 0;
   // 
-  // virtual SharedPointer<Resource>
+  // virtual SPtr<Resource>
   // create(const Path& pathToResource, void* data) = 0;
 
 protected:

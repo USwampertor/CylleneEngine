@@ -147,7 +147,7 @@ public:
   create(const uint32& width, const uint32& height, const uint32& bpp);
 
   void
-  bitBlt(const SharedPointer<ImageResource>& srcImg,
+  bitBlt(const SPtr<ImageResource>& srcImg,
          const Rect& srcRect, 
          const Rect& dstRect, 
          const TEXTUREMODE::E& format = TEXTUREMODE::E::eNONE);

@@ -147,10 +147,10 @@ public:
   /*
    *	@brief	retrieves a new shader, getting its values via reflection and making them
    *          manipulable to the material
-   *	@param	const SharedPointer<ShaderResource>& newShader the new shader to set
+   *	@param	const SPtr<ShaderResource>& newShader the new shader to set
    */
   void
-  loadShader(const SharedPointer<ShaderResource>& newShader);
+  loadShader(const SPtr<ShaderResource>& newShader);
 
   
 private:
@@ -163,9 +163,9 @@ private:
 
 private:
 
-  Map<String, SharedPointer<void*>> m_components;
+  Map<String, SPtr<void*>> m_components;
 
-  WeakPointer<ShaderResource> m_shader;
+  WPtr<ShaderResource> m_shader;
 };
 
 }

@@ -46,20 +46,20 @@ public:
   void*
   createInputLayout();
 
-  virtual UniquePointer<GraphicsBuffer>
+  virtual UPtr<GraphicsBuffer>
   createGraphicsBuffer(const Vector<char>& data) = 0;
 
-  virtual UniquePointer<VertexBuffer>
+  virtual UPtr<VertexBuffer>
   createVertexBuffer(const Vector<char>& data) = 0;
 
-  virtual UniquePointer<IndexBuffer>
+  virtual UPtr<IndexBuffer>
   createIndexBuffer(const Vector<char>& data) = 0;
 
-  virtual UniquePointer<ConstantBuffer>
+  virtual UPtr<ConstantBuffer>
   createConstantBuffer(const Vector<char>& data) = 0;
 
   virtual void
-  writeToBuffer(const UniquePointer<GraphicsBuffer>& pBuffer, const Vector<char>& data) = 0;
+  writeToBuffer(const UPtr<GraphicsBuffer>& pBuffer, const Vector<char>& data) = 0;
 
 private:
 
@@ -89,7 +89,7 @@ private:
 };
 
 // TODO: Check if this is correct
-// extern CY_CORE_EXPORT UniquePointer<GraphicsAPI> g_GraphicsAPI;
+// extern CY_CORE_EXPORT UPtr<GraphicsAPI> g_GraphicsAPI;
 
 }
 

@@ -25,6 +25,7 @@
     <ClInclude Include="include\cyAudioAPI.h" />
     <ClInclude Include="include\cyBaseUI.h" />
     <ClInclude Include="include\cyBeing.h" />
+    <ClInclude Include="include\cyCamera.h" />
     <ClInclude Include="include\cyClassRegister.h" />
     <ClInclude Include="include\cyCodec.h" />
     <ClInclude Include="include\cyComponent.h" />
@@ -60,6 +61,7 @@
     <ClCompile Include="src\cyAudioAPI.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
     <ClCompile Include="src\cyBeing.cpp" />
+    <ClCompile Include="src\cyCamera.cpp" />
     <ClCompile Include="src\cyClassRegister.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />
     <ClCompile Include="src\cyGameMode.cpp" />

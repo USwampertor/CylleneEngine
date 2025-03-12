@@ -86,7 +86,7 @@ public:
 //              const uint32& height);
 
   void
-  setImage(const SharedPointer<ImageResource>&  img);
+  setImage(const SPtr<ImageResource>&  img);
 
   Color
   sample(float u, 
@@ -100,7 +100,7 @@ public:
          const SAMPLERFILTER::E& sampler = SAMPLERFILTER::E::ePOINT);
 
   void 
-  draw(SharedPointer<ImageResource>& img,
+  draw(SPtr<ImageResource>& img,
        int32_t x,
        int32_t y,
        const Rect& srcRect, 
@@ -126,7 +126,7 @@ public:
   /**
    * The image resource being used
    */
-  SharedPointer<ImageResource> m_img;
+  SPtr<ImageResource> m_img;
 };
 
 }

@@ -99,7 +99,7 @@ ImageCodec::decode(const File& f) {
   // Check for metadata
     
   // TODO: Extract file path starting from our project folder path so name includes this
-  // SharedPointer<TextureResource> newResource = 
+  // SPtr<TextureResource> newResource = 
   //   ResourceManager::instance().create<TextureResource>(p.fullPath());
 
   /* Vector<Color> colors;
@@ -204,7 +204,7 @@ ModelCodec::decode(const File& f) {
 
   Path p(f.path());
 
-  // SharedPointer<MeshResource> newResource = 
+  // SPtr<MeshResource> newResource = 
   //   ResourceManager::instance().create<MeshResource>(p.baseName());
 
   // Check if we are importing a Cyllene Engine Model or a "any other format" model
@@ -399,11 +399,11 @@ ShaderCodec::decode(const File& f) {
   void* data = reinterpret_cast<void*>(tmp.c_str()[0]);
     
   // auto tmpPointer = new ShaderResource(pathToResource, data);
-  // return SharedPointer<Resource>(tmpPointer);
+  // return SPtr<Resource>(tmpPointer);
   // 
   // delete(data);
 
-  SharedPointer<ShaderResource> newResource =
+  SPtr<ShaderResource> newResource =
     ResourceManager::instance().create<ShaderResource>(p.baseName());
 
   newResource->m_isBlob = p.extension().compare(".blob") == 0;
@@ -414,7 +414,7 @@ ShaderCodec::decode(const File& f) {
 void*
 AudioCodec::decode(const File& f) {
     
-  SharedPointer<AudioResource> newResource;
+  SPtr<AudioResource> newResource;
   // return REINTERPRETPOINTER(Resource, newResource);
   return nullptr;
 }

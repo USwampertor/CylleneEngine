@@ -70,27 +70,30 @@ public:
   bool 
   init();
 
-  SharedPointer<Window*> 
+  SPtr<Window*> 
   createWindow(const String& title,
                const int32& width, 
                const int32& height, 
                const int32& flags);
 
-  SharedPointer<Window*> 
+  SPtr<Window*> 
   createWindow(const String& title,
                const Vector2i& size, 
                const int32& flags);
 
-  SharedPointer<Window*>
+  SPtr<Window*>
   createWindow(const WindowSettings& settings);
 
-  SharedPointer<Window*>
+  SPtr<Window*>
   getWindow(const int32& window);
+
+  SPtr<WindowRenderer*>
+  createRenderer();
 
   void
   finish();
 
-  Vector<SharedPointer<Window*>> m_windows;
+  Vector<SPtr<Window*>> m_windows;
 
   static int32
   ShowWarningMessage( const String& title, const String& message) {

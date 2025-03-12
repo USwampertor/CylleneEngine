@@ -14,9 +14,9 @@ class PluginManager : public Module<PluginManager>
   void
   loadPlugin(const String& pluginName);
 
-  Vector<SharedPointer<Plugin>> m_plugins;
+  Vector<SPtr<Plugin>> m_plugins;
 
-  Map<String, SharedPointer<Plugin>> m_essentialPlugins;
+  Map<String, SPtr<Plugin>> m_essentialPlugins;
 
 };
 

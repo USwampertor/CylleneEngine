@@ -41,13 +41,13 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
-  SharedPointer<T> 
+  SPtr<T> 
   create(const String& assetPath) {
     String realName = generateResourceID<T>(assetPath);
     if (m_resources.find(Hash<String>()(realName)) != m_resources.end()) {
       return REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
     }
-    SharedPointer<T> newResource = makeSharedPtr<T>();
+    SPtr<T> newResource = makeSharedPtr<T>();
     newResource->m_name = assetPath;
     m_resources.insert(Utils::makePair(Hash<String>()(realName), newResource));
     return newResource;
@@ -55,7 +55,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
-  SharedPointer<T>
+  SPtr<T>
   loadFromPath(const String& assetPath) {
 
     File f = FileSystem::open(assetPath);
@@ -69,7 +69,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
     RESOURCE_TYPE::E type = T::staticType();
 
-    SharedPointer<Codec> codec;
+    SPtr<Codec> codec;
     codec = getCodec<Codec>(type);
     
     if (!codec->canDecode(assetPath)) {
@@ -84,7 +84,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     //TODO: Check for projectDir root and make paths relative
     // i.e C:/Foo/Bar/image.png -> /ProjectDir/SelectedFolder/image.png
 
-    SharedPointer<T> newResource = create<T>(p.baseName());
+    SPtr<T> newResource = create<T>(p.baseName());
     newResource->setData(codec->decode(f));
     return REINTERPRETPOINTER(T, newResource);
   }
@@ -92,7 +92,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   template<typename T,
            typename = std::enable_if_t<std::is_base_of<Resource, T>::value>,
            typename... Args>
-  SharedPointer<T>
+  SPtr<T>
   loadFromMemory(Args...) {
 
   }
@@ -104,7 +104,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
    *	@param		
    *  @return	
    */
-  SharedPointer<T>
+  SPtr<T>
   loadAsset(const String& projectPath) {
 
   }
@@ -123,7 +123,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   // template<typename T, 
   //          typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
-  // SharedPointer<T>&
+  // SPtr<T>&
   // getCodec() {
   //   RESOURCE_TYPE::E type = T::staticType();
   // 
@@ -135,7 +135,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
-  SharedPointer<T>
+  SPtr<T>
   getCodec(const RESOURCE_TYPE::E& type) {
 
     if (m_codecs.find(type._to_string()) != m_codecs.end()) {
@@ -149,15 +149,15 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 //   init(/*Device* pDevice*/);
 // 
 //   template<typename T = Resource>
-//   SharedPointer<T>
+//   SPtr<T>
 //   load(const String& path, bool& wasSuccesful);
 // 
 //   template<typename T = Resource>
-//   SharedPointer<T>
+//   SPtr<T>
 //   create(const String& name, const RESOURCE_TYPE::E& type);
 // 
 //   template<typename T = Resource>
-//   SharedPointer<T>
+//   SPtr<T>
 //   create(const String& name, const RESOURCE_TYPE::E& type, void* data);
 // 
 //   void
@@ -175,13 +175,13 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 //   bool
 //   resourceExists(const Path& path);
 // 
-//   SharedPointer<Codec>
+//   SPtr<Codec>
 //   getCodec(const RESOURCE_TYPE::E& resType);
 
 
-  Map<SizeT, SharedPointer<Resource>> m_resources;
+  Map<SizeT, SPtr<Resource>> m_resources;
 
-  Map<String, SharedPointer<Codec>> m_codecs;
+  Map<String, SPtr<Codec>> m_codecs;
 
   Event<void> m_resourceLoaded;
 

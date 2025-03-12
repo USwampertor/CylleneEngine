@@ -29,9 +29,9 @@ public:
 
 public:
 
-  Vector<SharedPointer<MeshResource>> m_meshes;
+  Vector<SPtr<MeshResource>> m_meshes;
 
-  SharedPointer<SkeletonResource> m_skeleton;
+  SPtr<SkeletonResource> m_skeleton;
 
   bool m_hasSkeleton;
 

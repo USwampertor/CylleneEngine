@@ -41,7 +41,7 @@ ImageResource::create(const uint32& width, const uint32& height, const uint32& b
 }
 
 void
-ImageResource::bitBlt(const SharedPointer<ImageResource>& srcImg, 
+ImageResource::bitBlt(const SPtr<ImageResource>& srcImg, 
                       const Rect& srcRect, 
                       const Rect& dstRect, 
                       const TEXTUREMODE::E& format) {

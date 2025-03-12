@@ -32,7 +32,7 @@ public:
 
   Vector<uint32> m_indexBuffer;
 
-  SharedPointer<MaterialResource> m_material;
+  SPtr<MaterialResource> m_material;
 };
 
 }

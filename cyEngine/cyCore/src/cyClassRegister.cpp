@@ -10,7 +10,7 @@ ClassRegister::registerBeing(const String& beingClassName, FabricatorFunc creato
 }
 
 // template<class... Args>
-// SharedPointer<Being> 
+// SPtr<Being> 
 // ClassRegister::createBeing(const String& beingClassName,
 //                            Args&& ...args) {
 //   auto it = getBeingRegistry().find(beingClassName);
@@ -20,7 +20,7 @@ ClassRegister::registerBeing(const String& beingClassName, FabricatorFunc creato
 // }
 // 
 // template<typename T, class... Args>
-// SharedPointer<T> 
+// SPtr<T> 
 // ClassRegister::createBeing(const String& beingClassName,
 //                            Args&&... args) {
 //   auto it = getBeingRegistry().find(beingClassName);

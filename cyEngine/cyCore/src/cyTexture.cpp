@@ -46,7 +46,7 @@ TextureResource::adjustTextureAddress(float& u,
 }
 
 void
-TextureResource::setImage(const SharedPointer<ImageResource>& img) {
+TextureResource::setImage(const SPtr<ImageResource>& img) {
   m_img = img;
 }
 
@@ -100,7 +100,7 @@ TextureResource::sample(Vector2f uv,
 }
 
 void
-TextureResource::draw(SharedPointer<ImageResource>& img,
+TextureResource::draw(SPtr<ImageResource>& img,
                       int32_t x,
                       int32_t y,
                       const Rect& srcRect, 
