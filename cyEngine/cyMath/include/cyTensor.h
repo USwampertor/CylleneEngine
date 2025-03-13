@@ -4,7 +4,7 @@
 
 namespace CYLLENE_SDK {
 
-class Tensor
+class CY_MATH_EXPORT Tensor
 {
 
 };
