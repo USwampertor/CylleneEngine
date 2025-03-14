@@ -18,7 +18,6 @@
 #include "cyException.h"
 #include "cyFileSystem.h"
 #include "cyLogger.h"
-#include "cyMath.h"
 
 namespace CYLLENE_SDK {
 
@@ -85,7 +84,7 @@ namespace CYLLENE_SDK {
     uint64 rawStackTrace[CY_MAX_STACKTRACE_DEPTH];
     uint32 numEntries = getRawStackTrace(context, rawStackTrace);
 
-    numEntries = Math::min(static_cast<uint32>(CY_MAX_STACKTRACE_DEPTH), numEntries);
+    numEntries = std::min(static_cast<uint32>(CY_MAX_STACKTRACE_DEPTH), numEntries);
 
     uint32 bufferSize = sizeof(PIMAGEHLP_SYMBOL64) + CY_MAX_STACKTRACE_NAME_BYTES;
     auto buffer = static_cast<uint8*>(cy_alloc(bufferSize));
