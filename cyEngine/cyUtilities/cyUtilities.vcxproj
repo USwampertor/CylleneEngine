@@ -186,25 +186,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\cyArgumentParser.h" />
-    <ClInclude Include="include\cyColor.h" />
     <ClInclude Include="include\cyCrashHandler.h" />
     <ClInclude Include="include\cyDinamicLibrary.h" />
     <ClInclude Include="include\cyDLLLoader.h" />
-    <ClInclude Include="include\cyEulerHelpers.h" />
     <ClInclude Include="include\cyEvent.h" />
     <ClInclude Include="include\cyException.h" />
     <ClInclude Include="include\cyFileSystem.h" />
     <ClInclude Include="include\cyJSON.h" />
-    <ClInclude Include="include\cyLine.h" />
-    <ClInclude Include="include\cyMath.h" />
-    <ClInclude Include="include\cyMatrix4x4.h" />
-    <ClInclude Include="include\cyPlane.h" />
-    <ClInclude Include="include\cyPlatformMath.h" />
     <ClInclude Include="include\cyPlatformUtilities.h" />
-    <ClInclude Include="include\cyQuaternion.h" />
-    <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyRegex.h" />
-    <ClInclude Include="include\cyRNG.h" />
     <ClInclude Include="include\cySmartPointers.h" />
     <ClInclude Include="include\cyThread.h" />
     <ClInclude Include="include\cyTime.h" />
@@ -217,48 +207,25 @@
     <ClInclude Include="include\cyUnitTesting.h" />
     <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
     <ClInclude Include="include\cyUtilities.h" />
-    <ClInclude Include="include\cyVector2f.h" />
-    <ClInclude Include="include\cyVector2i.h" />
-    <ClInclude Include="include\cyVector3f.h" />
-    <ClInclude Include="include\cyVector4f.h" />
     <ClInclude Include="include\cyWindows.h" />
-    <ClInclude Include="include\cyWindowsMath.h" />
-    <ClInclude Include="include\cyMatrix2x2.h" />
-    <ClInclude Include="include\cyMatrix3x3.h" />
     <ClInclude Include="include\cyWindowsUtilities.h" />
-    <ClInclude Include="include\cyZiggurat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyArgumentParser.cpp" />
     <ClCompile Include="source\cyCrashHandler.cpp" />
-    <ClCompile Include="source\cyColor.cpp" />
     <ClCompile Include="source\cyCrashHandlerLinux.cpp" />
     <ClCompile Include="source\cyDynamicLibrary.cpp" />
     <ClCompile Include="source\cyEvent.cpp" />
     <ClCompile Include="source\cyFileSystem.cpp" />
-    <ClCompile Include="source\cyLine.cpp" />
-    <ClCompile Include="source\cyPlane.cpp" />
     <ClCompile Include="source\cyRegex.cpp" />
-    <ClCompile Include="source\cySmartPointers.cpp" />
     <ClCompile Include="source\cyThread.cpp" />
     <ClCompile Include="source\cyWindowsCrashHandler.cpp" />
     <ClCompile Include="source\cyDLLLoader.cpp" />
-    <ClCompile Include="source\cyEulerHelpers.cpp" />
     <ClCompile Include="source\cyException.cpp" />
     <ClCompile Include="source\cyLogger.cpp" />
-    <ClCompile Include="source\cyMatrix2x2.cpp" />
-    <ClCompile Include="source\cyMatrix3x3.cpp" />
-    <ClCompile Include="source\cyMatrix4x4.cpp" />
     <ClCompile Include="source\cyMemoryAllocator.cpp" />
-    <ClCompile Include="source\cyPlatformMath.cpp" />
-    <ClCompile Include="source\cyQuaternion.cpp" />
-    <ClCompile Include="source\cyRandom.cpp" />
     <ClCompile Include="source\cyTime.cpp" />
     <ClCompile Include="source\cyPlatformUtilities.cpp" />
-    <ClCompile Include="source\cyVector2f.cpp" />
-    <ClCompile Include="source\cyVector2i.cpp" />
-    <ClCompile Include="source\cyVector3f.cpp" />
-    <ClCompile Include="source\cyVector4f.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,10 +4,10 @@ namespace CYLLENE_SDK {
 
   const String m_icon = "ch.ico";
 
-  const Vector2i PlatformCrashHandlerUI::m_buttonSize = Vector2i(450, 50);
+  const Ve2 PlatformCrashHandlerUI::m_buttonSize = Ve2(450, 50);
 
   ImVec2
-  toImVec2(Vector2i v) {
+  toImVec2(const Ve2& v) {
     return ImVec2(v.x, v.y);
   }
 
