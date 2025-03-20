@@ -201,12 +201,12 @@ namespace CYLLENE_SDK {
 
   int32
   Vector2i::sqrDistance(const Vector2i& a, const Vector2i& b) {
-    return Math::pow(a.x - b.x, 2) + Math::pow(a.y - b.y, 2);
+    return Math::sqr(a.x - b.x) + Math::sqr(a.y - b.y);
   }
 
   int32
   Vector2i::distance(const Vector2i& a, const Vector2i& b) {
-    return Math::sqrt(Math::sqr(a.x + b.x) + Math::sqr(a.y + b.y));
+    return Math::sqrt(Vector2i::sqrDistance(a, b) /*Math::sqr(a.x + b.x) + Math::sqr(a.y + b.y)*/);
   }
 
   void
@@ -239,7 +239,7 @@ namespace CYLLENE_SDK {
 
   int32
   Vector2i::magnitude() const {
-    return Math::sqrt(x * x + y * y);
+    return Math::sqrt(this->sqrMagnitude()/*x * x + y * y*/);
   }
 
   int32
@@ -256,12 +256,11 @@ namespace CYLLENE_SDK {
               !Math::isInfinite(static_cast<float>(y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(x), 2.0f) + 
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
                 Math::pow(static_cast<float>(y), 2.0f);
+    CY_ASSERT(!(sqr <= Math::EPSILONF) &&
+              Utils::format("Invalid normalization: value inside square root is %2.2f", sqr).c_str());
 
-    CY_ASSERT(sqr <= Math::EPSILONF &&
-              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
-    
     CY_DEBUG_ONLY(sqrMagnitude());
     
     float unit = Math::invSqrt(sqr);
@@ -277,12 +276,11 @@ namespace CYLLENE_SDK {
               !Math::isInfinite(static_cast<float>(y)) &&
                Utils::format("Value X or Y are either infinite or NAN").c_str());
 
-    float sqr = Math::pow(static_cast<float>(x), 2.0f) + 
+    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
                 Math::pow(static_cast<float>(y), 2.0f);
+    CY_ASSERT(!(sqr <= Math::EPSILONF) &&
+              Utils::format("Invalid normalization: value inside square root is %2.2f", sqr).c_str());
 
-    CY_ASSERT(sqr <= Math::EPSILONF &&
-              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
-    
     CY_DEBUG_ONLY(sqrMagnitude());
     
     float unit = Math::qInvSqrt(sqr);
@@ -291,46 +289,46 @@ namespace CYLLENE_SDK {
 
   void
   Vector2i::normalize() {
-
-    CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
-              !Math::isNaN(static_cast<float>(y)) &&
-              !Math::isInfinite(static_cast<float>(x)) &&
-              !Math::isInfinite(static_cast<float>(y)) &&
-               Utils::format("Value X or Y are either infinite or NAN").c_str());
-   
-    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
-                Math::pow(static_cast<float>(y), 2.0f);
-
-    CY_ASSERT(sqr <= Math::EPSILONF &&
-              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
-
-    CY_DEBUG_ONLY(sqrMagnitude());
-
-    float unit = Math::invSqrt(sqr);
-    x *= static_cast<int32>(unit);
-    y *= static_cast<int32>(unit);
+    *this = this->normalized();
+//     CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
+//               !Math::isNaN(static_cast<float>(y)) &&
+//               !Math::isInfinite(static_cast<float>(x)) &&
+//               !Math::isInfinite(static_cast<float>(y)) &&
+//                Utils::format("Value X or Y are either infinite or NAN").c_str());
+//    
+//     float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+//                 Math::pow(static_cast<float>(y), 2.0f);
+// 
+//     CY_ASSERT(sqr <= Math::EPSILONF &&
+//               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
+// 
+//     CY_DEBUG_ONLY(sqrMagnitude());
+// 
+//     float unit = Math::invSqrt(sqr);
+//     x *= static_cast<int32>(unit);
+//     y *= static_cast<int32>(unit);
   }
 
   void
   Vector2i::qNormalize() {
-
-    CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
-              !Math::isNaN(static_cast<float>(y)) &&
-              !Math::isInfinite(static_cast<float>(x)) &&
-              !Math::isInfinite(static_cast<float>(y)) &&
-               Utils::format("Value X or Y are either infinite or NAN").c_str());
-   
-    float sqr = Math::pow(static_cast<float>(x), 2.0f) +
-                Math::pow(static_cast<float>(y), 2.0f);
-
-    CY_ASSERT(sqr <= Math::EPSILONF &&
-              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
-
-    CY_DEBUG_ONLY(sqrMagnitude());
-
-    float unit = Math::qInvSqrt(sqr);
-    x *= static_cast<int32>(unit);
-    y *= static_cast<int32>(unit);
+    *this = this->qNormalized();
+//     CY_ASSERT(!Math::isNaN(static_cast<float>(x)) &&
+//               !Math::isNaN(static_cast<float>(y)) &&
+//               !Math::isInfinite(static_cast<float>(x)) &&
+//               !Math::isInfinite(static_cast<float>(y)) &&
+//                Utils::format("Value X or Y are either infinite or NAN").c_str());
+//    
+//     float sqr = Math::pow(static_cast<float>(x), 2.0f) +
+//                 Math::pow(static_cast<float>(y), 2.0f);
+// 
+//     CY_ASSERT(sqr <= Math::EPSILONF &&
+//               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
+// 
+//     CY_DEBUG_ONLY(sqrMagnitude());
+// 
+//     float unit = Math::qInvSqrt(sqr);
+//     x *= static_cast<int32>(unit);
+//     y *= static_cast<int32>(unit);
   }
 
   bool
