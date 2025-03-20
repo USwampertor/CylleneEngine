@@ -1,4 +1,9 @@
 
+#include <cyCrashHandler.h>
+#include <cyLogger.h>
+#include <cyRandom.h>
+#include <cyTime.h>
+
 #include <cyUnitTesting.h>
 
 // Using namespace for ease of use
@@ -14,6 +19,11 @@ using namespace CYLLENE_SDK;
 int32
 main(int argc, char* argv[])
 {
+
+  CrashHandler::startUp();
+  Logger::startUp();
+  Time::startUp();
+
   doctest::Context context;
 
   context.applyCommandLine(argc, argv);
@@ -29,4 +39,65 @@ main(int argc, char* argv[])
   return res + EXIT_SUCCESS;
 }
 
+TEST_CASE("[random] testing random module") {
+  Random::init();
 
+
+  float value = 0.0f;
+
+  Benchmark().epochs(100000).run("100000 random floats", 
+    [&] {
+      DONOTOPTIMIZE(value = Random::get<float>());
+    }
+  );
+
+  // Time::instance().update();
+  // for (int i = 0; i < 1000000; ++i) {
+  //   value = Random::get<float>();
+  // }
+  // Time::instance().update();
+
+
+  Benchmark().epochs(100000).run("100000 random normalized floats",
+    [&] {
+      DONOTOPTIMIZE(value = Random::getNormalized());
+      CHECK(value <= 1.0f);
+    }
+  );
+
+  // Time::instance().update();
+  // for (int i = 0; i < 1000000; ++i) {
+  //   value = Random::getNormalized();
+  //   CHECK(value <= 1.0f);
+  // }
+  // Time::instance().update();
+
+
+  Benchmark().epochs(100000).run("100000 random floats ranged [876-1000]",
+    [&] {
+      DONOTOPTIMIZE(value = Random::getRanged<float>(876.0f, 1000.0f));
+      CHECK((value <= 1000.0f && value >= 876.0f));
+    }
+  );
+
+  // Time::instance().update();
+  // for (int i = 0; i < 1000000; ++i) {
+  //   value = Random::getRanged<float>(876.0f, 1000.0f);
+  //   CHECK((value <= 1000.0f && value >= 876.0f));
+  // }
+  // Time::instance().update();
+
+  Benchmark().epochs(100000).run("100000 random uint32 ranged [0-10]",
+    [&] {
+      DONOTOPTIMIZE(value = static_cast<float>(Random::getRanged<uint32>(0, 10)));
+      CHECK((value <= 10 && value >= 0));
+    }
+  );
+
+  // Time::instance().update();
+  // for (int i = 0; i < 1000000; ++i) {
+  //   value = static_cast<float>(Random::getRanged<uint32>(0, 10));
+  //   CHECK((value <= 10));
+  // }
+  // Time::instance().update();
+}
