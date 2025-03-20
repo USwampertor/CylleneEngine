@@ -185,12 +185,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyMT.h" />
     <ClInclude Include="include\cyRandom.h" />
     <ClInclude Include="include\cyRandomPrerequisites.h" />
     <ClInclude Include="include\cyRNG.h" />
     <ClInclude Include="include\cyZiggurat.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\cyMT.cpp" />
     <ClCompile Include="source\cyRandom.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

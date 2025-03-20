@@ -15,15 +15,18 @@
 /******************************************** */
 #pragma once
 
-#include <random>
 #include <chrono>
 
-#include <cyZiggurat.h>
 
 #include "cyRandomPrerequisites.h"
+#include "cyZiggurat.h"
+#include "cyMT.h"
+
 #include <cyVector2f.h>
 #include <cyVector2i.h>
 #include <cyVector3f.h>
+#include <cyVector4f.h>
+#include <cyColor.h>
 
 namespace CYLLENE_SDK {
 
@@ -74,8 +77,6 @@ public:
       break;
     }
 
-    
-
     return static_cast<T>(value);
   }
 
@@ -120,6 +121,12 @@ public:
   static Vector3f
   getNormVector3f();
 
+  static Vector4f
+  getNormVector4f();
+
+  static Color
+  getColor();
+
   static Vector2i
   getVector2i(const float& thickness);
 
@@ -129,6 +136,9 @@ public:
   static Vector3f
   getVector3f(const float& thickness);
 
+  static Vector4f
+  getVector4f(const float& thickness);
+
   static void
   changeMethod(const RANDOM_METHOD::E& method = RANDOM_METHOD::E::eZIGGURAT);
 
@@ -137,6 +147,7 @@ public:
   static uint32 m_seed[4];
 
   static Ziggurat m_ziggurat;
+  static MT m_mt;
 
   static uint32 m_method;
 };

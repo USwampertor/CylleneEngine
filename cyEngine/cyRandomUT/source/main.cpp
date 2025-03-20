@@ -45,10 +45,10 @@ TEST_CASE("[random] testing random module") {
 
   float value = 0.0f;
 
-  Benchmark().epochs(100000).run("100000 random floats", 
+  Benchmark().epochs(1000).run("1000 random floats",
     [&] {
-      DONOTOPTIMIZE(value = Random::get<float>());
-    }
+    DONOTOPTIMIZE(value = Random::get<float>());
+  }
   );
 
   // Time::instance().update();
@@ -58,7 +58,7 @@ TEST_CASE("[random] testing random module") {
   // Time::instance().update();
 
 
-  Benchmark().epochs(100000).run("100000 random normalized floats",
+  BENCHMARKEPOCHS("1000 random normalized floats", 1000,
     [&] {
       DONOTOPTIMIZE(value = Random::getNormalized());
       CHECK(value <= 1.0f);
@@ -73,7 +73,7 @@ TEST_CASE("[random] testing random module") {
   // Time::instance().update();
 
 
-  Benchmark().epochs(100000).run("100000 random floats ranged [876-1000]",
+  Benchmark().epochs(1000).run("1000 random floats ranged [876-1000]",
     [&] {
       DONOTOPTIMIZE(value = Random::getRanged<float>(876.0f, 1000.0f));
       CHECK((value <= 1000.0f && value >= 876.0f));
@@ -87,7 +87,7 @@ TEST_CASE("[random] testing random module") {
   // }
   // Time::instance().update();
 
-  Benchmark().epochs(100000).run("100000 random uint32 ranged [0-10]",
+  Benchmark().epochs(1000).run("1000 random uint32 ranged [0-10]",
     [&] {
       DONOTOPTIMIZE(value = static_cast<float>(Random::getRanged<uint32>(0, 10)));
       CHECK((value <= 10 && value >= 0));
@@ -100,4 +100,11 @@ TEST_CASE("[random] testing random module") {
   //   CHECK((value <= 10));
   // }
   // Time::instance().update();
+  Vector2f v2f;
+  Benchmark().epochs(1000).run("1000 random Vector", 
+    [&] {
+      v2f = Random::getVector2f(5);
+    }
+  );
+
 }
