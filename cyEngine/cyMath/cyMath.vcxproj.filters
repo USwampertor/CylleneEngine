@@ -81,6 +81,9 @@
     <ClInclude Include="include\cyTensor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyColor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyPlatformMath.cpp">
@@ -135,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyTensor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyColor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
