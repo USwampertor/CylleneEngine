@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -116,7 +116,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyCored.lib;cyUtilitiesd.lib;SDL3d.lib;shell32.lib;assimpd.lib;cppfsd.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyCored.lib;cyMathd.lib;cyRandomd.lib;cyUtilitiesd.lib;SDL3d.lib;shell32.lib;assimpd.lib;cppfsd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,7 +128,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -141,7 +141,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyCore.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;shell32.lib;assimp.lib;cppfs.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyCore.lib;cyMath.lib;cyRandom.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;shell32.lib;assimp.lib;cppfs.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -151,7 +151,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -162,7 +162,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyCored.lib;cyUtilitiesd.lib;SDL3d.lib;shell32.lib;assimpd.lib;cppfsd.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyCored.lib;cyMathd.lib;cyRandomd.lib;cyUtilitiesd.lib;SDL3d.lib;shell32.lib;assimpd.lib;cppfsd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,7 +174,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <OpenMPSupport>true</OpenMPSupport>
@@ -187,7 +187,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyCore.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;shell32.lib;assimp.lib;cppfs.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyCore.lib;cyMath.lib;cyRandom.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;shell32.lib;assimp.lib;cppfs.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
