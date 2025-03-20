@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="include\cyAABB.h" />
     <ClInclude Include="include\cyCapsule.h" />
+    <ClInclude Include="include\cyColor.h" />
     <ClInclude Include="include\cyEulerHelpers.h" />
     <ClInclude Include="include\cyLine.h" />
     <ClInclude Include="include\cyMath.h" />
@@ -210,6 +211,7 @@
   <ItemGroup>
     <ClCompile Include="source\cyAABB.cpp" />
     <ClCompile Include="source\cyCapsule.cpp" />
+    <ClCompile Include="source\cyColor.cpp" />
     <ClCompile Include="source\cyLine.cpp" />
     <ClCompile Include="source\cyOBB.cpp" />
     <ClCompile Include="source\cyPlane.cpp" />
