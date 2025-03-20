@@ -15,9 +15,20 @@
 
 #include <cyFileSystem.h>
 #include <cyModule.h>
-#include <cyVector2i.h>
 
 namespace CYLLENE_SDK {
+
+struct Ve2
+{
+public:
+  Ve2() = default;
+  Ve2(int32 nx, int32 ny)
+    : x(nx),
+      y(ny) {}
+
+  int32 x, y;
+};
+
 
 class PlatformCrashHandlerUI
 {
@@ -60,7 +71,7 @@ class PlatformCrashHandlerUI
 
   static const String m_icon;
 
-  static const Vector2i m_buttonSize;
+  static const Ve2 m_buttonSize;
 
   ImGuiIO* m_io;
 
