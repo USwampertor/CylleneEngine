@@ -152,7 +152,39 @@ TEST_CASE("[vector2f] Testing vector2 functionality") {
 }
 
 TEST_CASE("[vector3f] Testing vector5 functionality") {
+  Vector3f v0(0, 0, 0);
+  CHECK(v0[0] == 0);
+  v0 = { 2, 4, 5 };
 
+  CHECK(v0.x == 2);
+  CHECK(v0.y == 4);
+  CHECK(v0.z == 5);
+
+  v0.normalize();
+  CHECK(Math::isNearSame(v0.magnitude(), 1.0f, Math::EPSILONF));
+
+  v0.setValues(5, 6, 0);
+
+  CHECK(v0.getLowest() == 0);
+
+  CHECK(v0.getHighest() == 6);
+
+  CHECK(v0.sqrMagnitude() == 61);
+  CHECK(v0.magnitude() == Math::sqrt(61.0f));
+
+  BENCHMARK("normalized", [&]() {
+    DONOTOPTIMIZE(v0.normalized());
+  });
+
+  BENCHMARK("quick normalized", [&]() {
+    DONOTOPTIMIZE(v0.qNormalized());
+  });
+  bool areSame = Vector3f::areNearlySame(v0.normalized(), v0.qNormalized(), 0.0001f);
+  CHECK(areSame);
+
+  Vector3f v1(7, 8, 10);
+  float d = Vector3f::distance(v0, v1);
+  CHECK(Math::isNearSame(d, 10.39230484f, Math::EPSILONF));
 }
 
 TEST_CASE("[vector4f] Testing vector4 functionality") {

@@ -477,7 +477,7 @@ public:
     *
     */
   static bool
-  isNearlySame(const Vector3f& a, const Vector3f& b, const float& error);
+  areNearlySame(const Vector3f& a, const Vector3f& b, const float& error);
 
   /**
     * @brief Returns the vector as a printable string
