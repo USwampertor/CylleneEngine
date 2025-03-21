@@ -101,9 +101,37 @@ TEST_CASE("[random] testing random module") {
   // }
   // Time::instance().update();
   Vector2f v2f;
-  Benchmark().epochs(1000).run("1000 random Vector", 
+  Benchmark().epochs(1000).run("1000 random Vector2f", 
     [&] {
       v2f = Random::getVector2f(5);
+      float mag = v2f.magnitude();
+      CHECK(Math::isNearSame(mag, 5.0f, Math::KINDASMALLNUMBER));
+    }
+  );
+
+  Benchmark().epochs(1000).run("1000 random normalized Vector2f",
+    [&] {
+      v2f = Random::getNormVector2f();
+      float mag = v2f.magnitude();
+      CHECK(Math::isNearSame(mag, 1.0f, Math::KINDASMALLNUMBER));
+    }
+  );
+
+
+  Vector3f v3f;
+  Benchmark().epochs(1000).run("1000 random Vector3f",
+    [&] {
+      v3f = Random::getVector3f(5);
+      float mag = v3f.magnitude();
+      CHECK(Math::isNearSame(mag, 5.0f, Math::KINDASMALLNUMBER));
+    }
+  );
+
+  Benchmark().epochs(1000).run("1000 random normalized Vector3f",
+    [&] {
+      v3f = Random::getNormVector3f();
+      float mag = v3f.magnitude();
+      CHECK(Math::isNearSame(mag, 1.0f, Math::KINDASMALLNUMBER));
     }
   );
 
