@@ -219,10 +219,9 @@ namespace CYLLENE_SDK {
 
   float
   Vector3f::distance(const Vector3f& a, const Vector3f& b) {
-    return 
-      Math::sqrt(Math::sqr(a.x - b.x) +
-                 Math::sqr(a.y - b.y) +
-                 Math::sqr(a.z - b.z));
+    return Math::sqrt(Vector3f::sqrDistance(a, b)); // Math::sqr(a.x - b.x) +
+                                                    // Math::sqr(a.y - b.y) +
+                                                    // Math::sqr(a.z - b.z));
   }
 
   void
@@ -286,7 +285,7 @@ namespace CYLLENE_SDK {
 
   float
   Vector3f::magnitude() const {
-    return Math::sqrt(x * x + y * y + z * z);
+    return Math::sqrt(this->sqrMagnitude()/*x * x + y * y + z * z*/);
   }
 
   float
@@ -330,8 +329,8 @@ namespace CYLLENE_SDK {
 
     float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
 
-    CY_ASSERT(sqr <= Math::EPSILONF &&
-      Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
+    CY_ASSERT(!(sqr <= Math::EPSILONF) &&
+              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
 
     CY_DEBUG_ONLY(sqrMagnitude());
 
@@ -342,53 +341,52 @@ namespace CYLLENE_SDK {
 
   void
   Vector3f::normalize() {
-
-    CY_ASSERT(!Math::isNaN(x) &&
-              !Math::isNaN(y) &&
-              !Math::isNaN(z) &&
-              !Math::isInfinite(x) &&
-              !Math::isInfinite(y) &&
-              !Math::isInfinite(z) &&
-               Utils::format("Value X Y or Z are either infinite or NAN").c_str());
-
-    float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
-
-    CY_ASSERT(sqr <= Math::EPSILONF &&
-              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
-
-    CY_DEBUG_ONLY(sqrMagnitude());
-
-    float unit = Math::invSqrt(sqr);
-
-    x *= unit;
-    y *= unit; 
-    z *= unit;
+    *this = this->normalized();
+//     CY_ASSERT(!Math::isNaN(x) &&
+//               !Math::isNaN(y) &&
+//               !Math::isNaN(z) &&
+//               !Math::isInfinite(x) &&
+//               !Math::isInfinite(y) &&
+//               !Math::isInfinite(z) &&
+//                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
+// 
+//     float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
+// 
+//     CY_ASSERT(!(sqr <= Math::EPSILONF) &&
+//               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
+// 
+//     CY_DEBUG_ONLY(sqrMagnitude());
+// 
+//     float unit = Math::invSqrt(sqr);
+// 
+//     x *= unit;
+//     y *= unit; 
+//     z *= unit;
   }
 
   void
   Vector3f::qNormalize() {
-
-    CY_ASSERT(!Math::isNaN(x) &&
-              !Math::isNaN(y) &&
-              !Math::isNaN(z) &&
-              !Math::isInfinite(x) &&
-              !Math::isInfinite(y) &&
-              !Math::isInfinite(z) &&
-               Utils::format("Value X Y or Z are either infinite or NAN").c_str());
-
-    float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
-
-    CY_ASSERT(sqr <= Math::EPSILONF &&
-              Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
-
-    CY_DEBUG_ONLY(sqrMagnitude());
-
-    float unit = Math::qInvSqrt(sqr);
-
-    x *= unit;
-    y *= unit; 
-    z *= unit;
-
+    *this = this->qNormalized();
+//     CY_ASSERT(!Math::isNaN(x) &&
+//               !Math::isNaN(y) &&
+//               !Math::isNaN(z) &&
+//               !Math::isInfinite(x) &&
+//               !Math::isInfinite(y) &&
+//               !Math::isInfinite(z) &&
+//                Utils::format("Value X Y or Z are either infinite or NAN").c_str());
+// 
+//     float sqr = Math::pow(x, 2.0f) + Math::pow(y, 2.0f) + Math::pow(z, 2.0f);
+// 
+//     CY_ASSERT(sqr <= Math::EPSILONF &&
+//               Utils::format("Invalid normalization: value inside square root is %f", sqr).c_str());
+// 
+//     CY_DEBUG_ONLY(sqrMagnitude());
+// 
+//     float unit = Math::qInvSqrt(sqr);
+// 
+//     x *= unit;
+//     y *= unit; 
+//     z *= unit;
   }
 
   bool
@@ -397,7 +395,7 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector3f::isNearlySame(const Vector3f& a, const Vector3f& b, const float& error = Math::SMALLNUMBER) {
+  Vector3f::areNearlySame(const Vector3f& a, const Vector3f& b, const float& error = Math::SMALLNUMBER) {
     return Math::abs(a.x - b.x) <= error &&
            Math::abs(a.y - b.y) <= error &&
            Math::abs(a.z - b.z) <= error;

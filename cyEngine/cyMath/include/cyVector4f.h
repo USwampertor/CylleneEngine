@@ -484,7 +484,7 @@ public:
     *
     */
   static bool
-  isNearlySame(const Vector4f& a, const Vector4f& b, const float& error);
+  areNearlySame(const Vector4f& a, const Vector4f& b, const float& error);
 
   /**
     * @brief Returns the vector as a printable string
