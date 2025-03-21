@@ -18,6 +18,8 @@ uint32 Random::m_method = 0;
 
 Ziggurat Random::m_ziggurat = {};
 
+MT Random::m_mt = {};
+
 void
 Random::set(const uint32& newSeed) {
 //     m_seed[0] = newSeed;
@@ -26,6 +28,7 @@ Random::set(const uint32& newSeed) {
 //     m_seed[3] = newSeed * 0x912FF1AD + 1;
 
   m_ziggurat.m_generator = { newSeed };
+  m_mt.m_generator = { newSeed };
 }
 
 float
@@ -120,6 +123,28 @@ Random::getNormVector3f() {
   return output;
 }
 
+Vector4f
+Random::getNormVector4f() {
+  Vector4f output;
+  float sqrdSize;
+
+  do {
+    output.x = getRangeFloat(-1.0f, 1.0f);
+    output.y = getRangeFloat(-1.0f, 1.0f);
+    output.z = getRangeFloat(-1.0f, 1.0f);
+    output.w = getRangeFloat(-1.0f, 1.0f);
+    sqrdSize = output.sqrMagnitude();
+  } while (sqrdSize > 1.0f || sqrdSize < 0.001f);
+
+  output.normalize();
+  return output;
+}
+
+Color
+Random::getColor() {
+  return Color(getNormalized(), getNormalized(), getNormalized(), getNormalized());
+}
+
 Vector2i
 Random::getVector2i(const float& thickness) {
   return getNormVector2i() * static_cast<int32>(thickness);
@@ -134,6 +159,12 @@ Random::getVector2f(const float& thickness) {
 Vector3f
 Random::getVector3f(const float& thickness) {
   return getNormVector3f() * thickness;
+
+}
+
+Vector4f
+Random::getVector4f(const float& thickness) {
+  return getNormVector4f() * thickness;
 
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cyMathPrerequisites.h"
+#include "cyMath.h"
 
 namespace CYLLENE_SDK {
 
@@ -24,7 +25,6 @@ public:
 
   Vector2f(const Vector3f& other);
 
-    
   Vector2f(const Vector4f& other);
 
   ~Vector2f() = default;
@@ -447,7 +447,7 @@ public:
     *
     */
   static bool
-  isNearlySame(const Vector2f& a, const Vector2f& b, const float& error);
+  isNearlySame(const Vector2f& a, const Vector2f& b, const float& error = Math::SMALLNUMBER);
 
   /**
     * @brief Returns the vector as a printable string
@@ -495,12 +495,12 @@ public:
   static const Vector2f RIGHT;
 
   /**
-    * Vector2 with y value -1. This is our right in our world
+    * Vector2 with y value -1. This is our down in our world
     */
   static const Vector2f DOWN;
 
   /**
-    * Vector2 with x value -1. This is our up in our world
+    * Vector2 with x value -1. This is our left in our world
     */
   static const Vector2f LEFT;
 
