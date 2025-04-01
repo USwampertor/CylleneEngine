@@ -307,6 +307,11 @@ class CY_MATH_EXPORT Color
   Vector4f
   toVector4();
 
+  /*
+   *	@brief returns the color as a grey scaled value	
+   *	@param		
+   *  @return	
+   */
   float
   toGrey();
 

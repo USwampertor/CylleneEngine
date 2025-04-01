@@ -3,6 +3,7 @@
 #include "cyMathPrerequisites.h"
 
 #include "cyVector4f.h"
+#include "cyQuaternion.h"
 
 namespace CYLLENE_SDK {
 
@@ -156,6 +157,9 @@ class CY_MATH_EXPORT Matrix4x4
             const float& v20, const float& v21, const float& v22, const float v23,
             const float& v30, const float& v31, const float& v32, const float v33);
 
+  void
+  setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir);
+
   Matrix4x4
   inversed();
 
@@ -183,6 +187,72 @@ class CY_MATH_EXPORT Matrix4x4
               const float ZFar,
               const float FOV);
 
+  Vector3f
+  transformPosition(const Vector3f& v) const;
+
+  Vector3f
+  transformDirection(const Vector3f& v) const;
+
+  void
+  translate(const Vector3f& translation);
+
+  void
+  setPosition(const Vector3f& position);
+
+  void
+  rotateX(const float& angle);
+
+  void
+  rotateY(const float& angle);
+
+  void
+  rotateZ(const float& angle);
+
+  void
+  rotate(const Vector3f& rotation);
+
+  void
+  rotate(const Quaternion& rotation);
+
+  void
+  setRotation(const Vector3f& rotation);
+
+  void
+  setRotation(const Quaternion& rotation);
+
+  void
+  setScale(const Vector3f& newScale);
+
+  void
+  setScale(const float& newScale);
+
+  void
+  scale(const Vector3f& newScale);
+
+  void
+  scale(const float& newScale);
+
+  Vector3f
+  getForwardVector() const;
+  
+  Vector3f
+  getRightVector() const;
+
+  Vector3f
+  getUpVector() const;
+
+  Vector3f
+  getEulerRotation() const;
+
+  Quaternion
+  getQuatRotation() const;
+
+  Vector3f
+  getPosition() const;
+
+  Vector3f
+  getScale() const;
+
   Matrix3x3
   subMatrix();
 
@@ -201,21 +271,33 @@ class CY_MATH_EXPORT Matrix4x4
 
 public:
 
+//   union {
+//     /**
+//       * Row major based matrix struct
+//       */
+//     struct {
+//       float m00, m01, m02, m03;
+//       float m10, m11, m12, m13;
+//       float m20, m21, m22, m23;
+//       float m30, m31, m32, m33;
+//     }_m;
+//     float m[4][4];
+//     Vector4f vec[4];
+//     float fVec[16];
+//   };
   union {
-    /**
-      * Row major based matrix struct
-      */
+    // Column-major storage
     struct {
-      float m00, m01, m02, m03;
-      float m10, m11, m12, m13;
-      float m20, m21, m22, m23;
-      float m30, m31, m32, m33;
-    }_m;
-    float m[4][4];
-    Vector4f vec[4];
-    float fVec[16];
+      // Column 0          Column 1          Column 2          Column 3
+      float m00, m10, m20, m30;  // X-axis, Y-axis, Z-axis, Translation (X)
+      float m01, m11, m21, m31;  // ^      ^      ^        Translation (Y)
+      float m02, m12, m22, m32;  // ^      ^      ^        Translation (Z)
+      float m03, m13, m23, m33;  // (Unused in affine transforms)
+    } _m;
+    float m[4][4];  // m[column][row]
+    Vector4f columns[4];  // Explicit column storage
+    float fVec[16];  // Flat array (column-major order)
   };
-
 
   
 };
