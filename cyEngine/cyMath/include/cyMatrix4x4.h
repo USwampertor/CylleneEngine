@@ -26,10 +26,10 @@ class CY_MATH_EXPORT Matrix4x4
 
   Matrix4x4(const Matrix2x2& other);
 
-  Matrix4x4(const float& v00, const float& v01, const float& v02, const float v03,
-            const float& v10, const float& v11, const float& v12, const float v13,
-            const float& v20, const float& v21, const float& v22, const float v23,
-            const float& v30, const float& v31, const float& v32, const float v33);
+  Matrix4x4(const float& m00, const float& m01, const float& m02, const float& m03,
+            const float& m10, const float& m11, const float& m12, const float& m13,
+            const float& m20, const float& m21, const float& m22, const float& m23,
+            const float& m30, const float& m31, const float& m32, const float& m33);
 
   /**
     * @brief + operator overload
@@ -152,10 +152,10 @@ class CY_MATH_EXPORT Matrix4x4
   setValues(const float& value);
 
   void
-  setValues(const float& v00, const float& v01, const float& v02, const float v03,
-            const float& v10, const float& v11, const float& v12, const float v13,
-            const float& v20, const float& v21, const float& v22, const float v23,
-            const float& v30, const float& v31, const float& v32, const float v33);
+  setValues(const float& v00, const float& v01, const float& v02, const float& v03,
+            const float& v10, const float& v11, const float& v12, const float& v13,
+            const float& v20, const float& v21, const float& v22, const float& v23,
+            const float& v30, const float& v31, const float& v32, const float& v33);
 
   void
   setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir);
@@ -272,9 +272,7 @@ class CY_MATH_EXPORT Matrix4x4
 public:
 
 //   union {
-//     /**
-//       * Row major based matrix struct
-//       */
+//     // Row major based matrix struct
 //     struct {
 //       float m00, m01, m02, m03;
 //       float m10, m11, m12, m13;
@@ -288,11 +286,10 @@ public:
   union {
     // Column-major storage
     struct {
-      // Column 0          Column 1          Column 2          Column 3
-      float m00, m10, m20, m30;  // X-axis, Y-axis, Z-axis, Translation (X)
-      float m01, m11, m21, m31;  // ^      ^      ^        Translation (Y)
-      float m02, m12, m22, m32;  // ^      ^      ^        Translation (Z)
-      float m03, m13, m23, m33;  // (Unused in affine transforms)
+      float m00, m10, m20, m30;
+      float m01, m11, m21, m31;
+      float m02, m12, m22, m32;
+      float m03, m13, m23, m33;
     } _m;
     float m[4][4];  // m[column][row]
     Vector4f columns[4];  // Explicit column storage
@@ -301,4 +298,4 @@ public:
 
   
 };
-}
+} // namespace CYLLENE_SDK

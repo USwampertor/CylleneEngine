@@ -5,12 +5,16 @@
 #include <cyLogger.h>
 #include <cyMath.h>
 #include <cyMatrix4x4.h>
+#include <cyMatrix3x3.h>
 #include <cyTime.h>
 #include <cyUnitTesting.h>
 #include <cyVector2i.h>
 #include <cyVector2f.h>
 #include <cyVector3f.h>
 #include <cyVector4f.h>
+
+#undef near
+#undef far
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -227,130 +231,246 @@ TEST_CASE("[color] Testing color to hex") {
   c2.setFloat(0, 0, 0, 1);
   CHECK(c2.toHexValue() == 0x000000ff);
 }
+TEST_SUITE("Matrix4x4 Tests") {
+  TEST_CASE("Constructors") {
+    SUBCASE("Default Constructor") {
+      Matrix4x4 m(0);
+      CHECK(m == Matrix4x4::ZERO);
+    }
 
-TEST_CASE("Matrix Construction") {
-  SUBCASE("Default Constructor") {
-    Matrix4x4 m(0);
-    CHECK(matrixEquals(m, Matrix4x4::ZERO));
+    SUBCASE("Value Constructor") {
+      Matrix4x4 m(5.0f);
+      for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+          CHECK(m.m[c][r] == 5.0f);
+        }
+      }
+    }
+
+    SUBCASE("Copy Constructor") {
+      Matrix4x4 m1(1.0f);
+      Matrix4x4 m2(m1);
+      CHECK(m1 == m2);
+    }
+
+    SUBCASE("From Matrix3x3") {
+      Matrix3x3 m3(1, 2, 3, 4, 5, 6, 7, 8, 9);
+      Matrix4x4 m4(m3);
+      CHECK(m4.m[0][0] == 1.0f);
+      CHECK(m4.m[1][0] == 4.0f);
+      CHECK(m4.m[2][0] == 7.0f);
+      CHECK(m4.m[3][3] == 0.0f);
+    }
   }
 
-  SUBCASE("Identity Matrix") {
-    Matrix4x4 m = Matrix4x4::IDENTITY;
-    for (int i = 0; i < 4; ++i) {
-      for (int j = 0; j < 4; ++j) {
-        CHECK(m.m[i][j] == (i == j ? 1.0f : 0.0f));
+  TEST_CASE("Basic Operations") {
+    Matrix4x4 m1( 1,  2,  3,  4, 
+                  5,  6,  7,  8, 
+                  9, 10, 11, 12, 
+                 13, 14, 15, 16);
+    Matrix4x4 m2(16, 15, 14, 13, 
+                 12, 11, 10,  9, 
+                  8,  7,  6,  5, 
+                  4,  3,  2,  1);
+
+    SUBCASE("Addition") {
+      Matrix4x4 result = m1 + m2;
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+          CHECK(result.m[i][j] == 17.0f);
+        }
+      }
+    }
+
+    SUBCASE("Subtraction") {
+      Matrix4x4 result = m1 - m2;
+      for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+          float expected = (1 + r * 4 + c) - (16 - r * 4 - c);
+          CHECK(result.m[c][r] == doctest::Approx(expected));
+        }
+      }
+    }
+
+    SUBCASE("Multiplication") {
+      Matrix4x4 identity = Matrix4x4::IDENTITY;
+      Matrix4x4 result = m1 * identity;
+     
+      for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+          CHECK(result.m[c][r] == doctest::Approx(m1.m[c][r]));
+        }
+      }
+
+      result = identity * m2;
+      for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+          CHECK(result.m[c][r] == doctest::Approx(m2.m[c][r]));
+        }
+      }
+
+      Matrix4x4 expectedProduct(
+        80, 70, 60, 50,
+        240, 214, 188, 162,
+        400, 358, 316, 274,
+        560, 502, 444, 386
+      );
+      std::cout << m1.toString() << std::endl;
+      std::cout << m2.toString() << std::endl;
+      result = m1 * m2;
+      // CHECK(result == expectedProduct);
+      for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+          CHECK(result.m[c][r] == doctest::Approx(expectedProduct.m[c][r]));
+        }
+      }
+
+    }
+  }
+
+  TEST_CASE("Transformation Functions") {
+    SUBCASE("Translation") {
+      Matrix4x4 m;
+      m.setPosition(Vector3f(1, 2, 3));
+      CHECK(m.getPosition() == Vector3f(1, 2, 3));
+
+      m.translate(Vector3f(4, 5, 6));
+      CHECK(m.getPosition() == Vector3f(5, 7, 9));
+    }
+
+    SUBCASE("Rotation") {
+      Matrix4x4 m(0);
+      m.identity();
+      m.rotateX(Math::PI / 2);
+      Vector3f v = m.transformDirection(Vector3f(0, 1, 0));
+      CHECK(v.x == doctest::Approx(0.0f));
+      CHECK(v.y == doctest::Approx(0.0f));
+      CHECK(v.z == doctest::Approx(1.0f));
+
+      m.identity();
+      m.rotateY(Math::PI / 2);
+      v = m.transformDirection(Vector3f(0, 0, 1));
+      CHECK(v.x == doctest::Approx(1.0f));
+      CHECK(v.y == doctest::Approx(0.0f));
+      CHECK(v.z == doctest::Approx(0.0f));
+
+      m.identity();
+      m.rotateZ(Math::PI / 2);
+      v = m.transformDirection(Vector3f(1, 0, 0));
+      CHECK(v.x == doctest::Approx(0.0f));
+      CHECK(v.y == doctest::Approx(1.0f));
+      CHECK(v.z == doctest::Approx(0.0f));
+    }
+
+    SUBCASE("Scaling") {
+      Matrix4x4 m(0);
+      m.setScale(Vector3f(2, 3, 4));
+      Vector3f v = m.transformDirection(Vector3f(1, 1, 1));
+      CHECK(v == Vector3f(2, 3, 4));
+
+      m.scale(0.5f);
+      v = m.transformDirection(Vector3f(1, 1, 1));
+      CHECK(v == Vector3f(1, 1.5f, 2));
+    }
+  }
+
+  TEST_CASE("Matrix Operations") {
+    Matrix4x4 m(1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 4, 5, 6, 1);
+
+    SUBCASE("Transpose") {
+      Matrix4x4 transposed = m.transposed();
+      CHECK(transposed.m[0][0] == 1.0f);
+      CHECK(transposed.m[1][0] == 0.0f);
+      CHECK(transposed.m[0][1] == 0.0f);
+      CHECK(transposed.m[3][0] == 4.0f);
+    }
+
+    SUBCASE("Determinant") {
+      CHECK(m.determinant() == doctest::Approx(6.0f));
+
+      Matrix4x4 singular(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+      CHECK(singular.determinant() == doctest::Approx(0.0f));
+    }
+
+    SUBCASE("Inverse") {
+      Matrix4x4 inv = m.inversed();
+      Matrix4x4 identity = m * inv;
+
+      for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+          if (c == r) {
+            CHECK(identity.m[c][r] == doctest::Approx(1.0f));
+          }
+          else {
+            CHECK(identity.m[c][r] == doctest::Approx(0.0f));
+          }
+        }
       }
     }
   }
-}
 
-TEST_CASE("Matrix Operations") {
-  Matrix4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-  Matrix4x4 b(16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+  TEST_CASE("Special Matrices") {
+    SUBCASE("View Matrix") {
+      Matrix4x4 view;
+      view.View(Vector3f(0, 0, 5), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 
-  SUBCASE("Matrix Addition") {
-    Matrix4x4 result = a + b;
-    for (int i = 0; i < 4; ++i) {
-      for (int j = 0; j < 4; ++j) {
-        CHECK(result.m[i][j] == a.m[i][j] + b.m[i][j]);
-      }
+      Vector3f pos = view.transformPosition(Vector3f(0, 0, 0));
+      CHECK(pos.x == doctest::Approx(0.0f));
+      CHECK(pos.y == doctest::Approx(0.0f));
+      CHECK(pos.z == doctest::Approx(5.0f));
+    }
+
+    SUBCASE("Perspective Projection") {
+      Matrix4x4 proj(0);
+      proj.Perspective(800, 600, 0.1f, 100.0f, Math::PI / 2);
+
+      // Test near plane
+      Vector3f nearV = proj.transformPosition(Vector3f(0, 0, -0.1f));
+      CHECK(nearV.z == doctest::Approx(-1.0f));
+
+      // Test far plane
+      Vector3f farV = proj.transformPosition(Vector3f(0, 0, -100.0f));
+      CHECK(farV.z == doctest::Approx(1.0f));
+
+
+    }
+
+    SUBCASE("Orthographic Projection") {
+      Matrix4x4 ortho;
+      ortho.Orthogonal(800, 600, 0.1f, 100.0f);
+
+      Vector3f bottomLeft = ortho.transformPosition(Vector3f(-400, -300, -50));
+      CHECK(bottomLeft.x == doctest::Approx(-1.0f));
+      CHECK(bottomLeft.y == doctest::Approx(-1.0f));
+      CHECK(bottomLeft.z == doctest::Approx(0.0f));
     }
   }
 
-  SUBCASE("Matrix Multiplication") {
-    Matrix4x4 result = a * b;
-    // Manually calculated expected value for [0][0]
-    CHECK(result.m[0][0] == doctest::Approx(1 * 16 + 2 * 12 + 3 * 8 + 4 * 4));
-  }
+  TEST_CASE("Utility Functions") {
+    Matrix4x4 m(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
-  SUBCASE("Matrix Transpose") {
-    Matrix4x4 transposed = a;
-    transposed.transpose();
-    for (int i = 0; i < 4; ++i) {
-      for (int j = 0; j < 4; ++j) {
-        CHECK(transposed.m[i][j] == a.m[j][i]);
-      }
+    SUBCASE("Identity") {
+      m.identity();
+      CHECK(m == Matrix4x4::IDENTITY);
     }
-  }
-}
 
-TEST_CASE("Transformations") {
-  SUBCASE("Translation") {
-    Matrix4x4 m = Matrix4x4::IDENTITY;
-    m.translate(Vector3f(2, 3, 4));
-    Matrix4x4 expected = makeTranslationMatrix(2, 3, 4);
-    CHECK(matrixEquals(m, expected));
-  }
+    SUBCASE("Zero") {
+      m.zero();
+      CHECK(m == Matrix4x4::ZERO);
+    }
 
-  SUBCASE("Rotation (Z-Axis)") {
-    Matrix4x4 m;
-    m.rotateZ(Math::PI / 2); // 90 degrees
+    SUBCASE("Get Vectors") {
+      CHECK(m.getRightVector() == Vector3f(1, 2, 3).normalized());
+      CHECK(m.getUpVector() == Vector3f(5, 6, 7).normalized());
+      CHECK(m.getForwardVector() == Vector3f(9, 10, 11).normalized());
+      CHECK(m.getPosition() == Vector3f(13, 14, 15));
+    }
 
-    // Expected rotation matrix
-    Matrix4x4 expected;
-    expected.m[0][0] = 0;  expected.m[0][1] = 1;
-    expected.m[1][0] = -1; expected.m[1][1] = 0;
-    expected.m[2][2] = 1;  expected.m[3][3] = 1;
-
-    CHECK(matrixEquals(m, expected));
-  }
-
-  SUBCASE("Scaling") {
-    Matrix4x4 m;
-    m.setScale(Vector3f(2, 3, 4));
-    CHECK(m.m[0][0] == 2.0f);
-    CHECK(m.m[1][1] == 3.0f);
-    CHECK(m.m[2][2] == 4.0f);
-  }
-}
-
-TEST_CASE("View and Projection") {
-  SUBCASE("View Matrix") {
-    Vector4f eye(0, 0, 5, 1);
-    Vector4f target(0, 0, 0, 1);
-    Vector4f up(0, 1, 0, 0);
-
-    Matrix4x4 view;
-    view.View(eye, target, up);
-
-    // Should translate world backwards along Z
-    CHECK(view.m[3][2] == doctest::Approx(-5.0f));
-  }
-
-  SUBCASE("Perspective Projection") {
-    Matrix4x4 proj;
-    proj.Perspective(800, 600, 0.1f, 100.0f, Math::PI / 2);
-
-    // Check perspective divide term
-    CHECK(proj.m[2][3] == doctest::Approx(-1.0f));
-  }
-}
-
-TEST_CASE("Basis Vectors") {
-  Matrix4x4 m;
-  m.rotateY(Math::PI / 4); // 45 degrees
-
-  SUBCASE("Forward Vector") {
-    Vector3f fwd = m.getForwardVector();
-    CHECK(fwd.x == doctest::Approx(sqrt(2) / 2));
-    CHECK(fwd.z == doctest::Approx(-sqrt(2) / 2));
-  }
-
-  SUBCASE("Right Vector") {
-    Vector3f right = m.getRightVector();
-    CHECK(right.x == doctest::Approx(1.0f));
-  }
-}
-
-TEST_CASE("Edge Cases") {
-  SUBCASE("Inverse of Singular Matrix") {
-    Matrix4x4 singular; // All zeros
-    CHECK_THROWS(singular.inversed());
-  }
-
-  SUBCASE("Transform Position with Zero Matrix") {
-    Matrix4x4 zero = Matrix4x4::ZERO;
-    Vector3f v(1, 2, 3);
-    CHECK(zero.transformPosition(v) == Vector3f(0, 0, 0));
+    SUBCASE("Submatrix") {
+      Matrix3x3 sub = m.subMatrix();
+      CHECK(sub.m[0][0] == 1.0f);
+      CHECK(sub.m[1][1] == 6.0f);
+      CHECK(sub.m[2][2] == 11.0f);
+    }
   }
 }

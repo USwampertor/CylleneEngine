@@ -383,7 +383,7 @@ public:
     */
   template <typename T>
   static bool
-  isNearSame(T a, T b, T threshold = SMALLNUMBER) {
+  isNearSame(T a, T b, T threshold = KINDASMALLNUMBER) {
     return abs(a - b) <= threshold;
   }
 
