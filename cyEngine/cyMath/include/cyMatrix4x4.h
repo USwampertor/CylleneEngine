@@ -209,7 +209,10 @@ class CY_MATH_EXPORT Matrix4x4
   rotateZ(const float& angle);
 
   void
-  rotate(const Vector3f& rotation);
+  rotate(const float& angle, const Vector3f& axis);
+
+  void
+  rotate(const float& angle, const float& x, const float& y, const float& z);
 
   void
   rotate(const Quaternion& rotation);

@@ -345,12 +345,12 @@ TEST_SUITE("Matrix4x4 Tests") {
       Vector3f v = m.transformDirection(Vector3f(0, 1, 0));
       CHECK(v.x == doctest::Approx(0.0f));
       CHECK(v.y == doctest::Approx(0.0f));
-      CHECK(v.z == doctest::Approx(1.0f));
+      CHECK(v.z == doctest::Approx(-1.0f));
 
       m.identity();
       m.rotateY(Math::PI / 2);
       v = m.transformDirection(Vector3f(0, 0, 1));
-      CHECK(v.x == doctest::Approx(1.0f));
+      CHECK(v.x == doctest::Approx(-1.0f));
       CHECK(v.y == doctest::Approx(0.0f));
       CHECK(v.z == doctest::Approx(0.0f));
 
@@ -358,7 +358,7 @@ TEST_SUITE("Matrix4x4 Tests") {
       m.rotateZ(Math::PI / 2);
       v = m.transformDirection(Vector3f(1, 0, 0));
       CHECK(v.x == doctest::Approx(0.0f));
-      CHECK(v.y == doctest::Approx(1.0f));
+      CHECK(v.y == doctest::Approx(-1.0f));
       CHECK(v.z == doctest::Approx(0.0f));
     }
 
@@ -390,6 +390,16 @@ TEST_SUITE("Matrix4x4 Tests") {
 
       Matrix4x4 singular(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
       CHECK(singular.determinant() == doctest::Approx(0.0f));
+    }
+
+    SUBCASE("Cofactor") {
+      Matrix4x4 compare(0);
+      Matrix4x4 singular(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+          CHECK(compare.m[c][r] == doctest::Approx(singular.cofactored().m[c][r]));
+        }
+      }
     }
 
     SUBCASE("Inverse") {

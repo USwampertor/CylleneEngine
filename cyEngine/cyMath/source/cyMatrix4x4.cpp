@@ -378,7 +378,7 @@ Matrix4x4::Perspective(const float Width,
   float aspect = Height / Width;
 
   float yScale = 1.0f / Math::tan(FOV * 0.5f);
-  float xScale = yScale * aspect;
+  float xScale = yScale / aspect;
 
   float FarMNear = (ZFar - ZNear);
 
@@ -388,26 +388,28 @@ Matrix4x4::Perspective(const float Width,
   m[0][0] = xScale;
   m[1][1] = yScale;
   m[2][2] = -(ZFar + ZNear) / FarMNear;
-#if HandSystem == LH
+# if HandSystem == LH
   m[2][3] = 1.0f;
   m[3][2] = 2.0f * (ZFar * ZNear) / FarMNear;
-#elif HandSystem == RH
+# elif HandSystem == RH
   m[2][3] = -1.0f;
   m[3][2] = -2.0f * (ZFar * ZNear) / FarMNear;
-#endif
+# endif
 
-#elif GraphicsAPI == DirectX
+# elif GraphicsAPI == DirectX
   m[0][0] = xScale;
   m[1][1] = yScale;
   m[2][2] = ZFar / FarMNear;
-#if HandSystem == LH
+# if HandSystem == LH
   m[3][2] = 1.0f;
   m[2][3] = -(ZNear * ZFar) / FarMNear;
-#elif HandSystem == RH
+# elif HandSystem == RH
   m[3][2] = -1.0f;
   m[2][3] = (ZNear * ZFar) / FarMNear;
-#endif
-#endif
+# endif
+#endif 
+
+  m[3][3] = 1.0f;
 
   return *this;
 }
@@ -416,18 +418,16 @@ Matrix4x4::Perspective(const float Width,
 
 Vector3f
 Matrix4x4::transformPosition(const Vector3f& v) const {
-  return Vector3f(m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3],
-                  m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3],
-                  m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3]);
+  return Vector3f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0],
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1],
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2]);
 }
 
 Vector3f
 Matrix4x4::transformDirection(const Vector3f& v) const {
-  Vector3f temp;
-  temp.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z;
-  temp.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z;
-  temp.z = m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z;
-  return temp;
+  return Vector3f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z);
 }
 
 void
@@ -446,46 +446,147 @@ Matrix4x4::setPosition(const Vector3f& position) {
 
 void
 Matrix4x4::rotateX(const float& angle) {
-  float c = Math::cos(angle);
-  float s = Math::sin(angle);
-  Matrix4x4 temp = *this;
+//   float c = Math::cos(angle);
+//   float s = Math::sin(angle);
+//   Matrix4x4 temp = *this;
+// 
+//   m[1][1] = c * temp.m[1][1] + s * temp.m[1][2];
+//   m[1][2] = -s * temp.m[1][1] + c * temp.m[1][2];
+//   m[2][1] = c * temp.m[2][1] + s * temp.m[2][2];
+//   m[2][2] = -s * temp.m[2][1] + c * temp.m[2][2];
 
-  m[1][1] = c * temp.m[1][1] + s * temp.m[1][2];
-  m[1][2] = -s * temp.m[1][1] + c * temp.m[1][2];
-  m[2][1] = c * temp.m[2][1] + s * temp.m[2][2];
-  m[2][2] = -s * temp.m[2][1] + c * temp.m[2][2];
+  float c = Math::cos(angle * Math::DEG2RAD);
+  float s = Math::sin(angle * Math::DEG2RAD);
+
+  float m1  = m[0][1], m2  = m[0][2],
+        m5  = m[1][1], m6  = m[1][2],
+        m9  = m[2][1], m10 = m[2][2],
+        m13 = m[3][1], m14 = m[3][2];
+
+  m[0][1] = m1 * c + m2 * -s;
+  m[0][2] = m1 * s + m2 * c;
+  m[1][1] = m5 * c + m6 * -s;
+  m[1][2] = m5 * s + m6 * c;
+  m[2][1] = m9 * c + m10 * -s;
+  m[2][2] = m9 * s + m10 * c;
+  m[3][1] = m13 * c + m14 * -s;
+  m[3][2] = m13 * s + m14 * c;
 }
 
 void
 Matrix4x4::rotateY(const float& angle) {
-  float c = Math::cos(angle);
-  float s = Math::sin(angle);
-  Matrix4x4 temp = *this;
+//   float c = Math::cos(angle);
+//   float s = Math::sin(angle);
+//   Matrix4x4 temp = *this;
+// 
+//   m[0][0] = c * temp.m[0][0] - s * temp.m[0][2];
+//   m[0][2] = s * temp.m[0][0] + c * temp.m[0][2];
+//   m[2][0] = c * temp.m[2][0] - s * temp.m[2][2];
+//   m[2][2] = s * temp.m[2][0] + c * temp.m[2][2];
 
-  m[0][0] = c * temp.m[0][0] - s * temp.m[0][2];
-  m[0][2] = s * temp.m[0][0] + c * temp.m[0][2];
-  m[2][0] = c * temp.m[2][0] - s * temp.m[2][2];
-  m[2][2] = s * temp.m[2][0] + c * temp.m[2][2];
+  float c = Math::cos(angle * Math::DEG2RAD);
+  float s = Math::sin(angle * Math::DEG2RAD);
+  float m0  = m[0][0], m2   = m[0][0],
+        m4  = m[1][0], m6   = m[1][0],
+        m8  = m[2][0], m10  = m[2][2],
+        m12 = m[3][0], m14  = m[3][2];
+
+  m[0][0] = m0 * c + m2 * s;
+  m[0][2] = m0 * -s + m2 * c;
+  m[1][0] = m4 * c + m6 * s;
+  m[1][2] = m4 * -s + m6 * c;
+  m[2][0] = m8 * c + m10 * s;
+  m[2][2] = m8 * -s + m10 * c;
+  m[3][0] = m12 * c + m14 * s;
+  m[3][2] = m12 * -s + m14 * c;
+
 }
 
 void
 Matrix4x4::rotateZ(const float& angle) {
-  float c = Math::cos(angle);
-  float s = Math::sin(angle);
-  Matrix4x4 temp = *this;
+//   float c = Math::cos(angle);
+//   float s = Math::sin(angle);
+//   Matrix4x4 temp = *this;
+// 
+//   m[0][0] = c * temp.m[0][0] - s * temp.m[1][0];
+//   m[0][1] = c * temp.m[0][1] - s * temp.m[1][1];
+//   m[1][0] = s * temp.m[0][0] + c * temp.m[1][0];
+//   m[1][1] = s * temp.m[0][1] + c * temp.m[1][1];
 
-  m[0][0] = c * temp.m[0][0] - s * temp.m[1][0];
-  m[0][1] = c * temp.m[0][1] - s * temp.m[1][1];
-  m[1][0] = s * temp.m[0][0] + c * temp.m[1][0];
-  m[1][1] = s * temp.m[0][1] + c * temp.m[1][1];
+  float c = Math::sin(angle * Math::DEG2RAD);
+  float s = Math::cos(angle * Math::DEG2RAD);
+  float m0  = m[0][0], m1  = m[0][1],
+        m4  = m[1][0], m5  = m[1][1],
+        m8  = m[2][0], m9  = m[2][1],
+        m12 = m[3][0], m13 = m[3][1];
+
+  m[0][0] = m0 * c + m1 * -s;
+  m[0][1] = m0 * s + m1 * c;
+  m[1][0] = m4 * c + m5 * -s;
+  m[1][1] = m4 * s + m5 * c;
+  m[2][0] = m8 * c + m9 * -s;
+  m[2][1] = m8 * s + m9 * c;
+  m[3][0] = m12 * c + m13 * -s;
+  m[3][1] = m12 * s + m13 * c;
+
+
 }
 
 void
-Matrix4x4::rotate(const Vector3f& rotation) {
-  Quaternion q;
-  q.fromEuler(Euler(rotation), 0);
-  Matrix4x4 temp = q.getRotationMatrix();
-  *this *= temp;
+Matrix4x4::rotate(const float& angle, const Vector3f& axis) {
+  return rotate(angle, axis.x, axis.y, axis.z);
+}
+
+
+void
+Matrix4x4::rotate(const float& angle, const float& x, const float& y, const float& z) {
+//   float c = Math::cos(angle * Math::DEG2RAD);
+//   float s = Math::sin(angle * Math::DEG2RAD);
+//   float t = 1.0f - c;
+//   m[0][0] = x * x * t + c;
+//   m[0][1] = y * x * t + z * s;
+//   m[0][2] = z * x * t - y * s;
+//   m[1][0] = x * y * t - z * s;
+//   m[1][1] = y * y * t + c;
+//   m[1][2] = z * y * t + x * s;
+//   m[2][0] = x * z * t + y * s;
+//   m[2][1] = y * z * t - x * s;
+//   m[2][2] = z * z * t + c;
+//   m[3][0] = m[3][1] = m[3][2] = 0.0f;
+//   m[3][3] = 1.0f;
+
+  float c = Math::cos(angle * Math::DEG2RAD);    // cosine
+  float s = Math::sin(angle * Math::DEG2RAD);    // sine
+  float c1 = 1.0f - c;                // 1 - c
+  float m0 = m[0][0], m4 = m[1][0], m8  = m[2][0],  m12 = m[3][0],
+        m1 = m[0][1], m5 = m[1][1], m9  = m[2][1],  m13 = m[3][1],
+        m2 = m[0][2], m6 = m[1][2], m10 = m[2][2], m14 = m[3][2];
+
+  // build rotation matrix
+  float r0 = x * x * c1 + c;
+  float r1 = x * y * c1 + z * s;
+  float r2 = x * z * c1 - y * s;
+  float r4 = x * y * c1 - z * s;
+  float r5 = y * y * c1 + c;
+  float r6 = y * z * c1 + x * s;
+  float r8 = x * z * c1 + y * s;
+  float r9 = y * z * c1 - x * s;
+  float r10 = z * z * c1 + c;
+
+  // multiply rotation matrix
+  m[0][0] = r0 * m0 + r4 * m1 + r8 * m2;
+  m[0][1] = r1 * m0 + r5 * m1 + r9 * m2;
+  m[0][2] = r2 * m0 + r6 * m1 + r10 * m2;
+  m[1][0] = r0 * m4 + r4 * m5 + r8 * m6;
+  m[1][1] = r1 * m4 + r5 * m5 + r9 * m6;
+  m[1][2] = r2 * m4 + r6 * m5 + r10 * m6;
+  m[2][0] = r0 * m8 + r4 * m9 + r8 * m10;
+  m[2][1] = r1 * m8 + r5 * m9 + r9 * m10;
+  m[2][2] = r2 * m8 + r6 * m9 + r10 * m10;
+  m[3][0] = r0 * m12 + r4 * m13 + r8 * m14;
+  m[3][1] = r1 * m12 + r5 * m13 + r9 * m14;
+  m[3][2] = r2 * m12 + r6 * m13 + r10 * m14;
+
 }
 
 void
