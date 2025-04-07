@@ -7,7 +7,7 @@
 namespace CYLLENE_SDK {
 
 // Forward class declaration
-class Matrix4x4;
+class Matrix4;
 
 class CY_MATH_EXPORT Matrix3x3
 {
@@ -21,7 +21,7 @@ class CY_MATH_EXPORT Matrix3x3
 
   Matrix3x3(const Matrix3x3& other);
 
-  Matrix3x3(const Matrix4x4& other);
+  Matrix3x3(const Matrix4& other);
 
   Matrix3x3(const float& v00, const float& v01, const float& v02,
             const float& v10, const float& v11, const float& v12,

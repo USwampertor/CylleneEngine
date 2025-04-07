@@ -15,9 +15,9 @@ namespace CYLLENE_SDK {
 
   const float PlatformMath::HALF_PI = PI / 2.0f;
 
-  const float PlatformMath::DEG2RAD = 180.0f / PlatformMath::PI;
+  const float PlatformMath::RAD2DEG = 180.0f / PlatformMath::PI;
 
-  const float PlatformMath::RAD2DEG = PlatformMath::PI / 180.0f;
+  const float PlatformMath::DEG2RAD = PlatformMath::PI / 180.0f;
 
   const float PlatformMath::EULER = pow((1.0f + (1.0f / 200000.0f)), 200000.0f); //2.71828182f;
   //nauPlatformMath::pow((1.0f + (1.0f / 10000000000000.0f)), 10000000000000.0f);

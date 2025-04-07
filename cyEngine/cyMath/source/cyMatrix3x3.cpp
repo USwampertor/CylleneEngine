@@ -1,6 +1,6 @@
 #include "cyMatrix3x3.h"
 
-#include "cyMatrix4x4.h"
+#include "cyMatrix4.h"
 #include "cyUtilities.h"
 #include "cyMath.h"
 
@@ -20,7 +20,7 @@ namespace CYLLENE_SDK {
     _m.m20 = v20; _m.m21 = v21; _m.m22 = v22;
   }
 
-  Matrix3x3::Matrix3x3(const Matrix4x4& other) {
+  Matrix3x3::Matrix3x3(const Matrix4& other) {
     _m.m00 = other._m.m00; _m.m01 = other._m.m01; _m.m02 = other._m.m01;
     _m.m10 = other._m.m10; _m.m11 = other._m.m11; _m.m12 = other._m.m11;
     _m.m20 = other._m.m20; _m.m21 = other._m.m21; _m.m22 = other._m.m21;

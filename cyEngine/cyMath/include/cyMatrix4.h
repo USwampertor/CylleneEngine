@@ -4,6 +4,7 @@
 
 #include "cyVector4f.h"
 #include "cyQuaternion.h"
+#include "cyRotor.h"
 
 namespace CYLLENE_SDK {
 
@@ -11,25 +12,25 @@ namespace CYLLENE_SDK {
 class Matrix2x2;
 class Matrix3x3;
 
-class CY_MATH_EXPORT Matrix4x4
+class CY_MATH_EXPORT Matrix4
 {
  public:
-  Matrix4x4() = default;
+  Matrix4() = default;
 
-  ~Matrix4x4() = default;
+  ~Matrix4() = default;
 
-  Matrix4x4(const float& value);
+  Matrix4(const float& value);
 
-  Matrix4x4(const Matrix4x4& other);
+  Matrix4(const Matrix4& other);
 
-  Matrix4x4(const Matrix3x3& other);
+  Matrix4(const Matrix3x3& other);
 
-  Matrix4x4(const Matrix2x2& other);
+  Matrix4(const Matrix2x2& other);
 
-  Matrix4x4(const float& m00, const float& m01, const float& m02, const float& m03,
-            const float& m10, const float& m11, const float& m12, const float& m13,
-            const float& m20, const float& m21, const float& m22, const float& m23,
-            const float& m30, const float& m31, const float& m32, const float& m33);
+  Matrix4(const float& m00, const float& m01, const float& m02, const float& m03,
+          const float& m10, const float& m11, const float& m12, const float& m13,
+          const float& m20, const float& m21, const float& m22, const float& m23,
+          const float& m30, const float& m31, const float& m32, const float& m33);
 
   /**
     * @brief + operator overload
@@ -37,8 +38,8 @@ class CY_MATH_EXPORT Matrix4x4
     * @return the sum of *this and b
     *
     */
-  Matrix4x4
-  operator+(const Matrix4x4& b);
+  Matrix4
+  operator+(const Matrix4& b);
 
   /**
     * @brief - operator overload
@@ -46,8 +47,8 @@ class CY_MATH_EXPORT Matrix4x4
     * @return the difference of *this and b
     *
     */
-  Matrix4x4
-  operator-(const Matrix4x4& b);
+  Matrix4
+  operator-(const Matrix4& b);
 
   /**
     * @brief * operator overload
@@ -55,8 +56,8 @@ class CY_MATH_EXPORT Matrix4x4
     * @return the multiplication of *this and b
     *
     */
-  Matrix4x4
-  operator*(const Matrix4x4& b);
+  Matrix4
+  operator*(const Matrix4& b);
 
   /**
     * @brief += operator overload
@@ -64,8 +65,8 @@ class CY_MATH_EXPORT Matrix4x4
     * @return *this summed b
     *
     */
-  Matrix4x4&
-  operator+=(const Matrix4x4& b);
+  Matrix4&
+  operator+=(const Matrix4& b);
 
   /**
     * @brief -= operator overload
@@ -73,8 +74,8 @@ class CY_MATH_EXPORT Matrix4x4
     * @return *this minus b
     *
     */
-  Matrix4x4&
-  operator-=(const Matrix4x4& b);
+  Matrix4&
+  operator-=(const Matrix4& b);
 
   /**
     * @brief *= operator overload
@@ -82,8 +83,8 @@ class CY_MATH_EXPORT Matrix4x4
     * @return *this summed b
     *
     */
-  Matrix4x4&
-  operator*=(const Matrix4x4& b);
+  Matrix4&
+  operator*=(const Matrix4& b);
 
   /**
     * @brief += operator overload
@@ -91,7 +92,7 @@ class CY_MATH_EXPORT Matrix4x4
     * @return naumatrix equal to *this summed value
     *
     */
-  Matrix4x4&
+  Matrix4&
   operator+=(const float& value);
 
   /**
@@ -100,7 +101,7 @@ class CY_MATH_EXPORT Matrix4x4
     * @return naumatrix equal to *this minus value
     *
     */
-  Matrix4x4&
+  Matrix4&
   operator-=(const float& value);
 
   /**
@@ -109,7 +110,7 @@ class CY_MATH_EXPORT Matrix4x4
     * @return naumatrix equal to *this times value
     *
     */
-  Matrix4x4&
+  Matrix4&
   operator*=(const float& value);
 
   /**
@@ -118,7 +119,7 @@ class CY_MATH_EXPORT Matrix4x4
     * @return naumatrix equal to *this folded value
     *
     */
-  Matrix4x4&
+  Matrix4&
   operator/=(const float& value);
 
   /**
@@ -128,7 +129,7 @@ class CY_MATH_EXPORT Matrix4x4
     *
     */
   bool
-  operator==(const Matrix4x4& b);
+  operator==(const Matrix4& b);
 
   void
   identity();
@@ -136,13 +137,13 @@ class CY_MATH_EXPORT Matrix4x4
   void
   zero();
 
-  Matrix4x4
+  Matrix4
   transposed() const;
 
   void
   transpose();
 
-  Matrix4x4
+  Matrix4
   cofactored() const;
 
   void
@@ -157,10 +158,21 @@ class CY_MATH_EXPORT Matrix4x4
             const float& v20, const float& v21, const float& v22, const float& v23,
             const float& v30, const float& v31, const float& v32, const float& v33);
 
-  void
-  setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir);
 
-  Matrix4x4
+  void
+  setTransformMatrix(const Vector3f& position, 
+                     const Quaternion& rotation, 
+                     const Vector3f& scale);
+
+  void
+  setTransformMatrix(const Vector3f& position, const Rotor& rotation);
+
+  void
+  setLookAt(const Vector3f& eyePos, 
+            const Vector3f& targetPos, 
+            const Vector3f& upDir);
+
+  Matrix4
   inversed();
 
   void
@@ -169,19 +181,27 @@ class CY_MATH_EXPORT Matrix4x4
   const float
   determinant() const;
 
-  Matrix4x4&
-  View(const Vector4f& Eye,
-        const Vector4f& Target,
-        const Vector4f& Up);
+  Matrix4&
+  view(const Vector4f& Eye,
+       const Vector4f& Target,
+       const Vector4f& Up);
 
-  Matrix4x4&
-  Orthogonal(const float Width,
-              const float Height,
-              const float ZNear,
-              const float ZFar);
+  Matrix4&
+  orthogonal(const float& width,
+             const float& height,
+             const float& zNear,
+             const float& zFar);
 
-  Matrix4x4&
-  Perspective(const float Width,
+  Matrix4&
+  orthogonal(const float& top,
+             const float& bottom,
+             const float& left,
+             const float& right,
+             const float& zNear,
+             const float& zFar);
+
+  Matrix4&
+  perspective(const float Width,
               const float Height,
               const float ZNear,
               const float ZFar,
@@ -265,12 +285,12 @@ class CY_MATH_EXPORT Matrix4x4
   /**
     * ZERO filled Matrix
     */
-  static const Matrix4x4 ZERO;
+  static const Matrix4 ZERO;
 
   /**
     * IDENTITY matrix
     */
-  static const Matrix4x4 IDENTITY;
+  static const Matrix4 IDENTITY;
 
 public:
 

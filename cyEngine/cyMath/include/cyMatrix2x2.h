@@ -8,7 +8,7 @@ namespace CYLLENE_SDK {
 
 // Forward definition
 class Matrix3x3;
-class Matrix4x4;
+class Matrix4;
 
 class CY_MATH_EXPORT Matrix2x2
 {

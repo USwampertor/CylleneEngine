@@ -19,7 +19,7 @@ namespace CYLLENE_SDK {
 class Vector4f;
 class Vector3f;
 class Matrix3x3;
-class Matrix4x4;
+class Matrix4;
 
 struct CY_MATH_EXPORT Euler {
 public:
