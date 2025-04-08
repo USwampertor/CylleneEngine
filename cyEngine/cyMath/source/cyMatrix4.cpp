@@ -529,9 +529,9 @@ Matrix4::rotateX(const float& angle) {
   float s = Math::sin(Math::DEG2RAD * angle);
   Matrix4 temp = *this;
 
-  m[1][0] = c * temp.m[1][0] + s * temp.m[2][0]; m[2][1] = -s * temp.m[1][0] + c * temp.m[2][0];
-  m[1][1] = c * temp.m[1][1] + s * temp.m[2][1]; m[2][2] = -s * temp.m[1][1] + c * temp.m[2][1];
-  m[1][2] = c * temp.m[1][2] + s * temp.m[2][2]; m[2][3] = -s * temp.m[1][2] + c * temp.m[2][2];
+  m[1][0] = c * temp.m[1][0] + s * temp.m[2][0]; m[2][1] = c * temp.m[2][0] - s * temp.m[1][0];
+  m[1][1] = c * temp.m[1][1] + s * temp.m[2][1]; m[2][2] = c * temp.m[2][1] - s * temp.m[1][1];
+  m[1][2] = c * temp.m[1][2] + s * temp.m[2][2]; m[2][3] = c * temp.m[2][2] - s * temp.m[1][2];
   
 
 }
@@ -543,9 +543,16 @@ Matrix4::rotateY(const float& angle) {
   float s = Math::sin(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
 
-  m[0][0] = temp.m[0][0] * c - temp.m[2][0] * s; m[2][0] = temp.m[0][0] * s + temp.m[2][0] * c;
-  m[0][1] = temp.m[0][1] * c - temp.m[2][1] * s; m[2][2] = temp.m[0][1] * s + temp.m[2][1] * c;
-  m[0][2] = temp.m[0][2] * c - temp.m[2][2] * s; m[2][1] = temp.m[0][2] * s + temp.m[2][2] * c;
+#if HandSystem == LH
+  m[0][0] = temp.m[0][0] * c + temp.m[2][0] * s; m[2][0] =  temp.m[2][0] * c - temp.m[0][0] * s;
+  m[0][1] = temp.m[0][1] * c + temp.m[2][1] * s; m[2][2] =  temp.m[2][1] * c - temp.m[0][1] * s;
+  m[0][2] = temp.m[0][2] * c + temp.m[2][2] * s; m[2][1] =  temp.m[2][2] * c - temp.m[0][2] * s;
+#elif HandSystem == RH
+  m[0][0] = temp.m[0][0] * c - temp.m[2][0] * s; m[2][0] = temp.m[2][0] * c + temp.m[0][0] * s;
+  m[0][1] = temp.m[0][1] * c - temp.m[2][1] * s; m[2][2] = temp.m[2][1] * c + temp.m[0][1] * s;
+  m[0][2] = temp.m[0][2] * c - temp.m[2][2] * s; m[2][1] = temp.m[2][2] * c + temp.m[0][2] * s;
+#endif 
+
 }
 
 void
@@ -554,10 +561,16 @@ Matrix4::rotateZ(const float& angle) {
   float c = Math::sin(angle * Math::DEG2RAD);
   float s = Math::cos(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
-  m[0][0] = c * temp.m[0][0] + s * temp.m[1][0]; m[1][0] = -s * temp.m[0][0] + c * temp.m[1][0];
-  m[0][1] = c * temp.m[0][1] + s * temp.m[1][1]; m[1][1] = -s * temp.m[0][1] + c * temp.m[1][1];
-  m[0][2] = c * temp.m[0][2] + s * temp.m[1][2]; m[1][2] = -s * temp.m[0][2] + c * temp.m[1][2];
 
+#if HandSystem == LH
+  m[0][0] = c * temp.m[0][0] + s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] - s * temp.m[0][0];
+  m[0][1] = c * temp.m[0][1] + s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] - s * temp.m[0][1];
+  m[0][2] = c * temp.m[0][2] + s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] - s * temp.m[0][2];
+#elif HandSystem == RH
+  m[0][0] = c * temp.m[0][0] - s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] + s * temp.m[0][0];
+  m[0][1] = c * temp.m[0][1] - s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] + s * temp.m[0][1];
+  m[0][2] = c * temp.m[0][2] - s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] + s * temp.m[0][2];
+#endif
 }
 
 void
@@ -636,13 +649,6 @@ Matrix4::scale(const float& scale) {
 }
 
 Vector3f
-Matrix4::getForwardVector() const {
-  return Vector3f(m[2][0], 
-                  m[2][1], 
-                  m[2][2]).normalized();
-}
-
-Vector3f
 Matrix4::getRightVector() const {
   return Vector3f(m[0][0], 
                   m[0][1], 
@@ -654,6 +660,13 @@ Matrix4::getUpVector() const {
   return Vector3f(m[1][0], 
                   m[1][1], 
                   m[1][2]).normalized();
+}
+
+Vector3f
+Matrix4::getForwardVector() const {
+  return Vector3f(m[2][0], 
+                  m[2][1], 
+                  m[2][2]).normalized();
 }
 
 Vector3f

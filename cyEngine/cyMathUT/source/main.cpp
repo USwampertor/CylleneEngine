@@ -302,7 +302,7 @@ TEST_SUITE("Matrix4 Tests") {
       Vector3f right = m.getRightVector();
       CHECK(right.x == doctest::Approx(0.0f));
       CHECK(right.y == doctest::Approx(0.0f));
-      CHECK(right.z == doctest::Approx(-1.0f));
+      CHECK(right.z == doctest::Approx(1.0f));
     }
 
     SUBCASE("Z-Axis Rotation") {
@@ -311,9 +311,14 @@ TEST_SUITE("Matrix4 Tests") {
       m.rotateZ(90.0f);
 
       Vector3f up = m.getUpVector();
-      CHECK(up.x == doctest::Approx(-1.0f));
+      Vector3f right = m.getRightVector();
+      CHECK(up.x == doctest::Approx(1.0f));
       CHECK(up.y == doctest::Approx(0.0f));
       CHECK(up.z == doctest::Approx(0.0f));
+    
+      CHECK(right.x == doctest::Approx(0.0f));
+      CHECK(right.y == doctest::Approx(1.0f));
+      CHECK(right.z == doctest::Approx(0.0f));
     }
 
     SUBCASE("Arbitrary Axis Rotation") {
