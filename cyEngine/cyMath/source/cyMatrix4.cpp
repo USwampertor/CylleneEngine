@@ -41,9 +41,9 @@ Matrix4::Matrix4(const Matrix2x2& other) {
 }
 
 Matrix4::Matrix4(const float& m00, const float& m10, const float& m20, const float& m30,  // Row 0
-                     const float& m01, const float& m11, const float& m21, const float& m31,  // Row 1
-                     const float& m02, const float& m12, const float& m22, const float& m32,  // Row 2
-                     const float& m03, const float& m13, const float& m23, const float& m33) {// Row 3
+                 const float& m01, const float& m11, const float& m21, const float& m31,  // Row 1
+                 const float& m02, const float& m12, const float& m22, const float& m32,  // Row 2
+                 const float& m03, const float& m13, const float& m23, const float& m33) {// Row 3
   m[0][0] = m00; m[1][0] = m10; m[2][0] = m20; m[3][0] = m30;
   m[0][1] = m01; m[1][1] = m11; m[2][1] = m21; m[3][1] = m31;
   m[0][2] = m02; m[1][2] = m12; m[2][2] = m22; m[3][2] = m32;
@@ -587,10 +587,16 @@ Matrix4::rotate(const float& angle, const Vector3f& axis) {
   }
 
   Matrix4 rot;
+
+#if HandSystem == LH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc - z * sin; rot.m[2][0] = x * z * omc + y * sin;
   rot.m[0][1] = y * x * omc + z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc - x * sin;
   rot.m[0][2] = z * x * omc - y * sin; rot.m[1][2] = z * y * omc + x * sin; rot.m[2][2] = cos + z * z * omc;
-
+#elif HandSystem == RH
+  rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc + z * sin; rot.m[2][0] = x * z * omc - y * sin;
+  rot.m[0][1] = y * x * omc - z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc + x * sin;
+  rot.m[0][2] = z * x * omc + y * sin; rot.m[1][2] = z * y * omc - x * sin; rot.m[2][2] = cos + z * z * omc;
+#endif
   *this = *this * rot;
 
 }

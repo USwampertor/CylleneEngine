@@ -312,7 +312,7 @@ TEST_SUITE("Matrix4 Tests") {
 
       Vector3f up = m.getUpVector();
       Vector3f right = m.getRightVector();
-      CHECK(up.x == doctest::Approx(1.0f));
+      CHECK(up.x == doctest::Approx(-1.0f));
       CHECK(up.y == doctest::Approx(0.0f));
       CHECK(up.z == doctest::Approx(0.0f));
     
@@ -327,9 +327,9 @@ TEST_SUITE("Matrix4 Tests") {
       m.rotate(90.0f, Vector3f(1, 1, 0).normalized());
 
       Vector3f forward = m.getForwardVector();
-      CHECK(forward.x == doctest::Approx(-0.5f).epsilon(0.01f));
-      CHECK(forward.y == doctest::Approx(0.5f).epsilon(0.01f));
-      CHECK(forward.z == doctest::Approx(0.707f).epsilon(0.01f));
+      CHECK(forward.x == doctest::Approx(0.7071f).epsilon(0.01f));
+      CHECK(forward.y == doctest::Approx(-0.7071f).epsilon(0.01f));
+      CHECK(forward.z == doctest::Approx(0.0f).epsilon(0.01f));
     }
   }
 
