@@ -558,8 +558,8 @@ Matrix4::rotateY(const float& angle) {
 void
 Matrix4::rotateZ(const float& angle) {
 
-  float c = Math::sin(angle * Math::DEG2RAD);
-  float s = Math::cos(angle * Math::DEG2RAD);
+  float s = Math::sin(angle * Math::DEG2RAD);
+  float c = Math::cos(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
 
 #if HandSystem == LH
