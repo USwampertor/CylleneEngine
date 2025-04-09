@@ -351,7 +351,7 @@ TEST_SUITE("Matrix4 Tests") {
   TEST_CASE("Transformation Composition") {
     Matrix4 transform;
     Quaternion rotation;
-    rotation.fromEuler(Vector3f(0, 90.0f, 0), 0);
+    rotation.fromEuler(Euler(0, 90.0f, 0, EulOrdXYZs));
     Vector3f translation(5, 3, 0);
     Vector3f scale(1, 1, 1);
     transform.setTransformMatrix(translation,

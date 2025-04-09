@@ -275,9 +275,9 @@ Matrix4::setTransformMatrix(const Vector3f& position,
   Matrix4 T = Matrix4::IDENTITY; // Translation
   T.setPosition(position);
 
-  Matrix4 R = rotation.getRotationMatrix(); // Rotation (from quaternion)
+  Matrix4 R = rotation.toMat4(); // Rotation (from quaternion)
   Matrix4 S = Matrix4::IDENTITY;  // Scale
-  S.setScale(scale.x);
+  S.setScale(scale);
 
   // Column-major: T × R × S
   Matrix4 M = T * (R * S);
@@ -609,21 +609,21 @@ Matrix4::rotate(const float& angle, const float& x, const float& y, const float&
 
 void
 Matrix4::rotate(const Quaternion& rotation) {
-  Matrix4 rotationMatrix = rotation.getRotationMatrix();
+  Matrix4 rotationMatrix = rotation.toMat3();
   *this *= rotationMatrix;
 }
 
 void
 Matrix4::setRotation(const Vector3f& rotation) {
   Quaternion q;
-  q.fromEuler(Euler(rotation), 0);
-  Matrix4 temp = q.getRotationMatrix();
+  q.fromEuler(Euler(rotation));
+  Matrix4 temp = q.toMat3();
   *this = temp;
 }
 
 void
 Matrix4::setRotation(const Quaternion& rotation) {
-  *this = rotation.getRotationMatrix();
+  *this = rotation.toMat3();
 }
 
 void
