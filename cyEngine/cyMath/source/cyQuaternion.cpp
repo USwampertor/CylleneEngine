@@ -453,7 +453,7 @@ namespace CYLLENE_SDK {
     return Matrix4(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz),         2.0f * (xz + wy),        0.0f,
                    2.0f * (xy + wz),        1.0f - 2.0f * (x2 + z2),  2.0f * (yz - wx),        0.0f,
                    2.0f * (xz - wy),        2.0f * (yz + wx),         1.0f - 2.0f * (x2 + y2), 0.0f,
-                   0.0f,                    0.0f,                     0.0f,                    0.0f);// .transposed();
+                   0.0f,                    0.0f,                     0.0f,                    1.0f);// .transposed();
   }
 
   float

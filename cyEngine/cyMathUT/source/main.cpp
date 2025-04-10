@@ -351,7 +351,7 @@ TEST_SUITE("Matrix4 Tests") {
   TEST_CASE("Transformation Composition") {
     Matrix4 transform;
     Quaternion rotation;
-    rotation.fromEuler(Euler(0, 90.0f, 0, EulOrdXYZs));
+    rotation.fromEuler(Euler(0, Math::DEG2RAD * 90.0f, 0, EulOrdXYZs));
     Vector3f translation(5, 3, 0);
     Vector3f scale(1, 1, 1);
     transform.setTransformMatrix(translation,
@@ -364,9 +364,9 @@ TEST_SUITE("Matrix4 Tests") {
     CHECK(pos.z == 0.0f);
 
     Vector3f forward = transform.getForwardVector();
-    CHECK(forward.x == doctest::Approx(0.0f));
+    CHECK(forward.x == doctest::Approx(1.0f));
     CHECK(forward.y == doctest::Approx(0.0f));
-    CHECK(forward.z == doctest::Approx(-1.0f));
+    CHECK(forward.z == doctest::Approx(0.0f));
   }
 
   TEST_CASE("View Matrix") {
