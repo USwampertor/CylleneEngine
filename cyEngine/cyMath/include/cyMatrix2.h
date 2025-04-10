@@ -2,30 +2,28 @@
 
 #include "cyMathPrerequisites.h"
 
-#include "cyVector3f.h"
+#include "cyVector2f.h"
 
 namespace CYLLENE_SDK {
 
-// Forward class declaration
+// Forward definition
+class Matrix3;
 class Matrix4;
 
-class CY_MATH_EXPORT Matrix3x3
+class CY_MATH_EXPORT Matrix2
 {
  public:
 
-  Matrix3x3() = default;
+  Matrix2() = default;
 
-  ~Matrix3x3() = default;
+  ~Matrix2() = default;
 
-  Matrix3x3(const float& value);
+  Matrix2(const float& value);
 
-  Matrix3x3(const Matrix3x3& other);
+  Matrix2(const Matrix2& other);
 
-  Matrix3x3(const Matrix4& other);
-
-  Matrix3x3(const float& v00, const float& v01, const float& v02,
-            const float& v10, const float& v11, const float& v12,
-            const float& v20, const float& v21, const float& v22);
+  Matrix2(const float& m00, const float& m10,
+          const float& m01, const float& m11);
 
   /**
     * @brief + operator overload
@@ -33,8 +31,8 @@ class CY_MATH_EXPORT Matrix3x3
     * @return the sum of *this and b
     *
     */
-  Matrix3x3
-  operator+(const Matrix3x3& b);
+  Matrix2
+  operator+(const Matrix2& b);
 
   /**
     * @brief - operator overload
@@ -42,8 +40,8 @@ class CY_MATH_EXPORT Matrix3x3
     * @return the difference of *this and b
     *
     */
-  Matrix3x3
-  operator-(const Matrix3x3& b);
+  Matrix2
+  operator-(const Matrix2& b);
 
   /**
     * @brief * operator overload
@@ -51,8 +49,8 @@ class CY_MATH_EXPORT Matrix3x3
     * @return the multiplication of *this and b
     *
     */
-  Matrix3x3
-  operator*(const Matrix3x3& b);
+  Matrix2
+  operator*(const Matrix2& b);
 
   /**
     * @brief += operator overload
@@ -60,8 +58,8 @@ class CY_MATH_EXPORT Matrix3x3
     * @return *this summed b
     *
     */
-  Matrix3x3&
-  operator+=(const Matrix3x3& b);
+  Matrix2&
+  operator+=(const Matrix2& b);
 
   /**
     * @brief -= operator overload
@@ -69,8 +67,8 @@ class CY_MATH_EXPORT Matrix3x3
     * @return *this minus b
     *
     */
-  Matrix3x3&
-  operator-=(const Matrix3x3& b);
+  Matrix2&
+  operator-=(const Matrix2& b);
 
   /**
     * @brief *= operator overload
@@ -78,8 +76,8 @@ class CY_MATH_EXPORT Matrix3x3
     * @return *this summed b
     *
     */
-  Matrix3x3&
-  operator*=(const Matrix3x3& b);
+  Matrix2&
+  operator*=(const Matrix2& b);
 
   /**
     * @brief += operator overload
@@ -87,7 +85,7 @@ class CY_MATH_EXPORT Matrix3x3
     * @return naumatrix equal to *this summed value
     *
     */
-  Matrix3x3&
+  Matrix2&
   operator+=(const float& value);
 
   /**
@@ -96,7 +94,7 @@ class CY_MATH_EXPORT Matrix3x3
     * @return naumatrix equal to *this minus value
     *
     */
-  Matrix3x3&
+  Matrix2&
   operator-=(const float& value);
 
   /**
@@ -105,7 +103,7 @@ class CY_MATH_EXPORT Matrix3x3
     * @return naumatrix equal to *this times value
     *
     */
-  Matrix3x3&
+  Matrix2&
   operator*=(const float& value);
 
   /**
@@ -114,7 +112,7 @@ class CY_MATH_EXPORT Matrix3x3
     * @return naumatrix equal to *this folded value
     *
     */
-  Matrix3x3&
+  Matrix2&
   operator/=(const float& value);
 
   /**
@@ -124,7 +122,7 @@ class CY_MATH_EXPORT Matrix3x3
     *
     */
   bool
-  operator==(const Matrix3x3& b);
+  operator==(const Matrix2& b);
 
   void
   identity();
@@ -132,13 +130,13 @@ class CY_MATH_EXPORT Matrix3x3
   void
   zero();
 
-  Matrix3x3
+  Matrix2
   transposed() const;
 
   void
   transpose();
 
-  Matrix3x3
+  Matrix2
   cofactored() const;
 
   void
@@ -148,11 +146,10 @@ class CY_MATH_EXPORT Matrix3x3
   setValues(const float& value);
 
   void
-  setValues(const float& v00, const float& v01, const float& v02,
-            const float& v10, const float& v11, const float& v12,
-            const float& v20, const float& v21, const float& v22);
+  setValues(const float& m00, const float& m10,
+            const float& m01, const float& m11);
 
-  Matrix3x3
+  Matrix2
   inversed();
 
   void
@@ -167,28 +164,30 @@ class CY_MATH_EXPORT Matrix3x3
   /**
     * ZERO filled Matrix
     */
-  static const Matrix3x3 ZERO;
+  static const Matrix2 ZERO;
 
   /**
     * IDENTITY matrix
     */
-  static const Matrix3x3 IDENTITY;
+  static const Matrix2 IDENTITY;
 
- public:
+public:
 
   union {
     /**
       * Row major based matrix struct
       */
     struct {
-      float m00, m01, m02;
-      float m10, m11, m12;
-      float m20, m21, m22;
+      float m00, m10;
+      float m01, m11;
     }_m;
-    float m[3][3];
-    Vector3f vec[3];
-    float fVec[9];
+    float m[2][2];
+    Vector2f columns[2];
+    float fVec[4];
   };
 
+
+
 };
+
 }

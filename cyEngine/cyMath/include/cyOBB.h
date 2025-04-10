@@ -3,7 +3,7 @@
 #include "cyMathPrerequisites.h"
 #include "cyVector3f.h"
 #include "cyVector4f.h"
-#include "cyMatrix3x3.h"
+#include "cyMatrix3.h"
 #include "cyQuaternion.h"
 
 namespace CYLLENE_SDK {

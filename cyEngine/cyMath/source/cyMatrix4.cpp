@@ -1,22 +1,13 @@
 #include "cyMatrix4.h"
 #include "cyUtilities.h"
 
-#include "cyMatrix2x2.h"
-#include "cyMatrix3x3.h"
+#include "cyMatrix2.h"
+#include "cyMatrix3.h"
 #include "cyMath.h"
-
-#define LH 0
-#define RH 1
-
-#define OpenGL  0
-#define DirectX 1
-
-#define HandSystrem LH
-#define GraphicsAPI OpenGL
 
 namespace CYLLENE_SDK {
 Matrix4::Matrix4(const float& value) {
-  memset(&_m, static_cast<int32>(0), sizeof(_m));
+  memset(&_m, static_cast<float>(value), sizeof(_m));
 
   if (0 != value) {
     _m.m00 = _m.m11 = _m.m22 = _m.m33 = 1.0f;
@@ -26,14 +17,14 @@ Matrix4::Matrix4(const float& value) {
 Matrix4::Matrix4(const Matrix4& other)
   : _m(other._m) {}
 
-Matrix4::Matrix4(const Matrix3x3& other) {
+Matrix4::Matrix4(const Matrix3& other) {
   m[0][0] = other.m[0][0]; m[1][0] = other.m[1][0]; m[2][0] = other.m[2][0]; m[3][0] = 0;
   m[0][1] = other.m[0][1]; m[1][1] = other.m[1][1]; m[2][1] = other.m[2][1]; m[3][1] = 0;
   m[0][2] = other.m[0][1]; m[1][2] = other.m[1][1]; m[2][2] = other.m[2][1]; m[3][2] = 0;
   m[0][3] = 0;             m[1][3] = 0;             m[2][3] = 0;             m[3][3] = 0;
 }
 
-Matrix4::Matrix4(const Matrix2x2& other) {
+Matrix4::Matrix4(const Matrix2& other) {
   m[0][0] = other.m[0][0]; m[1][0] = other.m[1][0]; m[2][0] = 0; m[3][0] = 0;
   m[0][1] = other.m[0][1]; m[1][1] = other.m[1][1]; m[2][1] = 0; m[3][1] = 0;
   m[0][2] = 0;             m[1][2] = 0;             m[2][2] = 0; m[3][2] = 0;
@@ -75,35 +66,41 @@ Matrix4::operator-(const Matrix4& b) {
 
 Matrix4
 Matrix4::operator*(const Matrix4& b) {
-  Matrix4 result;
+  Matrix4 tmp;
   for (int c = 0; c < 4; c++) {
     for (int r = 0; r < 4; r++) {
-      result.m[c][r] = 0;
+      tmp.m[c][r] = 0;
       for (int k = 0; k < 4; k++) {
-        result.m[c][r] += m[k][r] * b.m[c][k];
+        tmp.m[c][r] += m[k][r] * b.m[c][k];
       }
     }
   }
-  return result;
+  return tmp;
 }
 
 Matrix4&
 Matrix4::operator+=(const Matrix4& b) {
-  for (uint32 c = 0; c < 4; ++c) {
-    for (uint32 r = 0; r < 4; ++r) {
-      m[c][r] += b.m[c][r];
-    }
-  }
+  // for (uint32 c = 0; c < 4; ++c) {
+  //   for (uint32 r = 0; r < 4; ++r) {
+  //     m[c][r] += b.m[c][r];
+  //   }
+  // }
+  // return *this;
+
+  *this = *this + b;
   return *this;
 }
 
 Matrix4&
 Matrix4::operator-=(const Matrix4& b) {
-  for (uint32 c = 0; c < 4; ++c) {
-    for (uint32 r = 0; r < 4; ++r) {
-      m[c][r] -= b.m[c][r];
-    }
-  }
+  // for (uint32 c = 0; c < 4; ++c) {
+  //   for (uint32 r = 0; r < 4; ++r) {
+  //     m[c][r] -= b.m[c][r];
+  //   }
+  // }
+  // return *this;
+
+  *this = *this - b;
   return *this;
 }
 
@@ -176,9 +173,9 @@ Matrix4::zero() {
 Matrix4
 Matrix4::transposed() const {
   return Matrix4(m[0][0], m[0][1], m[0][2], m[0][3],
-                   m[1][0], m[1][1], m[1][2], m[1][3],
-                   m[2][0], m[2][1], m[2][2], m[2][3],
-                   m[3][0], m[3][1], m[3][2], m[3][3]);
+                 m[1][0], m[1][1], m[1][2], m[1][3],
+                 m[2][0], m[2][1], m[2][2], m[2][3],
+                 m[3][0], m[3][1], m[3][2], m[3][3]);
 }
 
 void
@@ -248,7 +245,7 @@ Matrix4::cofactor() {
 
 void
 Matrix4::setValues(const float& value) {
-  memset(&_m, static_cast<int32>(value), sizeof(_m));
+  memset(&_m, static_cast<float>(value), sizeof(_m));
 
   // m[0][0] = m[0][1] = m[0][2] = m[0][3] = 
   // m[1][0] = m[1][1] = m[1][2] = m[1][3] =
@@ -474,39 +471,63 @@ Matrix4::perspective(const float width,
                      const float height,
                      const float zNear,
                      const float zFar,
-                     const float FOV) {
+                     const float FOVangle) {
 
-  float halfFOV = FOV * 0.5;
-  float plane0[4] = { 1.0f / std::tanf(halfFOV), 0.0f,                                0.0f,                           0.0f };
-  float plane1[4] = { 0.0f,                      width / std::tanf(halfFOV) / height, 0.0f,                           0.0f };
-  float plane2[4] = { 0.0f,                      0.0f,                                zFar / (zFar - zNear),          1.0f };
-  float plane3[4] = { 0.0f,                      0.0f,                                -zNear * zFar / (zFar - zNear), 0.0f };
+  float FOVrads = Math::DEG2RAD * FOVangle;
 
+  float halfFOVrads = FOVrads * 0.5;
+  // float plane0[4] = { 1.0f / std::tanf(halfFOV), 0.0f,                                0.0f,                           0.0f };
+  // float plane1[4] = { 0.0f,                      width / std::tanf(halfFOV) / height, 0.0f,                           0.0f };
+  // float plane2[4] = { 0.0f,                      0.0f,                                zFar / (zFar - zNear),          1.0f };
+  // float plane3[4] = { 0.0f,                      0.0f,                                -zNear * zFar / (zFar - zNear), 0.0f };
+  // columns[0] = { plane0[0], plane0[1], plane0[2], plane0[3] }; // Column 1
+  // columns[1] = { plane1[0], plane1[1], plane1[2], plane1[3] }; // Column 2
+  // columns[2] = { plane2[0], plane2[1], plane2[2], plane2[3] }; // Column 3
+  // columns[3] = { plane3[0], plane3[1], plane3[2], plane3[3] }; // Column 4
 
-  columns[0] = { plane0[0], plane0[1], plane0[2], plane0[3] }; // Column 1
-  columns[1] = { plane1[0], plane1[1], plane1[2], plane1[3] }; // Column 2
-  columns[2] = { plane2[0], plane2[1], plane2[2], plane2[3] }; // Column 3
-  columns[3] = { plane3[0], plane3[1], plane3[2], plane3[3] }; // Column 4
+  *this = Matrix4(1.0f / std::tanf(halfFOVrads), 0.0f,                                    0.0f,                  0.0f,
+                  0.0f,                          width / std::tanf(halfFOVrads) / height, 0.0f,                  0.0f,
+                  0.0f,                          0.0f,                                    zFar / (zFar - zNear), - zNear * zFar / (zFar - zNear),
+                  0.0f,                          0.0f,                                    1.0f,                  0.0f);
+
 
   return *this;
 
 }
 
 
-// TODO: This is not the correct way to set the transform matrix
+// TODO: check if this is the correct way to set the transform matrix
 Vector3f
 Matrix4::transformPosition(const Vector3f& v) const {
-  return Vector3f(m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3],
-                  m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3],
-                  m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3]);
+  return Vector3f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] /* * 1.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] /* * 1.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] /* * 1.0f */);
 }
 
 // TODO: This is not the correct way to set the direction matrix
 Vector3f
 Matrix4::transformDirection(const Vector3f& v) const {
-  return Vector3f(m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
-                  m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
-                  m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z);
+  return Vector3f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z /* + m[3][0] * 0.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z /* + m[3][1] * 0.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z /* + m[3][2] * 0.0f */);
+}
+
+// TODO: check if this is the correct way to set the transform matrix
+Vector4f
+Matrix4::transformPositionV4(const Vector4f& v) const {
+  return Vector4f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] * v.w /* * 1.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] * v.w /* * 1.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] * v.w /* * 1.0f */,
+                  m[0][3] * v.x + m[1][3] * v.y + m[2][3] * v.z + m[3][3] * v.w /* * 1.0f */);
+}
+
+// TODO: This is not the correct way to set the direction matrix
+Vector4f
+Matrix4::transformDirectionV4(const Vector4f& v) const {
+  return Vector4f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z /* + m[3][0] * 0.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z /* + m[3][1] * 0.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z /* + m[3][2] * 0.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z /* + m[3][2] * 0.0f */);
 }
 
 void
@@ -683,11 +704,11 @@ Matrix4::getPosition() const {
                   m[3][2]);
 }
 
-Matrix3x3
+Matrix3
 Matrix4::subMatrix() {
-  return Matrix3x3(m[0][0], m[1][0], m[2][0],
-                   m[0][1], m[1][1], m[2][1],
-                   m[0][2], m[1][2], m[2][2]);
+  return Matrix3(m[0][0], m[1][0], m[2][0],
+                 m[0][1], m[1][1], m[2][1],
+                 m[0][2], m[1][2], m[2][2]);
 }
 
 String

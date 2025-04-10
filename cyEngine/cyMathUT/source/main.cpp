@@ -5,7 +5,7 @@
 #include <cyLogger.h>
 #include <cyMath.h>
 #include <cyMatrix4.h>
-#include <cyMatrix3x3.h>
+#include <cyMatrix3.h>
 #include <cyTime.h>
 #include <cyUnitTesting.h>
 #include <cyVector2i.h>
@@ -369,6 +369,18 @@ TEST_SUITE("Matrix4 Tests") {
     CHECK(forward.z == doctest::Approx(0.0f));
   }
 
+  TEST_CASE("transform position") {
+    Matrix4 transform;
+    Quaternion rotation;
+    rotation.fromEuler(Euler(0, Math::DEG2RAD * 90.0f, 0, EulOrdXYZs));
+    Vector3f translation(5, 3, 0);
+    Vector3f scale(1, 1, 1);
+    transform.setTransformMatrix(translation,
+                                 rotation,
+                                 scale);
+    Vector3f point = transform.transformPosition(Vector3f(1, 2, 3));
+  }
+
   TEST_CASE("View Matrix") {
     Matrix4 view;
     view.view(
@@ -401,16 +413,17 @@ TEST_SUITE("Matrix4 Tests") {
       persp.perspective(800, 600, 0.1f, 100.0f, 45.0f);
 
       // Should transform z properly with perspective divide
-      Vector3f point = persp.transformPosition(Vector3f(0, 0, -5.0f));
+      Vector4f point = persp.transformPositionV4(Vector4f(0, 0, -5.0f, 1.0f));
+      point /= point.w; // Perspective divide
       CHECK(point.z > 0.0f); // Should be in front of camera
     }
   }
 
   TEST_CASE("Matrix Inversion") {
     Matrix4 m(1, 0, 0, 5,
-      0, 1, 0, 3,
-      0, 0, 1, 0,
-      0, 0, 0, 1);
+              0, 1, 0, 3,
+              0, 0, 1, 0,
+              0, 0, 0, 1);
 
     Matrix4 inv = m.inversed();
     Matrix4 identity = m * inv;
@@ -439,13 +452,13 @@ TEST_SUITE("Matrix4 Tests") {
 
     CHECK(transformed.x == doctest::Approx(5.0f));
     CHECK(transformed.y == doctest::Approx(3.0f));
-    CHECK(transformed.z == doctest::Approx(-1.0f));
+    CHECK(transformed.z == doctest::Approx(1.0f));
 
     Vector3f dir(1, 0, 0);
     Vector3f transformedDir = m.transformDirection(dir);
 
     CHECK(transformedDir.x == doctest::Approx(0.0f));
     CHECK(transformedDir.y == doctest::Approx(0.0f));
-    CHECK(transformedDir.z == doctest::Approx(-1.0f));
+    CHECK(transformedDir.z == doctest::Approx(1.0f));
   }
 }

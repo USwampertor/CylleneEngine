@@ -9,8 +9,8 @@
 namespace CYLLENE_SDK {
 
 // Forward class declaration
-class Matrix2x2;
-class Matrix3x3;
+class Matrix2;
+class Matrix3;
 
 class CY_MATH_EXPORT Matrix4
 {
@@ -23,9 +23,9 @@ class CY_MATH_EXPORT Matrix4
 
   Matrix4(const Matrix4& other);
 
-  Matrix4(const Matrix3x3& other);
+  Matrix4(const Matrix3& other);
 
-  Matrix4(const Matrix2x2& other);
+  Matrix4(const Matrix2& other);
 
   Matrix4(const float& m00, const float& m01, const float& m02, const float& m03,
           const float& m10, const float& m11, const float& m12, const float& m13,
@@ -153,16 +153,16 @@ class CY_MATH_EXPORT Matrix4
   setValues(const float& value);
 
   void
-  setValues(const float& v00, const float& v01, const float& v02, const float& v03,
-            const float& v10, const float& v11, const float& v12, const float& v13,
-            const float& v20, const float& v21, const float& v22, const float& v23,
-            const float& v30, const float& v31, const float& v32, const float& v33);
+  setValues(const float& v00, const float& v10, const float& v20, const float& v30,
+            const float& v01, const float& v11, const float& v21, const float& v31,
+            const float& v02, const float& v12, const float& v22, const float& v32,
+            const float& v03, const float& v13, const float& v23, const float& v33);
 
 
   void
-  setTransformMatrix(const Vector3f& position, 
-                     const Quaternion& rotation, 
-                     const Vector3f& scale);
+  setTransformMatrix(const Vector3f&    position, 
+                     const Quaternion&  rotation, 
+                     const Vector3f&    scale);
 
   void
   setTransformMatrix(const Vector3f& position, const Rotor& rotation);
@@ -212,6 +212,12 @@ class CY_MATH_EXPORT Matrix4
 
   Vector3f
   transformDirection(const Vector3f& v) const;
+
+  Vector4f
+  transformPositionV4(const Vector4f& v) const;
+
+  Vector4f
+  transformDirectionV4(const Vector4f& v) const;
 
   void
   translate(const Vector3f& translation);
@@ -276,7 +282,7 @@ class CY_MATH_EXPORT Matrix4
   Vector3f
   getScale() const;
 
-  Matrix3x3
+  Matrix3
   subMatrix();
 
   String

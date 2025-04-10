@@ -20,7 +20,7 @@ namespace CYLLENE_SDK {
 
 class Vector4f;
 class Vector3f;
-class Matrix3x3;
+class Matrix3;
 class Matrix4;
 
 struct CY_MATH_EXPORT Euler {
@@ -312,7 +312,7 @@ public:
   setValues(const Vector3f& vector, const float& scalar);
 
   void
-  setRotationMatrix(const Matrix3x3& m);
+  setRotationMatrix(const Matrix3& m);
 
   const Vector3f
   getVectorPart() const;
@@ -320,7 +320,7 @@ public:
   const float&
   getScalarPart() const;
 
-  const Matrix3x3
+  const Matrix3
   toMat3() const;
 
   const Matrix4

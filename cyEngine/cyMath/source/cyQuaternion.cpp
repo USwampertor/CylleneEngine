@@ -11,7 +11,7 @@
 
 #include "cyVector3f.h"
 #include "cyVector4f.h"
-#include "cyMatrix3x3.h"
+#include "cyMatrix3.h"
 #include "cyMath.h"
 #include "cyUtilities.h"
 #include "cyMatrix4.h"
@@ -361,9 +361,9 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Quaternion::setRotationMatrix(const Matrix3x3& m) {
+  Quaternion::setRotationMatrix(const Matrix3& m) {
 
-    Matrix3x3 tmp = m.transposed();
+    Matrix3 tmp = m.transposed();
 
     float sum = tmp._m.m00 + tmp._m.m11 + tmp._m.m22;
 
@@ -411,7 +411,7 @@ namespace CYLLENE_SDK {
     return w;
   }
 
-  const Matrix3x3
+  const Matrix3
   Quaternion::toMat3() const {
 
     Quaternion tmp = this->normalized();
@@ -428,7 +428,7 @@ namespace CYLLENE_SDK {
 
     // Don't know if this is row major or column major
     // With the transposed, it should be row.
-    return Matrix3x3(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz),         2.0f * (xz + wy),
+    return Matrix3(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz),         2.0f * (xz + wy),
                      2.0f * (xy + wz),        1.0f - 2.0f * (x2 + z2),  2.0f * (yz - wx),
                      2.0f * (xz - wy),        2.0f * (yz + wx),         1.0f - 2.0f * (x2 + y2));// .transposed();
   }
