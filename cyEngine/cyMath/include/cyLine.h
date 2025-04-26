@@ -1,7 +1,8 @@
 #pragma once
 
 #include "cyMathPrerequisites.h"
-#include "cyVector4f.h"
+#include "cyVector3f.h"
+#include "cyPrimitive.h"
 
 namespace CYLLENE_SDK
 {
@@ -11,31 +12,41 @@ namespace CYLLENE_SDK
  *	@brief  Defines two positions in space bound to each other
  *
  */
-class CY_MATH_EXPORT Line
+class CY_MATH_EXPORT Line : public Primitive
 {
   /*
    *	@brief  Default constructor
    */
-  Line() = default;
+  Line() 
+    : Primitive(PRIMITIVE_TYPE::E::LINE),
+      m_a(Vector3f::ZERO),
+      m_b(Vector3f::ZERO) {}
 
   /*
    *	@brief  Constructor taking two vectors
    *	@param  const Point& a - Point a
    *	@param  const Point& b - Point b
    */
-  Line(const Point& a, const Point& b)
-    : m_a(a),
+  Line(const Vector3f& a, const Vector3f& b)
+    : Primitive(PRIMITIVE_TYPE::E::LINE),
+      m_a(a),
       m_b(b) {}
 
+
+  virtual bool
+  intersects(const Primitive& other) override;
+
+  virtual String
+  toString() override;
 
 private:
 
   /**
    * 
    */
-  Point m_a;
+  Vector3f m_a;
 
-  Point m_b;
+  Vector3f m_b;
 };
 
 }

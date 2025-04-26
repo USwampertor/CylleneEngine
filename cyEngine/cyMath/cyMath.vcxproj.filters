@@ -84,6 +84,15 @@
     <ClInclude Include="include\cyColor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyIntersections.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPrimitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyPlatformMath.cpp">
@@ -141,6 +150,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyColor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Primitive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

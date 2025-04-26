@@ -1,11 +1,10 @@
 
 #include "cyUtilities.h"
 
+#include "cyQuaternion.h"
 #include "cyVector2i.h"
 #include "cyVector2f.h"
-
 #include "cyVector3f.h"
-
 #include "cyVector4f.h"
 
 
@@ -108,7 +107,7 @@ namespace CYLLENE_SDK {
 
   bool
   Vector2f::operator==(const Vector2f& v) const {
-    return x == v.x && y == v.y;
+    return Math::isNearSame(x, v.x) && Math::isNearSame(y, v.y);
   }
 
   bool
@@ -342,6 +341,20 @@ namespace CYLLENE_SDK {
   Vector2f::isNearlySame(const Vector2f& a, const Vector2f& b, const float& error) {
     return Math::abs(a.x - b.x) <= error &&
            Math::abs(a.y - b.y) <= error ;
+  }
+
+  Vector2f
+  Vector2f::toNearestOctant() const {
+    float angleRad = Math::atan2(y, x);
+    angleRad /= (2 * Math::PI);
+    angleRad *= 8.0f;
+    angleRad = Math::round(angleRad);
+    angleRad = Math::mod(angleRad, 8.0f);
+    Quaternion q;
+    q.fromEuler(Vector3f(angleRad, 0, 0));
+    Vector3f res(*this);
+    q.rotate(res);
+    return Vector2f(res);
   }
 
   String

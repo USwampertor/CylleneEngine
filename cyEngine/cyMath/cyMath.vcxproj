@@ -189,6 +189,7 @@
     <ClInclude Include="include\cyCapsule.h" />
     <ClInclude Include="include\cyColor.h" />
     <ClInclude Include="include\cyEulerHelpers.h" />
+    <ClInclude Include="include\cyIntersections.h" />
     <ClInclude Include="include\cyLine.h" />
     <ClInclude Include="include\cyMath.h" />
     <ClInclude Include="include\cyMathPrerequisites.h" />
@@ -196,6 +197,8 @@
     <ClInclude Include="include\cyOBB.h" />
     <ClInclude Include="include\cyPlane.h" />
     <ClInclude Include="include\cyPlatformMath.h" />
+    <ClInclude Include="include\cyPoint.h" />
+    <ClInclude Include="include\cyPrimitive.h" />
     <ClInclude Include="include\cyQuaternion.h" />
     <ClInclude Include="include\cyRotor.h" />
     <ClInclude Include="include\cySphere.h" />
@@ -220,6 +223,7 @@
     <ClCompile Include="source\cyMatrix3.cpp" />
     <ClCompile Include="source\cyMatrix4.cpp" />
     <ClCompile Include="source\cyPlatformMath.cpp" />
+    <ClCompile Include="source\cyPoint.cpp" />
     <ClCompile Include="source\cyQuaternion.cpp" />
     <ClCompile Include="source\cyRotor.cpp" />
     <ClCompile Include="source\cySphere.cpp" />
@@ -228,6 +232,7 @@
     <ClCompile Include="source\cyVector2i.cpp" />
     <ClCompile Include="source\cyVector3f.cpp" />
     <ClCompile Include="source\cyVector4f.cpp" />
+    <ClCompile Include="source\Primitive.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

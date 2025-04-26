@@ -1,11 +1,13 @@
 
 // Defining values for unit testing
 #include <cyCrashHandler.h>
+#include <cyCapsule.h>
 #include <cyColor.h>
 #include <cyLogger.h>
 #include <cyMath.h>
 #include <cyMatrix4.h>
 #include <cyMatrix3.h>
+#include <cyOBB.h>
 #include <cyTime.h>
 #include <cyUnitTesting.h>
 #include <cyVector2i.h>
@@ -383,11 +385,9 @@ TEST_SUITE("Matrix4 Tests") {
 
   TEST_CASE("View Matrix") {
     Matrix4 view;
-    view.view(
-      Vector4f(0, 0, 5, 1),
-      Vector4f(0, 0, 0, 1),
-      Vector4f(0, 1, 0, 0)
-    );
+    view.view(Vector4f(0, 0, 5, 1),
+              Vector4f(0, 0, 0, 1),
+              Vector4f(0, 1, 0, 0));
 
     Vector3f forward = view.getForwardVector();
     CHECK(forward.x == doctest::Approx(0.0f));
@@ -460,5 +460,87 @@ TEST_SUITE("Matrix4 Tests") {
     CHECK(transformedDir.x == doctest::Approx(0.0f));
     CHECK(transformedDir.y == doctest::Approx(0.0f));
     CHECK(transformedDir.z == doctest::Approx(1.0f));
+  }
+}
+
+TEST_SUITE("Primitive Tests") {
+  TEST_CASE("OBB Collision Detection") {
+    SUBCASE("Colliding OBBs (Overlapping)") {
+      OBB a, b;
+
+      // OBB A: Centered at (0,0,0), axis-aligned, size 2x2x2
+      a.m_center = Vector3f(0, 0, 0);
+      a.m_hExtents = Vector3f(1, 1, 1);
+      a.m_orientation = Quaternion(0, 0, 0, 1);  // No rotation
+
+      // OBB B: Centered at (0.5, 0, 0), slightly offset (should intersect)
+      b.m_center = Vector3f(0.5f, 0, 0);
+      b.m_hExtents = Vector3f(1, 1, 1);
+      b.m_orientation = Quaternion(0, 0, 0, 1);  // No rotation
+
+      CHECK(a.intersects(b) == true);  // Should collide
+    }
+
+    SUBCASE("Non-Colliding OBBs (Separated)") {
+      OBB a, b;
+
+      // OBB A: Centered at (0,0,0), axis-aligned, size 2x2x2
+      a.m_center = Vector3f(0, 0, 0);
+      a.m_hExtents = Vector3f(1, 1, 1);
+      a.m_orientation = Quaternion(0, 0, 0, 1);  // No rotation
+
+      // OBB B: Centered at (3.0, 0, 0), slightly offset (should intersect)
+      b.m_center = Vector3f(3.0f, 0, 0);
+      b.m_hExtents = Vector3f(1, 1, 1);
+      b.m_orientation = Quaternion(0, 0, 0, 1);  // No rotation
+
+      CHECK(a.intersects(b) == false);  // Should NOT collide
+    }
+
+    SUBCASE("Colliding Rotated OBBs") {
+      OBB a, b;
+
+      // OBB A: Centered at (0,0,0), axis-aligned, size 2x2x2
+      a.m_center = Vector3f(0, 0, 0);
+      a.m_hExtents = Vector3f(1, 1, 1);
+      a.m_orientation = Quaternion(0, 0, 0, 1);  // No rotation
+
+      // OBB B: Centered at (3.0, 0, 0), slightly offset (should intersect)
+      b.m_center = Vector3f(1.5f, 0, 0);
+      b.m_hExtents = Vector3f(0.5f, 0.5f, 0.5f);
+      b.m_orientation = Quaternion(0, 0, 0, 1);  // No rotation
+      b.m_orientation.fromEuler(Euler(0, Math::DEG2RAD * 45.0f, 0, EulOrdXYZs));
+      // 
+      //     // OBB B: Centered at (1.5, 0, 0), rotated 45° around Y (should intersect)
+      //     b.center = Vector3f(1.5f, 0, 0);
+      //     b.extents = Vector3f(0.5f, 0.5f, 0.5f);
+      //     float angle = 3.141592f / 4.0f;  // 45° in radians
+      //     b.orientation = Quaternion(std::cos(angle / 2), 0, std::sin(angle / 2), 0);
+
+      CHECK(a.intersects(b) == true);  // Should collide
+    }
+  }
+
+  TEST_CASE("Capsule-Capsule Collision") {
+    SUBCASE("Colliding Capsules (Overlapping)") {
+      Capsule cap1 = { Vector3f(0, 0, 0), Vector3f(2, 0, 0), 1.0f };
+      Capsule cap2 = { Vector3f(1, 0, 0), Vector3f(1, 2, 0), 1.0f };
+
+      CHECK(cap1.intersects(cap2) == true); // Should collide
+    }
+
+    SUBCASE("Non-Colliding Capsules (Separated)") {
+      Capsule cap1 = { Vector3f(0, 0, 0), Vector3f(2, 0, 0), 1.0f };
+      Capsule cap2 = { Vector3f(3, 0, 0), Vector3f(5, 0, 0), 1.0f };
+
+      CHECK(cap1.intersects(cap2) == false); // Should NOT collide
+    }
+
+    SUBCASE("Colliding Capsules (Touching)") {
+      Capsule cap1 = { Vector3f(0, 0, 0), Vector3f(2, 0, 0), 1.0f };
+      Capsule cap2 = { Vector3f(3, 0, 0), Vector3f(3, 2, 0), 1.0f };
+
+      CHECK(cap1.intersects(cap2) == true); // Should collide (barely touching)
+    }
   }
 }
