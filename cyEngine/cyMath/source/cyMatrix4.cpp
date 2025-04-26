@@ -358,20 +358,20 @@ Matrix4&
 Matrix4::view(const Vector4f& eye,
               const Vector4f& target,
               const Vector4f& worldUp) {
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   Vector3f front = (target - eye).normalized();
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   Vector3f front = (eye - target).normalized();
 #endif
 
   Vector3f right = Vector3f::cross(worldUp, front).normalized();
   Vector3f up = Vector3f::cross(front, right).normalized();
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   float A = -Vector3f::dot(right, eye);
   float B = -Vector3f::dot(up, eye);
   float C = -Vector3f::dot(front, eye);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   float A = Vector3f::dot(right, eye);
   float B = Vector3f::dot(up, eye);
   float C = Vector3f::dot(front, eye);
@@ -395,10 +395,10 @@ Matrix4::orthogonal(const float& width,
   m[0][0] = 2.0f / width;
   m[1][1] = 2.0f / height;
 
-#if GraphicsAPI == OpenGL
-#if HandSystem == LH
+#if GAPI_MATHTYPE == GAPI_GL
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 2.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = -2.0f / (zNear - zFar);
 #endif
 
@@ -409,10 +409,10 @@ Matrix4::orthogonal(const float& width,
   m[3][1] = 1; // -(top+bottom)/(top-bottom);
   m[3][2] = -(zFar + zNear) / (zFar - zNear);
 
-#elif GraphicsAPI == DirectX
-#if HandSystem == LH
+#elif GAPI_MATHTYPE == GAPI_DX
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 1.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
 #endif
 
@@ -437,10 +437,10 @@ Matrix4::orthogonal(const float& top,
   m[0][0] = 2.0f / width;
   m[1][1] = 2.0f / height;
 
-#if GraphicsAPI == OpenGL
-#if HandSystem == LH
+#if GAPI_MATHTYPE == GAPI_GL
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 2.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = -2.0f / (zNear - zFar);
 #endif
 
@@ -451,10 +451,10 @@ Matrix4::orthogonal(const float& top,
   m[3][1] = -(top + bottom) / (top - bottom);
   m[3][2] = -(zFar + zNear) / (zFar - zNear);
 
-#elif GraphicsAPI == DirectX
-#if HandSystem == LH
+#elif GAPI_MATHTYPE == GAPI_DX
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 1.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
 #endif
 
@@ -565,11 +565,11 @@ Matrix4::rotateY(const float& angle) {
   float s = Math::sin(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   m[0][0] = temp.m[0][0] * c + temp.m[2][0] * s; m[2][0] =  temp.m[2][0] * c - temp.m[0][0] * s;
   m[0][1] = temp.m[0][1] * c + temp.m[2][1] * s; m[2][2] =  temp.m[2][1] * c - temp.m[0][1] * s;
   m[0][2] = temp.m[0][2] * c + temp.m[2][2] * s; m[2][1] =  temp.m[2][2] * c - temp.m[0][2] * s;
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[0][0] = temp.m[0][0] * c - temp.m[2][0] * s; m[2][0] = temp.m[2][0] * c + temp.m[0][0] * s;
   m[0][1] = temp.m[0][1] * c - temp.m[2][1] * s; m[2][2] = temp.m[2][1] * c + temp.m[0][1] * s;
   m[0][2] = temp.m[0][2] * c - temp.m[2][2] * s; m[2][1] = temp.m[2][2] * c + temp.m[0][2] * s;
@@ -584,11 +584,11 @@ Matrix4::rotateZ(const float& angle) {
   float c = Math::cos(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   m[0][0] = c * temp.m[0][0] + s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] - s * temp.m[0][0];
   m[0][1] = c * temp.m[0][1] + s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] - s * temp.m[0][1];
   m[0][2] = c * temp.m[0][2] + s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] - s * temp.m[0][2];
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[0][0] = c * temp.m[0][0] - s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] + s * temp.m[0][0];
   m[0][1] = c * temp.m[0][1] - s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] + s * temp.m[0][1];
   m[0][2] = c * temp.m[0][2] - s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] + s * temp.m[0][2];
@@ -610,11 +610,11 @@ Matrix4::rotate(const float& angle, const Vector3f& axis) {
 
   Matrix4 rot;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc - z * sin; rot.m[2][0] = x * z * omc + y * sin;
   rot.m[0][1] = y * x * omc + z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc - x * sin;
   rot.m[0][2] = z * x * omc - y * sin; rot.m[1][2] = z * y * omc + x * sin; rot.m[2][2] = cos + z * z * omc;
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc + z * sin; rot.m[2][0] = x * z * omc - y * sin;
   rot.m[0][1] = y * x * omc - z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc + x * sin;
   rot.m[0][2] = z * x * omc + y * sin; rot.m[1][2] = z * y * omc - x * sin; rot.m[2][2] = cos + z * z * omc;
