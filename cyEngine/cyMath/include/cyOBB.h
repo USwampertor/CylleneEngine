@@ -1,50 +1,59 @@
 #pragma once
 
 #include "cyMathPrerequisites.h"
-#include "cyVector3f.h"
-#include "cyVector4f.h"
-#include "cyMatrix3x3.h"
+
+#include "cyMatrix3.h"
+#include "cyPrimitive.h"
 #include "cyQuaternion.h"
+#include "cyVector3f.h"
 
 namespace CYLLENE_SDK {
 
-class CY_MATH_EXPORT OBB
+class CY_MATH_EXPORT OBB : public Primitive
 {
 public:
 
-  OBB() = default;
+  OBB()
+    : Primitive(PRIMITIVE_TYPE::E::OBB),
+      m_center(Vector3f::ZERO),
+      m_hExtents(Vector3f::ZERO),
+      m_orientation(Quaternion::IDENTITY) {}
 
   OBB(const OBB& other)
-    : m_center(other.m_center),
+    : Primitive(PRIMITIVE_TYPE::E::OBB),
+      m_center(other.m_center),
       m_hExtents(other.m_hExtents),
       m_orientation(other.m_orientation) {}
 
-  OBB(const Point& center, const Vector3f& halfExtents, const Quaternion& orientation)
-    : m_center(center),
+  OBB(const Vector3f& center, const Vector3f& halfExtents, const Quaternion& orientation)
+    : Primitive(PRIMITIVE_TYPE::E::OBB),
+      m_center(center),
       m_hExtents(halfExtents),
       m_orientation(orientation) {}
 
   Vector3f
   getDimensions();
 
-  String
-  toString();
+  virtual String
+  toString() override;
 
-  bool
-  intersects();
+  virtual bool
+  intersects(const Primitive& other) override;
 
   void
-  expandTo(const Point& pos);
+  expandTo(const Vector3f& pos);
 
   void
   expandTo(const OBB& other);
 
+  float
+  projectOntoAxis(const Vector3f& axis) const;
+
 public:
 
-  Point m_center;
+  Vector3f m_center;
   Vector3f m_hExtents;
   Quaternion m_orientation;
-
 
 };
 

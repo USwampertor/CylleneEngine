@@ -31,7 +31,7 @@ public:
 
   Vector3f(const Vector4f& other);
  
-  Vector3f(const float& nx, const float& ny = 0, const float& nz = 0);
+  Vector3f(const float& nx, const float& ny, const float& nz = 0);
 
   ~Vector3f() = default;
 

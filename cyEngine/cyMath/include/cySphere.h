@@ -1,38 +1,45 @@
 #pragma once
 #include "cyMathPrerequisites.h"
-#include "cyVector4f.h"
-
+#include "cyVector3f.h"
+#include "cyPrimitive.h"
 
 namespace CYLLENE_SDK {
 
-class CY_MATH_EXPORT Sphere
+class CY_MATH_EXPORT Sphere : public Primitive
 {
 public:
 
-  Sphere() = default;
+  Sphere()
+    : Primitive(PRIMITIVE_TYPE::E::SPHERE),
+      m_center(Vector3f::ZERO),
+      m_radius(0.0f) {}
+
+
   Sphere(const Sphere& other)
-    : m_center(other.m_center),
+    : Primitive(PRIMITIVE_TYPE::E::SPHERE),
+      m_center(other.m_center),
       m_radius(other.m_radius) {}
 
-  Sphere(const Point& center, const float& radius)
-    : m_center(center),
+  Sphere(const Vector3f& center, const float& radius)
+    : Primitive(PRIMITIVE_TYPE::E::SPHERE),
+      m_center(center),
       m_radius(radius) {}
 
   float
   getDiameter();
 
-  String
-  toString();
+  virtual String
+  toString() override;
 
-  bool
-  intersects();
+  virtual bool
+  intersects(const Primitive& other) override;
 
   void
-  expandTo(const Point& pos);
+  expandTo(const Vector3f& pos);
 
 public:
 
-  Point m_center;
+  Vector3f m_center;
   float m_radius;
 
 };
