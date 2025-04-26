@@ -30,8 +30,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyRandom", "cyRandom\cyRandom.vcxproj", "{EF286057-2B98-43FD-92B9-D9157C8BAFF3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyMath", "cyMath\cyMath.vcxproj", "{57FC85BC-8930-4FA8-B2D9-79B5006B3E9D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyMathUT", "cyMathUT\cyMathUT.vcxproj", "{5E6C9DCB-8114-4242-BE15-3142703A53AE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{57FC85BC-8930-4FA8-B2D9-79B5006B3E9D} = {57FC85BC-8930-4FA8-B2D9-79B5006B3E9D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyRandomUT", "cyRandomUT\cyRandomUT.vcxproj", "{13C8D15D-4CA4-4F8F-9A66-8E0844764DFE}"
 EndProject

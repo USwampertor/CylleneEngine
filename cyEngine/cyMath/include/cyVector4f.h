@@ -565,6 +565,6 @@ public:
   float w;
 };
 
-using Point = Vector4f;
+// using Point = Vector4f;
 
 }

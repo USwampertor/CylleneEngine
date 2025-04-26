@@ -29,3 +29,14 @@
 # define CY_MATH_EXPORT __attribute__ ((visibility ("default")))
 # define CY_MATH_HIDDEN __attribute__ ((visibility ("hidden")))
 #endif
+
+#define LH 0
+#define RH 1
+
+#define OpenGL  0
+#define DirectX 1
+
+#define HandSystrem LH
+#define GraphicsAPI OpenGL
+
+
