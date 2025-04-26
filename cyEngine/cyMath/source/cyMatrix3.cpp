@@ -276,11 +276,11 @@ Matrix3::rotateY(const float& angle) {
   float s = Math::sin(angle * Math::DEG2RAD);
   Matrix3 temp = *this;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   m[0][0] = temp.m[0][0] * c + temp.m[2][0] * s; m[2][0] =  temp.m[2][0] * c - temp.m[0][0] * s;
   m[0][1] = temp.m[0][1] * c + temp.m[2][1] * s; m[2][2] =  temp.m[2][1] * c - temp.m[0][1] * s;
   m[0][2] = temp.m[0][2] * c + temp.m[2][2] * s; m[2][1] =  temp.m[2][2] * c - temp.m[0][2] * s;
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[0][0] = temp.m[0][0] * c - temp.m[2][0] * s; m[2][0] = temp.m[2][0] * c + temp.m[0][0] * s;
   m[0][1] = temp.m[0][1] * c - temp.m[2][1] * s; m[2][2] = temp.m[2][1] * c + temp.m[0][1] * s;
   m[0][2] = temp.m[0][2] * c - temp.m[2][2] * s; m[2][1] = temp.m[2][2] * c + temp.m[0][2] * s;
@@ -295,11 +295,11 @@ Matrix3::rotateZ(const float& angle) {
   float c = Math::cos(angle * Math::DEG2RAD);
   Matrix3 temp = *this;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   m[0][0] = c * temp.m[0][0] + s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] - s * temp.m[0][0];
   m[0][1] = c * temp.m[0][1] + s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] - s * temp.m[0][1];
   m[0][2] = c * temp.m[0][2] + s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] - s * temp.m[0][2];
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[0][0] = c * temp.m[0][0] - s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] + s * temp.m[0][0];
   m[0][1] = c * temp.m[0][1] - s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] + s * temp.m[0][1];
   m[0][2] = c * temp.m[0][2] - s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] + s * temp.m[0][2];
@@ -321,11 +321,11 @@ Matrix3::rotate(const float& angle, const Vector3f& axis) {
 
   Matrix3 rot;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc - z * sin; rot.m[2][0] = x * z * omc + y * sin;
   rot.m[0][1] = y * x * omc + z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc - x * sin;
   rot.m[0][2] = z * x * omc - y * sin; rot.m[1][2] = z * y * omc + x * sin; rot.m[2][2] = cos + z * z * omc;
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc + z * sin; rot.m[2][0] = x * z * omc - y * sin;
   rot.m[0][1] = y * x * omc - z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc + x * sin;
   rot.m[0][2] = z * x * omc + y * sin; rot.m[1][2] = z * y * omc - x * sin; rot.m[2][2] = cos + z * z * omc;

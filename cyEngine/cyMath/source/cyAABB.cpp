@@ -5,11 +5,13 @@
 #include <cyUtilities.h>
 
 namespace CYLLENE_SDK {
+
 Vector3f
-  AABB::getDimensions() {
+AABB::getDimensions() {
   return m_max - m_min;
 
 }
+
 Vector3f
 AABB::getCenter() {
   return (m_min + m_max) * 0.5f;
