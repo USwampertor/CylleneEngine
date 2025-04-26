@@ -73,7 +73,7 @@ public:
   void
   setEulerAngle(const Vector3f& newEulerAngles) {
     Euler e(newEulerAngles);
-    m_rotation.fromEuler(e, 0);
+    m_rotation.fromEuler(e);
   }
 
   void

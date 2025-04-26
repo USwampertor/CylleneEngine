@@ -3,7 +3,7 @@
 #include "cyCorePrerequisites.h"
 #include "cyResource.h"
 
-#include <cyMatrix4x4.h>
+#include <cyMatrix4.h>
 
 namespace CYLLENE_SDK {
 
@@ -19,11 +19,11 @@ struct CY_CORE_EXPORT Bone
 public:
   String m_name;
 
-  Matrix4x4 m_offset;
+  Matrix4 m_offset;
 
-  Matrix4x4 m_worldPosition;
+  Matrix4 m_worldPosition;
 
-  Matrix4x4 m_localPosition;
+  Matrix4 m_localPosition;
 
   uint32 m_ID;
 

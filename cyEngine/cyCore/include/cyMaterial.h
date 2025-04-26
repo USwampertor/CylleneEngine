@@ -14,8 +14,8 @@
 
 #include "cyCorePrerequisites.h"
 
-#include "cyMatrix3x3.h"
-#include "cyMatrix4x4.h"
+#include "cyMatrix3.h"
+#include "cyMatrix4.h"
 #include "cyResource.h"
 #include "cyShader.h"
 #include "cyVector2f.h"
@@ -65,11 +65,11 @@ public:
   void
   setVector4(const String& flag, const Vector4f& newValue);
 
-  void
-  setMatrix3x3(const String& flag, const Matrix3x3& newValue);
+  void 
+  setMatrix3(const String& flag, const Matrix3& newValue);
 
-  void
-  setMatrix4x4(const String& flag, const Matrix4x4& newValue);
+  void 
+  setMatrix4(const String& flag, const Matrix4& newValue);
 
   /*
    *	@brief	Retrieves a value from the material
@@ -129,20 +129,19 @@ public:
   getVector4(const String& flag);
 
   /*
-   *	@brief	Retrieves a Matrix3x3 from the material
+   *	@brief	Retrieves a Matrix3 from the material
    *	@param	const String& flag the flag to find in the material, referenced in the shader
-   *  @return Matrix3x3& value defined inside the shader
+   *  @return Matrix3& value defined inside the shader
    */
-  Matrix3x3&
-  getMatrix3x3(const String& flag);
+  Matrix3& 
+  getMatrix3(const String& flag);
 
   /*
-   *	@brief	Retrieves a Matrix4x4 from the material
+   *	@brief	Retrieves a Matrix4 from the material
    *	@param	const String& flag the flag to find in the material, referenced in the shader
-   *  @return Matrix4x4& value defined inside the shader
+   *  @return Matrix4& value defined inside the shader
    */
-  Matrix4x4&
-  getMatrix4x4(const String& flag);
+  Matrix4& getMatrix4(const String& flag);
 
   /*
    *	@brief	retrieves a new shader, getting its values via reflection and making them

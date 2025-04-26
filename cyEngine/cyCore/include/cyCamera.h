@@ -3,7 +3,7 @@
 #include "cyComponent.h"
 
 #include <cyVector3f.h>
-#include <cyMatrix4x4.h>
+#include <cyMatrix4.h>
 
 
 namespace CYLLENE_SDK {
@@ -36,8 +36,8 @@ public:
   float m_zNear;
   float m_zFar;
 
-  Matrix4x4 m_view;
-  Matrix4x4 m_projection;
+  Matrix4 m_view;
+  Matrix4 m_projection;
 
 
 };

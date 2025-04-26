@@ -7,9 +7,10 @@ namespace CYLLENE_SDK {
 class GraphicsBuffer
 {
   GraphicsBuffer() = default;
+
   virtual ~GraphicsBuffer();
 
-  friend class GraphicsAPI;
+  // friend class GraphicsAPI;
 
 public:
   void* m_buffer;
