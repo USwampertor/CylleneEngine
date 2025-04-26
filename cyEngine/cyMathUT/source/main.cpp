@@ -400,7 +400,7 @@ TEST_SUITE("Matrix4 Tests") {
       Matrix4 ortho;
       ortho.orthogonal(800, 600, 0.1f, 100.0f);
 
-      // Should transform z from [0.1, 100] to [-1, 1] in OpenGL
+      // Should transform z from [0.1, 100] to [-1, 1] in GAPI_GL
       Vector3f nearPoint = ortho.transformPosition(Vector3f(0, 0, 0.1f));
       Vector3f farPoint = ortho.transformPosition(Vector3f(0, 0, 100.0f));
 
