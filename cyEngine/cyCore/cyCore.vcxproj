@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\cyApp.h" />
     <ClInclude Include="include\cyAsset.h" />
     <ClInclude Include="include\cyAudio.h" />
     <ClInclude Include="include\cyAudioAPI.h" />
@@ -53,7 +52,6 @@
     <ClInclude Include="include\cyWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\cyApp.cpp" />
     <ClCompile Include="src\cyAsset.cpp" />
     <ClCompile Include="src\cyAudio.cpp" />
     <ClCompile Include="src\cyAudioAPI.cpp" />
