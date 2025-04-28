@@ -34,8 +34,6 @@
     <ClInclude Include="include\cyEngineAssets.h" />
     <ClInclude Include="include\cyGameMode.h" />
     <ClInclude Include="include\cyGarbageCollector.h" />
-    <ClInclude Include="include\cyGraphicsAPI.h" />
-    <ClInclude Include="include\cyGraphicsBuffer.h" />
     <ClInclude Include="include\cyImage.h" />
     <ClInclude Include="include\cyMaterial.h" />
     <ClInclude Include="include\cyMesh.h" />
@@ -66,8 +64,6 @@
     <ClCompile Include="src\cyCodec.cpp" />
     <ClCompile Include="src\cyGameMode.cpp" />
     <ClCompile Include="src\cyGarbageCollector.cpp" />
-    <ClCompile Include="src\cyGraphicsAPI.cpp" />
-    <ClCompile Include="src\cyGraphicsBuffer.cpp" />
     <ClCompile Include="src\cyImage.cpp" />
     <ClCompile Include="src\cyMaterial.cpp" />
     <ClCompile Include="src\cyMesh.cpp" />

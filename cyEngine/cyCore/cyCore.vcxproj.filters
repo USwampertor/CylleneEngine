@@ -78,9 +78,6 @@
     <ClInclude Include="include\cyGameMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyGraphicsAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyPluginManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -109,9 +106,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyTriangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cyGraphicsBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyCamera.h">
@@ -155,9 +149,6 @@
     <ClCompile Include="src\cyGameMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyGraphicsAPI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\cyPluginManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -195,9 +186,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyVertex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cyGraphicsBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyCamera.cpp">
