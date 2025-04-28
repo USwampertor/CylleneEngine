@@ -21,9 +21,13 @@
   <ItemGroup>
     <ClInclude Include="include\cyGraphicsAPI.h" />
     <ClInclude Include="include\cyGraphicsPrerequisites.h" />
+    <ClInclude Include="include\cyRenderTargetView.h" />
+    <ClInclude Include="include\cyShaderResourceView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyGraphicsAPI.cpp" />
+    <ClCompile Include="source\cyRenderTargetView.cpp" />
+    <ClCompile Include="source\cyShaderResourceView.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
