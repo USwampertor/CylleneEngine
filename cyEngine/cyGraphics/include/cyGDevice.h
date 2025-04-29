@@ -1,9 +1,16 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
+
 #include "cyGDepthStencilView.h"
+#include "cyGInputLayout.h"
+#include "cyGRenderTargetView.h"
+#include "cyGShader.h"
+#include "cyGShaderResourceView.h"
+#include "cyGraphicsBuffer.h"
 
 namespace CYLLENE_SDK
 {
+
 struct AdapterElement
 {
 	String description;
@@ -63,5 +70,17 @@ public:
   virtual SPtr<GShaderResourceView>
   createShaderResourceView() = 0;
 
+  virtual SPtr<GInputLayout>
+  createInputLayout(const Vector<GInputElement>& descriptor,
+                    SPtr<GVertexShader> desc) = 0;
+
+  virtual SPtr<GVertexShader>
+  createVertexShader(SPtr<GShaderBlob> blob) = 0;
+
+  virtual SPtr<GPixelShader>
+  createPixelShader(SPtr<GShaderBlob> blob) = 0;
+
+  virtual SPtr<GraphicsBuffer>
+  createGraphicsBuffer(const GBufferElement& bufferElement) = 0;
 };
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 #include "cyGraphic.h"
+#include "cyGViewport.h"
+
 
 namespace CYLLENE_SDK
 {
@@ -15,7 +17,7 @@ public:
   queryInterface() = 0;
 
   virtual void
-  setViewPort() = 0;
+  setViewPort(uint32 numViewports, const GViewport& viewport) = 0;
 
   virtual void
   updateSubresource(Graphic* resource, uint32 index, uint32 data) = 0;

@@ -4,6 +4,16 @@
 
 namespace CYLLENE_SDK {
 
+struct GBufferElement
+{
+  uint32 byteWidth;
+  uint32 usage;
+  uint32 bindFlags;
+  uint32 cpuAccessFlags;
+  uint32 miscFlags;
+  uint32 structureByteStride;
+};
+
 class GraphicsBuffer : public Graphic
 {
 public:

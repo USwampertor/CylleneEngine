@@ -17,18 +17,38 @@ namespace CYLLENE_SDK
   );
   }
 
+struct GShaderBlob
+{
+public:
+  
+  /*
+   * The idea is that the DX11 Shaderblob has a D3D11Blob 
+   */
+  virtual void*
+  getBlob() = 0;
+
+  uint32 size;
+  uint32 type;
+  String entry;
+  String model;
+  String data;
+  String error;
+  bool isCompiled = false;
+};
 
 class GShader
 {
 public:
   GShader() = default;
+
   virtual ~GShader() = default;
   
-  virtual bool
-  compile() = 0;
+  virtual void*
+  getBlob() = 0;
 
-  void* blob = nullptr;
-  void* shader = nullptr;
+  virtual void*
+  getShader() = 0;
+
 };
 
 

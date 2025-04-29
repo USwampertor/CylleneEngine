@@ -6,6 +6,7 @@ namespace CYLLENE_SDK
 
 struct GSwapChainElement
 {
+  void* windowHandle;
   String description;
   uint32 width;
   uint32 height;
@@ -17,6 +18,7 @@ struct GSwapChainElement
   uint32 sampleQuality;
   uint32 swapEffect;
   uint32 alphaMode;
+  uint32 scaling;
   uint32 flags;
 };
 

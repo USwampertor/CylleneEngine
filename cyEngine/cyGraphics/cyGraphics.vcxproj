@@ -32,6 +32,7 @@
     <ClInclude Include="include\cyGTexture.h" />
     <ClInclude Include="include\cyGRenderTargetView.h" />
     <ClInclude Include="include\cyGShaderResourceView.h" />
+    <ClInclude Include="include\cyGViewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyGDepthStencilView.cpp" />
@@ -45,6 +46,7 @@
     <ClCompile Include="source\cyGTexture.cpp" />
     <ClCompile Include="source\cyGRenderTargetView.cpp" />
     <ClCompile Include="source\cyGShaderResourceView.cpp" />
+    <ClCompile Include="source\cyGViewport.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
