@@ -18,7 +18,7 @@ class CY_MATH_EXPORT Line : public Primitive
    *	@brief  Default constructor
    */
   Line() 
-    : Primitive(PRIMITIVE_TYPE::E::LINE),
+    : Primitive(Line::staticType()),
       m_a(Vector3f::ZERO),
       m_b(Vector3f::ZERO) {}
 
@@ -28,10 +28,13 @@ class CY_MATH_EXPORT Line : public Primitive
    *	@param  const Point& b - Point b
    */
   Line(const Vector3f& a, const Vector3f& b)
-    : Primitive(PRIMITIVE_TYPE::E::LINE),
+    : Primitive(Line::staticType()),
       m_a(a),
       m_b(b) {}
 
+  static PRIMITIVE_TYPE::E staticType() {
+    return PRIMITIVE_TYPE::E::LINE;
+  }
 
   virtual bool
   intersects(const Primitive& other) override;
