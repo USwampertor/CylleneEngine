@@ -20,9 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cyDepthStencilView.h" />
+    <ClInclude Include="include\cyGraphic.h" />
     <ClInclude Include="include\cyGraphicsAPI.h" />
     <ClInclude Include="include\cyGraphicsBuffer.h" />
     <ClInclude Include="include\cyGraphicsPrerequisites.h" />
+    <ClInclude Include="include\cyGShader.h" />
+    <ClInclude Include="include\cyGTexture.h" />
     <ClInclude Include="include\cyRenderTargetView.h" />
     <ClInclude Include="include\cyShaderResourceView.h" />
   </ItemGroup>
@@ -30,6 +33,8 @@
     <ClCompile Include="source\cyDepthStencilView.cpp" />
     <ClCompile Include="source\cyGraphicsAPI.cpp" />
     <ClCompile Include="source\cyGraphicsBuffer.cpp" />
+    <ClCompile Include="source\cyGShader.cpp" />
+    <ClCompile Include="source\cyGTexture.cpp" />
     <ClCompile Include="source\cyRenderTargetView.cpp" />
     <ClCompile Include="source\cyShaderResourceView.cpp" />
   </ItemGroup>

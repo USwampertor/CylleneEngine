@@ -1,9 +1,10 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
+#include "cyGraphic.h"
 
 namespace CYLLENE_SDK {
 
-class GraphicsBuffer
+class GraphicsBuffer : public Graphic
 {
 public:
 
@@ -11,6 +12,9 @@ public:
 
   virtual ~GraphicsBuffer();
   
+  virtual void
+  setData(void* data) = 0;
+
   friend class GraphicsAPI;
 
 public:
