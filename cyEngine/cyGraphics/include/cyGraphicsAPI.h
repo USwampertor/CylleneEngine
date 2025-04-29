@@ -47,9 +47,6 @@ public:
 								void* ppRTV = nullptr,
 								void* ppDSV = nullptr);
 
-
-public:
-
 };
 
 
