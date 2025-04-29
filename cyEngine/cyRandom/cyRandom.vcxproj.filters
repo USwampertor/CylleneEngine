@@ -18,39 +18,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\cyGraphicsPrerequisites.h">
+    <ClInclude Include="include\cyRandom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyGraphicsAPI.h">
+    <ClInclude Include="include\cyZiggurat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyShaderResourceView.h">
+    <ClInclude Include="include\cyRNG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyRenderTargetView.h">
+    <ClInclude Include="include\cyRandomPrerequisites.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyGraphicsBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cyDepthStencilView.h">
+    <ClInclude Include="include\cyMT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\cyGraphicsAPI.cpp">
+    <ClCompile Include="source\cyRandom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyShaderResourceView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyRenderTargetView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGraphicsBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyDepthStencilView.cpp">
+    <ClCompile Include="source\cyMT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,6 +2,12 @@
 
 #include "cyGraphicsPrerequisites.h"
 #include <cyModule.h>
+#include <cyShader.h>
+
+#include "cyGraphicsBuffer.h"
+#include "cyShaderResourceView.h"
+#include "cyRenderTargetView.h"
+#include "cyDepthStencilView.h"
 
 namespace CYLLENE_SDK {
 
@@ -43,9 +49,13 @@ public:
 								uint32 bindFlags, 
 								uint32 cpuAccessFlags = 0,
 								uint32 mipFlags = 1,
-								void* ppSRV = nullptr,
-								void* ppRTV = nullptr,
-								void* ppDSV = nullptr);
+								ShaderResourceView* ppSRV = nullptr,
+								RenderTargetView* ppRTV = nullptr,
+								DepthStencilView* ppDSV = nullptr);
+
+	void*
+	createVertexShader(const char* pShaderCode, 
+										 const char* pEntryPoint);
 
 };
 
