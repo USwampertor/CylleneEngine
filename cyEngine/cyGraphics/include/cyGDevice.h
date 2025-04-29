@@ -29,10 +29,18 @@ struct AdapterElement
 struct GDeviceElement
 {
   void* windowHandle;
+  AdapterElement adapter;
   uint32 width;
   uint32 height;
   uint32 bufferCount;
+  uint32 featureLevel;
+  bool enableDebugLayer;
+  bool enableGPUValidation;
   bool enableVSync;
+  bool emableSingleThread;
+  bool enableContextSharing;
+  uint32 colorFormat;
+  uint32 depthFormat;
 };
 
 class GDevice

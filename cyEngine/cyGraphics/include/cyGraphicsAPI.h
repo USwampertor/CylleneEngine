@@ -55,7 +55,7 @@ public:
 	registerToRenderPool(const uint32& index);
 
 	virtual SPtr<GDevice>
-	createDevice() = 0;
+	createDevice(const GDeviceElement& deviceParams) = 0;
 
   virtual SPtr<GDeviceContext>
   createDeviceContext() = 0;
