@@ -34,27 +34,7 @@ namespace CYLLENE_SDK {
 	);
 	}
 
-struct AdapterElement
-{
-	String description;
-  uint32 vendorId;
-  uint32 deviceId;
-  uint32 subsysId;
-  uint32 revision;
-  uint32 dedicatedVideoMemory;
-  uint32 dedicatedSystemMemory;
-  uint32 sharedSystemMemory;
-  uint32 outputCount;
-  uint32 outputId;
-  uint32 outputWidth;
-  uint32 outputHeight;
-  uint32 outputRefreshRate;
-  uint32 outputFormat;
-  uint32 outputColorDepth;
-	String lowpart;
-	float highpart;
-	uint32 flags;
-};
+
 
 class CY_GRAPHICS_EXPORT GraphicsAPI : public Module<GraphicsAPI>
 {
