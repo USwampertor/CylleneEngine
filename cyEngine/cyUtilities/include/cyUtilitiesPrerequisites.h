@@ -10,7 +10,11 @@
 
 #pragma once
 
+// External includes
+#define BETTER_ENUMS_STRICT_CONVERSION
 #include <better-enums/enum.h>
+
+// Essential includes
 #include "cyPlatformDefines.h"
 #include "cyPlatformTypes.h"
 #include "cyStdHeaders.h"

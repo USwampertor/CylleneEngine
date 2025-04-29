@@ -18,24 +18,27 @@
     <ClInclude Include="include\cyCrashHandlerPrerequisites.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyDirectx11UI.h">
+    <ClInclude Include="include\cyPlatformCrashHandlerUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyGraphicsUI.h">
+    <ClInclude Include="include\cyCrashHandlerUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyGLUI.h">
+    <ClInclude Include="include\cyWindowsCrashHandlerUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\oldMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyPlaformCrashHandlerUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyWindowsCrashHandlerUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cyDirectx11UI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cyGraphicsUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -51,7 +51,6 @@ namespace CYLLENE_SDK {
     toString(const String& format)
     {
       return Utils::timeFormat(*this, format);
-      // return "";
     }
   };
 
@@ -62,6 +61,9 @@ namespace CYLLENE_SDK {
     Time() = default;
 
     ~Time() = default;
+
+    virtual void
+    onStartUp() override;
 
     void 
     init();

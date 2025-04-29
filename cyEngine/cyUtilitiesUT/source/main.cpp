@@ -4,46 +4,33 @@
 
 #include <conio.h>
 
-#include <cyJSON.h>
-#include <cyQuaternion.h>
-#include <cyMatrix3x3.h>
-#include <cyMatrix4x4.h>
-#include <cyCrashHandler.h>
-#include <cyMath.h>
+// Defining values for unit testing
+#include <cyUnitTesting.h>
 
+// Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
+
+/*
+ *	@brief  Unit Testing main for Utilities
+ *	@param  int argc - amount of arguments
+ *	@param  char* argv[] - arguments
+ *  @return	int32 should return 0 if everything went a ok
+ */
 int32
-main() {
-  CrashHandler::startUp();
-  Quaternion q;
+main(int argc, char* argv[])
+{
+  doctest::Context context;
 
-  try
-  {
-#if _DEBUG
-    printf("DEBUG\n");
-#else
-    printf("RELEASE\n");
-#endif
+  context.applyCommandLine(argc, argv);
 
-    float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
-    Quaternion worldRotation;
-    worldRotation.fromEuler(Euler(3.14159265f * 1.5f, 3.14159265f, 0.0f), 0);
-    printf("Quaternion:\n%s\n", worldRotation.toString().c_str());
+  int32 res = context.run();
 
-    Matrix3x3 world3x3 = worldRotation.getRotationMatrix();
-    Matrix4x4 world(world3x3.m[0][0], world3x3.m[0][1], world3x3.m[0][2], 0.0f,
-                    world3x3.m[1][0], world3x3.m[1][1], world3x3.m[1][2], 0.0f,
-                    world3x3.m[2][0], world3x3.m[2][1], world3x3.m[2][2], 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f);
-    printf("Matrix:\n%s\n", world3x3.toString().c_str());
-
+  if (context.shouldExit()) {
+    return res;
   }
-  catch (const std::exception& e)
-  {
-    std::cout << e.what();
-    CrashHandler::instance().createReport(e);
-  }
-  std::cout << "End of test..." << std::endl;
-  return 0;
+
+  context.clearFilters();
+
+  return res + EXIT_SUCCESS;
 }

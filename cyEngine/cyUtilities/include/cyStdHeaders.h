@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <bitset>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -21,6 +22,9 @@
 #include <memory>
 #include <mutex>
 #include <sstream>
+#include <thread>
+#include <unordered_set>
+#include <unordered_map>
 #include <type_traits>
 
 
@@ -59,16 +63,47 @@
 #endif
 
 namespace CYLLENE_SDK {
+
+  template<std::size_t N>
+  using Bitset = std::bitset<N>;
+
   using StringStream  = std::stringstream;
 
+  using IStringStream = std::istringstream;
+
+  using OStringStream = std::ostringstream;
+
+  using IfStream = std::ifstream;
+
+  using OfStream = std::ofstream;
+
+  using FileBuffer = std::filebuf;
+
   template<typename T>
-  using SharedPointer = std::shared_ptr<T>;
+  using SPtr = std::shared_ptr<T>;
+
+  template<typename T>
+  using UPtr = std::unique_ptr<T>;
 
   using Mutex         = std::mutex;
 
+  template<typename T>
+  using ULock    = std::unique_lock<T>;
+
+  using MULock     = ULock<Mutex>;
+
+  template<typename T>
+  using Hash          = std::hash<T>;
+
   using HighClock     = std::chrono::high_resolution_clock;
 
+  using RMutex = std::recursive_mutex;
+
+  using RMULock = ULock<RMutex>;
+
   using SteadyClock   = std::chrono::steady_clock;
+
+  using StreamSize    = std::streamsize;
 
   using SystemClock   = std::chrono::system_clock;
 
@@ -94,7 +129,33 @@ namespace CYLLENE_SDK {
   template<typename T>
   using NumericLimits = std::numeric_limits<T>;
 
-  using Exception     = std::exception;
+  using StdException  = std::exception;
+
+  using RunTimeError  = std::runtime_error;
+
+  template<typename T, typename A>
+  using Pair = std::pair<T, A>;
+
+  template<typename T, typename A>
+  using Tuple = std::tuple<T, A>;
+
+  using Thread = std::thread;
+
+  template<class Key,
+           class Hash = std::hash<Key>,
+           class KeyEqual = std::equal_to<Key>,
+           class Allocator = std::allocator<Key>>
+  using UnorderedSet = std::unordered_set<Key, Hash, KeyEqual, Allocator>;
+
+  template<typename Key, 
+           typename Value, 
+           typename Hash = std::hash<Key>, 
+           typename KeyEqual = std::equal_to<Key>,
+           typename Allocator = std::allocator<std::pair<const Key, Value>>>
+  using UnorderedMap = std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>;
+
+  template<typename T>
+  using WPtr = std::weak_ptr<T>;
 }
 
 
@@ -144,6 +205,7 @@ namespace CYLLENE_SDK {
 
   using String = std::string;
 
+  using WString = std::wstring;
 #else
   template<typename T, size_t N = 1>
   using Array = eastl::array<T, N>;
@@ -175,27 +237,28 @@ namespace CYLLENE_SDK {
     using PriorityQueue = eastl::priority_queue<T, B, A>;
 
   template<typename KEY,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using Set = eastl::set<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+  using Set = eastl::set<KEY, B, A>;
 
   template<typename KEY,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using MultiSet = eastl::multiset<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+  using MultiSet = eastl::multiset<KEY, B, A>;
 
   template<typename KEY, typename T,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using Map = eastl::map<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+   using Map = eastl::map<KEY, B, A>;
 
   template<typename KEY, typename T,
-    typename B = eastl::less<KEY>,
-    typename A = EASTLAllocatorType>
-    using MultiMap = eastl::multimap<KEY, B, A>;
+           typename B = eastl::less<KEY>,
+           typename A = EASTLAllocatorType>
+  using MultiMap = eastl::multimap<KEY, B, A>;
 
   using String = eastl::string;
 
+  using WString = eastl::wstring;
 
 #endif
 

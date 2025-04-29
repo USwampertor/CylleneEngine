@@ -10,24 +10,35 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
+
 #include "cyModule.h"
 
-#if CY_PLATFORM == CY_PLATFORM_WIN32
-# include "windows.h"
-#elif CY_PLATFORM == CY_PLATFORM_LINUX
-
-#endif
-
 namespace CYLLENE_SDK {
-  struct DLLLoader {
-  public:
-    DLLLoader() = default;
+struct DLLLoader {
+ public:
+ 
+  /**
+   * Default constructor
+   */
+  DLLLoader() = default;
 
-    ~DLLLoader() = default;
+  /**
+   * Default destructor
+   */
+  ~DLLLoader() = default;
 
-    static void*
-    Load(String path, String functionName = "create");
+  /*
+   *	@brief	gets a Symbol from a DLL given and the name of the function	
+   *	@param  const String& path the path of the DLL
+   *	@param  const String& functionName the name of the symbol
+   *	@param  bool isOSDll is the Dll you want to load part of the OS or a custom
+   *          one?
+   *	@return void* with the information of the symbol, nullptr if there was
+   *          any error retrieving the information
+   */
+  static void*
+  load(const String& path, const String& functionName = "create", bool isOSDll = true);
 
-  };
+};
 }
 
