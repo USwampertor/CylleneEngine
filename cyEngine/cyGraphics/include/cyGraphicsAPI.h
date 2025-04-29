@@ -74,11 +74,23 @@ public:
 	void 
 	registerToRenderPool(const uint32& index);
 
-	virtual GDevice*
+	virtual SPtr<GDevice>
 	createDevice() = 0;
 
-	virtual GSwapChain*
+  virtual SPtr<GDeviceContext>
+  createDeviceContext() = 0;
+
+  virtual SPtr<GRenderTargetView>
+  createRenderTargetView() = 0;
+
+  virtual SPtr<GDepthStencilView>
+  createDepthStencilView() = 0;
+
+	virtual SPtr<GSwapChain>
 	createSwapChain() = 0;
+
+  virtual SPtr<GShaderResourceView>
+  createShaderResourceView() = 0;
 
 	virtual SPtr<GTexture>
   createTexture(SPtr<TextureResource> texture,
