@@ -24,16 +24,16 @@
     <ClInclude Include="include\cyGraphicsAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyShaderResourceView.h">
+    <ClInclude Include="include\cyGShaderResourceView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyRenderTargetView.h">
+    <ClInclude Include="include\cyGRenderTargetView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyGraphicsBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyDepthStencilView.h">
+    <ClInclude Include="include\cyGDepthStencilView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyGTexture.h">
@@ -45,27 +45,51 @@
     <ClInclude Include="include\cyGraphic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyGInputLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyGSwapChain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyGDeviceContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyGDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyGraphicsAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyShaderResourceView.cpp">
+    <ClCompile Include="source\cyGShaderResourceView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyRenderTargetView.cpp">
+    <ClCompile Include="source\cyGRenderTargetView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyGraphicsBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyDepthStencilView.cpp">
+    <ClCompile Include="source\cyGDepthStencilView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyGTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyGShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyGInputLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyGSwapChain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyGDeviceContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyGDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

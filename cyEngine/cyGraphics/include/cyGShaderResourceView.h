@@ -3,7 +3,7 @@
 
 namespace CYLLENE_SDK {
 
-class ShaderResourceView
+class GShaderResourceView
 {
 };
 

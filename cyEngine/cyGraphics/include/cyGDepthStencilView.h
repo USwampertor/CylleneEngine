@@ -3,9 +3,7 @@
 
 namespace CYLLENE_SDK
 {
-
-class RenderTargetView
+class GDepthStencilView
 {
 };
-
 }

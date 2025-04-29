@@ -19,24 +19,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\cyDepthStencilView.h" />
+    <ClInclude Include="include\cyGDepthStencilView.h" />
+    <ClInclude Include="include\cyGDevice.h" />
+    <ClInclude Include="include\cyGDeviceContext.h" />
+    <ClInclude Include="include\cyGInputLayout.h" />
     <ClInclude Include="include\cyGraphic.h" />
     <ClInclude Include="include\cyGraphicsAPI.h" />
     <ClInclude Include="include\cyGraphicsBuffer.h" />
     <ClInclude Include="include\cyGraphicsPrerequisites.h" />
     <ClInclude Include="include\cyGShader.h" />
+    <ClInclude Include="include\cyGSwapChain.h" />
     <ClInclude Include="include\cyGTexture.h" />
-    <ClInclude Include="include\cyRenderTargetView.h" />
-    <ClInclude Include="include\cyShaderResourceView.h" />
+    <ClInclude Include="include\cyGRenderTargetView.h" />
+    <ClInclude Include="include\cyGShaderResourceView.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\cyDepthStencilView.cpp" />
+    <ClCompile Include="source\cyGDepthStencilView.cpp" />
+    <ClCompile Include="source\cyGDevice.cpp" />
+    <ClCompile Include="source\cyGDeviceContext.cpp" />
+    <ClCompile Include="source\cyGInputLayout.cpp" />
     <ClCompile Include="source\cyGraphicsAPI.cpp" />
     <ClCompile Include="source\cyGraphicsBuffer.cpp" />
     <ClCompile Include="source\cyGShader.cpp" />
+    <ClCompile Include="source\cyGSwapChain.cpp" />
     <ClCompile Include="source\cyGTexture.cpp" />
-    <ClCompile Include="source\cyRenderTargetView.cpp" />
-    <ClCompile Include="source\cyShaderResourceView.cpp" />
+    <ClCompile Include="source\cyGRenderTargetView.cpp" />
+    <ClCompile Include="source\cyGShaderResourceView.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -19,7 +19,7 @@ public:
 
 public:
 
-  void* m_pBuffer = nullptr;
+  // void* m_pBuffer = nullptr;
   
 };
 
