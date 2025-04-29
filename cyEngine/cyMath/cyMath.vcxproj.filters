@@ -93,6 +93,9 @@
     <ClInclude Include="include\cyPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyRect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyPlatformMath.cpp">
@@ -156,6 +159,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

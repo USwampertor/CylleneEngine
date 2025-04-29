@@ -13,6 +13,7 @@
 #include "cyResource.h"
 
 #include <cyColor.h>
+#include <cyRect.h>
 #include <cyVector4f.h>
 
 namespace CYLLENE_SDK {
@@ -90,24 +91,6 @@ public:
   uint32 m_height;
   uint32 m_colortype;
   uint32 m_bpp;
-};
-
-struct Rect
-{
-public:
-
-  Rect() = default;
-
-  Rect(uint32 nx, uint32 ny, uint32 nwidth, uint32 nheight)
-    : x(nx),
-      y(ny),
-      width(nwidth),
-      height(nheight) {}
-
-  uint32 x;
-  uint32 y;
-  uint32 width;
-  uint32 height;
 };
 
 class CY_CORE_EXPORT ImageResource : public Resource
