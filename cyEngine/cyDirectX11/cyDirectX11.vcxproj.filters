@@ -24,9 +24,15 @@
     <ClInclude Include="include\cyGraphicsDX11API.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyGDX11Device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyGraphicsDX11API.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyGDX11Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
