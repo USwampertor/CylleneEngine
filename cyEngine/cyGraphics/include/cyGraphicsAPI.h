@@ -42,8 +42,12 @@ class CY_GRAPHICS_EXPORT GraphicsAPI : public Module<GraphicsAPI>
 public:
   GraphicsAPI() = default;
 
-  GraphicsAPI(void* pHandle);
+	virtual void
+  initialize(void* pHandle) = 0;
   
+	virtual void
+  shutdown() = 0;
+
 	virtual ~GraphicsAPI() = default;
 
 	void

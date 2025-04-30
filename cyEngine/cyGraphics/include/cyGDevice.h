@@ -3,10 +3,13 @@
 
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
+#include "cyGraphicsBuffer.h"
+#include "cyGRasterizerState.h"
 #include "cyGRenderTargetView.h"
+#include "cyGSamplerState.h"
 #include "cyGShader.h"
 #include "cyGShaderResourceView.h"
-#include "cyGraphicsBuffer.h"
+#include "cyGSwapChain.h"
 
 namespace CYLLENE_SDK
 {
@@ -82,5 +85,10 @@ public:
 
   virtual SPtr<GraphicsBuffer>
   createGraphicsBuffer(const GBufferElement& bufferElement) = 0;
+
+  virtual SPtr<GRasterizerState>
+  createRasterizerState(const GRasterizerElement& rasterizerElement) = 0;
+
+
 };
 }

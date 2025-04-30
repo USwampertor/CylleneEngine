@@ -24,6 +24,12 @@ struct GSwapChainElement
 
 class GSwapChain
 {
+  GSwapChain() = default;
+  
+  ~GSwapChain() = default;
+
+  virtual void
+    present() = 0;
 };
 
 }
