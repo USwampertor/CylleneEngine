@@ -66,10 +66,15 @@ public:
   ~GDevice() = default;
 
   virtual void
-  queryInterface(int32 width, int32 height) = 0;
+  queryInterface(SPtr<GSwapChain> swapChain, 
+                 SPtr<GDepthStencilView> backBuffer, 
+                 int32 width, 
+                 int32 height) = 0;
 
   virtual void
-  queryInterface(Vector2i size) = 0;
+  queryInterface(SPtr<GSwapChain> swapChain,
+                 SPtr<GDepthStencilView> backBuffer, 
+                 Vector2i size) = 0;
 
   virtual SPtr<GDepthStencilView>
   createDepthStencilView(SPtr<GTexture> depthStencilView,
