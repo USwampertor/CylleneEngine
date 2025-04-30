@@ -13,8 +13,20 @@ void GDX11Device::set(void* pHandle) {
   m_pDevice = static_cast<ID3D11Device*>(pHandle);
 }
 
-void GDX11Device::queryInterface(int32 width, int32 height) {
+void 
+GDX11Device::queryInterface(SPtr<GSwapChain> swapChain, 
+                            SPtr<GDepthStencilView> backBuffer, 
+                            int32 width, 
+                            int32 height) {
   
+  if (!swapChain) {
+    return;
+  }
+
+
+
+  SPtr<GTexture> texture = swapChain->getBuffer(0);
+
 
 }
 

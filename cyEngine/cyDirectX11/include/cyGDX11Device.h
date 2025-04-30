@@ -22,10 +22,15 @@ public:
   set(void* pHandle) override;
 
   virtual void
-  queryInterface(int32 width, int32 height) override;
+  queryInterface(SPtr<GSwapChain> swapChain,
+                 SPtr<GDepthStencilView> backBuffer,
+                 int32 width, 
+                 int32 height) override;
 
   virtual void
-  queryInterface(Vector2i size) override;
+  queryInterface(SPtr<GSwapChain> swapChain,
+                 SPtr<GDepthStencilView> backBuffer,
+                 Vector2i size) override;
 
   virtual SPtr<GDepthStencilView>
   createDepthStencilView(SPtr<GTexture> depthStencilView,
