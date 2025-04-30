@@ -186,10 +186,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\cyDirectX11Prerequisites.h" />
+    <ClInclude Include="include\cyGDX11DepthStencilView.h" />
     <ClInclude Include="include\cyGDX11Device.h" />
     <ClInclude Include="include\cyGraphicsDX11API.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\cyGDX11DepthStencilView.cpp" />
     <ClCompile Include="source\cyGDX11Device.cpp" />
     <ClCompile Include="source\cyGraphicsDX11API.cpp" />
   </ItemGroup>
