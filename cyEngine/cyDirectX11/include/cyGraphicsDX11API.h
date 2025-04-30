@@ -8,8 +8,9 @@ class CY_DX11_EXPORT GraphicsDX11API : public GraphicsAPI
 {
 public:
   GraphicsDX11API() = default;
-  ~GraphicsDX11API() override;
-
+  ~GraphicsDX11API() {}
+  virtual void
+  initialize(void* pHandle) override;
 };
 
 }
