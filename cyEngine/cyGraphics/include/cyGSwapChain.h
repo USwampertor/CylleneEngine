@@ -29,7 +29,7 @@ class GSwapChain
   ~GSwapChain() = default;
 
   virtual void
-    present() = 0;
+  present() = 0;
 };
 
 }

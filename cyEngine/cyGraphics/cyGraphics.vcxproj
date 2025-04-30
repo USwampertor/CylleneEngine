@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\cyMath\include\cyGRasterizerState.h" />
+    <ClInclude Include="..\cyMath\include\cyGSamplerState.h" />
     <ClInclude Include="include\cyGDepthStencilView.h" />
     <ClInclude Include="include\cyGDevice.h" />
     <ClInclude Include="include\cyGDeviceContext.h" />
@@ -35,6 +37,8 @@
     <ClInclude Include="include\cyGViewport.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\cyMath\source\cyGRasterizerState.cpp" />
+    <ClCompile Include="..\cyMath\source\cyGSamplerState.cpp" />
     <ClCompile Include="source\cyGDepthStencilView.cpp" />
     <ClCompile Include="source\cyGDevice.cpp" />
     <ClCompile Include="source\cyGDeviceContext.cpp" />
