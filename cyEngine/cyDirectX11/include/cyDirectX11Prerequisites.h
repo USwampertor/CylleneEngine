@@ -30,4 +30,5 @@
 # define CY_DX11_HIDDEN __attribute__ ((visibility ("hidden")))
 #endif
 
+#define DX11_SAFE_RELEASE(p) { if (p) { p->Release(); p = nullptr; } }
 

@@ -8,9 +8,87 @@ class CY_DX11_EXPORT GraphicsDX11API : public GraphicsAPI
 {
 public:
   GraphicsDX11API() = default;
-  ~GraphicsDX11API() {}
+  
+  virtual ~GraphicsDX11API() override;
+  
   virtual void
   initialize(void* pHandle) override;
+
+  virtual void
+  shutdown() override;
+
+  virtual SPtr<GDevice>
+	createDevice(const GDeviceElement& deviceParams) override;
+
+  virtual SPtr<GDeviceContext>
+  createDeviceContext() override;
+
+  virtual SPtr<GRenderTargetView>
+  createRenderTargetView() override;
+
+  virtual SPtr<GDepthStencilView>
+  createDepthStencilView() override;
+
+	virtual SPtr<GSwapChain>
+	createSwapChain(const SPtr<GDevice>& device, 
+									const GSwapChainElement& swapChainParams) override;
+
+  virtual SPtr<GShaderResourceView>
+  createShaderResourceView() override;
+
+	virtual SPtr<GTexture>
+  createTexture(SPtr<TextureResource> texture,
+								uint32 bindFlags, 
+								uint32 cpuAccessFlags = 0,
+								uint32 mipFlags = 1,
+								GShaderResourceView* ppSRV = nullptr,
+								GRenderTargetView* ppRTV = nullptr,
+								GDepthStencilView* ppDSV = nullptr) override;
+
+	virtual SPtr<GShaderBlob>
+	compileShader(const String& data, const String& entry, const String& model) override;
+
+	virtual SPtr<GVertexShader>
+	createVertexShader(SPtr<ShaderResource> shader, const String& entry) override;
+
+  virtual SPtr<GPixelShader>
+	createPixelShader(SPtr<ShaderResource> shader, const String& entry) override;
+	
+  virtual SPtr<GGeometryShader>
+	createGeometryShader(SPtr<ShaderResource> shader, const String& entry) override;
+
+  virtual SPtr<GInputLayout>
+  createInputLayout(const Vector<GInputLayoutElement>& descriptor,
+										SPtr<GVertexShader> desc) override;
+
+  virtual SPtr<GraphicsBuffer>
+	createVertexBuffer(const Vector<char>& data) override;
+  
+	virtual SPtr<GraphicsBuffer>
+	createIndexBuffer(const Vector<char>& data) override;
+
+  virtual SPtr<GraphicsBuffer>
+  createConstantBuffer(const Vector<char>& data) override;
+
+	virtual void
+  writeToBuffer(const SPtr<GraphicsBuffer>& buffer, 
+								const Vector<char>& data) override;
+
+	virtual void
+	queryInterface(int32 width, int32 height) override;
+
+	virtual void
+	queryInterface(const Vector2i& size) override;
+
+	virtual void
+	clear(const Color& color) override;
+
+	virtual void
+	present() override;
+
+	virtual void
+	setViewport(int32 x, int32 y, int32 width, int32 height) override;
+
 };
 
 }
