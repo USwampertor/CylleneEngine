@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cyGraphicsPrerequisites.h"
+#include "cyGraphic.h"
 
 namespace CYLLENE_SDK
 {
@@ -36,7 +37,7 @@ public:
   bool isCompiled = false;
 };
 
-class GShader
+class GShader : public Graphic
 {
 public:
   GShader() = default;

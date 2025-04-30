@@ -1,11 +1,11 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-
+#include "cyGraphic.h"
 
 namespace CYLLENE_SDK
 {
 
-struct GInputElement
+struct GInputLayoutElement
 {
   String   semanticName;
   uint32_t semanticIndex;
@@ -16,7 +16,10 @@ struct GInputElement
   uint32_t instanceDataStepRate;
 };
 
-class GInputLayout
+class GInputLayout : public Graphic
 {
+public:
+  GInputLayout() = default;
+  ~GInputLayout() = default;
 };
 }

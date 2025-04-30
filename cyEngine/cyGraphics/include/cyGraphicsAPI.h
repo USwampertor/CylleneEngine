@@ -100,7 +100,7 @@ public:
 	createGeometryShader(SPtr<ShaderResource> shader, const String& entry) = 0;
 
   virtual SPtr<GInputLayout>
-  createInputLayout(const Vector<GInputElement>& descriptor,
+  createInputLayout(const Vector<GInputLayoutElement>& descriptor,
 										SPtr<GVertexShader> desc) = 0;
 
   virtual SPtr<GraphicsBuffer>

@@ -2,6 +2,8 @@
 #include "cyGraphicsPrerequisites.h"
 #include "cyGraphic.h"
 
+#include <cyRect.h>
+
 namespace CYLLENE_SDK
 {
 
@@ -10,10 +12,9 @@ class GViewport : public Graphic
 public:
   GViewport() = default;
   GViewport(int32 x, int32 y, int32 width, int32 height)
-    : m_x(x), 
-      m_y(y), 
-      m_width(width), 
-      m_height(height) {}
+    : {
+      m_rect = { x,y,width, height };
+    }
   
   ~GViewport() = default;
 
@@ -22,10 +23,7 @@ public:
 
 public:
 
-  int32 m_x = 0;
-  int32 m_y = 0;
-  int32 m_width = 0;
-  int32 m_height = 0;
+  Rect m_rect;
 };
 
 }

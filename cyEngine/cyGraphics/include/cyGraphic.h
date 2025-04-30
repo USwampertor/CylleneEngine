@@ -23,7 +23,20 @@ namespace CYLLENE_SDK
 class Graphic
 {
 public:
+  /*
+   * You shouldn't be doing this but hey, to each their own 
+   */
+  Graphic() = default;
+  
   virtual ~Graphic() = default;
+
+  virtual void*
+  get() = 0;
+
+  virtual void
+  set(void*) = 0;
+
+
 
 };
 

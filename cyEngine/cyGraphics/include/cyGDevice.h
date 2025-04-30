@@ -1,6 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 
+#include "cyGraphic.h"
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
 #include "cyGraphicsBuffer.h"
@@ -10,6 +11,9 @@
 #include "cyGShader.h"
 #include "cyGShaderResourceView.h"
 #include "cyGSwapChain.h"
+#include "cyGTexture.h"
+
+#include <cyVector2i.h>
 
 namespace CYLLENE_SDK
 {
@@ -53,7 +57,7 @@ struct GDeviceElement
   uint32 depthFormat;
 };
 
-class GDevice
+class GDevice : public Graphic
 {
 public:
 
@@ -62,19 +66,25 @@ public:
   ~GDevice() = default;
 
   virtual void
-  queryInterface() = 0;
+  queryInterface(int32 width, int32 height) = 0;
+
+  virtual void
+  queryInterface(Vector2i size) = 0;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView() = 0;
+  createDepthStencilView(SPtr<GTexture> depthStencilView,
+                         const GDepthStencilViewElement& dsvParams) = 0;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView() = 0;
+  createRenderTargetView(SPtr<GTexture> renderTargetView, 
+                         const GRenderTargetViewElement& rtvParams) = 0;
 
   virtual SPtr<GShaderResourceView>
-  createShaderResourceView() = 0;
+  createShaderResourceView(SPtr<GTexture> shaderResourceView,
+                           const GShaderResourceViewElement& srvParams) = 0;
 
   virtual SPtr<GInputLayout>
-  createInputLayout(const Vector<GInputElement>& descriptor,
+  createInputLayout(const Vector<GInputLayoutElement>& descriptor,
                     SPtr<GVertexShader> desc) = 0;
 
   virtual SPtr<GVertexShader>
@@ -88,7 +98,6 @@ public:
 
   virtual SPtr<GRasterizerState>
   createRasterizerState(const GRasterizerElement& rasterizerElement) = 0;
-
 
 };
 }

@@ -21,6 +21,7 @@ class GDeviceContext : public Graphic
 public:
 
   GDeviceContext() = default;
+
   ~GDeviceContext() = default;
 
   virtual void

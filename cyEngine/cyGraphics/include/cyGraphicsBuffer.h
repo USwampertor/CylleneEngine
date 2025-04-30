@@ -21,9 +21,6 @@ public:
   GraphicsBuffer() = default;
 
   virtual ~GraphicsBuffer();
-  
-  virtual void
-  setData(void* data) = 0;
 
   friend class GraphicsAPI;
 

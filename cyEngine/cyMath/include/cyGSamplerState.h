@@ -1,5 +1,6 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
+#include "cyGraphic.h"
 
 namespace CYLLENE_SDK
 {
@@ -18,8 +19,11 @@ struct GSamplerStateElement
   float maxLOD;
 };
 
-class GSamplerState
+class GSamplerState : public Graphic
 {
+public:
+  GSamplerState() = default;
+  ~GSamplerState() = default;
 };
 
 }
