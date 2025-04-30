@@ -12,20 +12,24 @@ class CY_MATH_EXPORT AABB : public Primitive
 public:
 
   AABB() 
-    : Primitive(PRIMITIVE_TYPE::E::AABB), 
+    : Primitive(AABB::staticType()),
       m_min(Vector3f::ZERO),
       m_max(Vector3f::ONE) {}
 
   AABB(const Vector3f& min, const Vector3f& max)
-    : Primitive(PRIMITIVE_TYPE::E::AABB),
+    : Primitive(AABB::staticType()),
       m_min(min),
       m_max(max) {}
 
 
   AABB(const AABB& other)
-    : Primitive(PRIMITIVE_TYPE::E::AABB),
+    : Primitive(AABB::staticType()),
       m_min(other.m_min),
       m_max(other.m_max) {}
+
+  static PRIMITIVE_TYPE::E staticType() {
+    return PRIMITIVE_TYPE::E::AABB;
+  }
 
   Vector3f
   getDimensions();
