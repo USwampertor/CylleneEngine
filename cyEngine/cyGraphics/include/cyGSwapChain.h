@@ -26,6 +26,7 @@ struct GSwapChainElement
 
 class CY_GRAPHICS_EXPORT GSwapChain : public Graphic
 {
+public:
   GSwapChain() = default;
   
   virtual ~GSwapChain() {}
