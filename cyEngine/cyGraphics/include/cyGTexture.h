@@ -6,11 +6,11 @@
 namespace CYLLENE_SDK
 {
 
-class GTexture : public Graphic
+class CY_GRAPHICS_EXPORT GTexture : public Graphic
 {
 public:
   GTexture() = default;
-  virtual ~GTexture() = default;
+  virtual ~GTexture() {}
   
   virtual void bind() = 0;
   virtual void* getBlob() = 0;

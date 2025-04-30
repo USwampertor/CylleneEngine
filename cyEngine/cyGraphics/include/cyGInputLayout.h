@@ -16,7 +16,7 @@ struct GInputLayoutElement
   uint32_t instanceDataStepRate;
 };
 
-class GInputLayout : public Graphic
+class CY_GRAPHICS_EXPORT GInputLayout : public Graphic
 {
 public:
   GInputLayout() = default;

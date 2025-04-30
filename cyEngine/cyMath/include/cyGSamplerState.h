@@ -19,7 +19,7 @@ struct GSamplerStateElement
   float maxLOD;
 };
 
-class GSamplerState : public Graphic
+class CY_GRAPHICS_EXPORT GSamplerState : public Graphic
 {
 public:
   GSamplerState() = default;

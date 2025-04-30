@@ -37,7 +37,7 @@ public:
   bool isCompiled = false;
 };
 
-class GShader : public Graphic
+class CY_GRAPHICS_EXPORT GShader : public Graphic
 {
 public:
   GShader() = default;

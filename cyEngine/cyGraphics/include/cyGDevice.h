@@ -57,7 +57,7 @@ struct GDeviceElement
   uint32 depthFormat;
 };
 
-class GDevice : public Graphic
+class CY_GRAPHICS_EXPORT GDevice : public Graphic
 {
 public:
 

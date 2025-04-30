@@ -20,11 +20,11 @@ struct GRenderTargetViewElement
 
 };
 
-class GRenderTargetView : public Graphic
+class CY_GRAPHICS_EXPORT GRenderTargetView : public Graphic
 {
 public:
   GRenderTargetView() = default;
-  ~GRenderTargetView() = default;
+  virtual ~GRenderTargetView() {}
 };
 
 }

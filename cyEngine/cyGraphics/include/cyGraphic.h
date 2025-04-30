@@ -20,7 +20,7 @@ namespace CYLLENE_SDK
     );
   }
 
-class Graphic
+class CY_GRAPHICS_EXPORT Graphic
 {
 public:
   /*
@@ -28,7 +28,7 @@ public:
    */
   Graphic() = default;
   
-  virtual ~Graphic() = default;
+  virtual ~Graphic() {}
 
   virtual void*
   get() = 0;

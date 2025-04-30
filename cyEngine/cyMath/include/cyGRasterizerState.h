@@ -10,7 +10,7 @@ struct GRasterizerElement
 
 };
 
-class GRasterizerState : public Graphic
+class CY_GRAPHICS_EXPORT GRasterizerState : public Graphic
 {
 public:
   GRasterizerState() = default;

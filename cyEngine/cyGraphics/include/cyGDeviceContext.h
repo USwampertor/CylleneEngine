@@ -16,13 +16,13 @@
 
 namespace CYLLENE_SDK
 {
-class GDeviceContext : public Graphic
+class CY_GRAPHICS_EXPORT GDeviceContext : public Graphic
 {
 public:
 
   GDeviceContext() = default;
 
-  ~GDeviceContext() = default;
+  virtual ~GDeviceContext() {}
 
   virtual void
   queryInterface() = 0;

@@ -19,11 +19,11 @@ struct GShaderResourceViewElement
 };
 
 
-class GShaderResourceView : public Graphic
+class CY_GRAPHICS_EXPORT GShaderResourceView : public Graphic
 {
 public:
   GShaderResourceView() = default;
-  virtual ~GShaderResourceView();
+  virtual ~GShaderResourceView() {}
 };
 
 }

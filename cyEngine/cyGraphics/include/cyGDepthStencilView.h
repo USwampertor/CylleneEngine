@@ -18,12 +18,12 @@ struct GDepthStencilViewElement
   uint32 flags;
 };
 
-class GDepthStencilView : public Graphic
+class CY_GRAPHICS_EXPORT GDepthStencilView : public Graphic
 {
 public:
   GDepthStencilView() = default;
 
-  virtual ~GDepthStencilView();
+  virtual ~GDepthStencilView() {}
 
 };
 }

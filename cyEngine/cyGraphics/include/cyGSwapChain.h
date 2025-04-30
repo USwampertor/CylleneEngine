@@ -24,17 +24,17 @@ struct GSwapChainElement
   uint32 flags;
 };
 
-class GSwapChain : public Graphic
+class CY_GRAPHICS_EXPORT GSwapChain : public Graphic
 {
   GSwapChain() = default;
   
-  virtual ~GSwapChain();
+  virtual ~GSwapChain() {}
 
   virtual void
   present() = 0;
 
   virtual SPtr<GTexture>
-  getBuffer(uint32 num);
+  getBuffer(uint32 num) = 0;
 
 
 };

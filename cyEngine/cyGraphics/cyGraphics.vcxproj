@@ -142,7 +142,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -167,7 +167,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -188,7 +188,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -213,7 +213,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>

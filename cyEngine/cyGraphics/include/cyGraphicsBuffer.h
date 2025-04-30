@@ -14,7 +14,7 @@ struct GBufferElement
   uint32 structureByteStride;
 };
 
-class GraphicsBuffer : public Graphic
+class CY_GRAPHICS_EXPORT GraphicsBuffer : public Graphic
 {
 public:
 
