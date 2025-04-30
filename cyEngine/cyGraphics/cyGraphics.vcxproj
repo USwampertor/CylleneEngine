@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\cyMath\include\cyGRasterizerState.h" />
+    <ClInclude Include="..\cyMath\include\cyGSamplerState.h" />
     <ClInclude Include="include\cyGDepthStencilView.h" />
     <ClInclude Include="include\cyGDevice.h" />
     <ClInclude Include="include\cyGDeviceContext.h" />
@@ -32,8 +34,11 @@
     <ClInclude Include="include\cyGTexture.h" />
     <ClInclude Include="include\cyGRenderTargetView.h" />
     <ClInclude Include="include\cyGShaderResourceView.h" />
+    <ClInclude Include="include\cyGViewport.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\cyMath\source\cyGRasterizerState.cpp" />
+    <ClCompile Include="..\cyMath\source\cyGSamplerState.cpp" />
     <ClCompile Include="source\cyGDepthStencilView.cpp" />
     <ClCompile Include="source\cyGDevice.cpp" />
     <ClCompile Include="source\cyGDeviceContext.cpp" />
@@ -45,6 +50,7 @@
     <ClCompile Include="source\cyGTexture.cpp" />
     <ClCompile Include="source\cyGRenderTargetView.cpp" />
     <ClCompile Include="source\cyGShaderResourceView.cpp" />
+    <ClCompile Include="source\cyGViewport.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -136,7 +142,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -161,7 +167,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -182,7 +188,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -207,7 +213,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;user32.lib;cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>

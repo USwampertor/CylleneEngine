@@ -1,11 +1,14 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
+#include "cyGTexture.h"
+#include "cyGraphic.h"
 
 namespace CYLLENE_SDK
 {
 
 struct GSwapChainElement
 {
+  void* windowHandle;
   String description;
   uint32 width;
   uint32 height;
@@ -17,11 +20,23 @@ struct GSwapChainElement
   uint32 sampleQuality;
   uint32 swapEffect;
   uint32 alphaMode;
+  uint32 scaling;
   uint32 flags;
 };
 
-class GSwapChain
+class CY_GRAPHICS_EXPORT GSwapChain : public Graphic
 {
+  GSwapChain() = default;
+  
+  virtual ~GSwapChain() {}
+
+  virtual void
+  present() = 0;
+
+  virtual SPtr<GTexture>
+  getBuffer(uint32 num) = 0;
+
+
 };
 
 }

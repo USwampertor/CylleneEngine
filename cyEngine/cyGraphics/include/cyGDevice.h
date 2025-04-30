@@ -1,10 +1,63 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
+
+#include "cyGraphic.h"
 #include "cyGDepthStencilView.h"
+#include "cyGInputLayout.h"
+#include "cyGraphicsBuffer.h"
+#include "cyGRasterizerState.h"
+#include "cyGRenderTargetView.h"
+#include "cyGSamplerState.h"
+#include "cyGShader.h"
+#include "cyGShaderResourceView.h"
+#include "cyGSwapChain.h"
+#include "cyGTexture.h"
+
+#include <cyVector2i.h>
 
 namespace CYLLENE_SDK
 {
-class GDevice
+
+struct AdapterElement
+{
+	String description;
+  uint32 vendorId;
+  uint32 deviceId;
+  uint32 subsysId;
+  uint32 revision;
+  uint32 dedicatedVideoMemory;
+  uint32 dedicatedSystemMemory;
+  uint32 sharedSystemMemory;
+  uint32 outputCount;
+  uint32 outputId;
+  uint32 outputWidth;
+  uint32 outputHeight;
+  uint32 outputRefreshRate;
+  uint32 outputFormat;
+  uint32 outputColorDepth;
+	String lowpart;
+	float highpart;
+	uint32 flags;
+};
+
+struct GDeviceElement
+{
+  void* windowHandle;
+  AdapterElement adapter;
+  uint32 width;
+  uint32 height;
+  uint32 bufferCount;
+  uint32 featureLevel;
+  bool enableDebugLayer;
+  bool enableGPUValidation;
+  bool enableVSync;
+  bool emableSingleThread;
+  bool enableContextSharing;
+  uint32 colorFormat;
+  uint32 depthFormat;
+};
+
+class CY_GRAPHICS_EXPORT GDevice : public Graphic
 {
 public:
 
@@ -13,16 +66,38 @@ public:
   ~GDevice() = default;
 
   virtual void
-  queryInterface() = 0;
+  queryInterface(int32 width, int32 height) = 0;
+
+  virtual void
+  queryInterface(Vector2i size) = 0;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView() = 0;
+  createDepthStencilView(SPtr<GTexture> depthStencilView,
+                         const GDepthStencilViewElement& dsvParams) = 0;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView() = 0;
+  createRenderTargetView(SPtr<GTexture> renderTargetView, 
+                         const GRenderTargetViewElement& rtvParams) = 0;
 
   virtual SPtr<GShaderResourceView>
-  createShaderResourceView() = 0;
+  createShaderResourceView(SPtr<GTexture> shaderResourceView,
+                           const GShaderResourceViewElement& srvParams) = 0;
+
+  virtual SPtr<GInputLayout>
+  createInputLayout(const Vector<GInputLayoutElement>& descriptor,
+                    SPtr<GVertexShader> desc) = 0;
+
+  virtual SPtr<GVertexShader>
+  createVertexShader(SPtr<GShaderBlob> blob) = 0;
+
+  virtual SPtr<GPixelShader>
+  createPixelShader(SPtr<GShaderBlob> blob) = 0;
+
+  virtual SPtr<GraphicsBuffer>
+  createGraphicsBuffer(const GBufferElement& bufferElement) = 0;
+
+  virtual SPtr<GRasterizerState>
+  createRasterizerState(const GRasterizerElement& rasterizerElement) = 0;
 
 };
 }

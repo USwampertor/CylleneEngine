@@ -1,10 +1,11 @@
 #pragma once
 
 #include "cyGraphicsPrerequisites.h"
+#include <cyColor.h>
 #include <cyModule.h>
 #include <cyShader.h>
 #include <cyTexture.h>
-#include <cyColor.h>
+#include <cyVector2i.h>
 
 #include "cyGraphicsBuffer.h"
 #include "cyGDepthStencilView.h"
@@ -34,48 +35,32 @@ namespace CYLLENE_SDK {
 	);
 	}
 
-struct AdapterElement
-{
-	String description;
-  uint32 vendorId;
-  uint32 deviceId;
-  uint32 subsysId;
-  uint32 revision;
-  uint32 dedicatedVideoMemory;
-  uint32 dedicatedSystemMemory;
-  uint32 sharedSystemMemory;
-  uint32 outputCount;
-  uint32 outputId;
-  uint32 outputWidth;
-  uint32 outputHeight;
-  uint32 outputRefreshRate;
-  uint32 outputFormat;
-  uint32 outputColorDepth;
-	String lowpart;
-	float highpart;
-	uint32 flags;
-};
+
 
 class CY_GRAPHICS_EXPORT GraphicsAPI : public Module<GraphicsAPI>
 {
 public:
   GraphicsAPI() = default;
 
-  GraphicsAPI(void* pHandle);
+	virtual void
+  initialize(void* pHandle) = 0;
   
+	virtual void
+  shutdown() = 0;
+
 	virtual ~GraphicsAPI() = default;
 
 	void
-	addToRenderPool(const uint32& index);
+	addToRenderPool(uint32 index);
 
 	void
-	removeFromRenderPool(const uint32& index);
+	removeFromRenderPool(uint32 index);
 
 	void 
-	registerToRenderPool(const uint32& index);
+	registerToRenderPool(uint32 index);
 
 	virtual SPtr<GDevice>
-	createDevice() = 0;
+	createDevice(const GDeviceElement& deviceParams) = 0;
 
   virtual SPtr<GDeviceContext>
   createDeviceContext() = 0;
@@ -87,7 +72,8 @@ public:
   createDepthStencilView() = 0;
 
 	virtual SPtr<GSwapChain>
-	createSwapChain() = 0;
+	createSwapChain(const SPtr<GDevice>& device, 
+									const GSwapChainElement& swapChainParams) = 0;
 
   virtual SPtr<GShaderResourceView>
   createShaderResourceView() = 0;
@@ -101,15 +87,21 @@ public:
 								GRenderTargetView* ppRTV = nullptr,
 								GDepthStencilView* ppDSV = nullptr) = 0;
 
+	virtual SPtr<GShaderBlob>
+	compileShader(const String& data, const String& entry, const String& model) = 0;
+
 	virtual SPtr<GVertexShader>
-	createVertexShader(SPtr<ShaderResource> shader) = 0;
+	createVertexShader(SPtr<ShaderResource> shader, const String& entry) = 0;
 
   virtual SPtr<GPixelShader>
-	createPixelShader(SPtr<ShaderResource> shader) = 0;
+	createPixelShader(SPtr<ShaderResource> shader, const String& entry) = 0;
+	
+  virtual SPtr<GGeometryShader>
+	createGeometryShader(SPtr<ShaderResource> shader, const String& entry) = 0;
 
   virtual SPtr<GInputLayout>
-  createInputLayout(Vector<GInputElement> descriptor,
-										const SPtr<GVertexShader>& desc) = 0;
+  createInputLayout(const Vector<GInputLayoutElement>& descriptor,
+										SPtr<GVertexShader> desc) = 0;
 
   virtual SPtr<GraphicsBuffer>
 	createVertexBuffer(const Vector<char>& data) = 0;
@@ -126,6 +118,9 @@ public:
 
 	virtual void
 	queryInterface(int32 width, int32 height) = 0;
+
+	virtual void
+	queryInterface(const Vector2i& size) = 0;
 
 	virtual void
 	clear(const Color& color) = 0;

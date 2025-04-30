@@ -14,22 +14,26 @@ class CY_MATH_EXPORT OBB : public Primitive
 public:
 
   OBB()
-    : Primitive(PRIMITIVE_TYPE::E::OBB),
+    : Primitive(OBB::staticType()),
       m_center(Vector3f::ZERO),
       m_hExtents(Vector3f::ZERO),
       m_orientation(Quaternion::IDENTITY) {}
 
   OBB(const OBB& other)
-    : Primitive(PRIMITIVE_TYPE::E::OBB),
+    : Primitive(OBB::staticType()),
       m_center(other.m_center),
       m_hExtents(other.m_hExtents),
       m_orientation(other.m_orientation) {}
 
   OBB(const Vector3f& center, const Vector3f& halfExtents, const Quaternion& orientation)
-    : Primitive(PRIMITIVE_TYPE::E::OBB),
+    : Primitive(OBB::staticType()),
       m_center(center),
       m_hExtents(halfExtents),
       m_orientation(orientation) {}
+
+  static PRIMITIVE_TYPE::E staticType() {
+    return PRIMITIVE_TYPE::E::OBB;
+  }
 
   Vector3f
   getDimensions();
