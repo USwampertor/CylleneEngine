@@ -11,9 +11,10 @@ class Point : public Primitive, public Vector3f
 {
 public:
 
-  Point() : Primitive(PRIMITIVE_TYPE::E::POINT) {}
+  Point() : Primitive(Point::staticType()) {}
 
-  static PRIMITIVE_TYPE::E staticType() { return PRIMITIVE_TYPE::E::POINT; }
+  static PRIMITIVE_TYPE::E 
+  staticType() { return PRIMITIVE_TYPE::E::POINT; }
 
   virtual bool
   intersects(const Primitive& other) override;

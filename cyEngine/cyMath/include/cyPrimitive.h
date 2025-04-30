@@ -3,6 +3,10 @@
 
 #include "cyVector4f.h"
 
+#ifdef RECT
+#undef RECT
+#endif
+
 namespace CYLLENE_SDK
 {
 
@@ -21,7 +25,7 @@ namespace CYLLENE_SDK
               PLANE,
               POINT,
               RAY,
-              RECTANGLE,  
+              RECT,  
               SPHERE);
   }
 
@@ -43,7 +47,7 @@ public:
   const PRIMITIVE_TYPE::E getType() const { return m_type; }
 
   // Implement this per primitive
-  virtual PRIMITIVE_TYPE::E staticType() {
+  static PRIMITIVE_TYPE::E staticType() {
     CY_ASSERT(true && "IMPLEMENT THIS");
     return PRIMITIVE_TYPE::E::NONE;
   }

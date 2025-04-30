@@ -200,6 +200,7 @@
     <ClInclude Include="include\cyPoint.h" />
     <ClInclude Include="include\cyPrimitive.h" />
     <ClInclude Include="include\cyQuaternion.h" />
+    <ClInclude Include="include\cyRect.h" />
     <ClInclude Include="include\cyRotor.h" />
     <ClInclude Include="include\cySphere.h" />
     <ClInclude Include="include\cyTensor.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="source\cyPlatformMath.cpp" />
     <ClCompile Include="source\cyPoint.cpp" />
     <ClCompile Include="source\cyQuaternion.cpp" />
+    <ClCompile Include="source\cyRect.cpp" />
     <ClCompile Include="source\cyRotor.cpp" />
     <ClCompile Include="source\cySphere.cpp" />
     <ClCompile Include="source\cyTensor.cpp" />
