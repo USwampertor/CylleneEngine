@@ -3,8 +3,4 @@
 namespace CYLLENE_SDK
 {
 
-GraphicsBuffer::~GraphicsBuffer() {
-
-}
-
 }
