@@ -20,6 +20,6 @@ class CY_GRAPHICS_EXPORT GInputLayout : public Graphic
 {
 public:
   GInputLayout() = default;
-  ~GInputLayout() = default;
+  virtual ~GInputLayout() {}
 };
 }

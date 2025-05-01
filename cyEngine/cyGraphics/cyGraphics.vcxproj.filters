@@ -66,6 +66,9 @@
     <ClInclude Include="..\cyMath\include\cyGSamplerState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyGModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyGraphicsAPI.cpp">
@@ -108,6 +111,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\cyMath\source\cyGSamplerState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cyGModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

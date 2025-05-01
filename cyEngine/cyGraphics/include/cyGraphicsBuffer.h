@@ -20,7 +20,7 @@ public:
 
   GraphicsBuffer() = default;
 
-  virtual ~GraphicsBuffer();
+  virtual ~GraphicsBuffer() {}
 
   friend class GraphicsAPI;
 

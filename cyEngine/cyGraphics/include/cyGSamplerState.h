@@ -23,7 +23,7 @@ class CY_GRAPHICS_EXPORT GSamplerState : public Graphic
 {
 public:
   GSamplerState() = default;
-  ~GSamplerState() = default;
+  virtual ~GSamplerState() {}
 };
 
 }
