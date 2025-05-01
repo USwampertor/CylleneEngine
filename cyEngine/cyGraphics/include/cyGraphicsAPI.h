@@ -79,13 +79,22 @@ public:
   createShaderResourceView() = 0;
 
 	virtual SPtr<GTexture>
-  createTexture(SPtr<TextureResource> texture,
-								uint32 bindFlags, 
-								uint32 cpuAccessFlags = 0,
-								uint32 mipFlags = 1,
-								GShaderResourceView* ppSRV = nullptr,
-								GRenderTargetView* ppRTV = nullptr,
-								GDepthStencilView* ppDSV = nullptr) = 0;
+  createTexture2D(SPtr<TextureResource> texture,
+									uint32 bindFlags, 
+									uint32 cpuAccessFlags = 0,
+									uint32 mipFlags = 1,
+									GShaderResourceView* ppSRV = nullptr,
+									GRenderTargetView* ppRTV = nullptr,
+									GDepthStencilView* ppDSV = nullptr) = 0;
+
+	virtual SPtr<GTexture>
+  createTexture2D(const Vector2i& size,
+									uint32 bindFlags, 
+									uint32 cpuAccessFlags = 0,
+									uint32 mipFlags = 1,
+									GShaderResourceView* ppSRV = nullptr,
+									GRenderTargetView* ppRTV = nullptr,
+									GDepthStencilView* ppDSV = nullptr) = 0;
 
 	virtual SPtr<GShaderBlob>
 	compileShader(const String& data, const String& entry, const String& model) = 0;
