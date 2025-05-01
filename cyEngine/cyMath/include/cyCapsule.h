@@ -27,7 +27,8 @@ public:
       m_pointB(b),
       m_radius(radius) {}
 
-  static PRIMITIVE_TYPE::E staticType() {
+  static PRIMITIVE_TYPE::E 
+  staticType() {
     return PRIMITIVE_TYPE::E::CAPSULE;
   }
 

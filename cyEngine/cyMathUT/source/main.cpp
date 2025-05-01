@@ -14,6 +14,8 @@
 #include <cyVector2f.h>
 #include <cyVector3f.h>
 #include <cyVector4f.h>
+#include <cyPoint.h>
+#include <cyRect.h>
 
 #undef near
 #undef far
@@ -542,5 +544,9 @@ TEST_SUITE("Primitive Tests") {
 
       CHECK(cap1.intersects(cap2) == true); // Should collide (barely touching)
     }
+  }
+
+  TEST_CASE("Rect-Rect Collision") {
+    Capsule r(Vector3f::ZERO, Vector3f::ZERO, 0);
   }
 }
