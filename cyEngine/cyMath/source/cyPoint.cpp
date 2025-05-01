@@ -44,4 +44,10 @@ Point::intersects(const Primitive& other) {
   return false;
 }
 
+
+String
+Point::toString() {
+  return static_cast<Vector3f*>(this)->toString();
+}
+
 }
