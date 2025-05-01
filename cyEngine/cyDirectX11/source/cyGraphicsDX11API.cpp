@@ -164,7 +164,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
 
   m_pDevice->CreateDepthStencilView(pDepthStencil, nullptr, &m_pBackBufferDSV);
 
-  SAFE_RELEASE(pDepthStencil);
+  DX11_SAFE_RELEASE(pDepthStencil);
 }
 
 
@@ -172,5 +172,81 @@ void
 GraphicsDX11API::queryInterface(const Vector2i & size) {
   return queryInterface(size.x, size.y);
 }
+
+SPtr<GTexture>
+GraphicsDX11API::createTexture2D(const Vector2i& size,
+                                 uint32 bindFlags,
+                                 uint32 cpuAccessFlags = 0,
+                                 uint32 mipFlags = 1,
+                                 GShaderResourceView*,
+                                 GRenderTargetView*,
+                                 GDepthStencilView*) {
+  SPtr<GDX11Texture> pTexture = std::make_shared<GDX11Texture>();
+  
+  D3D11_TEXTURE2D_DESC desc;
+
+  memset(&pTexture, 0, sizeof(pTexture));
+
+  desc.ArraySize = 1;
+  desc.BindFlags = bindFlags;
+  desc.CPUAccessFlags = cpuAccessFlags;
+  desc.Format = format;
+  desc.Height = size.x;
+  desc.Width = size.y;
+  desc.MipLevels = mipFlags;
+  desc.MiscFlags = 0;
+
+  desc.SampleDesc.Count = 1; //MSAA
+  desc.SampleDesc.Quality = 0;
+
+  desc.Usage = usage;
+
+  if (FAILED(m_pDevice->CreateTexture2D(&desc, nullptr, &pTexture))) {
+    return nullptr;
+  }
+
+  if (ppSRV != nullptr) {
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
+
+      D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC();
+      srvDesc.Format = format;
+      srvDesc.Texture2D.MipLevels = mipFlags == 1 ? 1 : -1;
+      srvDesc.Texture2D.MostDetailedMip = 0;
+      srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+      m_pDevice->CreateShaderResourceView(pTexture, &srvDesc, ppSRV);
+
+
+    }
+  }
+
+  if (ppSRV != nullptr) {
+    if (bindFlags & D3D11_BIND_RENDER_TARGET) {
+
+      D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = CD3D11_RENDER_TARGET_VIEW_DESC();
+      rtvDesc.Format = format;
+      rtvDesc.Texture2D.MipSlice = 0;
+      rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+      m_pDevice->CreateRenderTargetView(pTexture, &rtvDesc, ppRTV);
+
+
+    }
+  }
+
+  if (ppDSV != nullptr) {
+    if (bindFlags & D3D11_BIND_DEPTH_STENCIL) {
+
+      D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC();
+      dsvDesc.Format = format;
+      dsvDesc.Texture2D.MipSlice = 0;
+      dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+      m_pDevice->CreateDepthStencilView(pTexture, &dsvDesc, ppDSV);
+
+
+    }
+  }
+
+  return pTexture;
+}
+
 
 }
