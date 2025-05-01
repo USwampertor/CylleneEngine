@@ -1,4 +1,7 @@
 #include "cyGDX11Device.h"
+#include "cyGDX11Texture.h"
+#include "cyGDX11DepthStencilView.h"
+#include "cyGDX11RenderTargetView.h"
 
 namespace CYLLENE_SDK {
 
@@ -23,9 +26,10 @@ GDX11Device::queryInterface(SPtr<GSwapChain> swapChain,
     return;
   }
 
-
-
-  SPtr<GTexture> texture = swapChain->getBuffer(0);
+  SPtr<GDX11DepthStencilView> pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(backBuffer);
+  SPtr<
+  SPtr<GDX11Texture> pBackBuffer = std::static_pointer_cast<GDX11Texture>(swapChain->getBuffer(0));
+  m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pDepthStencilView->m_pDSV);
 
 
 }
