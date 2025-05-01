@@ -12,7 +12,7 @@ struct CY_GRAPHICS_EXPORT GModel
   
   ~GModel() = default;
   
-  Vector<GMesh> m_meshes;
+  Vector<SPtr<GMesh>> m_meshes;
 
 };
 

@@ -131,24 +131,26 @@ public:
 	virtual void
 	setViewport(int32 x, int32 y, int32 width, int32 height) = 0;
 
+	
+
 public:
 
-	void*
+	SPtr<void*>
 	m_pWHandle = nullptr;
 
-  GDevice* 
+  SPtr<GDevice> 
 	m_pDevice = nullptr;
 
-	GDeviceContext* 
+	SPtr<GDeviceContext> 
 	m_pDeviceContext = nullptr;
 	
-	GSwapChain* 
+	SPtr<GSwapChain>
 	m_pSwapChain = nullptr;
   
-	GRenderTargetView* 
+	SPtr<GRenderTargetView> 
 	m_pRenderTargetView = nullptr;
 	
-	GDepthStencilView* 
+	SPtr<GDepthStencilView> 
 	m_pDepthStencilView = nullptr;
 
 

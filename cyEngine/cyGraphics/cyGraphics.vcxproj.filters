@@ -116,15 +116,6 @@
     <ClCompile Include="source\cyGViewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\cyMath\source\cyGRasterizerState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cyMath\source\cyGSamplerState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cyGModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\cyGMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

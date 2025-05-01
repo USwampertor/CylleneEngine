@@ -41,9 +41,6 @@
     <ClInclude Include="include\cyGViewport.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\cyMath\source\cyGRasterizerState.cpp" />
-    <ClCompile Include="..\cyMath\source\cyGSamplerState.cpp" />
-    <ClCompile Include="cyGModel.cpp" />
     <ClCompile Include="source\cyGDepthStencilView.cpp" />
     <ClCompile Include="source\cyGDevice.cpp" />
     <ClCompile Include="source\cyGDeviceContext.cpp" />
