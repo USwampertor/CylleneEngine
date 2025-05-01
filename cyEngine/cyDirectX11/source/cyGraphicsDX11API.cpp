@@ -7,6 +7,7 @@
 
 #include "cyGDX11Device.h" 
 #include "cyGDX11DeviceContext.h" 
+#include "cyGDX11SwapChain.h"
 
 namespace CYLLENE_SDK {
 
@@ -46,6 +47,9 @@ GraphicsDX11API::initialize(void* pHandle) {
   ID3D11Device* pDevice = nullptr;
   ID3D11DeviceContext* pDeviceContext = nullptr;
 
+  SPtr<GDX11Device> sPtrDevice = std::make_shared<GDX11Device>();
+  SPtr<GDX11DeviceContext> sPtrDeviceContext = std::make_shared<GDX11DeviceContext>();
+
   uint32_t deviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 #if defined(_DEBUG)
@@ -69,14 +73,56 @@ GraphicsDX11API::initialize(void* pHandle) {
   }
 
   pDevice->QueryInterface(__uuidof(ID3D11Device1),
-              reinterpret_cast<void**>(&sPtrDevice->m_pDevice));
+  reinterpret_cast<void**>(&sPtrDevice->m_pDevice));
 
   pDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1),
-                     reinterpret_cast<void**>(&sPtrDeviceContext->m_pDeviceContext));
+  reinterpret_cast<void**>(&sPtrDeviceContext->m_pDeviceContext));
 
   DX11_SAFE_RELEASE(pDeviceContext);
   DX11_SAFE_RELEASE(pDevice);
 
+  DXGI_SWAP_CHAIN_DESC1 scDesc;
+  memset(&scDesc, 0, sizeof(scDesc));
+
+  scDesc.Width = rc.right;
+  scDesc.Height = rc.bottom;
+  // This is because we are using colors as float
+  scDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // DXGI_FORMAT_R32G32B32A32_FLOAT;
+  scDesc.Stereo = false;
+  scDesc.SampleDesc.Count = 1; // MSAA
+  scDesc.SampleDesc.Quality = 0;
+  scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+  scDesc.BufferCount = 2;
+  scDesc.Scaling = DXGI_SCALING_NONE;
+  scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+
+  IDXGIDevice1* pDXGIDevice = nullptr;
+
+  sPtrDevice->m_pDevice->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGIDevice);
+
+  IDXGIAdapter* pDXGIAdapter = nullptr;
+  pDXGIDevice->GetAdapter(&pDXGIAdapter);
+
+  IDXGIFactory2* pFactory2 = nullptr;
+  pDXGIAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&pFactory2);
+
+  SPtr<GDX11SwapChain> sPtrSwapChain = std::make_shared<GDX11SwapChain>();
+
+  hr =
+  pFactory2->CreateSwapChainForHwnd(sPtrDevice->m_pDevice,
+                                    hwnd,
+                                    &scDesc,
+                                    nullptr,
+                                    nullptr,
+                                    &sPtrSwapChain->m_pSwapChain);
+
+  pDXGIDevice->SetMaximumFrameLatency(3);
+
+  if (FAILED(hr)) {
+    MessageBox(hwnd, "Failed to create swap chain", "Error", MB_OK);
+    return;
+  }
+  queryInterface(scDesc.Width, scDesc.Height);
 }
 
 }
