@@ -30,6 +30,14 @@ GDX11Device::queryInterface(SPtr<GSwapChain> swapChain,
 
 }
 
+void
+GDX11Device::queryInterface(SPtr<GSwapChain> swapChain,
+                            SPtr<GDepthStencilView> backBuffer,
+                            Vector2i size) {
+  return queryInterface(swapChain, backBuffer, size.x, size.y);
+}
+
+
 
 
 

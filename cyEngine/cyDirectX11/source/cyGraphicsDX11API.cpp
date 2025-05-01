@@ -47,8 +47,8 @@ GraphicsDX11API::initialize(void* pHandle) {
   ID3D11Device* pDevice = nullptr;
   ID3D11DeviceContext* pDeviceContext = nullptr;
 
-  SPtr<GDX11Device> sPtrDevice = std::make_shared<GDX11Device>();
-  SPtr<GDX11DeviceContext> sPtrDeviceContext = std::make_shared<GDX11DeviceContext>();
+  SPtr<GDX11Device> sPtrDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
+  SPtr<GDX11DeviceContext> sPtrDeviceContext = std::static_pointer_cast<GDX11DeviceContext>(m_pDeviceContext);
 
   uint32_t deviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
@@ -106,7 +106,7 @@ GraphicsDX11API::initialize(void* pHandle) {
   IDXGIFactory2* pFactory2 = nullptr;
   pDXGIAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&pFactory2);
 
-  SPtr<GDX11SwapChain> sPtrSwapChain = std::make_shared<GDX11SwapChain>();
+  SPtr<GDX11SwapChain> sPtrSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
 
   hr =
   pFactory2->CreateSwapChainForHwnd(sPtrDevice->m_pDevice,
@@ -128,19 +128,14 @@ GraphicsDX11API::initialize(void* pHandle) {
 
 void
 GraphicsDX11API::queryInterface(int32 width, int32 height) {
-  SPtr<GDX11SwapChain> sPtrSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
-  SPtr<GDX11DeviceContext> sPtrDeviceContext = std::static_pointer_cast<GDX11DeviceContext>(m_pDeviceContext);
-  ID3D11Texture2D* pBackBuffer = nullptr;
-  sPtrSwapChain->m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-  D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-  rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-  rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-  rtvDesc.Texture2D.MipSlice = 0;
-  ID3D11RenderTargetView* pRenderTargetView = nullptr;
-  sPtrDeviceContext->m_pDeviceContext->CreateRenderTargetView(pBackBuffer, &rtvDesc, &pRenderTargetView);
-  pBackBuffer->Release();
-  m_pRenderTargetView = pRenderTargetView;
-  m_pDeviceContext->m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
 
-
+  if (m_pDevice) {
+    m_pDevice->queryInterface(m_pSwapChain, m_pDepthStencilView, width, height);
+  }
 }
+
+void
+GraphicsDX11API::queryInterface(const Vector2i& size) {
+  return queryInterface(size.x, size.y);
+}
+
