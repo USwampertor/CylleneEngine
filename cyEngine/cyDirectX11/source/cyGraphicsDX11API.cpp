@@ -8,6 +8,9 @@
 #include "cyGDX11Device.h" 
 #include "cyGDX11DeviceContext.h" 
 #include "cyGDX11SwapChain.h"
+#include "cyGDX11Texture.h"
+#include "cyGDX11DepthStencilView.h"
+#include "cyGDX11RenderTargetView.h"
 
 namespace CYLLENE_SDK {
 
@@ -129,13 +132,45 @@ GraphicsDX11API::initialize(void* pHandle) {
 void
 GraphicsDX11API::queryInterface(int32 width, int32 height) {
 
-  if (m_pDevice) {
-    m_pDevice->queryInterface(m_pSwapChain, m_pDepthStencilView, width, height);
+  if (!m_pSwapChain) {
+    return;
   }
+
+  SPtr<GDX11Device> pDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
+  SPtr<GDX11DepthStencilView> pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(m_pDepthStencilView);
+  SPtr<GDX11RenderTargetView> pRenderTargetView = std::static_pointer_cast<GDX11RenderTargetView>(m_pRenderTargetView);
+  
+  SPtr<GDX11Texture> pBackBuffer = std::static_pointer_cast<GDX11Texture>(m_pSwapChain->getBuffer(0));
+  
+  pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
+
+  // TODO ?
+  DX11_SAFE_RELEASE(pBackBuffer->m_texture);
+
+
+  SPtr<GDX11Texture> pDepthStencil = std::static_pointer_cast<GDX11Texture>(createTexture());
+
+  ID3D11Texture2D* pDepthStencil = nullptr;
+  pDepthStencil = createTexture(nullptr,
+    height,
+    DXGI_FORMAT_D24_UNORM_S8_UINT,
+    D3D11_USAGE_DEFAULT,
+    D3D11_BIND_DEPTH_STENCIL);
+
+  if (!pDepthStencil) {
+    MessageBox(nullptr, L"Failed to create depth stencil", L"Error", MB_OK);
+    return;
+  }
+
+  m_pDevice->CreateDepthStencilView(pDepthStencil, nullptr, &m_pBackBufferDSV);
+
+  SAFE_RELEASE(pDepthStencil);
 }
 
+
 void
-GraphicsDX11API::queryInterface(const Vector2i& size) {
+GraphicsDX11API::queryInterface(const Vector2i & size) {
   return queryInterface(size.x, size.y);
 }
 
+}

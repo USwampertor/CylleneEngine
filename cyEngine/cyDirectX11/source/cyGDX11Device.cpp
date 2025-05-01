@@ -18,31 +18,37 @@ void GDX11Device::set(void* pHandle) {
 
 void 
 GDX11Device::queryInterface(SPtr<GSwapChain> swapChain, 
-                            SPtr<GDepthStencilView> backBuffer, 
+                            SPtr<GDepthStencilView> depthStencil, 
+                            SPtr<GRenderTargetView> renderTargetView, 
                             int32 width, 
                             int32 height) {
   
-  if (!swapChain) {
-    return;
-  }
+  
 
-  SPtr<GDX11DepthStencilView> pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(backBuffer);
-  SPtr<
-  SPtr<GDX11Texture> pBackBuffer = std::static_pointer_cast<GDX11Texture>(swapChain->getBuffer(0));
-  m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pDepthStencilView->m_pDSV);
-
-
+  
+  
 }
 
 void
 GDX11Device::queryInterface(SPtr<GSwapChain> swapChain,
-                            SPtr<GDepthStencilView> backBuffer,
+                            SPtr<GDepthStencilView> depthStencil, 
+                            SPtr<GRenderTargetView> renderTargetView,
                             Vector2i size) {
-  return queryInterface(swapChain, backBuffer, size.x, size.y);
+  return queryInterface(swapChain, depthStencil, renderTargetView, size.x, size.y);
 }
 
 
+SPtr<GDepthStencilView>
+GDX11Device::createDepthStencilView(SPtr<GTexture> depthStencilView,
+                                    const GDepthStencilViewElement& dsvParams) {
+  
+}
 
+SPtr<GRenderTargetView>
+GDX11Device::createRenderTargetView(SPtr<GTexture> renderTargetView,
+                                    const GRenderTargetViewElement& rtvParams) {
+  
+}
 
 
 }

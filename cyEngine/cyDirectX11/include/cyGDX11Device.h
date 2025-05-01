@@ -23,13 +23,15 @@ public:
 
   virtual void
   queryInterface(SPtr<GSwapChain> swapChain,
-                 SPtr<GDepthStencilView> backBuffer,
+                 SPtr<GDepthStencilView> depthStencil, 
+                 SPtr<GRenderTargetView> renderTargetView,
                  int32 width, 
                  int32 height) override;
 
   virtual void
   queryInterface(SPtr<GSwapChain> swapChain,
-                 SPtr<GDepthStencilView> backBuffer,
+                 SPtr<GDepthStencilView> depthStencil, 
+                 SPtr<GRenderTargetView> renderTargetView,
                  Vector2i size) override;
 
   virtual SPtr<GDepthStencilView>
