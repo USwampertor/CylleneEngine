@@ -43,8 +43,39 @@ GraphicsDX11API::initialize(void* pHandle) {
 
   D3D_FEATURE_LEVEL selectedFeatureLevel;
 
-  SPtr<GDX11Device> sPtrDevice = std::make_shared<GDX11Device>();
-  SPtr<GDX11Device> sPtrDevice = std::make_shared<GDX11Device>();
+  ID3D11Device* pDevice = nullptr;
+  ID3D11DeviceContext* pDeviceContext = nullptr;
+
+  uint32_t deviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+
+#if defined(_DEBUG)
+  deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+  HRESULT hr = D3D11CreateDevice(vAdapters[0],
+                                 D3D_DRIVER_TYPE_UNKNOWN,
+                                 nullptr,
+                                 deviceFlags,
+                                 vFeatureLevels.data(),
+                                 vFeatureLevels.size(),
+                                 D3D11_SDK_VERSION,
+                                 &pDevice,
+                                 &selectedFeatureLevel,
+                                 &pDeviceContext);
+
+  if (FAILED(hr)) {
+    MessageBox(hwnd, "Failed to create device", "Error", MB_OK);
+    return;
+  }
+
+  pDevice->QueryInterface(__uuidof(ID3D11Device1),
+              reinterpret_cast<void**>(&sPtrDevice->m_pDevice));
+
+  pDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1),
+                     reinterpret_cast<void**>(&sPtrDeviceContext->m_pDeviceContext));
+
+  DX11_SAFE_RELEASE(pDeviceContext);
+  DX11_SAFE_RELEASE(pDevice);
 
 }
 
