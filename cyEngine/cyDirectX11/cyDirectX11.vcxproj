@@ -189,6 +189,7 @@
     <ClInclude Include="include\cyDirectX11Prerequisites.h" />
     <ClInclude Include="include\cyGDX11DepthStencilView.h" />
     <ClInclude Include="include\cyGDX11Device.h" />
+    <ClInclude Include="include\cyGDX11Mesh.h" />
     <ClInclude Include="include\cyGDX11SwapChain.h" />
     <ClInclude Include="include\cyGraphicsDX11API.h" />
   </ItemGroup>
@@ -196,6 +197,7 @@
     <ClCompile Include="..\cyGraphics\source\cyGDX11DeviceContext.cpp" />
     <ClCompile Include="source\cyGDX11DepthStencilView.cpp" />
     <ClCompile Include="source\cyGDX11Device.cpp" />
+    <ClCompile Include="source\cyGDX11Mesh.cpp" />
     <ClCompile Include="source\cyGDX11SwapChain.cpp" />
     <ClCompile Include="source\cyGraphicsDX11API.cpp" />
   </ItemGroup>
