@@ -63,7 +63,7 @@ public:
 
   GDevice() = default;
 
-  ~GDevice() = default;
+  virtual ~GDevice() {}
 
   virtual void
   queryInterface(SPtr<GSwapChain> swapChain, 

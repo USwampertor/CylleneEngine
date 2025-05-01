@@ -14,7 +14,7 @@ class CY_GRAPHICS_EXPORT GRasterizerState : public Graphic
 {
 public:
   GRasterizerState() = default;
-  ~GRasterizerState() = default;
+  virtual ~GRasterizerState() {}
 };
 
 }

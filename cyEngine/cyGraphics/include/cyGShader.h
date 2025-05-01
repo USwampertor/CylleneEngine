@@ -42,7 +42,7 @@ class CY_GRAPHICS_EXPORT GShader : public Graphic
 public:
   GShader() = default;
 
-  virtual ~GShader() = default;
+  virtual ~GShader() {}
   
   virtual void*
   getBlob() = 0;

@@ -25,6 +25,7 @@
     <ClInclude Include="include\cyGDevice.h" />
     <ClInclude Include="include\cyGDeviceContext.h" />
     <ClInclude Include="include\cyGInputLayout.h" />
+    <ClInclude Include="include\cyGModel.h" />
     <ClInclude Include="include\cyGraphic.h" />
     <ClInclude Include="include\cyGraphicsAPI.h" />
     <ClInclude Include="include\cyGraphicsBuffer.h" />
@@ -39,6 +40,7 @@
   <ItemGroup>
     <ClCompile Include="..\cyMath\source\cyGRasterizerState.cpp" />
     <ClCompile Include="..\cyMath\source\cyGSamplerState.cpp" />
+    <ClCompile Include="cyGModel.cpp" />
     <ClCompile Include="source\cyGDepthStencilView.cpp" />
     <ClCompile Include="source\cyGDevice.cpp" />
     <ClCompile Include="source\cyGDeviceContext.cpp" />
