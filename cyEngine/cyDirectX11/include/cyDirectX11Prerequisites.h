@@ -2,6 +2,8 @@
 
 #include <cyUtilitiesPrerequisites.h>
 
+#include <d3d11_2.h>
+
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # if CY_COMPILER == CY_COMPILER_MSVC
 #   if defined( CY_STATIC_LIB )

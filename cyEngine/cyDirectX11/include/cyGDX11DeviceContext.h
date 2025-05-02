@@ -22,7 +22,7 @@ public:
 
 public:
 
-  ID3D11DeviceContext* m_pDeviceContext = nullptr;
+  ID3D11DeviceContext1* m_pDeviceContext = nullptr;
 
 };
 }

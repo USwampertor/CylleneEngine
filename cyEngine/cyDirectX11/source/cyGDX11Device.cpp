@@ -2,6 +2,9 @@
 #include "cyGDX11Texture.h"
 #include "cyGDX11DepthStencilView.h"
 #include "cyGDX11RenderTargetView.h"
+#include "cyGDX11InputLayout.h"
+#include "cyGDX11Shader.h"
+#include "cyDX11GraphicsBuffer.h"
 
 namespace CYLLENE_SDK {
 
@@ -100,6 +103,108 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
   return std::static_pointer_cast<GTexture>(pTexture);
 }
 
+SPtr<GVertexShader>
+GDX11Device::createVertexShader(SPtr<GShaderBlob> blob) {
+  SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::static_pointer_cast<GDX11ShaderBlob>(blob);
+  
+  SPtr<GDX11VertexShader> sPtrShader = std::make_shared<GDX11VertexShader>();
+  
+  HRESULT hr = m_pDevice->CreateVertexShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
+                                             sPtrShaderBlob->m_pBlob->GetBufferSize(),
+                                             nullptr,
+                                             &sPtrShader->m_pVertexShader);
+
+
+  if (FAILED(hr)) {
+    MessageBox(nullptr, "Error creating Vertex Shader", "Error", MB_OK);
+    return nullptr;
+  }
+
+  return std::static_pointer_cast<GVertexShader>(sPtrShader);
+}
+
+SPtr<GPixelShader>
+GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
+  SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::static_pointer_cast<GDX11ShaderBlob>(blob);
+
+  SPtr<GDX11PixelShader> sPtrShader = std::make_shared<GDX11PixelShader>();
+
+  HRESULT hr = m_pDevice->CreatePixelShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
+                                            sPtrShaderBlob->m_pBlob->GetBufferSize(),
+                                            nullptr,
+                                            &sPtrShader->m_pPixelShader);
+
+
+  if (FAILED(hr)) {
+    MessageBox(nullptr, "Error creating Vertex Shader", "Error", MB_OK);
+    return nullptr;
+  }
+
+  return std::static_pointer_cast<GPixelShader>(sPtrShader);
+}
+
+SPtr<GInputLayout>
+GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
+                               SPtr<GVertexShader> desc) {
+
+  SPtr<GDX11InputLayout> sPtrInputLayout = std::make_shared<GDX11InputLayout>();
+
+  Vector<D3D11_INPUT_ELEMENT_DESC> d3d11Descriptor;
+
+  for (const auto& element : descriptor) {
+    D3D11_INPUT_ELEMENT_DESC desc;
+    desc.SemanticName = element.semanticName.c_str();
+    desc.SemanticIndex = element.semanticIndex;
+    desc.Format = static_cast<DXGI_FORMAT>(element.format);
+    desc.InputSlot = element.inputSlot;
+    desc.AlignedByteOffset = element.alignedByteOffset;
+    desc.InputSlotClass = static_cast<D3D11_INPUT_CLASSIFICATION>(element.inputSlotClass);
+    desc.InstanceDataStepRate = element.instanceDataStepRate;
+    d3d11Descriptor.push_back(desc);
+  }
+
+  HRESULT hr = m_pDevice->CreateInputLayout(d3d11Descriptor.data(),
+                                            d3d11Descriptor.size(),
+                                /*pShader*/ desc->getBlob()->GetBufferPointer(),
+                                /*pShader*/ desc->getBlob()->GetBufferSize(),
+                                            &sPtrInputLayout->m_pInputLayout);
+
+
+  if (FAILED(hr)) {
+    MessageBox(nullptr, "Error creating Input layout", "Error", MB_OK);
+    return nullptr;
+  }
+}
+
+
+SPtr<GraphicsBuffer>
+GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
+  
+  D3D11_BUFFER_DESC desc;
+
+  desc.Usage = static_cast<D3D11_USAGE>(bufferParams->usage);
+  desc.ByteWidth = bufferParams->byteWidth;
+  desc.BindFlags = bufferParams->bindFlags;
+  desc.CPUAccessFlags = bufferParams->cpuAccessFlags;
+  desc.MiscFlags = 0;
+
+  D3D11_SUBRESOURCE_DATA initData;
+  // initData.pSysMem = data.data();
+  initData.SysMemPitch = 0;
+  initData.SysMemSlicePitch = 0;
+  
+  SPtr<DX11GraphicsBuffer> pBuffer = std::make_shared<DX11GraphicsBuffer>();
+
+  HRESULT hr = m_pDevice->CreateBuffer(&desc, &initData, &pBuffer->m_pBuffer);
+
+
+  if (FAILED(hr)) {
+    MessageBox(nullptr, "Error creating vertex buffer", "Error", MB_OK);
+    return nullptr;
+  }
+
+  return std::static_pointer_cast<GraphicsBuffer>(pBuffer);
+}
 
 }
 

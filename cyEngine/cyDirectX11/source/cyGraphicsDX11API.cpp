@@ -5,12 +5,15 @@
 #include <d3d11_2.h>
 #include <dxgi.h>
 
+#include "cyGDX11Shader.h"
 #include "cyGDX11Device.h" 
 #include "cyGDX11DeviceContext.h" 
 #include "cyGDX11SwapChain.h"
 #include "cyGDX11Texture.h"
 #include "cyGDX11DepthStencilView.h"
 #include "cyGDX11RenderTargetView.h"
+#include "cyGDX11InputLayout.h"
+#include "cyDX11GraphicsBuffer.h"
 
 namespace CYLLENE_SDK {
 
@@ -142,7 +145,131 @@ GraphicsDX11API::createSwapChain(const SPtr<GDevice>& device,
 SPtr<GVertexShader>
 GraphicsDX11API::createVertexShader(SPtr<ShaderResource> shader, 
                                     const String& entry) {
-  SPtr<
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
+
+  if (!sPtrShaderBlob->isCompiled) {
+    return nullptr;
+  }
+
+  SPtr<GVertexShader> sPtrShader = m_pDevice->createVertexShader(sPtrShaderBlob);
+
+  return sPtrShader;
+}
+
+SPtr<GPixelShader>
+GraphicsDX11API::createPixelShader(SPtr<ShaderResource> shader,
+  const String& entry) {
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
+
+  if (!sPtrShaderBlob->isCompiled) {
+    return nullptr;
+  }
+
+  SPtr<GPixelShader> sPtrShader = m_pDevice->createPixelShader(sPtrShaderBlob);
+
+  return sPtrShader;
+}
+
+SPtr<GShaderBlob>
+GraphicsDX11API::compileShader(const String& data,
+                               const String& entry,
+                               const String& model) {
+  ID3DBlob* pBlob = nullptr;
+  ID3DBlob* pErrorBlob = nullptr;
+  HRESULT hr = D3DCompile(data.c_str(),
+                          data.size(),
+                          nullptr,
+                          nullptr,
+                          nullptr,
+                          entry.c_str(),
+                          model.c_str(),
+                          D3DCOMPILE_ENABLE_STRICTNESS,
+                          0,
+                          &pBlob,
+                          &pErrorBlob);
+
+  SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::make_shared<GDX11ShaderBlob>();
+  
+  if (FAILED(hr)) {
+    if (pErrorBlob) {
+      sPtrShaderBlob->error = static_cast<const char*>(pErrorBlob->GetBufferPointer());
+      sPtrShaderBlob->size = pErrorBlob->GetBufferSize();
+      sPtrShaderBlob->isCompiled = false;
+      MessageBoxA(nullptr, static_cast<const char*>(pErrorBlob->GetBufferPointer()), "Error", MB_OK);
+      pErrorBlob->Release();
+    }
+    return sPtrShaderBlob;
+  }
+  sPtrShaderBlob->isCompiled = true;
+  sPtrShaderBlob->m_pBlob = pBlob;
+  return std::static_pointer_cast<GShaderBlob>(sPtrShaderBlob);
+}
+
+SPtr<GInputLayout>
+GraphicsDX11API::createInputLayout(const Vector<GInputLayoutElement>& descriptor, 
+                                   SPtr<GVertexShader> desc) {
+  SPtr<GDX11InputLayout> sPtrInputLayout = std::make_shared<GDX11InputLayout>();
+
+  if (descriptor.empty()) { // || pVertexShader.expired()) {
+    return nullptr;
+  }
+
+  SPtr<GInputLayout> pInputLayout = m_pDevice->createInputLayout(descriptor, desc);
+
+  return pInputLayout;
+}
+
+
+SPtr<GraphicsBuffer>
+GraphicsDX11API::createVertexBuffer(const Vector<char>& data) {
+  
+  SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
+  // bufferParams->data = data;
+  // bufferParams->size = data.size();
+  bufferParams->usage = D3D11_USAGE_DEFAULT;
+  bufferParams->bindFlags = D3D11_BIND_VERTEX_BUFFER;
+  bufferParams->cpuAccessFlags = 0;
+  SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
+  return pBuffer;
+}
+
+SPtr<GraphicsBuffer>
+GraphicsDX11API::createIndexBuffer(const Vector<char>& data) {
+
+  SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
+  // bufferParams->data = data;
+  // bufferParams->size = data.size();
+  bufferParams->usage = D3D11_USAGE_DEFAULT;
+  bufferParams->bindFlags = D3D11_BIND_INDEX_BUFFER;
+  bufferParams->cpuAccessFlags = 0;
+  SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
+  return pBuffer;
+}
+
+SPtr<GraphicsBuffer>
+GraphicsDX11API::createConstantBuffer(const Vector<char>& data) {
+  SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
+  // bufferParams->data = data;
+  // bufferParams->size = data.size();
+  bufferParams->usage = D3D11_USAGE_DEFAULT;
+  bufferParams->bindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  bufferParams->cpuAccessFlags = 0;
+  SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
+  return pBuffer;
+}
+
+void
+GraphicsDX11API::writeToBuffer(const SPtr<GraphicsBuffer>& buffer,
+                               const Vector<char>& data) {
+  SPtr<GDX11DeviceContext> pDeviceContext = std::static_pointer_cast<GDX11DeviceContext>(m_pDeviceContext);
+  SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffer);
+  // D3D11_MAPPED_SUBRESOURCE mappedResource;
+  // pDeviceContext->m_pDeviceContext->Map(pBuffer->m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+  // memcpy(mappedResource.pData, data.data(), data.size());
+  // pDeviceContext->m_pDeviceContext->Unmap(pBuffer->m_pBuffer, 0);
+  pDeviceContext->m_pDeviceContext->UpdateSubresource1(pBuffer->m_pBuffer, 0, nullptr, data.data(), 0, 0, 0);
+
+
 }
 
 void
@@ -193,9 +320,9 @@ GraphicsDX11API::createTexture2D(const Vector2i& size,
                                  uint32 usage, 
                                  uint32 cpuAccessFlags /* = 0 */, 
                                  uint32 mipFlags /* = 1 */, 
-                                 const SPtr<GShaderResourceView>& ppSRV /* = nullptr */, 
-                                 const SPtr<GRenderTargetView>& ppRTV /* = nullptr */, 
-                                 const SPtr<GDepthStencilView>& ppDSV /* = nullptr */) {
+                                 SPtr<GShaderResourceView> ppSRV /* = nullptr */, 
+                                 SPtr<GRenderTargetView> ppRTV /* = nullptr */, 
+                                 SPtr<GDepthStencilView> ppDSV /* = nullptr */) {
   SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
 
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
