@@ -83,9 +83,9 @@ public:
 									uint32 bindFlags, 
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
-									const SPtr<GShaderResourceView>& ppSRV = nullptr,
-									const SPtr<GRenderTargetView>& ppRTV = nullptr,
-									const SPtr<GDepthStencilView>& ppDSV = nullptr) = 0;
+									SPtr<GShaderResourceView> ppSRV = nullptr,
+									SPtr<GRenderTargetView> ppRTV		= nullptr,
+									SPtr<GDepthStencilView> ppDSV		= nullptr) = 0;
 
 	virtual SPtr<GTexture>
   createTexture2D(const Vector2i& size,
@@ -94,9 +94,9 @@ public:
 									uint32 usage,		
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
-									const SPtr<GShaderResourceView>& ppSRV = nullptr,
-									const SPtr<GRenderTargetView>& ppRTV = nullptr,
-									const SPtr<GDepthStencilView>& ppDSV = nullptr) = 0;
+									SPtr<GShaderResourceView> ppSRV = nullptr,
+									SPtr<GRenderTargetView>		ppRTV = nullptr,
+									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
 
 	virtual SPtr<GShaderBlob>
 	compileShader(const String& data, const String& entry, const String& model) = 0;
