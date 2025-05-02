@@ -79,7 +79,7 @@ public:
 
 	virtual SPtr<GSwapChain>
 	createSwapChain(SPtr<GDevice> device, 
-									SPtr<GShaderResourceViewElement> swapChainParams) = 0;
+									SPtr<GSwapChainElement> swapChainParams) = 0;
 
   virtual SPtr<GShaderResourceView>
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
