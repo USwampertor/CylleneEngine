@@ -25,15 +25,15 @@ public:
 
   virtual SPtr<GRenderTargetView>
   createRenderTargetView(SPtr<GTexture> shaderResourceView,
-												 SPtr<GShaderResourceViewElement> srvParams) override;
+												 SPtr<GRenderTargetViewElement> srvParams) override;
 
   virtual SPtr<GDepthStencilView>
   createDepthStencilView(SPtr<GTexture> depthStencilView,
 												 SPtr<GDepthStencilViewElement> dsvParams) override;
 
 	virtual SPtr<GSwapChain>
-	createSwapChain(const SPtr<GDevice>& device, 
-									const GSwapChainElement& swapChainParams) override;
+	createSwapChain(SPtr<GDevice> device, 
+									SPtr<GSwapChainElement> swapChainParams) override;
 
   virtual SPtr<GShaderResourceView>
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
