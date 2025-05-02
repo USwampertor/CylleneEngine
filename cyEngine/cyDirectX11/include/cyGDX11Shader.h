@@ -31,7 +31,7 @@ public:
   ID3DBlob* m_pBlob;
 };
 
-class CY_DX11_EXPORT GDX11VertexShader : public GShader
+class CY_DX11_EXPORT GDX11VertexShader : public GVertexShader
 {
 public:
 
@@ -39,21 +39,35 @@ public:
 
   virtual ~GDX11VertexShader() override;
 
+  virtual void*
+  getBlob() override {
+    return m_pBlob;
+  }
+
 public:
+
+  GDX11ShaderBlob* m_pBlob = nullptr;
 
   ID3D11VertexShader* m_pVertexShader = nullptr;
 
 };
 
-class CY_DX11_EXPORT GDX11PixelShader : public GShader
+class CY_DX11_EXPORT GDX11PixelShader : public GPixelShader
 {
 public:
 
   GDX11PixelShader() = default;
 
   virtual ~GDX11PixelShader() override;
+  
+  virtual void*
+    getBlob() override {
+    return m_pBlob;
+  }
 
 public:
+
+  GDX11ShaderBlob* m_pBlob = nullptr;
 
   ID3D11PixelShader* m_pPixelShader = nullptr;
 

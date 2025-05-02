@@ -142,6 +142,11 @@ GraphicsDX11API::shutdown() {
 // 
 // }
 
+SPtr<GRenderTargetView>
+GraphicsDX11API::createRenderTargetView(SPtr<GTexture> shaderResourceView,
+                                        SPtr<GShaderResourceViewElement> srvParams) {
+  return m_pDevice->createRenderTargetView(shaderResourceView, srvParams);
+}
 
 
 SPtr<GSwapChain>

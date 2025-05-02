@@ -65,7 +65,7 @@ public:
 
 public:
 
-  ID3D11Device* m_pDevice = nullptr;
+  ID3D11Device1* m_pDevice = nullptr;
 
 };
 }
