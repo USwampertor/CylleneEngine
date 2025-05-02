@@ -3,8 +3,6 @@
 
 #include <cyGDevice.h>
 
-#include <d3d11_2.h>
-
 namespace CYLLENE_SDK 
 {
 class GDX11Device : public GDevice

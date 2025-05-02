@@ -12,7 +12,7 @@ void* GDX11DeviceContext::get() {
 }
 
 void GDX11DeviceContext::set(void* pHandle) {
-  m_pDeviceContext = static_cast<ID3D11DeviceContext*>(pHandle);
+  m_pDeviceContext = static_cast<ID3D11DeviceContext1*>(pHandle);
 }
 
 }
