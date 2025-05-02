@@ -16,7 +16,7 @@ void* GDX11Device::get() {
 }
 
 void GDX11Device::set(void* pHandle) {
-  m_pDevice = static_cast<ID3D11Device*>(pHandle);
+  m_pDevice = static_cast<ID3D11Device1*>(pHandle);
 }
 
 void

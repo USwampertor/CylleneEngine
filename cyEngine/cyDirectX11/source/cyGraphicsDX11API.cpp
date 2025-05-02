@@ -23,7 +23,10 @@ GraphicsDX11API::~GraphicsDX11API() {
 
 void
 GraphicsDX11API::initialize(void* pHandle) {
-  HWND hwnd = static_cast<HWND>(pHandle);
+
+  m_pWHandle = std::make_shared<void*>(pHandle);
+
+  HWND hwnd = static_cast<HWND>(static_cast<void*>(m_pWHandle.get()));
   RECT rc;
   GetClientRect(hwnd, &rc);
 
@@ -52,6 +55,9 @@ GraphicsDX11API::initialize(void* pHandle) {
 
   ID3D11Device* pDevice = nullptr;
   ID3D11DeviceContext* pDeviceContext = nullptr;
+
+  m_pDevice = std::make_shared<GDX11Device>();
+  m_pDeviceContext = std::make_shared<GDX11DeviceContext>();
 
   SPtr<GDX11Device> sPtrDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
   SPtr<GDX11DeviceContext> sPtrDeviceContext = std::static_pointer_cast<GDX11DeviceContext>(m_pDeviceContext);
@@ -144,43 +150,122 @@ GraphicsDX11API::shutdown() {
 
 SPtr<GRenderTargetView>
 GraphicsDX11API::createRenderTargetView(SPtr<GTexture> shaderResourceView,
-                                        SPtr<GShaderResourceViewElement> srvParams) {
+                                        SPtr<GRenderTargetViewElement> srvParams) {
   return m_pDevice->createRenderTargetView(shaderResourceView, srvParams);
 }
 
+SPtr<GDepthStencilView>
+GraphicsDX11API::createDepthStencilView(SPtr<GTexture> depthStencilView,
+                                        SPtr<GDepthStencilViewElement> dsvParams) {
+  return m_pDevice->createDepthStencilView(depthStencilView, dsvParams);
+}
 
 SPtr<GSwapChain>
-GraphicsDX11API::createSwapChain(const SPtr<GDevice>& device,
-                                 const GSwapChainElement& swapChainParams) {
+GraphicsDX11API::createSwapChain(SPtr<GDevice> device,
+                                 SPtr<GSwapChainElement> swapChainParams) {
+  SPtr<GDX11Device> sPtrDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
+  HWND hwnd = static_cast<HWND>(static_cast<void*>(m_pWHandle.get()));
 
+  IDXGIDevice1* pDXGIDevice = nullptr;
+  
+  sPtrDevice->m_pDevice->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGIDevice);
+
+  IDXGIAdapter* pDXGIAdapter = nullptr;
+  pDXGIDevice->GetAdapter(&pDXGIAdapter);
+
+  IDXGIFactory2* pFactory2 = nullptr;
+  pDXGIAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&pFactory2);
+
+  SPtr<GDX11SwapChain> sPtrSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
+
+  DXGI_SWAP_CHAIN_DESC1 scDesc;
+  memset(&scDesc, 0, sizeof(scDesc));
+  RECT rc;
+  GetClientRect(hwnd, &rc);
+  scDesc.Width = rc.right;
+  scDesc.Height = rc.bottom;
+  // This is because we are using colors as float
+  scDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // DXGI_FORMAT_R32G32B32A32_FLOAT;
+  scDesc.Stereo = false;
+  scDesc.SampleDesc.Count = 1; // MSAA
+  scDesc.SampleDesc.Quality = 0;
+  scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+  scDesc.BufferCount = 2;
+  scDesc.Scaling = DXGI_SCALING_NONE;
+  scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+
+  HRESULT hr =
+    pFactory2->CreateSwapChainForHwnd(sPtrDevice->m_pDevice,
+                                      hwnd,
+                                      &scDesc,
+                                      nullptr,
+                                      nullptr,
+                                      &sPtrSwapChain->m_pSwapChain);
+
+  pDXGIDevice->SetMaximumFrameLatency(3);
+  return std::static_pointer_cast<GSwapChain>(sPtrSwapChain);
 }
 
-SPtr<GVertexShader>
-GraphicsDX11API::createVertexShader(SPtr<ShaderResource> shader, 
-                                    const String& entry) {
-  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
-
-  if (!sPtrShaderBlob->isCompiled) {
-    return nullptr;
-  }
-
-  SPtr<GVertexShader> sPtrShader = m_pDevice->createVertexShader(sPtrShaderBlob);
-
-  return sPtrShader;
+SPtr<GShaderResourceView>
+GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
+                                          SPtr<GShaderResourceViewElement> srvParams) {
+  return m_pDevice->createShaderResourceView(shaderResourceView, srvParams);
 }
 
-SPtr<GPixelShader>
-GraphicsDX11API::createPixelShader(SPtr<ShaderResource> shader,
-  const String& entry) {
-  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
+SPtr<GTexture>
+GraphicsDX11API::createTexture2D(SPtr<TextureResource> texture,
+                                 uint32 bindFlags,
+                                 uint32 cpuAccessFlags,
+                                 uint32 mipFlags,
+                                 SPtr<GShaderResourceView> ppSRV,
+                                 SPtr<GRenderTargetView> ppRTV,
+                                 SPtr<GDepthStencilView> ppDSV) {
+  return nullptr;
+}
 
-  if (!sPtrShaderBlob->isCompiled) {
-    return nullptr;
+
+SPtr<GTexture>
+GraphicsDX11API::createTexture2D(const Vector2i& size, 
+                                 uint32 bindFlags, 
+                                 uint32 format, 
+                                 uint32 usage, 
+                                 uint32 cpuAccessFlags /* = 0 */, 
+                                 uint32 mipFlags /* = 1 */, 
+                                 SPtr<GShaderResourceView> ppSRV /* = nullptr */, 
+                                 SPtr<GRenderTargetView> ppRTV /* = nullptr */, 
+                                 SPtr<GDepthStencilView> ppDSV /* = nullptr */) {
+  SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
+
+  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
+
+  if (ppSRV != nullptr) {
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
+      ppSRV = m_pDevice->createShaderResourceView(pTexture, nullptr);
+    }
   }
 
-  SPtr<GPixelShader> sPtrShader = m_pDevice->createPixelShader(sPtrShaderBlob);
+  if (ppSRV != nullptr) {
+    if (bindFlags & D3D11_BIND_RENDER_TARGET) {
+      ppRTV = m_pDevice->createRenderTargetView(pTexture, nullptr);
+    }
+  }
 
-  return sPtrShader;
+  if (ppDSV != nullptr) {
+    if (bindFlags & D3D11_BIND_DEPTH_STENCIL) {
+      ppDSV = m_pDevice->createDepthStencilView(pTexture, nullptr);
+    }
+  }
+
+  return pTexture;
+}
+
+
+SPtr<GTexture>
+GraphicsDX11API::createTexture2D(SPtr<GTextureElement> textureParams,
+                                 SPtr<GShaderResourceView> ppSRV,
+                                 SPtr<GRenderTargetView> ppRTV,
+                                 SPtr<GDepthStencilView> ppDSV) {
+  return nullptr;
 }
 
 SPtr<GShaderBlob>
@@ -218,20 +303,56 @@ GraphicsDX11API::compileShader(const String& data,
   return std::static_pointer_cast<GShaderBlob>(sPtrShaderBlob);
 }
 
+SPtr<GVertexShader>
+GraphicsDX11API::createVertexShader(SPtr<ShaderResource> shader, 
+                                    const String& entry) {
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
+
+  if (!sPtrShaderBlob->isCompiled) {
+    return nullptr;
+  }
+
+  SPtr<GVertexShader> sPtrShader = m_pDevice->createVertexShader(sPtrShaderBlob);
+
+  return sPtrShader;
+}
+
+SPtr<GPixelShader>
+GraphicsDX11API::createPixelShader(SPtr<ShaderResource> shader,
+                                   const String& entry) {
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
+
+  if (!sPtrShaderBlob->isCompiled) {
+    return nullptr;
+  }
+
+  SPtr<GPixelShader> sPtrShader = m_pDevice->createPixelShader(sPtrShaderBlob);
+
+  return sPtrShader;
+}
+
+SPtr<GGeometryShader>
+GraphicsDX11API::createGeometryShader(SPtr<ShaderResource> shader,
+  const String& entry) {
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "gs_5_0");
+  if (!sPtrShaderBlob->isCompiled) {
+    return nullptr;
+  }
+  SPtr<GGeometryShader> sPtrShader; // = m_pDevice->createGeometryShader(sPtrShaderBlob);
+  return sPtrShader;
+}
+
 SPtr<GInputLayout>
 GraphicsDX11API::createInputLayout(const Vector<GInputLayoutElement>& descriptor, 
                                    SPtr<GVertexShader> desc) {
-  SPtr<GDX11InputLayout> sPtrInputLayout = std::make_shared<GDX11InputLayout>();
-
+  
   if (descriptor.empty()) { // || pVertexShader.expired()) {
     return nullptr;
   }
 
-  SPtr<GInputLayout> pInputLayout = m_pDevice->createInputLayout(descriptor, desc);
+  return m_pDevice->createInputLayout(descriptor, desc);
 
-  return pInputLayout;
 }
-
 
 SPtr<GraphicsBuffer>
 GraphicsDX11API::createVertexBuffer(const Vector<char>& data) {
@@ -326,48 +447,28 @@ GraphicsDX11API::queryInterface(const Vector2i & size) {
   return queryInterface(size.x, size.y);
 }
 
-SPtr<GTexture>
-GraphicsDX11API::createTexture2D(const Vector2i& size, 
-                                 uint32 bindFlags, 
-                                 uint32 format, 
-                                 uint32 usage, 
-                                 uint32 cpuAccessFlags /* = 0 */, 
-                                 uint32 mipFlags /* = 1 */, 
-                                 SPtr<GShaderResourceView> ppSRV /* = nullptr */, 
-                                 SPtr<GRenderTargetView> ppRTV /* = nullptr */, 
-                                 SPtr<GDepthStencilView> ppDSV /* = nullptr */) {
-  SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
+void
+GraphicsDX11API::clear(const Color& color) {
+  
+}
 
-  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
+void
+GraphicsDX11API::present() {
+  SPtr<GDX11SwapChain> pSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
+  pSwapChain->m_pSwapChain->Present(0, 0);
+}
 
-
-  if (ppSRV != nullptr) {
-    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
-
-      ppSRV = m_pDevice->createShaderResourceView(pTexture, nullptr);
-
-
-    }
-  }
-
-  if (ppSRV != nullptr) {
-    if (bindFlags & D3D11_BIND_RENDER_TARGET) {
-
-      ppRTV = m_pDevice->createRenderTargetView(pTexture, nullptr);
-
-
-    }
-  }
-
-  if (ppDSV != nullptr) {
-    if (bindFlags & D3D11_BIND_DEPTH_STENCIL) {
-
-      ppDSV = m_pDevice->createDepthStencilView(pTexture, nullptr);
-
-    }
-  }
-
-  return pTexture;
+void
+GraphicsDX11API::setViewport(int32 x, int32 y, int32 width, int32 height) {
+  D3D11_VIEWPORT vp;
+  vp.TopLeftX = static_cast<float>(x);
+  vp.TopLeftY = static_cast<float>(y);
+  vp.Width = static_cast<float>(width);
+  vp.Height = static_cast<float>(height);
+  vp.MinDepth = 0.0f;
+  vp.MaxDepth = 1.0f;
+  SPtr<GDX11DeviceContext> pDeviceContext = std::static_pointer_cast<GDX11DeviceContext>(m_pDeviceContext);
+  pDeviceContext->m_pDeviceContext->RSSetViewports(1, &vp);
 }
 
 

@@ -59,6 +59,12 @@ public:
 									SPtr<GRenderTargetView> ppRTV = nullptr,
 									SPtr<GDepthStencilView> ppDSV = nullptr) override;
 
+	virtual SPtr<GTexture>
+	createTexture2D(SPtr<GTextureElement> textureParams,
+									SPtr<GShaderResourceView> ppSRV = nullptr,
+									SPtr<GRenderTargetView>		ppRTV = nullptr,
+									SPtr<GDepthStencilView>		ppDSV = nullptr) override;
+
 	virtual SPtr<GShaderBlob>
 	compileShader(const String& data, const String& entry, const String& model) override;
 
