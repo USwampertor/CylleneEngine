@@ -5,7 +5,7 @@
 
 namespace CYLLENE_SDK 
 {
-class GDX11Device : public GDevice
+class CY_DX11_EXPORT GDX11Device : public GDevice
 {
 public:
 

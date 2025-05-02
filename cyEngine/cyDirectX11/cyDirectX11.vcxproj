@@ -26,8 +26,11 @@
     <ClInclude Include="include\cyGDX11DeviceContext.h" />
     <ClInclude Include="include\cyGDX11InputLayout.h" />
     <ClInclude Include="include\cyGDX11Mesh.h" />
+    <ClInclude Include="include\cyGDX11RasterizerState.h" />
     <ClInclude Include="include\cyGDX11RenderTargetView.h" />
+    <ClInclude Include="include\cyGDX11SamplerState.h" />
     <ClInclude Include="include\cyGDX11Shader.h" />
+    <ClInclude Include="include\cyGDX11ShaderResourceView.h" />
     <ClInclude Include="include\cyGDX11SwapChain.h" />
     <ClInclude Include="include\cyGDX11Texture.h" />
     <ClInclude Include="include\cyGraphicsDX11API.h" />
@@ -40,10 +43,13 @@
     <ClCompile Include="source\cyGDX11InputLayout.cpp" />
     <ClCompile Include="source\cyGDX11Mesh.cpp" />
     <ClCompile Include="source\cyGDX11RenderTargetView.cpp" />
+    <ClCompile Include="source\cyGDX11SamplerState.cpp" />
     <ClCompile Include="source\cyGDX11Shader.cpp" />
+    <ClCompile Include="source\cyGDX11ShaderResourceView.cpp" />
     <ClCompile Include="source\cyGDX11SwapChain.cpp" />
     <ClCompile Include="source\cyGDX11Texture.cpp" />
     <ClCompile Include="source\cyGraphicsDX11API.cpp" />
+    <ClCompile Include="source\cyGDX11RasterizerState.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

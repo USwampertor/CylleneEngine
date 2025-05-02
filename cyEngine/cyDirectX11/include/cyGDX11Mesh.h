@@ -6,18 +6,25 @@
 namespace CYLLENE_SDK
 {
 
-class GDX11Mesh : GMesh
+class CY_DX11_EXPORT GDX11Mesh : public GMesh
 {
+public:
   GDX11Mesh() = default;
+  
   virtual ~GDX11Mesh() override;
 
+  virtual void*
+  get() override;
 
   virtual void
-  setVertexBuffer(Vector<Vertex> vertexBuffer) = 0;
+  set(void* pHandle) override;
+
   virtual void
-  setIndexBuffer(Vector<uint32> indexBuffer) = 0;
+  setVertexBuffer(Vector<Vertex> vertexBuffer) override;
   virtual void
-  setPrimitiveTopology(PRIMITIVE_TOPOLOGY::E topology) = 0;
+  setIndexBuffer(Vector<uint32> indexBuffer) override;
+  virtual void
+  setPrimitiveTopology(PRIMITIVE_TOPOLOGY::E topology) override;
 };
 
 }

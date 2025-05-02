@@ -6,7 +6,7 @@
 
 namespace CYLLENE_SDK {
 
-class DX11GraphicsBuffer : public GraphicsBuffer
+class CY_DX11_EXPORT DX11GraphicsBuffer : public GraphicsBuffer
 {
 public:
   DX11GraphicsBuffer() = default;

@@ -7,7 +7,7 @@
 namespace CYLLENE_SDK
 {
 
-class GDX11SwapChain : public GSwapChain
+class CY_DX11_EXPORT GDX11SwapChain : public GSwapChain
 {
 public:
   

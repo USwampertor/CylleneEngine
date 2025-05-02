@@ -5,7 +5,7 @@
 
 namespace CYLLENE_SDK {
 
-class GDX11Texture : public GTexture
+class CY_DX11_EXPORT GDX11Texture : public GTexture
 {
 public:
   GDX11Texture() = default;
@@ -27,7 +27,7 @@ public:
   virtual void* 
   getResource() override;
 
-  ID3D11Texture2D* m_texture;
+  ID3D11Texture2D* m_texture = nullptr;
 };
 
 }

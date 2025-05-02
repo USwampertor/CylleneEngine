@@ -8,7 +8,7 @@
 namespace CYLLENE_SDK
 {
 
-class GDX11DepthStencilView : public GDepthStencilView
+class CY_DX11_EXPORT GDX11DepthStencilView : public GDepthStencilView
 {
 public:
   GDX11DepthStencilView() = default;

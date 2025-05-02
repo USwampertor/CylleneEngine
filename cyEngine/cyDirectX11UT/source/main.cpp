@@ -1,5 +1,7 @@
-
 #include <cyUnitTesting.h>
+
+#include <cyGraphicsDX11API.h>
+
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -14,6 +16,11 @@ using namespace CYLLENE_SDK;
 int32
 main(int argc, char* argv[])
 {
+  GraphicsDX11API::startUp();
+
+
+
+
   doctest::Context context;
 
   context.applyCommandLine(argc, argv);

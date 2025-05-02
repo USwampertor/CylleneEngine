@@ -1,5 +1,15 @@
 #include "cyGDX11DeviceContext.h"
 
+#include "cyGDX11DepthStencilView.h"
+#include "cyGDX11RenderTargetView.h"
+#include "cyGDX11Shader.h"
+#include "cyGDX11InputLayout.h"
+#include "cyDX11GraphicsBuffer.h"
+#include "cyGDX11ShaderResourceView.h"
+#include "cyGDX11SamplerState.h"
+#include "cyGDX11Mesh.h"
+#include "cyGDX11RasterizerState.h"
+
 namespace CYLLENE_SDK
 {
 
@@ -14,5 +24,183 @@ void* GDX11DeviceContext::get() {
 void GDX11DeviceContext::set(void* pHandle) {
   m_pDeviceContext = static_cast<ID3D11DeviceContext1*>(pHandle);
 }
+
+void
+GDX11DeviceContext::queryInterface() {
+
+}
+
+void
+GDX11DeviceContext::setViewPort(uint32 numViewports, const GViewport& viewport) {
+  D3D11_VIEWPORT vp;
+  vp.TopLeftX = viewport.m_rect.x;
+  vp.TopLeftY = viewport.m_rect.y;
+  vp.Width = viewport.m_rect.width;
+  vp.Height = viewport.m_rect.height;
+  vp.MinDepth = 0.0f;
+  vp.MaxDepth = 1.0f;
+  m_pDeviceContext->RSSetViewports(numViewports, &vp);
+}
+
+void
+GDX11DeviceContext::updateSubresource(Graphic* resource, uint32 index, uint32 data) {
+  ID3D11Resource* pResource = static_cast<ID3D11Resource*>(resource->get());
+  m_pDeviceContext->UpdateSubresource(pResource, index, nullptr, &data, 0, 0);
+}
+
+void
+GDX11DeviceContext::setRenderTargets(uint32 numRenderTargets,
+                                     Vector<SPtr<GRenderTargetView>> renderTargets,
+                                     SPtr<GDepthStencilView> depthStencil) {
+
+  SPtr<GDX11DepthStencilView> pDepthStencilView = 
+    std::static_pointer_cast<GDX11DepthStencilView>(depthStencil);
+  Vector<ID3D11RenderTargetView*> pRTVs;
+  
+  for (uint32 i = 0; i < numRenderTargets; ++i) {
+    SPtr<GDX11RenderTargetView> pRenderTargetView = 
+      std::static_pointer_cast<GDX11RenderTargetView>(renderTargets[i]);
+    pRTVs.push_back(pRenderTargetView->m_pRTV);
+  }
+
+  m_pDeviceContext->OMSetRenderTargets(numRenderTargets, pRTVs.data(), pDepthStencilView->m_pDSV);
+}
+
+void
+GDX11DeviceContext::clearRenderTargetView(SPtr<GRenderTargetView> renderTarget,
+                                          const Color& color) {
+  SPtr<GDX11RenderTargetView> pRenderTargetView = 
+    std::static_pointer_cast<GDX11RenderTargetView>(renderTarget);
+  
+  float toDXColor[] = { color.r, color.g, color.b, color.a };
+  
+  m_pDeviceContext->ClearRenderTargetView(pRenderTargetView->m_pRTV, toDXColor);
+}
+
+void
+GDX11DeviceContext::clearDepthStencilView(SPtr<GDepthStencilView> depthStencil,
+                                          uint32 clearFlags,
+                                          float depth, 
+                                          uint8 stencil) {
+  SPtr<GDX11DepthStencilView> pDepthStencilView = 
+    std::static_pointer_cast<GDX11DepthStencilView>(depthStencil);
+  
+  m_pDeviceContext->ClearDepthStencilView(pDepthStencilView->m_pDSV, clearFlags, depth, stencil);
+}
+
+void
+GDX11DeviceContext::setVertexShader(SPtr<GVertexShader> shader, 
+                                    void* classInstance /* = nullptr */, 
+                                    uint32 numClasses /* = 0 */) {
+  SPtr<GDX11VertexShader> pVertexShader = std::static_pointer_cast<GDX11VertexShader>(shader);
+  m_pDeviceContext->VSSetShader(pVertexShader->m_pVertexShader, 
+                                static_cast<ID3D11ClassInstance* const*>(classInstance), 
+                                numClasses);
+}
+
+void
+GDX11DeviceContext::setPixelShader(SPtr<GPixelShader> shader,
+                                   void* classInstance /* = nullptr */,
+                                   uint32 numClasses /* = 0 */) {
+  SPtr<GDX11PixelShader> pPixelShader = std::static_pointer_cast<GDX11PixelShader>(shader);
+  m_pDeviceContext->PSSetShader(pPixelShader->m_pPixelShader, 
+                                static_cast<ID3D11ClassInstance* const*>(classInstance), 
+                                numClasses);
+}
+
+void
+GDX11DeviceContext::setInputLayout(SPtr<GInputLayout> layout) {
+  SPtr<GDX11InputLayout> pInputLayout = std::static_pointer_cast<GDX11InputLayout>(layout);
+  m_pDeviceContext->IASetInputLayout(pInputLayout->m_pInputLayout);
+}
+
+void
+GDX11DeviceContext::setPrimitiveTopology(uint32 topology) {
+  m_pDeviceContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(topology));
+}
+
+void
+GDX11DeviceContext::setVertexBuffers(uint32 startSlot, 
+                                     uint32 numBuffers, 
+                                     Vector<SPtr<GraphicsBuffer>> buffers, 
+                                     Vector<uint32> strides, 
+                                     Vector<uint32> offsets) {
+  Vector<ID3D11Buffer*> pBuffers;
+  for (uint32 i = 0; i < numBuffers; ++i) {
+    SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffers[i]);
+    pBuffers.push_back(pBuffer->m_pBuffer);
+  }
+
+  m_pDeviceContext->IASetVertexBuffers(startSlot, 
+                                       numBuffers, 
+                                       pBuffers.data(), 
+                                       strides.data(), 
+                                       offsets.data());
+}
+
+
+void
+GDX11DeviceContext::setIndexBuffer(SPtr<GraphicsBuffer> buffer,
+                                   uint32 format,
+                                   uint32 offset) {
+  SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffer);
+  m_pDeviceContext->IASetIndexBuffer(pBuffer->m_pBuffer, static_cast<DXGI_FORMAT>(format), offset);
+}
+
+void
+GDX11DeviceContext::setConstantBuffer(uint32 slot,
+                                      uint32 numBuffers,
+                                      Vector<SPtr<GraphicsBuffer>> buffers) {
+  Vector<ID3D11Buffer*> pBuffers;
+  for (uint32 i = 0; i < numBuffers; ++i) {
+    SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffers[i]);
+    pBuffers.push_back(pBuffer->m_pBuffer);
+  }
+  m_pDeviceContext->VSSetConstantBuffers(slot, numBuffers, pBuffers.data());
+}
+
+void
+GDX11DeviceContext::setShaderResource(SPtr<GShaderResourceView> resource,
+                                      uint32 slot,
+                                      uint32 numViews) {
+  SPtr<GDX11ShaderResourceView> pShaderResourceView = 
+    std::static_pointer_cast<GDX11ShaderResourceView>(resource);
+  m_pDeviceContext->PSSetShaderResources(slot, numViews, &pShaderResourceView->m_pSRV);
+}
+
+void
+GDX11DeviceContext::setSamplers(uint32 slot,
+                                uint32 numSamplers,
+                                Vector<SPtr<GSamplerState>> samplers) {
+                                Vector<ID3D11SamplerState*> pSamplers;
+  for (uint32 i = 0; i < numSamplers; ++i) {
+    SPtr<GDX11SamplerState> pSamplerState = std::static_pointer_cast<GDX11SamplerState>(samplers[i]);
+    pSamplers.push_back(pSamplerState->m_pSamplerState);
+  }
+  m_pDeviceContext->PSSetSamplers(slot, numSamplers, pSamplers.data());
+}
+
+void
+GDX11DeviceContext::drawIndexed(SPtr<GMesh> mesh) {
+  SPtr<GDX11Mesh> pMesh = std::static_pointer_cast<GDX11Mesh>(mesh);
+  // m_pDeviceContext->DrawIndexed(pMesh->m_indexCount,
+  //                               pMesh->m_startIndexLocation,
+  //                               pMesh->m_baseVertexLocation);
+}
+
+// 
+// void
+// GDX11DeviceContext::setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
+//                                        uint32 slot,
+//                                        uint32 numViews) {
+//   Vector<ID3D11ShaderResourceView*> pViews;
+//   for (uint32 i = 0; i < numViews; ++i) {
+//     SPtr<GDX11ShaderResourceView> pShaderResourceView =
+//       std::static_pointer_cast<GDX11ShaderResourceView>(pViews[i]);
+//     pViews.push_back(pShaderResourceView->m_pSRV);
+//   }
+//   m_pDeviceContext->PSSetShaderResources(slot, numViews, pViews.data());
+// }
+
 
 }

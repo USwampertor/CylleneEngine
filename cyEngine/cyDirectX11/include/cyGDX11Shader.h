@@ -8,7 +8,7 @@
 namespace CYLLENE_SDK
 {
 
-struct GDX11ShaderBlob : public GShaderBlob
+struct CY_DX11_EXPORT GDX11ShaderBlob : public GShaderBlob
 {
 public:
 
@@ -44,6 +44,15 @@ public:
     return m_pBlob;
   }
 
+  virtual void*
+  getShader();
+
+  virtual void
+  set(void* pHandle) override;
+
+  virtual void*
+  get() override;
+
 public:
 
   GDX11ShaderBlob* m_pBlob = nullptr;
@@ -61,9 +70,19 @@ public:
   virtual ~GDX11PixelShader() override;
   
   virtual void*
-    getBlob() override {
+  getBlob() override {
     return m_pBlob;
   }
+
+  virtual void*
+  getShader();
+
+  virtual void
+  set(void* pHandle) override;
+
+  virtual void*
+  get() override;
+
 
 public:
 

@@ -5,6 +5,8 @@
 #include "cyGDX11InputLayout.h"
 #include "cyGDX11Shader.h"
 #include "cyDX11GraphicsBuffer.h"
+#include "cyGDX11RasterizerState.h"
+#include "cyGDX11ShaderResourceView.h"
 
 namespace CYLLENE_SDK {
 
@@ -19,12 +21,23 @@ void GDX11Device::set(void* pHandle) {
   m_pDevice = static_cast<ID3D11Device1*>(pHandle);
 }
 
+void 
+GDX11Device::queryInterface(SPtr<GSwapChain> swapChain, 
+                            SPtr<GDepthStencilView> depthStencil, 
+                            SPtr<GRenderTargetView> renderTargetView, 
+                            int32 width, 
+                            int32 height) {
+  // Implementation of queryInterface for DirectX 11
+  // This typically involves setting up the swap chain and render target views
+  // based on the provided parameters.
+}
+
 void
 queryInterface(SPtr<GSwapChain> swapChain, 
-               SPtr<GDepthStencilView> depthStencil, 
-               SPtr<GRenderTargetView> renderTargetView, 
-               int32 width, 
-               int32 height) {
+                 SPtr<GDepthStencilView> depthStencil, 
+                 SPtr<GRenderTargetView> renderTargetView, 
+                 int32 width, 
+                 int32 height) {
 
 }
 
@@ -143,6 +156,24 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
   return std::static_pointer_cast<GPixelShader>(sPtrShader);
 }
 
+SPtr<GShaderResourceView>
+GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
+                                      SPtr<GShaderResourceViewElement> srvParams) {
+  
+  D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC();
+  srvDesc.Format = static_cast<DXGI_FORMAT>(srvParams->format);
+  srvDesc.Texture2D.MipLevels = srvParams->mipLevels;
+  srvDesc.Texture2D.MostDetailedMip = 0;
+  srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(shaderResourceView);
+  SPtr<GDX11ShaderResourceView> pShaderResourceView = std::make_shared<GDX11ShaderResourceView>();
+
+  m_pDevice->CreateShaderResourceView(pTexture->m_texture, &srvDesc, &pShaderResourceView->m_pSRV);
+  return std::static_pointer_cast<GShaderResourceView>(pShaderResourceView);
+}
+
+
 SPtr<GInputLayout>
 GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
                                SPtr<GVertexShader> desc) {
@@ -163,17 +194,20 @@ GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
     d3d11Descriptor.push_back(desc);
   }
 
-  // HRESULT hr = m_pDevice->CreateInputLayout(d3d11Descriptor.data(),
-  //                                           d3d11Descriptor.size(),
-  //                               /*pShader*/ desc->getBlob()->GetBufferPointer(),
-  //                               /*pShader*/ desc->getBlob()->GetBufferSize(),
-  //                                           &sPtrInputLayout->m_pInputLayout);
-  // 
-  // 
-  // if (FAILED(hr)) {
-  //   MessageBox(nullptr, "Error creating Input layout", "Error", MB_OK);
-  //   return nullptr;
-  // }
+  SPtr<GDX11VertexShader> sPtrVertexShader = std::static_pointer_cast<GDX11VertexShader>(desc);
+
+  HRESULT hr = m_pDevice->CreateInputLayout(d3d11Descriptor.data(),
+                                            d3d11Descriptor.size(),
+                                /*pShader*/ sPtrVertexShader->m_pBlob->m_pBlob->GetBufferPointer(),
+                                /*pShader*/ sPtrVertexShader->m_pBlob->m_pBlob->GetBufferSize(),
+                                            &sPtrInputLayout->m_pInputLayout);
+  
+  
+  if (FAILED(hr)) {
+    MessageBox(nullptr, "Error creating Input layout", "Error", MB_OK);
+    return nullptr;
+  }
+  return std::static_pointer_cast<GInputLayout>(sPtrInputLayout);
 }
 
 
@@ -204,6 +238,20 @@ GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
   }
 
   return std::static_pointer_cast<GraphicsBuffer>(pBuffer);
+}
+
+SPtr<GRasterizerState>
+GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
+  CD3D11_RASTERIZER_DESC1 descRD(D3D11_DEFAULT);
+
+  SPtr<GDX11RasterizerState> pRasterizerState = std::make_shared<GDX11RasterizerState>();
+
+  m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState);
+  if (FAILED(m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState))) {
+    MessageBox(nullptr, "Error creating Rasterizer State", "Error", MB_OK);
+    return nullptr;
+  }
+  return std::static_pointer_cast<GRasterizerState>(pRasterizerState);
 }
 
 }

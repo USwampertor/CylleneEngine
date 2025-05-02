@@ -7,7 +7,7 @@
 namespace CYLLENE_SDK
 {
 
-class GDX11RenderTargetView : GRenderTargetView
+class CY_DX11_EXPORT GDX11RenderTargetView : public GRenderTargetView
 {
 public:
   GDX11RenderTargetView() = default;

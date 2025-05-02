@@ -5,11 +5,19 @@
 namespace CYLLENE_SDK
 {
 
-class GDX11InputLayout : public GInputLayout
+class CY_DX11_EXPORT GDX11InputLayout : public GInputLayout
 {
 public:
   GDX11InputLayout() = default;
+  
   virtual ~GDX11InputLayout() override;
+
+  void* 
+  get() override;
+  
+  void 
+  set(void* pHandle) override;
+
 
 public:
 
