@@ -80,15 +80,15 @@ public:
 
   virtual SPtr<GDepthStencilView>
   createDepthStencilView(SPtr<GTexture> depthStencilView,
-                         const GDepthStencilViewElement& dsvParams) = 0;
+                         SPtr<GDepthStencilViewElement> dsvParams) = 0;
 
   virtual SPtr<GRenderTargetView>
   createRenderTargetView(SPtr<GTexture> renderTargetView, 
-                         const GRenderTargetViewElement& rtvParams) = 0;
+                         SPtr<GRenderTargetViewElement> rtvParams) = 0;
 
   virtual SPtr<GShaderResourceView>
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
-                           const GShaderResourceViewElement& srvParams) = 0;
+                           SPtr<GShaderResourceViewElement> srvParams) = 0;
 
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,
@@ -101,10 +101,13 @@ public:
   createPixelShader(SPtr<GShaderBlob> blob) = 0;
 
   virtual SPtr<GraphicsBuffer>
-  createGraphicsBuffer(const GBufferElement& bufferElement) = 0;
+  createGraphicsBuffer(SPtr<GBufferElement> bufferParams) = 0;
 
   virtual SPtr<GRasterizerState>
-  createRasterizerState(const GRasterizerElement& rasterizerElement) = 0;
+  createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) = 0;
+
+  virtual SPtr<GTexture>
+  createTexture2D(SPtr<GTextureElement> textureParams) = 0;
 
 };
 }
