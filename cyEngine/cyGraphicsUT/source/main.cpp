@@ -1,6 +1,8 @@
 
 #include <cyUnitTesting.h>
 
+#include <cyGraphicsAPI.h>
+
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
@@ -14,6 +16,7 @@ using namespace CYLLENE_SDK;
 int32
 main(int argc, char* argv[])
 {
+
   doctest::Context context;
 
   context.applyCommandLine(argc, argv);
