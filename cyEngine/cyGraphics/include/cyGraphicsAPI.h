@@ -43,8 +43,10 @@ class CY_GRAPHICS_EXPORT GraphicsAPI : public Module<GraphicsAPI>
 public:
   GraphicsAPI() = default;
 
-  virtual GFXTYPE::E
-  getType() const = 0;
+	virtual ~GraphicsAPI() {}
+  
+	virtual GFXTYPE::E
+  getType() const { return GFXTYPE::E::eUNKNOWN; }
 
 	virtual void
   initialize(void* pHandle) = 0;
@@ -52,7 +54,6 @@ public:
 	virtual void
   shutdown() = 0;
 
-	virtual ~GraphicsAPI() {}
 
 	void
 	addToRenderPool(uint32 index);
