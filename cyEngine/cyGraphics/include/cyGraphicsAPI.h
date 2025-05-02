@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cyGraphicsPrerequisites.h"
+
 #include <cyColor.h>
 #include <cyModule.h>
 #include <cyShader.h>
@@ -42,13 +43,16 @@ class CY_GRAPHICS_EXPORT GraphicsAPI : public Module<GraphicsAPI>
 public:
   GraphicsAPI() = default;
 
+  virtual GFXTYPE::E
+  getType() const = 0;
+
 	virtual void
   initialize(void* pHandle) = 0;
   
 	virtual void
   shutdown() = 0;
 
-	virtual ~GraphicsAPI() = default;
+	virtual ~GraphicsAPI() {}
 
 	void
 	addToRenderPool(uint32 index);
@@ -59,24 +63,27 @@ public:
 	void 
 	registerToRenderPool(uint32 index);
 
-	virtual SPtr<GDevice>
-	createDevice(const GDeviceElement& deviceParams) = 0;
-
-  virtual SPtr<GDeviceContext>
-  createDeviceContext() = 0;
+// 	virtual SPtr<GDevice>
+// 	createDevice(const GDeviceElement& deviceParams) = 0;
+// 
+//   virtual SPtr<GDeviceContext>
+//   createDeviceContext() = 0;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView() = 0;
+  createRenderTargetView(SPtr<GTexture> shaderResourceView,
+												 SPtr<GShaderResourceViewElement> srvParams) = 0;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView() = 0;
+  createDepthStencilView(SPtr<GTexture> depthStencilView,
+												 SPtr<GDepthStencilViewElement> dsvParams) = 0;
 
 	virtual SPtr<GSwapChain>
 	createSwapChain(const SPtr<GDevice>& device, 
 									const GSwapChainElement& swapChainParams) = 0;
 
   virtual SPtr<GShaderResourceView>
-  createShaderResourceView() = 0;
+  createShaderResourceView(SPtr<GTexture> shaderResourceView,
+													 SPtr<GShaderResourceViewElement> srvParams) = 0;
 
 	virtual SPtr<GTexture>
   createTexture2D(SPtr<TextureResource> texture,
@@ -84,8 +91,8 @@ public:
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
 									SPtr<GShaderResourceView> ppSRV = nullptr,
-									SPtr<GRenderTargetView> ppRTV		= nullptr,
-									SPtr<GDepthStencilView> ppDSV		= nullptr) = 0;
+									SPtr<GRenderTargetView>		ppRTV = nullptr,
+									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
 
 	virtual SPtr<GTexture>
   createTexture2D(const Vector2i& size,
@@ -94,6 +101,12 @@ public:
 									uint32 usage,		
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
+									SPtr<GShaderResourceView> ppSRV = nullptr,
+									SPtr<GRenderTargetView>		ppRTV = nullptr,
+									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
+
+  virtual SPtr<GTexture>
+	createTexture2D(SPtr<GTextureElement> textureParams,
 									SPtr<GShaderResourceView> ppSRV = nullptr,
 									SPtr<GRenderTargetView>		ppRTV = nullptr,
 									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
@@ -141,6 +154,9 @@ public:
 
 	virtual void
 	setViewport(int32 x, int32 y, int32 width, int32 height) = 0;
+
+	virtual void
+	setViewport(const Rect& rect) = 0;
 
 	
 

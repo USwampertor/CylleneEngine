@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\cyMath\include\cyGRasterizerState.h" />
-    <ClInclude Include="..\cyMath\include\cyGSamplerState.h" />
     <ClInclude Include="include\cyGDepthStencilView.h" />
     <ClInclude Include="include\cyGDevice.h" />
     <ClInclude Include="include\cyGDeviceContext.h" />

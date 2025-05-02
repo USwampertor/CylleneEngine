@@ -60,12 +60,6 @@
     <ClInclude Include="include\cyGViewport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\cyMath\include\cyGRasterizerState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cyMath\include\cyGSamplerState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyGModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>

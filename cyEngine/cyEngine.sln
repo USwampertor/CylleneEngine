@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.6.33829.357
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyUtilities", "cyUtilities\cyUtilities.vcxproj", "{07A0942F-CFCB-427F-9C1B-401A59829E25}"
 EndProject
@@ -28,6 +28,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyCoreUT", "cyCoreUT\cyCore
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyRandom", "cyRandom\cyRandom.vcxproj", "{EF286057-2B98-43FD-92B9-D9157C8BAFF3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+		{57FC85BC-8930-4FA8-B2D9-79B5006B3E9D} = {57FC85BC-8930-4FA8-B2D9-79B5006B3E9D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyMath", "cyMath\cyMath.vcxproj", "{57FC85BC-8930-4FA8-B2D9-79B5006B3E9D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -36,6 +40,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyMath", "cyMath\cyMath.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyMathUT", "cyMathUT\cyMathUT.vcxproj", "{5E6C9DCB-8114-4242-BE15-3142703A53AE}"
 	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
 		{57FC85BC-8930-4FA8-B2D9-79B5006B3E9D} = {57FC85BC-8930-4FA8-B2D9-79B5006B3E9D}
 	EndProjectSection
 EndProject
@@ -45,12 +50,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyGraphics", "cyGraphics\cy
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyRandomUT", "cyRandomUT\cyRandomUT.vcxproj", "{13C8D15D-4CA4-4F8F-9A66-8E0844764DFE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07A0942F-CFCB-427F-9C1B-401A59829E25} = {07A0942F-CFCB-427F-9C1B-401A59829E25}
+		{57FC85BC-8930-4FA8-B2D9-79B5006B3E9D} = {57FC85BC-8930-4FA8-B2D9-79B5006B3E9D}
+		{EF286057-2B98-43FD-92B9-D9157C8BAFF3} = {EF286057-2B98-43FD-92B9-D9157C8BAFF3}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyGraphicsUT", "cyGraphicsUT\cyGraphicsUT.vcxproj", "{A02D1C84-5AE7-440E-B5FF-E3503D1359F8}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyDirectX11", "cyDirectX11\cyDirectX11.vcxproj", "{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyDirectX11UT", "cyDirectX11UT\cyDirectX11UT.vcxproj", "{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D82687E1-8BAE-4766-B409-B72E2947C4F4} = {D82687E1-8BAE-4766-B409-B72E2947C4F4}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -148,22 +157,6 @@ Global
 		{A02D1C84-5AE7-440E-B5FF-E3503D1359F8}.Release|x64.Build.0 = Release|x64
 		{A02D1C84-5AE7-440E-B5FF-E3503D1359F8}.Release|x86.ActiveCfg = Release|Win32
 		{A02D1C84-5AE7-440E-B5FF-E3503D1359F8}.Release|x86.Build.0 = Release|Win32
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Debug|x64.ActiveCfg = Debug|x64
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Debug|x64.Build.0 = Debug|x64
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Debug|x86.ActiveCfg = Debug|Win32
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Debug|x86.Build.0 = Debug|Win32
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Release|x64.ActiveCfg = Release|x64
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Release|x64.Build.0 = Release|x64
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Release|x86.ActiveCfg = Release|Win32
-		{081CEDE6-E71D-4F6E-8528-8E30DC8276A7}.Release|x86.Build.0 = Release|Win32
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Debug|x64.ActiveCfg = Debug|x64
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Debug|x64.Build.0 = Debug|x64
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Debug|x86.ActiveCfg = Debug|Win32
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Debug|x86.Build.0 = Debug|Win32
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Release|x64.ActiveCfg = Release|x64
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Release|x64.Build.0 = Release|x64
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Release|x86.ActiveCfg = Release|Win32
-		{1DF7AE42-AA2A-47FC-9B44-00F2A315E4C1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
