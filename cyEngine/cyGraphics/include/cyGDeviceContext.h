@@ -10,7 +10,7 @@
 #include "cyGShader.h"
 #include "cyGShaderResourceView.h"
 #include "cyGViewport.h"
-#include "cyModel.h"
+#include "cyGMesh.h"
 
 #include <cyColor.h>
 
@@ -92,7 +92,7 @@ public:
               Vector<SPtr<GSamplerState>> samplers) = 0;
 
   virtual void
-  draw(SPtr<ModelResource> model) = 0;
+  drawIndexed(SPtr<GMesh> mesh) = 0;
 
 };
 }
