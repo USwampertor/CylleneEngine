@@ -128,6 +128,22 @@ GraphicsDX11API::initialize(void* pHandle) {
   queryInterface(scDesc.Width, scDesc.Height);
 }
 
+SPtr<GDevice>
+GraphicsDX11API::createDevice(const GDeviceElement& deviceParams) {
+
+}
+
+SPtr<GSwapChain>
+GraphicsDX11API::createSwapChain(const SPtr<GDevice>& device,
+                                 const GSwapChainElement& swapChainParams) {
+
+}
+
+SPtr<GVertexShader>
+GraphicsDX11API::createVertexShader(SPtr<ShaderResource> shader, 
+                                    const String& entry) {
+  SPtr<
+}
 
 void
 GraphicsDX11API::queryInterface(int32 width, int32 height) {
@@ -159,8 +175,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   }
 
   
-  GDepthStencilViewElement e;
-  m_pDepthStencilView = m_pDevice->createDepthStencilView(pDepthStencil, e);
+  m_pDepthStencilView = m_pDevice->createDepthStencilView(pDepthStencil, nullptr);
 
   DX11_SAFE_RELEASE(pDepthStencil->m_texture);
 }
@@ -172,48 +187,24 @@ GraphicsDX11API::queryInterface(const Vector2i & size) {
 }
 
 SPtr<GTexture>
-GraphicsDX11API::createTexture2D(const Vector2i& size,
-									               uint32 bindFlags,
-									               uint32 format,
-									               uint32 usage,		
-                                 uint32 cpuAccessFlags = 0,
-                                 uint32 mipFlags = 1,
-                                 GShaderResourceView* ppSRV,
-                                 GRenderTargetView* ppRTV,
-                                 GDepthStencilView* ppDSV) {
-  SPtr<GDX11Texture> pTexture = std::make_shared<GDX11Texture>();
-  
-  D3D11_TEXTURE2D_DESC desc;
+GraphicsDX11API::createTexture2D(const Vector2i& size, 
+                                 uint32 bindFlags, 
+                                 uint32 format, 
+                                 uint32 usage, 
+                                 uint32 cpuAccessFlags /* = 0 */, 
+                                 uint32 mipFlags /* = 1 */, 
+                                 const SPtr<GShaderResourceView>& ppSRV /* = nullptr */, 
+                                 const SPtr<GRenderTargetView>& ppRTV /* = nullptr */, 
+                                 const SPtr<GDepthStencilView>& ppDSV /* = nullptr */) {
+  SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
 
-  memset(&pTexture, 0, sizeof(pTexture));
+  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
 
-  desc.ArraySize = 1;
-  desc.BindFlags = bindFlags;
-  desc.CPUAccessFlags = cpuAccessFlags;
-  desc.Format = static_cast<DXGI_FORMAT>(format);
-  desc.Height = size.x;
-  desc.Width = size.y;
-  desc.MipLevels = mipFlags;
-  desc.MiscFlags = 0;
-
-  desc.SampleDesc.Count = 1; //MSAA
-  desc.SampleDesc.Quality = 0;
-
-  desc.Usage = static_cast<D3D11_USAGE>(usage);
-
-  if (FAILED(m_pDevice->m_pDevice->CreateTexture2D(&desc, nullptr, &pTexture))) {
-    return nullptr;
-  }
 
   if (ppSRV != nullptr) {
     if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
 
-      D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC();
-      srvDesc.Format = static_cast<DXGI_FORMAT>(format);
-      srvDesc.Texture2D.MipLevels = mipFlags == 1 ? 1 : -1;
-      srvDesc.Texture2D.MostDetailedMip = 0;
-      srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-      m_pDevice->CreateShaderResourceView(pTexture, &srvDesc, ppSRV);
+      ppSRV = m_pDevice->createShaderResourceView(pTexture, nullptr);
 
 
     }
@@ -222,11 +213,7 @@ GraphicsDX11API::createTexture2D(const Vector2i& size,
   if (ppSRV != nullptr) {
     if (bindFlags & D3D11_BIND_RENDER_TARGET) {
 
-      D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = CD3D11_RENDER_TARGET_VIEW_DESC();
-      rtvDesc.Format = static_cast<DXGI_FORMAT>(format);
-      rtvDesc.Texture2D.MipSlice = 0;
-      rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-      m_pDevice->CreateRenderTargetView(pTexture, &rtvDesc, ppRTV);
+      ppRTV = m_pDevice->createRenderTargetView(pTexture, nullptr);
 
 
     }
@@ -235,12 +222,7 @@ GraphicsDX11API::createTexture2D(const Vector2i& size,
   if (ppDSV != nullptr) {
     if (bindFlags & D3D11_BIND_DEPTH_STENCIL) {
 
-      D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC();
-      dsvDesc.Format = static_cast<DXGI_FORMAT>(format);
-      dsvDesc.Texture2D.MipSlice = 0;
-      dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-      m_pDevice->CreateDepthStencilView(pTexture, &dsvDesc, ppDSV);
-
+      ppDSV = m_pDevice->createDepthStencilView(pTexture, nullptr);
 
     }
   }

@@ -190,6 +190,7 @@
     <ClInclude Include="include\cyGDX11Device.h" />
     <ClInclude Include="include\cyGDX11DeviceContext.h" />
     <ClInclude Include="include\cyGDX11Mesh.h" />
+    <ClInclude Include="include\cyGDX11Shader.h" />
     <ClInclude Include="include\cyGDX11SwapChain.h" />
     <ClInclude Include="include\cyGDX11Texture.h" />
     <ClInclude Include="include\cyGraphicsDX11API.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="source\cyGDX11Device.cpp" />
     <ClCompile Include="source\cyGDX11DeviceContext.cpp" />
     <ClCompile Include="source\cyGDX11Mesh.cpp" />
+    <ClCompile Include="source\cyGDX11Shader.cpp" />
     <ClCompile Include="source\cyGDX11SwapChain.cpp" />
     <ClCompile Include="source\cyGraphicsDX11API.cpp" />
     <ClCompile Include="source\cyGDX11Texture.cpp" />

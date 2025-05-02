@@ -22,29 +22,29 @@ public:
   set(void* pHandle) override;
 
   virtual void
-  queryInterface(SPtr<GSwapChain> swapChain,
+  queryInterface(SPtr<GSwapChain> swapChain, 
                  SPtr<GDepthStencilView> depthStencil, 
-                 SPtr<GRenderTargetView> renderTargetView,
+                 SPtr<GRenderTargetView> renderTargetView, 
                  int32 width, 
                  int32 height) override;
 
   virtual void
   queryInterface(SPtr<GSwapChain> swapChain,
-                 SPtr<GDepthStencilView> depthStencil, 
+                 SPtr<GDepthStencilView> depthStencil,
                  SPtr<GRenderTargetView> renderTargetView,
                  Vector2i size) override;
 
   virtual SPtr<GDepthStencilView>
   createDepthStencilView(SPtr<GTexture> depthStencilView,
-                         const GDepthStencilViewElement& dsvParams) override;
+                         SPtr<GDepthStencilViewElement> dsvParams) override;
 
   virtual SPtr<GRenderTargetView>
   createRenderTargetView(SPtr<GTexture> renderTargetView, 
-                         const GRenderTargetViewElement& rtvParams) override;
+                         SPtr<GRenderTargetViewElement> rtvParams) override;
 
   virtual SPtr<GShaderResourceView>
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
-                           const GShaderResourceViewElement& srvParams) override;
+                           SPtr<GShaderResourceViewElement> srvParams) override;
 
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,
@@ -57,10 +57,13 @@ public:
   createPixelShader(SPtr<GShaderBlob> blob) override;
 
   virtual SPtr<GraphicsBuffer>
-  createGraphicsBuffer(const GBufferElement& bufferElement) override;
+  createGraphicsBuffer(SPtr<GBufferElement> bufferParams) override;
 
   virtual SPtr<GRasterizerState>
-  createRasterizerState(const GRasterizerElement& rasterizerElement) override;
+  createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) override;
+
+  virtual SPtr<GTexture>
+  createTexture2D(SPtr<GTextureElement> textureParams) override;
 
 public:
 
