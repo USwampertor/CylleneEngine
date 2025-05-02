@@ -57,6 +57,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyRandomUT", "cyRandomUT\cy
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cyGraphicsUT", "cyGraphicsUT\cyGraphicsUT.vcxproj", "{A02D1C84-5AE7-440E-B5FF-E3503D1359F8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D82687E1-8BAE-4766-B409-B72E2947C4F4} = {D82687E1-8BAE-4766-B409-B72E2947C4F4}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
