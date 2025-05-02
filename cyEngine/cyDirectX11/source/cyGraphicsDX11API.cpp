@@ -131,10 +131,18 @@ GraphicsDX11API::initialize(void* pHandle) {
   queryInterface(scDesc.Width, scDesc.Height);
 }
 
-SPtr<GDevice>
-GraphicsDX11API::createDevice(const GDeviceElement& deviceParams) {
+
+void
+GraphicsDX11API::shutdown() {
 
 }
+
+// SPtr<GDevice>
+// GraphicsDX11API::createDevice(const GDeviceElement& deviceParams) {
+// 
+// }
+
+
 
 SPtr<GSwapChain>
 GraphicsDX11API::createSwapChain(const SPtr<GDevice>& device,

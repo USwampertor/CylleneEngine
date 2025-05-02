@@ -163,17 +163,17 @@ GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
     d3d11Descriptor.push_back(desc);
   }
 
-  HRESULT hr = m_pDevice->CreateInputLayout(d3d11Descriptor.data(),
-                                            d3d11Descriptor.size(),
-                                /*pShader*/ desc->getBlob()->GetBufferPointer(),
-                                /*pShader*/ desc->getBlob()->GetBufferSize(),
-                                            &sPtrInputLayout->m_pInputLayout);
-
-
-  if (FAILED(hr)) {
-    MessageBox(nullptr, "Error creating Input layout", "Error", MB_OK);
-    return nullptr;
-  }
+  // HRESULT hr = m_pDevice->CreateInputLayout(d3d11Descriptor.data(),
+  //                                           d3d11Descriptor.size(),
+  //                               /*pShader*/ desc->getBlob()->GetBufferPointer(),
+  //                               /*pShader*/ desc->getBlob()->GetBufferSize(),
+  //                                           &sPtrInputLayout->m_pInputLayout);
+  // 
+  // 
+  // if (FAILED(hr)) {
+  //   MessageBox(nullptr, "Error creating Input layout", "Error", MB_OK);
+  //   return nullptr;
+  // }
 }
 
 

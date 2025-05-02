@@ -18,6 +18,33 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\cyDirectX11Prerequisites.h" />
+    <ClInclude Include="include\cyDX11GraphicsBuffer.h" />
+    <ClInclude Include="include\cyGDX11DepthStencilView.h" />
+    <ClInclude Include="include\cyGDX11Device.h" />
+    <ClInclude Include="include\cyGDX11DeviceContext.h" />
+    <ClInclude Include="include\cyGDX11InputLayout.h" />
+    <ClInclude Include="include\cyGDX11Mesh.h" />
+    <ClInclude Include="include\cyGDX11RenderTargetView.h" />
+    <ClInclude Include="include\cyGDX11Shader.h" />
+    <ClInclude Include="include\cyGDX11SwapChain.h" />
+    <ClInclude Include="include\cyGDX11Texture.h" />
+    <ClInclude Include="include\cyGraphicsDX11API.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\cyDX11GraphicsBuffer.cpp" />
+    <ClCompile Include="source\cyGDX11DepthStencilView.cpp" />
+    <ClCompile Include="source\cyGDX11Device.cpp" />
+    <ClCompile Include="source\cyGDX11DeviceContext.cpp" />
+    <ClCompile Include="source\cyGDX11InputLayout.cpp" />
+    <ClCompile Include="source\cyGDX11Mesh.cpp" />
+    <ClCompile Include="source\cyGDX11RenderTargetView.cpp" />
+    <ClCompile Include="source\cyGDX11Shader.cpp" />
+    <ClCompile Include="source\cyGDX11SwapChain.cpp" />
+    <ClCompile Include="source\cyGDX11Texture.cpp" />
+    <ClCompile Include="source\cyGraphicsDX11API.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -184,31 +211,6 @@
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="include\cyDirectX11Prerequisites.h" />
-    <ClInclude Include="include\cyDX11GraphicsBuffer.h" />
-    <ClInclude Include="include\cyGDX11DepthStencilView.h" />
-    <ClInclude Include="include\cyGDX11Device.h" />
-    <ClInclude Include="include\cyGDX11DeviceContext.h" />
-    <ClInclude Include="include\cyGDX11InputLayout.h" />
-    <ClInclude Include="include\cyGDX11Mesh.h" />
-    <ClInclude Include="include\cyGDX11Shader.h" />
-    <ClInclude Include="include\cyGDX11SwapChain.h" />
-    <ClInclude Include="include\cyGDX11Texture.h" />
-    <ClInclude Include="include\cyGraphicsDX11API.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\cyDX11GraphicsBuffer.cpp" />
-    <ClCompile Include="source\cyGDX11DepthStencilView.cpp" />
-    <ClCompile Include="source\cyGDX11Device.cpp" />
-    <ClCompile Include="source\cyGDX11DeviceContext.cpp" />
-    <ClCompile Include="source\cyGDX11InputLayout.cpp" />
-    <ClCompile Include="source\cyGDX11Mesh.cpp" />
-    <ClCompile Include="source\cyGDX11Shader.cpp" />
-    <ClCompile Include="source\cyGDX11SwapChain.cpp" />
-    <ClCompile Include="source\cyGraphicsDX11API.cpp" />
-    <ClCompile Include="source\cyGDX11Texture.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

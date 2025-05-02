@@ -23,7 +23,7 @@ namespace CYLLENE_SDK {
 
 	namespace GFXTYPE
 	{
-	BETTER_ENUM(E, uint32, 
+	BETTER_ENUM(E, int32, 
 							eUNKNOWN = -1,
 							eNONE = 0,
 							eDX09 = 1,

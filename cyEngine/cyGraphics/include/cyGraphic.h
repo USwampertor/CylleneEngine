@@ -6,7 +6,7 @@ namespace CYLLENE_SDK
 
   namespace PRIMITIVE_TOPOLOGY
   {
-    BETTER_ENUM(E, uint32,
+    BETTER_ENUM(E, int32,
       eUNKNOWN = -1,
       ePOINTLIST = 0,
       eLINELIST = 1,
@@ -22,7 +22,7 @@ namespace CYLLENE_SDK
 
   namespace GRAPHIC_TYPE
   {
-    BETTER_ENUM(E, uint32,
+    BETTER_ENUM(E, int32,
       eUNKNOWN = -1,
       eNONE = 0,
       eMODEL = 1,

@@ -17,24 +17,27 @@ public:
   virtual void
   shutdown() override;
 
-  virtual SPtr<GDevice>
-	createDevice(const GDeviceElement& deviceParams) override;
-
-  virtual SPtr<GDeviceContext>
-  createDeviceContext() override;
+//   virtual SPtr<GDevice>
+// 	createDevice(const GDeviceElement& deviceParams) override;
+// 
+//   virtual SPtr<GDeviceContext>
+//   createDeviceContext() override;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView() override;
+  createRenderTargetView(SPtr<GTexture> shaderResourceView,
+												 SPtr<GShaderResourceViewElement> srvParams) override;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView() override;
+  createDepthStencilView(SPtr<GTexture> depthStencilView,
+												 SPtr<GDepthStencilViewElement> dsvParams) override;
 
 	virtual SPtr<GSwapChain>
 	createSwapChain(const SPtr<GDevice>& device, 
 									const GSwapChainElement& swapChainParams) override;
 
   virtual SPtr<GShaderResourceView>
-  createShaderResourceView() override;
+  createShaderResourceView(SPtr<GTexture> shaderResourceView,
+													 SPtr<GShaderResourceViewElement> srvParams) override;
 
 	virtual SPtr<GTexture>
   createTexture2D(SPtr<TextureResource> texture,

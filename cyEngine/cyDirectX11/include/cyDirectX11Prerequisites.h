@@ -2,9 +2,16 @@
 
 #include <cyUtilitiesPrerequisites.h>
 
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <d3d11_2.h>
 
+
+
+
+
 #if CY_PLATFORM == CY_PLATFORM_WIN32
+
 # if CY_COMPILER == CY_COMPILER_MSVC
 #   if defined( CY_STATIC_LIB )
 #     define CY_DX11_EXPORT
