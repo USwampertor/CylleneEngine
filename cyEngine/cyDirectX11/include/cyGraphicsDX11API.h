@@ -47,7 +47,9 @@ public:
 
 	virtual SPtr<GTexture>
   createTexture2D(const Vector2i& size,
-									uint32 bindFlags, 
+									uint32 bindFlags,
+									uint32 format,
+									uint32 usage,		
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
 									GShaderResourceView* ppSRV = nullptr,
