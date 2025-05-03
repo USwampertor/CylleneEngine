@@ -118,6 +118,7 @@ GraphicsDX11API::initialize(void* pHandle) {
   IDXGIFactory2* pFactory2 = nullptr;
   pDXGIAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&pFactory2);
 
+  m_pSwapChain = std::make_shared<GDX11SwapChain>();
   SPtr<GDX11SwapChain> sPtrSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
 
   hr =

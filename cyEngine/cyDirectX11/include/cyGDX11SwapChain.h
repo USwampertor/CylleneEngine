@@ -21,6 +21,12 @@ public:
   virtual void
   set(void* pHandle) override;
 
+  virtual void
+  present() override;
+
+  virtual SPtr<GTexture>
+  getBuffer(uint32 num) override;
+
 public:
 
   IDXGISwapChain1* m_pSwapChain = nullptr;
