@@ -32,7 +32,7 @@ public:
   virtual ~GSwapChain() {}
 
   virtual void
-  present() = 0;
+  present(uint32 syncInterval = 0, uint32 flags = 0) = 0;
 
   virtual SPtr<GTexture>
   getBuffer(uint32 num) = 0;
