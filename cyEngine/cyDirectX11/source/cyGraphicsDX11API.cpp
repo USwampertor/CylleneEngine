@@ -49,7 +49,8 @@ GraphicsDX11API::initialize(void* pHandle) {
   DX11_SAFE_RELEASE(pAdapter);
   DX11_SAFE_RELEASE(pFactory);
 
-  Vector<D3D_FEATURE_LEVEL> vFeatureLevels = { D3D_FEATURE_LEVEL_11_1,
+  Vector<D3D_FEATURE_LEVEL> vFeatureLevels = { D3D_FEATURE_LEVEL_12_0,
+                                               D3D_FEATURE_LEVEL_11_1,
                                                D3D_FEATURE_LEVEL_11_0,
                                                D3D_FEATURE_LEVEL_10_1,
                                                D3D_FEATURE_LEVEL_10_0,
@@ -87,7 +88,7 @@ GraphicsDX11API::initialize(void* pHandle) {
                                  &pDeviceContext);
 
   if (FAILED(hr)) {
-    WindowManager::ShowErrorMessage("Error", "Failed to create device");
+    WindowManager::ShowErrorMessage("Error", Utils::format("Failed to create Device %l", hr));
     return;
   }
 

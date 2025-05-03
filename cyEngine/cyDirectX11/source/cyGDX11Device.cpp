@@ -105,14 +105,14 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
     desc->ArraySize = 1;
     desc->BindFlags = textureParams->bindFlags;
     desc->CPUAccessFlags = textureParams->cpuAccessFlags;
-    desc->Format;// = textureParams->;
+    desc->Format = static_cast<DXGI_FORMAT>(textureParams->format);
     desc->Height = textureParams->height;
     desc->Width = textureParams->width;
     desc->MipLevels = textureParams->mipLevels;
     desc->MiscFlags = 0;
     desc->SampleDesc.Count = 1; //MSAA
     desc->SampleDesc.Quality = 0;
-    desc->Usage; // = textureParams->usage;
+    desc->Usage = static_cast<D3D11_USAGE>(textureParams->usage);
   }
   if (FAILED(m_pDevice->CreateTexture2D(desc, nullptr, &pTexture->m_texture))) {
     return nullptr;
