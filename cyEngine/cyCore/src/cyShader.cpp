@@ -1,4 +1,6 @@
 #include "cyShader.h"
+#include <cyJSON.h>
+#include <cyLogger.h>
 
 namespace CYLLENE_SDK {
 
@@ -9,8 +11,18 @@ ShaderResource::getData() {
 
 void
 ShaderResource::setData(void* data) {
-  String& s = *(static_cast<String*>(data));
-  m_data = s;
+  JSONDocument d;
+  String dataString = *reinterpret_cast<String*>(data);
+  d.Parse(dataString);
+  
+  if (d["type"].GetString() != "shader") {
+    Logger::instance().logError("The shader resource is not a shader");
+    return;
+  }
+
+  m_data = d["data"].GetString();
+  m_isBlob = d["isBlob"].GetBool();
+
 }
 
 }
