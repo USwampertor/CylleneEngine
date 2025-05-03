@@ -12,7 +12,7 @@ using Callback = std::function<ReturnType(Args...)>;
 
 
 template<typename ReturnType, typename... Args>
-class Event
+class CY_UTILITY_EXPORT Event
 {
 public:
 

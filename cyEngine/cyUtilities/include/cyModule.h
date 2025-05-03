@@ -20,7 +20,7 @@ namespace CYLLENE_SDK {
   *        Its a nicely done singleton, (I CANT BELIEVE ITS NOT SINGLETON!)
   */
 template <class T>
-class Module
+class CY_UTILITY_EXPORT Module
 {
  public:
 
