@@ -11,10 +11,8 @@
 
 #include "cyUtilitiesPrerequisites.h"
 
-#include "cyModule.h"
-
 namespace CYLLENE_SDK {
-struct DLLLoader {
+struct CY_UTILITY_EXPORT DLLLoader {
  public:
  
   /**
@@ -37,7 +35,7 @@ struct DLLLoader {
    *          any error retrieving the information
    */
   static void*
-  load(const String& path, const String& functionName = "create", bool isOSDll = true);
+  load(const String& path, const String& functionName = String("create"), bool isOSDll = true);
 
 };
 }

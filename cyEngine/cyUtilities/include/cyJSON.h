@@ -47,7 +47,7 @@ using JSONWriter = rapidjson::Writer<T>;
 
 using JSONStringBuffer = rapidjson::StringBuffer;
 
-class JSONDocument : public rapidjson::Document
+class CY_UTILITY_EXPORT JSONDocument : public rapidjson::Document
 {
 public:
 
