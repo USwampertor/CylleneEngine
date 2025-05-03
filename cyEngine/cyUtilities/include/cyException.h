@@ -21,7 +21,7 @@ using std::is_base_of;
 # pragma warning( disable : 4275 )
 #endif
 
-class CY_UTILITY_EXPORT Exception : public StdException
+class Exception : public StdException
 {
  public:
   Exception(const char* type, 
