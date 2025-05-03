@@ -11,6 +11,7 @@ struct GTextureElement
   uint32 width;
   uint32 height;
   uint32 depth;
+  uint32 usage;
   uint32 mipLevels;
   uint32 arraySize;
   uint32 sampleCount;
