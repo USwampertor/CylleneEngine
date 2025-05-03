@@ -4,7 +4,7 @@
 #include <cyDLLLoader.h>
 #include <cyGraphicsAPI.h>
 #include <cyWindow.h> 
-
+#include <cyLogger.h> 
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -19,11 +19,28 @@ using namespace CYLLENE_SDK;
 int32
 main(int argc, char* argv[])
 {
+  Logger::startUp();
+
+
+  WindowManager::startUp();
+  WindowManager::instance().init();
+  SPtr<Window*> window = WindowManager::instance().createWindow("Test", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
+
+  auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(reinterpret_cast<SDL_Window*>(window.get())),
+    SDL_PROP_WINDOW_WIN32_HWND_POINTER,
+    nullptr);
 
   GraphicsDX11API::startUp<GraphicsDX11API>();
-  GraphicsDX11API::instance().initialize(nullptr);
+  GraphicsDX11API::instance().initialize(hwnd);
 
 
+
+
+
+
+  WindowManager::shutDown();
+
+  return 0;
 
   doctest::Context context;
 
