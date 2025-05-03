@@ -315,6 +315,8 @@ GraphicsDX11API::compileShader(const String& data,
     }
     return sPtrShaderBlob;
   }
+  sPtrShaderBlob->size = pBlob->GetBufferSize();
+
   sPtrShaderBlob->isCompiled = true;
   sPtrShaderBlob->m_pBlob = pBlob;
   return std::static_pointer_cast<GShaderBlob>(sPtrShaderBlob);
@@ -337,7 +339,7 @@ GraphicsDX11API::createVertexShader(SPtr<ShaderResource> shader,
 SPtr<GPixelShader>
 GraphicsDX11API::createPixelShader(SPtr<ShaderResource> shader,
                                    const String& entry) {
-  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "ps_5_0");
 
   if (!sPtrShaderBlob->isCompiled) {
     return nullptr;

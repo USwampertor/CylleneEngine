@@ -20,14 +20,6 @@ public:
     return m_pBlob;
   }
 
-  uint32 size;
-  uint32 type;
-  String entry;
-  String model;
-  String data;
-  String error;
-  bool isCompiled = false;
-
   ID3DBlob* m_pBlob;
 };
 
