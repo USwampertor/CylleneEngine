@@ -24,11 +24,9 @@ main(int argc, char* argv[])
 
   WindowManager::startUp();
   WindowManager::instance().init();
-  SPtr<Window*> window = WindowManager::instance().createWindow("Test", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
+  SPtr<Window> window = WindowManager::instance().createWindow("Test", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
 
-  auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(reinterpret_cast<SDL_Window*>(window.get())),
-    SDL_PROP_WINDOW_WIN32_HWND_POINTER,
-    nullptr);
+  void* hwnd = WindowManager::instance().getWindowHandle(0);
 
   GraphicsDX11API::startUp<GraphicsDX11API>();
   GraphicsDX11API::instance().initialize(hwnd);
