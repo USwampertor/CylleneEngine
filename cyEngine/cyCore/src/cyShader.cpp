@@ -14,8 +14,12 @@ ShaderResource::setData(void* data) {
   JSONDocument d;
   String dataString = *reinterpret_cast<String*>(data);
   d.Parse(dataString);
-  
-  if (d["type"].GetString() != "shader") {
+  if (d.HasParseError()) {
+    Logger::instance().logError("The shader resource is not a valid JSON");
+    return;
+  }
+  String type = d["type"].GetString();
+  if (type != "shader") {
     Logger::instance().logError("The shader resource is not a shader");
     return;
   }
