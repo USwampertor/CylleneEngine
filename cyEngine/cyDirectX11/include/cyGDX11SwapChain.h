@@ -22,7 +22,7 @@ public:
   set(void* pHandle) override;
 
   virtual void
-  present() override;
+  present(uint32 syncInterval = 0, uint32 flags = 0) override;
 
   virtual SPtr<GTexture>
   getBuffer(uint32 num) override;

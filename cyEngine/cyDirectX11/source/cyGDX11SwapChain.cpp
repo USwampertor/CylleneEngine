@@ -20,9 +20,9 @@ GDX11SwapChain::set(void* pHandle) {
 }
 
 void
-GDX11SwapChain::present() {
+GDX11SwapChain::present(uint32 syncInterval/* = 0*/, uint32 flags/* = 0*/) {
   if (m_pSwapChain) {
-    m_pSwapChain->Present(0, 0);
+    m_pSwapChain->Present(syncInterval, flags);
   }
 }
 

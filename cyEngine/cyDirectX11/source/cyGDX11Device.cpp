@@ -53,18 +53,21 @@ GDX11Device::queryInterface(SPtr<GSwapChain> swapChain,
 SPtr<GDepthStencilView>
 GDX11Device::createDepthStencilView(SPtr<GTexture> depthStencilView,
                                     SPtr<GDepthStencilViewElement> dsvParams) {
-  D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC();
-  dsvDesc.Format; // = format;
-  dsvDesc.Texture2D.MipSlice = 0;
-  dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
+  D3D11_DEPTH_STENCIL_VIEW_DESC* dsvDesc = dsvParams != nullptr ? new CD3D11_DEPTH_STENCIL_VIEW_DESC() : nullptr;
+
+  if (dsvDesc != nullptr) {
+    // D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC();
+    dsvDesc->Flags = 0;
+    dsvDesc->Format; // = format;
+    dsvDesc->Texture2D.MipSlice = 0;
+    dsvDesc->ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+  }
+  
   SPtr<GDX11DepthStencilView> pDepthStencilView = std::make_shared<GDX11DepthStencilView>();
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
 
-
-  m_pDevice->CreateDepthStencilView(pTexture->m_texture, &dsvDesc, &pDepthStencilView->m_pDSV);
-
-  if (FAILED(m_pDevice->CreateDepthStencilView(pTexture->m_texture, &dsvDesc, &pDepthStencilView->m_pDSV))) {
+  if (FAILED(m_pDevice->CreateDepthStencilView(pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
     return nullptr;
   }
   return std::static_pointer_cast<GDepthStencilView>(pDepthStencilView);
@@ -73,15 +76,18 @@ GDX11Device::createDepthStencilView(SPtr<GTexture> depthStencilView,
 SPtr<GRenderTargetView>
 GDX11Device::createRenderTargetView(SPtr<GTexture> renderTargetView, 
                                     SPtr<GRenderTargetViewElement> rtvParams) {
-  D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = CD3D11_RENDER_TARGET_VIEW_DESC();
-  rtvDesc.Format; // = format;
-  rtvDesc.Texture2D.MipSlice = 0;
-  rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
   
+  D3D11_RENDER_TARGET_VIEW_DESC* rtvDesc = rtvParams ? new CD3D11_RENDER_TARGET_VIEW_DESC() : nullptr;
+  if (rtvDesc != nullptr) {
+    // D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = CD3D11_RENDER_TARGET_VIEW_DESC();
+    rtvDesc->Format; // = format;
+    rtvDesc->Texture2D.MipSlice = 0;
+    rtvDesc->ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+  }
   SPtr<GDX11RenderTargetView> pRenderTargetView = std::make_shared<GDX11RenderTargetView>();
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
 
-  if (FAILED(m_pDevice->CreateRenderTargetView(pTexture->m_texture, &rtvDesc, &pRenderTargetView->m_pRTV))) {
+  if (FAILED(m_pDevice->CreateRenderTargetView(pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
     return nullptr;
   }
   return std::static_pointer_cast<GRenderTargetView>(pRenderTargetView);
@@ -91,26 +97,24 @@ SPtr<GTexture>
 GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
 
   SPtr<GDX11Texture> pTexture = std::make_shared<GDX11Texture>();
-
-  D3D11_TEXTURE2D_DESC desc;
-
   memset(&pTexture->m_texture, 0, sizeof(pTexture->m_texture));
 
-  desc.ArraySize = 1;
-  desc.BindFlags = textureParams->bindFlags;
-  desc.CPUAccessFlags = textureParams->cpuAccessFlags;
-  desc.Format;// = textureParams->;
-  desc.Height = textureParams->height;
-  desc.Width = textureParams->width;
-  desc.MipLevels = textureParams->mipLevels;
-  desc.MiscFlags = 0;
+  D3D11_TEXTURE2D_DESC* desc = textureParams != nullptr ? new CD3D11_TEXTURE2D_DESC : nullptr;
 
-  desc.SampleDesc.Count = 1; //MSAA
-  desc.SampleDesc.Quality = 0;
-
-  desc.Usage; // = textureParams->usage;
-
-  if (FAILED(m_pDevice->CreateTexture2D(&desc, nullptr, &pTexture->m_texture))) {
+  if (desc != nullptr) {
+    desc->ArraySize = 1;
+    desc->BindFlags = textureParams->bindFlags;
+    desc->CPUAccessFlags = textureParams->cpuAccessFlags;
+    desc->Format;// = textureParams->;
+    desc->Height = textureParams->height;
+    desc->Width = textureParams->width;
+    desc->MipLevels = textureParams->mipLevels;
+    desc->MiscFlags = 0;
+    desc->SampleDesc.Count = 1; //MSAA
+    desc->SampleDesc.Quality = 0;
+    desc->Usage; // = textureParams->usage;
+  }
+  if (FAILED(m_pDevice->CreateTexture2D(desc, nullptr, &pTexture->m_texture))) {
     return nullptr;
   }
   return std::static_pointer_cast<GTexture>(pTexture);

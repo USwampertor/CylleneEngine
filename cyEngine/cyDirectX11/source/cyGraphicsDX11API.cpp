@@ -15,6 +15,10 @@
 #include "cyGDX11InputLayout.h"
 #include "cyDX11GraphicsBuffer.h"
 
+#include <cyLogger.h>
+#include <cyWindow.h>
+#include <cyUtilities.h>
+
 namespace CYLLENE_SDK {
 
 GraphicsDX11API::~GraphicsDX11API() {
@@ -24,9 +28,9 @@ GraphicsDX11API::~GraphicsDX11API() {
 void
 GraphicsDX11API::initialize(void* pHandle) {
 
-  m_pWHandle = std::make_shared<void*>(pHandle);
+  // m_pWHandle = std::make_shared<void*>(pHandle);
 
-  HWND hwnd = static_cast<HWND>(static_cast<void*>(m_pWHandle.get()));
+  HWND hwnd = static_cast<HWND>(pHandle); //static_cast<HWND>(static_cast<void*>(m_pWHandle.get()));
   RECT rc;
   GetClientRect(hwnd, &rc);
 
@@ -58,6 +62,9 @@ GraphicsDX11API::initialize(void* pHandle) {
 
   m_pDevice = std::make_shared<GDX11Device>();
   m_pDeviceContext = std::make_shared<GDX11DeviceContext>();
+  m_pSwapChain = std::make_shared<GDX11SwapChain>();
+  m_pRenderTargetView = std::make_shared<GDX11RenderTargetView>();
+  m_pDepthStencilView = std::make_shared<GDX11DepthStencilView>();
 
   SPtr<GDX11Device> sPtrDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
   SPtr<GDX11DeviceContext> sPtrDeviceContext = std::static_pointer_cast<GDX11DeviceContext>(m_pDeviceContext);
@@ -80,7 +87,7 @@ GraphicsDX11API::initialize(void* pHandle) {
                                  &pDeviceContext);
 
   if (FAILED(hr)) {
-    MessageBox(hwnd, "Failed to create device", "Error", MB_OK);
+    WindowManager::ShowErrorMessage("Error", "Failed to create device");
     return;
   }
 
@@ -118,7 +125,6 @@ GraphicsDX11API::initialize(void* pHandle) {
   IDXGIFactory2* pFactory2 = nullptr;
   pDXGIAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&pFactory2);
 
-  m_pSwapChain = std::make_shared<GDX11SwapChain>();
   SPtr<GDX11SwapChain> sPtrSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
 
   hr =
@@ -132,7 +138,8 @@ GraphicsDX11API::initialize(void* pHandle) {
   pDXGIDevice->SetMaximumFrameLatency(3);
 
   if (FAILED(hr)) {
-    MessageBox(hwnd, "Failed to create swap chain", "Error", MB_OK);
+    WindowManager::ShowErrorMessage("Error", Utils::format("Failed to create swap Chain %l", hr));
+    
     return;
   }
   queryInterface(scDesc.Width, scDesc.Height);
@@ -416,11 +423,13 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
 
   SPtr<GDX11Device> pDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
   SPtr<GDX11DepthStencilView> pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(m_pDepthStencilView);
-  SPtr<GDX11RenderTargetView> pRenderTargetView = std::static_pointer_cast<GDX11RenderTargetView>(m_pRenderTargetView);
+  // SPtr<GDX11RenderTargetView> pRenderTargetView = std::static_pointer_cast<GDX11RenderTargetView>(m_pRenderTargetView);
   
   SPtr<GDX11Texture> pBackBuffer = std::static_pointer_cast<GDX11Texture>(m_pSwapChain->getBuffer(0));
   
-  pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
+  // pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
+
+  m_pRenderTargetView = pDevice->createRenderTargetView(pBackBuffer, nullptr);
 
   // TODO ?
   DX11_SAFE_RELEASE(pBackBuffer->m_texture);
