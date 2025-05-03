@@ -55,7 +55,7 @@ main(int32 argc, char* argv[]) {
 
   WindowManager::instance().init();
 
-  WPtr<Window*> window = WindowManager::instance().createWindow("SDL3 Window", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
+  WPtr<Window> window = WindowManager::instance().createWindow("SDL3 Window", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
 
   if (window.expired()) {
     std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
@@ -77,10 +77,10 @@ main(int32 argc, char* argv[]) {
   // }
 
   // Create an SDL3 renderer
-  SDL_Renderer* renderer = SDL_CreateRenderer(*window.lock().get(), nullptr);
+  SDL_Renderer* renderer = SDL_CreateRenderer(window.lock().get(), nullptr);
   if (!renderer) {
     std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-    SDL_DestroyWindow(*window.lock().get());
+    SDL_DestroyWindow(window.lock().get());
     SDL_Quit();
     return -1;
   }
@@ -106,7 +106,7 @@ main(int32 argc, char* argv[]) {
 
   // Cleanup
   SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(*window.lock().get());
+  SDL_DestroyWindow(window.lock().get());
   SDL_Quit();
 
   // std::cout << "Starting Core Unit Test" << std::endl;

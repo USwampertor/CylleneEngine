@@ -70,30 +70,40 @@ public:
   bool 
   init();
 
-  SPtr<Window*> 
+  SPtr<Window> 
   createWindow(const String& title,
                const int32& width, 
                const int32& height, 
                const int32& flags);
 
-  SPtr<Window*> 
+  SPtr<Window> 
   createWindow(const String& title,
                const Vector2i& size, 
                const int32& flags);
 
-  SPtr<Window*>
+  SPtr<Window>
   createWindow(const WindowSettings& settings);
 
-  SPtr<Window*>
+  SPtr<Window>
   getWindow(const int32& window);
 
-  SPtr<WindowRenderer*>
+  SPtr<WindowRenderer>
   createRenderer();
+
+  void*
+  getWindowHandle(const int32& window);
+
+  void*
+  getWindowProperty(const int32& window, 
+                    const String& property);
+
+  const int32
+  getWindowID(SPtr<Window> wndw);
 
   void
   finish();
 
-  Vector<SPtr<Window*>> m_windows;
+  Vector<SPtr<Window>> m_windows;
 
   static int32
   ShowWarningMessage( const String& title, const String& message) {
@@ -101,7 +111,7 @@ public:
   }
 
   static int32
-  ShowMessageBox(const MessageBoxData* data, int32* id) {
+  ShowMessageBox(const SPtr<MessageBoxData> data, int32* id) {
     return 0;
   }
 
