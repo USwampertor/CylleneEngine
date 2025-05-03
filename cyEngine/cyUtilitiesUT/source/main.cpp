@@ -6,7 +6,8 @@
 
 // Defining values for unit testing
 #include <cyUnitTesting.h>
-
+#include <cyLogger.h>
+#include <cyDLLLoader.h>
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
@@ -34,3 +35,16 @@ main(int argc, char* argv[])
 
   return res + EXIT_SUCCESS;
 }
+
+TEST_SUITE("Modules") {
+  TEST_CASE("Logger") {
+    Logger::startUp();
+  }
+}
+
+
+TEST_CASE("dllloading") {
+}
+
+
+
