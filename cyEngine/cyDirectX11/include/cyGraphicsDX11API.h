@@ -117,12 +117,6 @@ public:
 
 };
 
-MS_ALIGN(16)
-extern "C" CY_DX11_EXPORT GraphicsAPI*
-createPluginAPI() {
-  return new GraphicsDX11API();
-}
-GCC_ALIGN(16)
 
 
 }

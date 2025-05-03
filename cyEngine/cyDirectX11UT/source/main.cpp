@@ -1,6 +1,9 @@
 #include <cyUnitTesting.h>
 
 #include <cyGraphicsDX11API.h>
+#include <cyDLLLoader.h>
+#include <cyGraphicsAPI.h>
+#include <cyWindow.h> 
 
 
 // Using namespace for ease of use
@@ -16,8 +19,9 @@ using namespace CYLLENE_SDK;
 int32
 main(int argc, char* argv[])
 {
-  GraphicsDX11API::startUp();
 
+  GraphicsDX11API::startUp<GraphicsDX11API>();
+  GraphicsDX11API::instance().initialize(nullptr);
 
 
 
