@@ -403,12 +403,24 @@ ShaderCodec::decode(const File& f) {
   // 
   // delete(data);
 
-  SPtr<ShaderResource> newResource =
-    ResourceManager::instance().create<ShaderResource>(p.baseName());
+  // SPtr<ShaderResource> newResource =
+  //   ResourceManager::instance().create<ShaderResource>(p.baseName());
 
-  newResource->m_isBlob = p.extension().compare(".blob") == 0;
+  bool isBlob = p.extension().compare(".blob") == 0;
+
+  JSONDocument d;
+  d.SetObject();
+
+  JSONDocument::AllocatorType& allocator = d.GetAllocator();
+
+  d.AddMember("type", "shader", allocator);
+  d.AddMember("isBlob", isBlob, allocator);
+  d.AddMember("data", tmp, allocator);
+
+
   // return REINTERPRETPOINTER(Resource, newResource);
-  return nullptr;
+  return reinterpret_cast<void*>(new String(d.stringify()));
+
 }
   
 void*

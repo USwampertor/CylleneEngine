@@ -22,9 +22,6 @@ public:
   virtual void
   setData(void* data) override;
 
-  bool
-  compile();
-
 public:
 
   /**
