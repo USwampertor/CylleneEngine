@@ -431,10 +431,12 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   }
 
   SPtr<GDX11Device> pDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
-  SPtr<GDX11DepthStencilView> pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(m_pDepthStencilView);
+  SPtr<GDX11DepthStencilView> pDepthStencilView = 
+    std::static_pointer_cast<GDX11DepthStencilView>(m_pDepthStencilView);
   // SPtr<GDX11RenderTargetView> pRenderTargetView = std::static_pointer_cast<GDX11RenderTargetView>(m_pRenderTargetView);
   
-  SPtr<GDX11Texture> pBackBuffer = std::static_pointer_cast<GDX11Texture>(m_pSwapChain->getBuffer(0));
+  SPtr<GDX11Texture> pBackBuffer = 
+    std::static_pointer_cast<GDX11Texture>(m_pSwapChain->getBuffer(0));
   
   // pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
 
@@ -444,10 +446,11 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   DX11_SAFE_RELEASE(pBackBuffer->m_texture);
 
 
-  SPtr<GDX11Texture> pDepthStencil = std::static_pointer_cast<GDX11Texture>(createTexture2D(Vector2i(width, height),
-                                                                                            DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                                                                            D3D11_USAGE_DEFAULT,
-                                                                                            D3D11_BIND_DEPTH_STENCIL));
+  SPtr<GDX11Texture> pDepthStencil = 
+    std::static_pointer_cast<GDX11Texture>(createTexture2D(Vector2i(width, height),
+                                                           D3D11_BIND_DEPTH_STENCIL,
+                                                           DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                                           D3D11_USAGE_DEFAULT));
 
   if (!pDepthStencil->m_texture) {
     MessageBox(nullptr, "Failed to create depth stencil", "Error", MB_OK);

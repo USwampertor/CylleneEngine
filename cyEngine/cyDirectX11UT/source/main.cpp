@@ -5,6 +5,10 @@
 #include <cyGraphicsAPI.h>
 #include <cyWindow.h> 
 #include <cyLogger.h> 
+#include <cyResourceManager.h>
+#include <cyShader.h>
+#include <cyFileSystem.h>
+#include <cyGShader.h>
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -20,6 +24,7 @@ int32
 main(int argc, char* argv[])
 {
   Logger::startUp();
+  ResourceManager::startUp();
 
 
   WindowManager::startUp();
@@ -31,8 +36,17 @@ main(int argc, char* argv[])
   GraphicsDX11API::startUp<GraphicsDX11API>();
   GraphicsDX11API::instance().initialize(hwnd);
 
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
+  SPtr<ShaderResource> vsShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderVSF.path());
+  File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
+  SPtr<ShaderResource> psShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderPSF.path());
 
+  SPtr<GVertexShader> vShader = GraphicsDX11API::instance().createVertexShader(vsShaderR, 
+                                                                               "vertex_main");
 
+  SPtr<GPixelShader> pShader = GraphicsDX11API::instance().createPixelShader(psShaderR, 
+                                                                             "pixel_main");
 
 
 

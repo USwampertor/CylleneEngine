@@ -113,7 +113,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib;cyDirectX11d.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib;cyDirectX11d.lib;cyRandomd.lib;SDL3d.lib;shell32.lib;assimpd.lib;cppfsd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -138,7 +138,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib;cyDirectX11.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib;cyDirectX11.lib;cyRandom.lib;SDL3.lib;shell32.lib;assimp.lib;cppfs.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -159,7 +159,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib;cyDirectX11d.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib;cyDirectX11d.lib;cyRandomd.lib;SDL3d.lib;shell32.lib;assimpd.lib;cppfsd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -184,7 +184,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib;cyDirectX11.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib;cyDirectX11.lib;cyRandom.lib;SDL3.lib;shell32.lib;assimp.lib;cppfs.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
