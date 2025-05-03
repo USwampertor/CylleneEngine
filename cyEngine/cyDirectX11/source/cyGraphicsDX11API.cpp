@@ -243,6 +243,14 @@ GraphicsDX11API::createTexture2D(const Vector2i& size,
                                  SPtr<GRenderTargetView> ppRTV /* = nullptr */, 
                                  SPtr<GDepthStencilView> ppDSV /* = nullptr */) {
   SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
+  textureParams->width = size.x;
+  textureParams->height = size.y;
+  textureParams->bindFlags = bindFlags;
+  textureParams->format = format;
+  textureParams->usage = usage;
+  textureParams->cpuAccessFlags = cpuAccessFlags;
+  textureParams->mipLevels = mipFlags;
+
 
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
 
