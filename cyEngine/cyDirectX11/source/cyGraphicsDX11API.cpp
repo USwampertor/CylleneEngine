@@ -471,5 +471,10 @@ GraphicsDX11API::setViewport(int32 x, int32 y, int32 width, int32 height) {
   pDeviceContext->m_pDeviceContext->RSSetViewports(1, &vp);
 }
 
+void
+GraphicsDX11API::setViewport(const Rect& rect) {
+  setViewport(rect.x, rect.y, rect.width, rect.height);
+}
+
 
 }

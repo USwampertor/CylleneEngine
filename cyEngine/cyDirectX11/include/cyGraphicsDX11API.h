@@ -11,6 +11,9 @@ public:
   
   virtual ~GraphicsDX11API() override;
   
+	virtual GFXTYPE::E
+	getType() const { return GFXTYPE::E::eDX11; }
+
   virtual void
   initialize(void* pHandle) override;
 
@@ -108,8 +111,19 @@ public:
 
 	virtual void
 	setViewport(int32 x, int32 y, int32 width, int32 height) override;
+	
+	virtual void
+	setViewport(const Rect& size) override;
 
 };
+
+MS_ALIGN(16)
+extern "C" CY_DX11_EXPORT GraphicsAPI*
+createPluginAPI() {
+  return new GraphicsDX11API();
+}
+GCC_ALIGN(16)
+
 
 }
 
