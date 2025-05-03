@@ -179,3 +179,12 @@ TEST_CASE("[resource] Creation of models") {
   }
 }
 
+TEST_CASE("[resources] Creation of shaders") {
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
+  SPtr<ShaderResource> vsShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderVSF.path());
+  File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
+  SPtr<ShaderResource> psShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderPSF.path());
+
+}
+
