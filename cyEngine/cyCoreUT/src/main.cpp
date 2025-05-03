@@ -46,84 +46,21 @@ main(int32 argc, char* argv[]) {
 
   std::cout << argv[0] << std::endl;
 
-  CrashHandler::startUp();
-  SmartPointers::startUp();
-  Logger::startUp();
-  Time::startUp();
-  ResourceManager::startUp();
-  WindowManager::startUp();
+  std::cout << "Starting Core Unit Test" << std::endl;
 
-  WindowManager::instance().init();
+  doctest::Context context;
 
-  WPtr<Window> window = WindowManager::instance().createWindow("SDL3 Window", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
+  context.applyCommandLine(argc, argv);
 
-  if (window.expired()) {
-    std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-    SDL_Quit();
-    return -1;
+  int32 res = context.run();
+
+  if (context.shouldExit()) {
+    return res;
   }
 
-  // if (!SDL_Init(SDL_INIT_VIDEO)) {
-  //   std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
-  //   return -1;
-  // }
+  context.clearFilters();
 
-  // Create an SDL3 window with OpenGL support
-  // SDL_Window* window = SDL_CreateWindow("SDL3 Window", 1280, 720, SDL_WINDOW_RESIZABLE);
-  // if (!window) {
-  //   std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-  //   SDL_Quit();
-  //   return -1;
-  // }
-
-  // Create an SDL3 renderer
-  SDL_Renderer* renderer = SDL_CreateRenderer(window.lock().get(), nullptr);
-  if (!renderer) {
-    std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-    SDL_DestroyWindow(window.lock().get());
-    SDL_Quit();
-    return -1;
-  }
-
-  // Main loop flag
-  int quit = 0;
-  Color clearColor = Color::MISSING;
-  // Main loop
-  bool running = true;
-  while (running) {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_EVENT_QUIT) {
-        running = false;
-      }
-    }
-
-    SDL_SetRenderDrawColor(renderer, 255 * clearColor.r, 255 * clearColor.g, 255 * clearColor.b, 255);
-    SDL_RenderClear(renderer);
-
-    SDL_RenderPresent(renderer);
-  }
-
-  // Cleanup
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window.lock().get());
-  SDL_Quit();
-
-  // std::cout << "Starting Core Unit Test" << std::endl;
-  // 
-  // doctest::Context context;
-  // 
-  // context.applyCommandLine(argc, argv);
-  // 
-  // int32 res = context.run();
-  // 
-  // if (context.shouldExit()) {
-  //   return res;
-  // }
-  // 
-  // context.clearFilters();
-  // 
-  // return res + EXIT_SUCCESS;
+  return res + EXIT_SUCCESS;
 
   return 0;
 }
@@ -183,8 +120,51 @@ TEST_CASE("[resources] Creation of shaders") {
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
   File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
   SPtr<ShaderResource> vsShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderVSF.path());
+  CHECK(!vsShaderR->m_data.empty());
   File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
+  CHECK(!vsShaderR->m_data.empty());
   SPtr<ShaderResource> psShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderPSF.path());
 
 }
 
+TEST_CASE("[window] Window creation") {
+  WindowManager::startUp();
+
+  WindowManager::instance().init();
+
+  WPtr<Window> window = WindowManager::instance().createWindow("SDL3 Window", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
+  CHECK(window.lock() != nullptr);
+  
+  // Create an SDL3 renderer
+  SDL_Renderer* renderer = SDL_CreateRenderer(window.lock().get(), nullptr);
+  
+  CHECK(renderer != nullptr);
+
+  // Main loop flag
+  int quit = 0;
+  Color clearColor = Color::MISSING;
+  // Main loop
+  bool running = true;
+  float timer = 0.0f;
+  while (timer < 3.0f) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      if (event.type == SDL_EVENT_QUIT) {
+        running = false;
+      }
+    }
+
+    SDL_SetRenderDrawColor(renderer, 255 * clearColor.r, 255 * clearColor.g, 255 * clearColor.b, 255);
+    SDL_RenderClear(renderer);
+
+    SDL_RenderPresent(renderer);
+
+    Time::instance().update();
+    timer += Time::instance().deltaTime();
+  }
+
+  // Cleanup
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window.lock().get());
+  SDL_Quit();
+}
