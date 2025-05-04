@@ -9,6 +9,7 @@
 #include <cyShader.h>
 #include <cyFileSystem.h>
 #include <cyGShader.h>
+#include <cyGInputLayout.h>
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -49,6 +50,17 @@ main(int argc, char* argv[])
                                                                              "pixel_main");
 
 
+  Vector<GInputLayoutElement> inputDescs = {
+    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "COLOR",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+  };
+
+  SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
+
+  if (!pInputLayout) {
+    WindowManager::ShowErrorMessage("Error", "Error creating Input Layout");
+  }
 
   WindowManager::shutDown();
 
