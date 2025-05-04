@@ -33,7 +33,7 @@ public:
 
   virtual void*
   getBlob() override {
-    return m_pBlob;
+    return reinterpret_cast<void*>(m_pBlob.get());
   }
 
   virtual void*
@@ -47,7 +47,7 @@ public:
 
 public:
 
-  GDX11ShaderBlob* m_pBlob = nullptr;
+  SPtr<GDX11ShaderBlob> m_pBlob = nullptr;
 
   ID3D11VertexShader* m_pVertexShader = nullptr;
 
@@ -63,7 +63,7 @@ public:
   
   virtual void*
   getBlob() override {
-    return m_pBlob;
+    return reinterpret_cast<void*>(m_pBlob.get());
   }
 
   virtual void*
@@ -78,7 +78,8 @@ public:
 
 public:
 
-  GDX11ShaderBlob* m_pBlob = nullptr;
+  SPtr<GDX11ShaderBlob> m_pBlob = nullptr;
+
 
   ID3D11PixelShader* m_pPixelShader = nullptr;
 

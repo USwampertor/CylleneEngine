@@ -62,6 +62,14 @@ main(int argc, char* argv[])
     WindowManager::ShowErrorMessage("Error", "Error creating Input Layout");
   }
 
+  while (true) {
+    WindowEvent event;
+
+
+
+  }
+  
+
   WindowManager::shutDown();
 
   return 0;

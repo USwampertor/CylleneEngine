@@ -125,6 +125,7 @@ GDX11Device::createVertexShader(SPtr<GShaderBlob> blob) {
   SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::static_pointer_cast<GDX11ShaderBlob>(blob);
   
   SPtr<GDX11VertexShader> sPtrShader = std::make_shared<GDX11VertexShader>();
+  sPtrShader->m_pBlob = sPtrShaderBlob;
   
   HRESULT hr = m_pDevice->CreateVertexShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
                                              sPtrShaderBlob->m_pBlob->GetBufferSize(),
@@ -145,6 +146,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
   SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::static_pointer_cast<GDX11ShaderBlob>(blob);
 
   SPtr<GDX11PixelShader> sPtrShader = std::make_shared<GDX11PixelShader>();
+  sPtrShader->m_pBlob = sPtrShaderBlob;
 
   HRESULT hr = m_pDevice->CreatePixelShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
                                             sPtrShaderBlob->m_pBlob->GetBufferSize(),
