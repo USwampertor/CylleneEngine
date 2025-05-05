@@ -33,6 +33,7 @@ using Window          = SDL_Window;
 using WindowEvent     = SDL_WindowEvent;
 using MessageBoxData  = SDL_MessageBoxData;
 using WindowRenderer  = SDL_Renderer;
+using SDLEvent        = SDL_Event;
 
 
   namespace WINDOW_INIT
@@ -87,6 +88,9 @@ public:
   SPtr<Window>
   getWindow(const int32& window);
 
+  void
+  destroyWindow(const int32& window);
+
   SPtr<WindowRenderer>
   createRenderer();
 
@@ -102,6 +106,9 @@ public:
 
   void
   finish();
+
+  bool
+  pollEvent(SPtr<SDLEvent> event);
 
   Vector<SPtr<Window>> m_windows;
 

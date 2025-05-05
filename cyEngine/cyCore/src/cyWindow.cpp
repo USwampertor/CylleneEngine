@@ -77,6 +77,10 @@ WindowManager::getWindowID(SPtr<Window> wndw) {
   return -1;
 }
 
+bool
+WindowManager::pollEvent(SPtr<SDLEvent> event) {
+  return SDL_PollEvent(event.get());
+}
 
 void
 WindowManager::finish() {
