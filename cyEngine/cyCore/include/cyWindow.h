@@ -19,8 +19,16 @@
 #include <cyVector3f.h>
 #include <cyVector4f.h>
 
-#define SDL_MAIN_USE_CALLBACKS 0
-#include <SDL3/SDL.h>
+
+#ifdef CY_PLATFORM == CY_PLATFORM_WIN32
+# define XWIN_WIN32
+#endif
+
+#include <CrossWindow/CrossWindow.h>
+
+// 
+// #define SDL_MAIN_USE_CALLBACKS 0
+// #include <SDL3/SDL.h>
 
 #ifdef CreateWindow
 # undef CreateWindow
@@ -29,25 +37,38 @@
 
 namespace CYLLENE_SDK {
 
-using Window          = SDL_Window;
-using WindowEvent     = SDL_WindowEvent;
-using MessageBoxData  = SDL_MessageBoxData;
-using WindowRenderer  = SDL_Renderer;
-using SDLEvent        = SDL_Event;
+using Window            = xwin::Window;
+using WindowDescriptor  = xwin::WindowDesc;
+using EventQueue        = xwin::EventQueue;
+using WindowEvent       = xwin::Event;
+
+struct MessageBoxData
+{
+  String title;
+  String message;
+  String windowTitle;
+  String buttonText;
+  int32      flags;
+};
+
+// using WindowEvent     = SDL_WindowEvent;
+// using MessageBoxData  = SDL_MessageBoxData;
+// using WindowRenderer  = SDL_Renderer;
+// using SDLEvent        = SDL_Event;
 
 
-  namespace WINDOW_INIT
-  {
-    BETTER_ENUM(E, uint32, 
-                eAUDIO    = SDL_INIT_AUDIO,
-                eVIDEO    = SDL_INIT_VIDEO,
-                eJOYSTICK = SDL_INIT_JOYSTICK,
-                eHAPTIC   = SDL_INIT_HAPTIC,
-                eGAMEPAD  = SDL_INIT_GAMEPAD,
-                eEVENTS   = SDL_INIT_EVENTS,
-                eSENSOR   = SDL_INIT_SENSOR,
-                eCAMERA   = SDL_INIT_CAMERA);
-  }
+  // namespace WINDOW_INIT
+  // {
+  //   BETTER_ENUM(E, uint32, 
+  //               eAUDIO    = SDL_INIT_AUDIO,
+  //               eVIDEO    = SDL_INIT_VIDEO,
+  //               eJOYSTICK = SDL_INIT_JOYSTICK,
+  //               eHAPTIC   = SDL_INIT_HAPTIC,
+  //               eGAMEPAD  = SDL_INIT_GAMEPAD,
+  //               eEVENTS   = SDL_INIT_EVENTS,
+  //               eSENSOR   = SDL_INIT_SENSOR,
+  //               eCAMERA   = SDL_INIT_CAMERA);
+  // }
 
 
 struct CY_CORE_EXPORT WindowSettings
@@ -91,8 +112,8 @@ public:
   void
   destroyWindow(const int32& window);
 
-  SPtr<WindowRenderer>
-  createRenderer();
+//   SPtr<WindowRenderer>
+//   createRenderer();
 
   void*
   getWindowHandle(const int32& window);
@@ -107,14 +128,17 @@ public:
   void
   finish();
 
-  bool
-  pollEvent(SPtr<SDLEvent> event);
-
-  Vector<SPtr<Window>> m_windows;
+  WindowEvent
+  pollEvent();
 
   static int32
   ShowWarningMessage( const String& title, const String& message) {
-    return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, title.c_str(), message.c_str(), nullptr);
+    WindowDescriptor desc;
+
+    // xwin::MessageDesc desc;
+    // xwin::showMessageBox(desc);
+    // return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, title.c_str(), message.c_str(), nullptr);
+    return 0;
   }
 
   static int32
@@ -124,7 +148,13 @@ public:
 
   static int32
   ShowErrorMessage( const String& title, const String& message) {
-    return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
+    // return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), message.c_str(), nullptr);
+    return 0;
   }
+
+
+public:
+
+  Vector<SPtr<Window>> m_windows;
 };
 }
