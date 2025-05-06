@@ -25,6 +25,8 @@
 #endif
 
 #include <CrossWindow/CrossWindow.h>
+#include <CrossWindow/Common/DialogsDesc.h>
+#include <CrossWindow/Common/Dialogs.h>
 
 // 
 // #define SDL_MAIN_USE_CALLBACKS 0
@@ -133,8 +135,9 @@ public:
 
   static int32
   ShowWarningMessage( const String& title, const String& message) {
-    WindowDescriptor desc;
-
+    xwin::MessageDesc mdesc;
+    mdesc.type = xwin::MessageType::Warning;
+    xwin::showMessageBox(mdesc);
     // xwin::MessageDesc desc;
     // xwin::showMessageBox(desc);
     // return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, title.c_str(), message.c_str(), nullptr);
