@@ -3,13 +3,13 @@
  * @file   	main.cpp
  * @author 	Marco "Swampy" Millan
  * @date 	2024/11/21
- * @brief 	
+ * @brief
  *
- * 
+ *
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+ /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
-// #define SDL_MAIN_USE_CALLBACKS 1
+ // #define SDL_MAIN_USE_CALLBACKS 1
 #include <iostream>
 
 #include <cyBeing.h>
@@ -127,44 +127,50 @@ TEST_CASE("[resources] Creation of shaders") {
 
 }
 
+
+
 TEST_CASE("[window] Window creation") {
   WindowManager::startUp();
 
   WindowManager::instance().init();
 
-  WPtr<Window> window = WindowManager::instance().createWindow("SDL3 Window", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
-  CHECK(window.lock() != nullptr);
-  
-  // Create an SDL3 renderer
-  SDL_Renderer* renderer = SDL_CreateRenderer(window.lock().get(), nullptr);
-  
-  CHECK(renderer != nullptr);
+  WindowManager::instance().createWindow("CrossWindow Window", Vector2i(1280, 720), 0);
 
-  // Main loop flag
+  CHECK(WindowManager::instance().m_windows.size() > 0);
+
   int quit = 0;
   Color clearColor = Color::MISSING;
   // Main loop
   bool running = true;
   float timer = 0.0f;
-  while (timer < 3.0f) {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_EVENT_QUIT) {
-        running = false;
+
+  SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
+  Time::instance().init();
+  Time::instance().update();
+  while (running) {
+    eventQueue->update();
+    Time::instance().update();
+    if (!eventQueue->empty()) {
+      WindowEvent event = eventQueue->front();
+      eventQueue->pop();
+
+      switch (event.type)
+      {
+      case xwin::EventType::MouseMove:
+        //mouse.x, mouse.y
+        break;
+      case xwin::EventType::Close:
+        WindowManager::instance().destroyWindow(0);
+        break;
+      default:
+        // Do nothing
+        break;
       }
     }
-
-    SDL_SetRenderDrawColor(renderer, 255 * clearColor.r, 255 * clearColor.g, 255 * clearColor.b, 255);
-    SDL_RenderClear(renderer);
-
-    SDL_RenderPresent(renderer);
-
-    Time::instance().update();
     timer += Time::instance().deltaTime();
-  }
+    if (timer > 30.0f) {
+      running = false;
+    }
 
-  // Cleanup
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window.lock().get());
-  SDL_Quit();
+  }
 }

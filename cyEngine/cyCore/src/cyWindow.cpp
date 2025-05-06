@@ -6,83 +6,107 @@ namespace CYLLENE_SDK {
 bool 
 WindowManager::init() {
 
-  if (!SDL_Init(WINDOW_INIT::E::eVIDEO)) {
-    String errorStr = Utils::format("Error initializing SDL: %s", SDL_GetError());
-    Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
-    return false;
-  }
+  // if (!SDL_Init(WINDOW_INIT::E::eVIDEO)) {
+  //   String errorStr = Utils::format("Error initializing SDL: %s", SDL_GetError());
+  //   Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+  //   return false;
+  // }
   return true;
 }
 
-SPtr<Window> 
+SPtr<WEventQueue>
 WindowManager::createWindow(const String& title,
                             const int32& width, 
                             const int32& height, 
                             const int32& flags) {
-  SPtr<Window> newWindow(SDL_CreateWindow(title.c_str(), width, height, flags),
-    [](Window* w) { if (w) SDL_DestroyWindow(w); });
-
-  if (!newWindow) {
+  // SPtr<Window> newWindow(SDL_CreateWindow(title.c_str(), width, height, flags),
+  //   [](Window* w) { if (w) SDL_DestroyWindow(w); });
+  // 
+  // if (!newWindow) {
+  //   CY_EXCEPT(InvalidStateException, "Window Manager was not able to create a window");
+  // }
+  // else {
+  //   m_windows.push_back(newWindow);
+  // }
+  SPtr<WEventQueue> newWindowEvent = std::make_shared<WEventQueue>();
+  SPtr<Window> newWindow = std::make_shared<Window>();
+  SPtr<WindowDesc> newWindowDesc = std::make_shared<WindowDesc>();
+  if (!newWindow->create(*newWindowDesc, *newWindowEvent)) {
     CY_EXCEPT(InvalidStateException, "Window Manager was not able to create a window");
   }
   else {
-    m_windows.push_back(newWindow);
+    m_windows.push_back(std::make_pair(newWindow,newWindowEvent));
   }
-  return newWindow;
+
+  return newWindowEvent;
 }
 
-SPtr<Window> 
+SPtr<WEventQueue>
 WindowManager::createWindow(const String& title,
                             const Vector2i& size, 
                             const int32& flags) {
   return createWindow(title, size.x, size.y, flags);
 }
 
-SPtr<Window>
+SPtr<WEventQueue>
 WindowManager::createWindow(const WindowSettings& settings) {
-  return createWindow(settings.title, 
-                      settings.size.x, 
-                      settings.size.y, 
-                      settings.flags);
+  return this->createWindow(settings.title, 
+                            settings.size, 
+                            settings.flags);
 }
   
 SPtr<Window>
 WindowManager::getWindow(const int32& window) {
-  return m_windows[window];
+  return std::get<0>(m_windows[window]);
+}
+
+SPtr<WEventQueue>
+WindowManager::getWEventQueue(const int32& window) {
+  return std::get<1>(m_windows[window]);
+}
+
+void
+WindowManager::destroyWindow(const int32& window) {
+  auto wndow = std::get<0>(m_windows[window]);
+  wndow->close();
 }
 
 void*
 WindowManager::getWindowHandle(const int32& window) {
-  auto wndow = m_windows[window];
-  auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(wndow.get()),
-                                                              SDL_PROP_WINDOW_WIN32_HWND_POINTER,
-                                                              nullptr);
-  return hwnd;
+  auto wndow = std::get<0>(m_windows[window]);
+  
+  // auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(wndow.get()),
+  //                                                             SDL_PROP_WINDOW_WIN32_HWND_POINTER,
+  //                                                             nullptr);
+  return wndow->getHwnd();
 }
-
-void*
-WindowManager::getWindowProperty(const int32& window, const String& property) {
-  auto wndow = m_windows[window];
-  auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(wndow.get()),
-                                                              property.c_str(),
-                                                              nullptr);
-  return hwnd;
-}
+// 
+// void*
+// WindowManager::getWindowProperty(const int32& window, const String& property) {
+//   auto wndow = std::get<0>(m_windows[window]);
+//   // auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(wndow.get()),
+//   //                                                             property.c_str(),
+//   //                                                             nullptr);
+// }
 
 const int32
 WindowManager::getWindowID(SPtr<Window> wndw) {
   for (int32 i = 0; i < m_windows.size(); ++i) {
-    if (m_windows[i] == wndw) { return i; }
+    if (std::get<0>(m_windows[i]) == wndw) { return i; }
   }
   return -1;
 }
 
+WindowEvent
+WindowManager::pollEvent() {
+  return WindowEvent();
+}
 
 void
 WindowManager::finish() {
   for (int32 i = 0; i < m_windows.size(); ++i) {
-    m_windows[i].reset();
+    std::get<0>(m_windows[i]).reset();
   }
-  SDL_Quit();
+  // SDL_Quit();
 }
 }

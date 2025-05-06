@@ -9,6 +9,7 @@
 #include <cyShader.h>
 #include <cyFileSystem.h>
 #include <cyGShader.h>
+#include <cyTime.h>
 #include <cyGInputLayout.h>
 
 // Using namespace for ease of use
@@ -26,11 +27,12 @@ main(int argc, char* argv[])
 {
   Logger::startUp();
   ResourceManager::startUp();
+  Time::startUp();
 
 
   WindowManager::startUp();
   WindowManager::instance().init();
-  SPtr<Window> window = WindowManager::instance().createWindow("Test", Vector2i(1280, 720), SDL_WINDOW_RESIZABLE);
+  WindowManager::instance().createWindow("Test", Vector2i(1280, 720), 0);
 
   void* hwnd = WindowManager::instance().getWindowHandle(0);
 
@@ -62,11 +64,35 @@ main(int argc, char* argv[])
     WindowManager::ShowErrorMessage("Error", "Error creating Input Layout");
   }
 
-  while (true) {
-    WindowEvent event;
+  SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
+  Time::instance().init();
+  Time::instance().update();
+  bool running = true;
+  float timer = 0.0f;
+  while (running) {
+    eventQueue->update();
+    Time::instance().update();
+    if (!eventQueue->empty()) {
+      WindowEvent event = eventQueue->front();
+      eventQueue->pop();
 
+      switch (event.type)
+      {
+      case xwin::EventType::MouseMove:
+        //mouse.x, mouse.y
+        break;
+      case xwin::EventType::Close:
+        WindowManager::instance().destroyWindow(0);
+        break;
+      default:
+        // Do nothing
+        break;
+      }
+    }
 
-
+    GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
+    GraphicsDX11API::instance().clear(Color::MISSING);
+    GraphicsDX11API::instance().present();
   }
   
 
