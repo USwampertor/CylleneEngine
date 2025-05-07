@@ -1,6 +1,7 @@
 #include <cyUnitTesting.h>
 
 #include <cyGraphicsDX11API.h>
+#include <cyGDX11Device.h>
 #include <cyDLLLoader.h>
 #include <cyGraphicsAPI.h>
 #include <cyWindow.h> 
@@ -11,10 +12,18 @@
 #include <cyGShader.h>
 #include <cyTime.h>
 #include <cyGInputLayout.h>
+#include <cyMatrix4.h>
+#include <cyModel.h>
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
+struct MatrixCollection
+{
+  Matrix4 world;
+  Matrix4 view;
+  Matrix4 projection;
+} matrices;
 
 /*
  *	@brief  Unit Testing main for Utilities
@@ -38,6 +47,9 @@ main(int argc, char* argv[])
 
   GraphicsDX11API::startUp<GraphicsDX11API>();
   GraphicsDX11API::instance().initialize(hwnd);
+
+  SPtr<GDevice> device = GraphicsDX11API::instance().getDevice();
+  SPtr<GDeviceContext> context = GraphicsDX11API::instance().getDeviceContext();
 
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
   File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
@@ -64,6 +76,31 @@ main(int argc, char* argv[])
     WindowManager::ShowErrorMessage("Error", "Error creating Input Layout");
     return -1;
   }
+
+  // camera shit
+
+  matrices.world = Matrix4::IDENTITY;
+  matrices.view = Matrix4::IDENTITY;
+  matrices.projection = Matrix4::IDENTITY;
+
+  matrices.world.transpose();
+  matrices.view.transpose();
+  matrices.projection.transpose();
+
+  Vector<char> data;
+  data.resize(sizeof(MatrixCollection));
+  memcpy(data.data(), &matrices, sizeof(MatrixCollection));
+  SPtr<GraphicsBuffer> constantBuffer = GraphicsDX11API::instance().createConstantBuffer(data);
+  if (!constantBuffer) {
+    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    return -1;
+  }
+
+  File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
+  SPtr<ModelResource> modelR = ResourceManager::instance().loadFromPath<ModelResource>(modelF.path());
+
+
+
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
@@ -101,17 +138,17 @@ main(int argc, char* argv[])
 
   return 0;
 
-  doctest::Context context;
+  doctest::Context dcontext;
 
-  context.applyCommandLine(argc, argv);
+  dcontext.applyCommandLine(argc, argv);
 
-  int32 res = context.run();
+  int32 res = dcontext.run();
 
-  if (context.shouldExit()) {
+  if (dcontext.shouldExit()) {
     return res;
   }
 
-  context.clearFilters();
+  dcontext.clearFilters();
 
   return res + EXIT_SUCCESS;
 }
