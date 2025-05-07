@@ -62,6 +62,7 @@ main(int argc, char* argv[])
 
   if (!pInputLayout) {
     WindowManager::ShowErrorMessage("Error", "Error creating Input Layout");
+    return -1;
   }
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
