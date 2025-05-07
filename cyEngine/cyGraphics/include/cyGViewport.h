@@ -23,6 +23,16 @@ public:
   void
   setViewport(int32 x, int32 y, int32 width, int32 height);
 
+  virtual void
+  set(void* data) override {
+    m_rect = *static_cast<Rect*>(data);
+  }
+
+  virtual void*
+  get() override {
+    return &m_rect;
+  }
+
 public:
 
   Rect m_rect;

@@ -159,7 +159,40 @@ public:
 	virtual void
 	setViewport(const Rect& rect) = 0;
 
-	
+  SPtr<GDevice>
+  getDevice() const { return m_pDevice; }
+  
+	SPtr<GDeviceContext>
+	getDeviceContext() const { return m_pDeviceContext; }
+
+  SPtr<GSwapChain>
+	getpSwapChain() const { return m_pSwapChain; }
+
+  SPtr<GRenderTargetView>
+	getRenderTargetView() const { return m_pRenderTargetView; }
+
+  SPtr<GDepthStencilView>
+	getDepthStencilView() const { return m_pDepthStencilView; }
+
+  SPtr<GRenderTargetView>
+    getRenderTargetView(uint32 index) const {
+		if (index < m_pRTVs.size()) {
+      return m_pRTVs[index];
+		}
+		else {
+      return nullptr;
+		}
+  }
+
+  SPtr<GDepthStencilView>
+	getDepthStencilView(uint32 index) const {
+		if (index < m_pDSVs.size()) {
+      return m_pDSVs[index];
+		}
+		else {
+      return nullptr;
+		}
+  }
 
 public:
 
@@ -181,6 +214,12 @@ public:
 	SPtr<GDepthStencilView> 
 	m_pDepthStencilView = nullptr;
 
+
+  Vector<SPtr<GRenderTargetView>>
+	m_pRTVs;
+
+  Vector<SPtr<GDepthStencilView>>
+  m_pDSVs;
 
 };
 
