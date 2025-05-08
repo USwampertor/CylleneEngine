@@ -19,6 +19,11 @@ public:
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eCAMERA; }
 
   void
+  setLookAt(const Vector3f& position,
+            const Vector3f& target, 
+            const Vector3f& up = Vector3f(0.0f, 1.0f, 0.0f));
+
+  void
   setPerspective(const float& newWidth, 
                  const float& newHeight, 
                  const float& newZNear, 
