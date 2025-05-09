@@ -19,19 +19,29 @@ WindowManager::createWindow(const String& title,
                             const int32& width, 
                             const int32& height, 
                             const int32& flags) {
-  // SPtr<Window> newWindow(SDL_CreateWindow(title.c_str(), width, height, flags),
-  //   [](Window* w) { if (w) SDL_DestroyWindow(w); });
-  // 
-  // if (!newWindow) {
-  //   CY_EXCEPT(InvalidStateException, "Window Manager was not able to create a window");
-  // }
-  // else {
-  //   m_windows.push_back(newWindow);
-  // }
+  
   SPtr<WEventQueue> newWindowEvent = std::make_shared<WEventQueue>();
   SPtr<Window> newWindow = std::make_shared<Window>();
-  SPtr<WindowDesc> newWindowDesc = std::make_shared<WindowDesc>();
-  if (!newWindow->create(*newWindowDesc, *newWindowEvent)) {
+  
+  WindowDesc settings;
+
+  settings.title = title;
+  settings.width = static_cast<uint32>(width);
+  settings.height = static_cast<uint32>(height);
+  settings.centered = flags & WINDOW_FLAGS::E::CENTERED;
+  settings.resizable = flags & WINDOW_FLAGS::E::RESIZABLE;
+  settings.movable = flags & WINDOW_FLAGS::E::MOVABLE;
+  settings.closable = flags & WINDOW_FLAGS::E::CLOSABLE;
+  settings.minimizable = flags & WINDOW_FLAGS::E::MINIMIZABLE;
+  settings.maximizable = flags & WINDOW_FLAGS::E::MAXIMIZABLE;
+  settings.canFullscreen = flags & WINDOW_FLAGS::E::CAN_FULLSCREEN;
+  settings.transparent = flags & WINDOW_FLAGS::E::TRANSPARENT;
+  settings.frame = flags & WINDOW_FLAGS::E::FRAME;
+  settings.hasShadow = flags & WINDOW_FLAGS::E::SHADOW;
+  settings.fullscreen = flags & WINDOW_FLAGS::E::FULLSCREEN;
+  settings.modal = flags & WINDOW_FLAGS::E::MODAL;
+
+  if (!newWindow->create(settings, *newWindowEvent)) {
     CY_EXCEPT(InvalidStateException, "Window Manager was not able to create a window");
   }
   else {
@@ -75,19 +85,8 @@ void*
 WindowManager::getWindowHandle(const int32& window) {
   auto wndow = std::get<0>(m_windows[window]);
   
-  // auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(wndow.get()),
-  //                                                             SDL_PROP_WINDOW_WIN32_HWND_POINTER,
-  //                                                             nullptr);
   return wndow->getHwnd();
 }
-// 
-// void*
-// WindowManager::getWindowProperty(const int32& window, const String& property) {
-//   auto wndow = std::get<0>(m_windows[window]);
-//   // auto hwnd = SDL_GetPointerProperty(SDL_GetWindowProperties(wndow.get()),
-//   //                                                             property.c_str(),
-//   //                                                             nullptr);
-// }
 
 const int32
 WindowManager::getWindowID(SPtr<Window> wndw) {

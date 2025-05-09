@@ -18,6 +18,8 @@
 #include <cyQuaternion.h>
 #include <cyUtilities.h>
 
+#include <cyMatrix4.h>
+
 namespace CYLLENE_SDK {
 
 class CY_CORE_EXPORT TransformComponent : public Component
@@ -30,44 +32,43 @@ public:
   TransformComponent(const Vector3f& position = Vector3f::ZERO,
                      const Vector3f& scale = Vector3f::ONE,
                      const Quaternion& rotation = Quaternion::IDENTITY)
-    : Component(TransformComponent::staticType()),
-      m_position(position),
-      m_scale(scale),
-      m_rotation(rotation) {}
+    : Component(TransformComponent::staticType()) {
+        m_tMatrix.setTransformMatrix(position, rotation, scale);
+      }
 
-  Vector3f&
+  const Vector3f&
   getPosition() {
-    return m_position;
+    return m_tMatrix.getPosition();
   }
 
   void
   setPosition(const Vector3f& newPos) {
-    m_position = newPos;
+    m_tMatrix.setPosition(newPos);
   }
 
-  Vector3f&
+  const Vector3f&
   getScale() {
-    return m_scale;
+    return m_tMatrix.getScale();
   }
 
   void
   setScale(const Vector3f& newScale) {
-    m_scale = newScale;
+    m_tMatrix.setScale(newScale);
   }
 
   Quaternion&
   getRotation() {
-    return m_rotation;
+    m_tMatrix.getQuatRotation();
   }
 
   void
   setRotation(const Quaternion& newRotation) {
-    m_rotation = newRotation;
+    m_tMatrix.setRotation(newRotation);
   }
 
-  Euler
+  Vector3f
   getEulerRotation() {
-    return m_rotation.toEuler(0);
+    return m_tMatrix.getEulerRotation();
   }
 
   void
@@ -78,14 +79,12 @@ public:
 
   void
   setTransform(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot) {
-    m_position  = newPos;
-    m_scale     = newSc;
-    m_rotation  = newRot;
+    m_tMatrix.setTransformMatrix(newPos, newRot, newSc);
   }
 
   void
   setTransform(const TransformComponent& other) {
-    setTransform(other.m_position, other.m_scale, other.m_rotation);
+    m_tMatrix = other;
   }
 
   void
@@ -105,30 +104,29 @@ public:
 
   void
   translate(const Vector3f& delta) {
-    m_position += delta;
+    m_tMatrix.translate(delta);
   }
 
   void 
   scale(const Vector3f& delta) {
-    m_scale += delta;
+    m_tMatrix.scale(delta);
   }
 
   void
   rotate(const Quaternion& delta) {
-    m_rotation += delta;
+    m_tMatrix.rotate(delta);
   }
 
   void
   rotate(const Vector3f& deltaAngles) {
+    m_tMatrix.rot
     Euler e(deltaAngles);
     m_rotation += Quaternion(e, 0);
   }
 
   void
   reset() {
-    m_position  = Vector3f::ZERO;
-    m_scale     = Vector3f::ONE;
-    m_rotation  = Quaternion::IDENTITY;
+    m_tMatrix.identity();
   }
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eTRANSFORM; }
@@ -138,20 +136,22 @@ public:
     String toReturn;
 
     toReturn = Utils::format("%s \n %s \n %s", 
-                             m_position.toString().c_str(), 
-                             m_rotation.toString().c_str(),
-                             m_scale.toString().c_str());
+                             m_tMatrix.getPosition().toString().c_str(), 
+                             m_tMatrix.getEulerRotation().toString().c_str(),
+                             m_tMatrix.getScale().toString().c_str());
 
     return toReturn;
   }
 
 private:
 
-  Vector3f m_position;
-  
-  Vector3f m_scale;
-  
-  Quaternion m_rotation;
+//   Vector3f m_position;
+//   
+//   Vector3f m_scale;
+//   
+//   Quaternion m_rotation;
+
+  Matrix4 m_tMatrix;
 
   WPtr<TransformComponent> m_parent;
   
