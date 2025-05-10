@@ -411,6 +411,43 @@ namespace CYLLENE_SDK {
     return w;
   }
 
+  void
+  Quaternion::fromMat3(const Matrix3& m) {
+    float trace = m._m.m00 + m._m.m11 + m._m.m22;
+
+    if (trace > 0) {
+      float S = sqrt(trace + 1.0f) * 2.0f; // S = 4 * w
+      w = 0.25f * S;
+      x = (m._m.m21 - m._m.m12) / S;
+      y = (m._m.m02 - m._m.m20) / S;
+      z = (m._m.m10 - m._m.m01) / S;
+    }
+    else if ((m._m.m00 > m._m.m11) && (m._m.m00 > m._m.m22)) {
+      float S = sqrt(1.0f + m._m.m00 - m._m.m11 - m._m.m22) * 2.0f; // S = 4 * x
+      w = (m._m.m21 - m._m.m12) / S;
+      x = 0.25f * S;
+      y = (m._m.m01 + m._m.m10) / S;
+      z = (m._m.m02 + m._m.m20) / S;
+    }
+    else if (m._m.m11 > m._m.m22) {
+      float S = sqrt(1.0f + m._m.m11 - m._m.m00 - m._m.m22) * 2.0f; // S = 4 * y
+      w = (m._m.m02 - m._m.m20) / S;
+      x = (m._m.m01 + m._m.m10) / S;
+      y = 0.25f * S;
+      z = (m._m.m12 + m._m.m21) / S;
+    }
+    else {
+      float S = sqrt(1.0f + m._m.m22 - m._m.m00 - m._m.m11) * 2.0f; // S = 4 * z
+      w = (m._m.m10 - m._m.m01) / S;
+      x = (m._m.m02 + m._m.m20) / S;
+      y = (m._m.m12 + m._m.m21) / S;
+      z = 0.25f * S;
+    }
+
+    // Normalize (optional, but recommended for numerical stability)
+    normalize();
+  }
+
   const Matrix3
   Quaternion::toMat3() const {
 

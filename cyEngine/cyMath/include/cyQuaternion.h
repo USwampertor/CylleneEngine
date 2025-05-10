@@ -320,6 +320,9 @@ public:
   const float&
   getScalarPart() const;
 
+  void
+  fromMat3(const Matrix3&);
+
   const Matrix3
   toMat3() const;
 

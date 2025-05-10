@@ -342,14 +342,54 @@ TEST_SUITE("Matrix4 Tests") {
     m.identity();
     m.setScale(Vector3f(2, 3, 4));
 
+    Vector3f s = m.getScale();
+
     CHECK(m.m[0][0] == 2.0f);
     CHECK(m.m[1][1] == 3.0f);
     CHECK(m.m[2][2] == 4.0f);
 
+    CHECK(s.x == 2.0f);
+    CHECK(s.y == 3.0f);
+    CHECK(s.z == 4.0f);
+
     m.scale(Vector3f(0.5f, 1.0f, 0.25f));
+
     CHECK(m.m[0][0] == 1.0f);
     CHECK(m.m[1][1] == 3.0f);
     CHECK(m.m[2][2] == 1.0f);
+
+    s = m.getScale();
+
+    CHECK(s.x == 1.0f);
+    CHECK(s.y == 3.0f);
+    CHECK(s.z == 1.0f);
+
+  }
+
+  TEST_CASE("Extract Rotation (Quaternion) from Matrix4") {
+    SUBCASE("No Rotation (Identity)") {
+      CYLLENE_SDK::Matrix4 m; // Identity matrix
+      m.identity();
+
+      CYLLENE_SDK::Quaternion q = m.getQuatRotation();
+      CHECK(q.w == doctest::Approx(1.0f)); // Identity quaternion
+      CHECK(q.x == doctest::Approx(0.0f));
+      CHECK(q.y == doctest::Approx(0.0f));
+      CHECK(q.z == doctest::Approx(0.0f));
+    }
+
+    SUBCASE("90-Degree Rotation Around Z") {
+      CYLLENE_SDK::Matrix4 m;
+      m.identity();
+      m.setRotation(Vector3f(0, 0, Math::DEG2RAD * 90.0f)); // Rotate 90° around Z
+
+      Quaternion q = m.getQuatRotation();
+      // Expected quaternion for 90° around Z: (0, 0, sin(45°), cos(45°))
+      CHECK(q.w == doctest::Approx(std::cos(Math::DEG2RAD * 45.0f)));
+      CHECK(q.x == doctest::Approx(0.0f));
+      CHECK(q.y == doctest::Approx(0.0f));
+      CHECK(q.z == doctest::Approx(std::sin(Math::DEG2RAD * 45.0f)));
+    }
   }
 
   TEST_CASE("Transformation Composition") {

@@ -241,6 +241,9 @@ class CY_MATH_EXPORT Matrix4
   rotate(const float& angle, const float& x, const float& y, const float& z);
 
   void
+  rotate(const Vector3f& delta);
+
+  void
   rotate(const Quaternion& rotation);
 
   void
@@ -282,11 +285,13 @@ class CY_MATH_EXPORT Matrix4
   Vector3f
   getScale() const;
 
-  Matrix3
-  subMatrix();
+  const Matrix3&
+  subMatrix() const;
 
   String
   toString();
+
+
 
   /**
     * ZERO filled Matrix
@@ -297,6 +302,13 @@ class CY_MATH_EXPORT Matrix4
     * IDENTITY matrix
     */
   static const Matrix4 IDENTITY;
+
+
+private:
+
+  void
+  removeScaleFromRotation(Vector3f scale, Matrix3& rotation) const;
+
 
 public:
 

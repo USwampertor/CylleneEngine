@@ -636,6 +636,13 @@ Matrix4::rotate(const Quaternion& rotation) {
 }
 
 void
+Matrix4::rotate(const Vector3f& delta) {
+  Quaternion q1;
+  q1.fromEuler(Euler(delta));
+  this->rotate(q1);
+}
+
+void
 Matrix4::setRotation(const Vector3f& rotation) {
   Quaternion q;
   q.fromEuler(Euler(rotation));
@@ -677,6 +684,13 @@ Matrix4::scale(const float& scale) {
 }
 
 Vector3f
+Matrix4::getForwardVector() const {
+  return Vector3f(m[2][0], 
+                  m[2][1], 
+                  m[2][2]).normalized();
+}
+
+Vector3f
 Matrix4::getRightVector() const {
   return Vector3f(m[0][0], 
                   m[0][1], 
@@ -691,11 +705,34 @@ Matrix4::getUpVector() const {
 }
 
 Vector3f
-Matrix4::getForwardVector() const {
-  return Vector3f(m[2][0], 
-                  m[2][1], 
-                  m[2][2]).normalized();
+Matrix4::getEulerRotation() const {
+  Quaternion q = getQuatRotation();
+  Euler e = q.toEuler();
+  return Vector3f(e.x, e.y, e.z);
 }
+
+Quaternion
+Matrix4::getQuatRotation() const {
+  Quaternion q;
+  Matrix3 m = this->subMatrix();
+  // remove scale
+  Vector3f scale = this->getScale();
+  Matrix3 normM = m;
+
+  removeScaleFromRotation(scale, normM);
+
+  q.setRotationMatrix(normM);
+  return q;
+}
+
+void
+Matrix4::removeScaleFromRotation(Vector3f scale, Matrix3& rotation) const {
+  rotation.m[0][0] /= scale.x; rotation.m[0][1] /= scale.x; rotation.m[0][2] /= scale.x;
+  rotation.m[1][0] /= scale.y; rotation.m[1][1] /= scale.y; rotation.m[1][2] /= scale.y;
+  rotation.m[2][0] /= scale.z; rotation.m[2][1] /= scale.z; rotation.m[2][2] /= scale.z;
+  
+}
+
 
 Vector3f
 Matrix4::getPosition() const {
@@ -704,8 +741,17 @@ Matrix4::getPosition() const {
                   m[3][2]);
 }
 
-Matrix3
-Matrix4::subMatrix() {
+Vector3f
+Matrix4::getScale() const {
+  Vector3f scale;
+  scale.x = std::sqrt(m[0][0] * m[0][0] + m[0][1] * m[0][1] + m[0][2] * m[0][2]);
+  scale.y = std::sqrt(m[1][0] * m[1][0] + m[1][1] * m[1][1] + m[1][2] * m[1][2]);
+  scale.z = std::sqrt(m[2][0] * m[2][0] + m[2][1] * m[2][1] + m[2][2] * m[2][2]);
+  return scale;
+}
+
+const Matrix3&
+Matrix4::subMatrix() const {
   return Matrix3(m[0][0], m[1][0], m[2][0],
                  m[0][1], m[1][1], m[2][1],
                  m[0][2], m[1][2], m[2][2]);
