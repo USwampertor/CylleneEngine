@@ -2,46 +2,56 @@
 
 #include "cyMathPrerequisites.h"
 
-#include "cyVector4f.h"
 #include "cyVector3f.h"
+#include "cyPrimitive.h"
 
 namespace CYLLENE_SDK {
 
-class CY_MATH_EXPORT AABB
+class CY_MATH_EXPORT AABB : public Primitive
 {
 public:
 
-  AABB() = default;
+  AABB() 
+    : Primitive(AABB::staticType()),
+      m_min(Vector3f::ZERO),
+      m_max(Vector3f::ONE) {}
 
-  AABB(const Point& min, const Point& max)
-    : m_min(min),
+  AABB(const Vector3f& min, const Vector3f& max)
+    : Primitive(AABB::staticType()),
+      m_min(min),
       m_max(max) {}
 
+
   AABB(const AABB& other)
-    : m_min(other.m_min),
+    : Primitive(AABB::staticType()),
+      m_min(other.m_min),
       m_max(other.m_max) {}
+
+  static PRIMITIVE_TYPE::E staticType() {
+    return PRIMITIVE_TYPE::E::AABB;
+  }
 
   Vector3f
   getDimensions();
 
-  Point
+  Vector3f
   getCenter();
 
-  String
-  toString();
+  virtual String
+  toString() override;
 
-  bool
-  intersects();
+  virtual bool
+  intersects(const Primitive& other) override;
 
   void
-  expandTo(const Point& pos);
+  expandTo(const Vector3f& pos);
 
   void
   expandTo(const AABB& other);
 
 public:
-  Point m_min;
-  Point m_max;
+  Vector3f m_min;
+  Vector3f m_max;
 };
 
 }

@@ -2,20 +2,32 @@
 
 #include "cyMathPrerequisites.h"
 #include "cyVector3f.h"
-
+#include "cyPrimitive.h"
 
 namespace CYLLENE_SDK
 {
 
-class CY_MATH_EXPORT Plane
+class CY_MATH_EXPORT Plane : public Primitive
 {
-  Plane() = default;
+  Plane()
+    : Primitive(Plane::staticType()),
+      m_origin(Vector3f::ZERO),
+      m_normal(Vector3f::ONEZ) {}
 
   Plane(const Vector3f& origin, const Vector3f& normal)
-    : m_origin(origin),
+    : Primitive(Plane::staticType()),
+      m_origin(origin),
       m_normal(normal) {}
 
+  static PRIMITIVE_TYPE::E staticType() {
+    return PRIMITIVE_TYPE::E::PLANE;
+  }
 
+  virtual bool
+  intersects(const Primitive& other) override;
+
+  virtual String
+  toString() override;
 
 private:
 

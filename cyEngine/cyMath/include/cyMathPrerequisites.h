@@ -29,3 +29,13 @@
 # define CY_MATH_EXPORT __attribute__ ((visibility ("default")))
 # define CY_MATH_HIDDEN __attribute__ ((visibility ("hidden")))
 #endif
+
+#define HANDSYS_LH 0
+#define HANDSYS_RH 1
+
+#define GAPI_GL  0
+#define GAPI_DX 1
+
+#define HANDSYSTEM HANDSYS_LH
+#define GAPI_MATHTYPE GAPI_GL
+

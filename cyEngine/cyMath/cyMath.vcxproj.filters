@@ -39,10 +39,10 @@
     <ClInclude Include="include\cyVector4f.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyMatrix2x2.h">
+    <ClInclude Include="include\cyMatrix2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyMatrix3x3.h">
+    <ClInclude Include="include\cyMatrix3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyMatrix4.h">
@@ -84,6 +84,18 @@
     <ClInclude Include="include\cyColor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyIntersections.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPrimitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyRect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyPlatformMath.cpp">
@@ -101,10 +113,10 @@
     <ClCompile Include="source\cyVector4f.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyMatrix2x2.cpp">
+    <ClCompile Include="source\cyMatrix2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyMatrix3x3.cpp">
+    <ClCompile Include="source\cyMatrix3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyMatrix4.cpp">
@@ -141,6 +153,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyColor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Primitive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

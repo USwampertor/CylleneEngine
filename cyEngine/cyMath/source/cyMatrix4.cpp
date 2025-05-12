@@ -1,22 +1,13 @@
 #include "cyMatrix4.h"
 #include "cyUtilities.h"
 
-#include "cyMatrix2x2.h"
-#include "cyMatrix3x3.h"
+#include "cyMatrix2.h"
+#include "cyMatrix3.h"
 #include "cyMath.h"
-
-#define LH 0
-#define RH 1
-
-#define OpenGL  0
-#define DirectX 1
-
-#define HandSystrem LH
-#define GraphicsAPI OpenGL
 
 namespace CYLLENE_SDK {
 Matrix4::Matrix4(const float& value) {
-  memset(&_m, static_cast<int32>(0), sizeof(_m));
+  memset(&_m, static_cast<float>(value), sizeof(_m));
 
   if (0 != value) {
     _m.m00 = _m.m11 = _m.m22 = _m.m33 = 1.0f;
@@ -26,24 +17,24 @@ Matrix4::Matrix4(const float& value) {
 Matrix4::Matrix4(const Matrix4& other)
   : _m(other._m) {}
 
-Matrix4::Matrix4(const Matrix3x3& other) {
+Matrix4::Matrix4(const Matrix3& other) {
   m[0][0] = other.m[0][0]; m[1][0] = other.m[1][0]; m[2][0] = other.m[2][0]; m[3][0] = 0;
   m[0][1] = other.m[0][1]; m[1][1] = other.m[1][1]; m[2][1] = other.m[2][1]; m[3][1] = 0;
   m[0][2] = other.m[0][1]; m[1][2] = other.m[1][1]; m[2][2] = other.m[2][1]; m[3][2] = 0;
   m[0][3] = 0;             m[1][3] = 0;             m[2][3] = 0;             m[3][3] = 0;
 }
 
-Matrix4::Matrix4(const Matrix2x2& other) {
+Matrix4::Matrix4(const Matrix2& other) {
   m[0][0] = other.m[0][0]; m[1][0] = other.m[1][0]; m[2][0] = 0; m[3][0] = 0;
   m[0][1] = other.m[0][1]; m[1][1] = other.m[1][1]; m[2][1] = 0; m[3][1] = 0;
   m[0][2] = 0;             m[1][2] = 0;             m[2][2] = 0; m[3][2] = 0;
   m[0][3] = 0;             m[1][3] = 0;             m[2][3] = 0; m[3][3] = 0;
 }
 
-Matrix4::Matrix4(const float& m00, const float& m10, const float& m20, const float& m30,  // Row 0
-                 const float& m01, const float& m11, const float& m21, const float& m31,  // Row 1
-                 const float& m02, const float& m12, const float& m22, const float& m32,  // Row 2
-                 const float& m03, const float& m13, const float& m23, const float& m33) {// Row 3
+Matrix4::Matrix4(const float& m00, const float& m10, const float& m20, const float& m30,   // Row 0
+                 const float& m01, const float& m11, const float& m21, const float& m31,   // Row 1
+                 const float& m02, const float& m12, const float& m22, const float& m32,   // Row 2
+                 const float& m03, const float& m13, const float& m23, const float& m33) { // Row 3
   m[0][0] = m00; m[1][0] = m10; m[2][0] = m20; m[3][0] = m30;
   m[0][1] = m01; m[1][1] = m11; m[2][1] = m21; m[3][1] = m31;
   m[0][2] = m02; m[1][2] = m12; m[2][2] = m22; m[3][2] = m32;
@@ -75,35 +66,41 @@ Matrix4::operator-(const Matrix4& b) {
 
 Matrix4
 Matrix4::operator*(const Matrix4& b) {
-  Matrix4 result;
+  Matrix4 tmp;
   for (int c = 0; c < 4; c++) {
     for (int r = 0; r < 4; r++) {
-      result.m[c][r] = 0;
+      tmp.m[c][r] = 0;
       for (int k = 0; k < 4; k++) {
-        result.m[c][r] += m[k][r] * b.m[c][k];
+        tmp.m[c][r] += m[k][r] * b.m[c][k];
       }
     }
   }
-  return result;
+  return tmp;
 }
 
 Matrix4&
 Matrix4::operator+=(const Matrix4& b) {
-  for (uint32 c = 0; c < 4; ++c) {
-    for (uint32 r = 0; r < 4; ++r) {
-      m[c][r] += b.m[c][r];
-    }
-  }
+  // for (uint32 c = 0; c < 4; ++c) {
+  //   for (uint32 r = 0; r < 4; ++r) {
+  //     m[c][r] += b.m[c][r];
+  //   }
+  // }
+  // return *this;
+
+  *this = *this + b;
   return *this;
 }
 
 Matrix4&
 Matrix4::operator-=(const Matrix4& b) {
-  for (uint32 c = 0; c < 4; ++c) {
-    for (uint32 r = 0; r < 4; ++r) {
-      m[c][r] -= b.m[c][r];
-    }
-  }
+  // for (uint32 c = 0; c < 4; ++c) {
+  //   for (uint32 r = 0; r < 4; ++r) {
+  //     m[c][r] -= b.m[c][r];
+  //   }
+  // }
+  // return *this;
+
+  *this = *this - b;
   return *this;
 }
 
@@ -176,9 +173,9 @@ Matrix4::zero() {
 Matrix4
 Matrix4::transposed() const {
   return Matrix4(m[0][0], m[0][1], m[0][2], m[0][3],
-                   m[1][0], m[1][1], m[1][2], m[1][3],
-                   m[2][0], m[2][1], m[2][2], m[2][3],
-                   m[3][0], m[3][1], m[3][2], m[3][3]);
+                 m[1][0], m[1][1], m[1][2], m[1][3],
+                 m[2][0], m[2][1], m[2][2], m[2][3],
+                 m[3][0], m[3][1], m[3][2], m[3][3]);
 }
 
 void
@@ -248,7 +245,7 @@ Matrix4::cofactor() {
 
 void
 Matrix4::setValues(const float& value) {
-  memset(&_m, static_cast<int32>(value), sizeof(_m));
+  memset(&_m, static_cast<float>(value), sizeof(_m));
 
   // m[0][0] = m[0][1] = m[0][2] = m[0][3] = 
   // m[1][0] = m[1][1] = m[1][2] = m[1][3] =
@@ -275,9 +272,9 @@ Matrix4::setTransformMatrix(const Vector3f& position,
   Matrix4 T = Matrix4::IDENTITY; // Translation
   T.setPosition(position);
 
-  Matrix4 R = rotation.getRotationMatrix(); // Rotation (from quaternion)
+  Matrix4 R = rotation.toMat4(); // Rotation (from quaternion)
   Matrix4 S = Matrix4::IDENTITY;  // Scale
-  S.setScale(scale.x);
+  S.setScale(scale);
 
   // Column-major: T × R × S
   Matrix4 M = T * (R * S);
@@ -361,20 +358,20 @@ Matrix4&
 Matrix4::view(const Vector4f& eye,
               const Vector4f& target,
               const Vector4f& worldUp) {
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   Vector3f front = (target - eye).normalized();
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   Vector3f front = (eye - target).normalized();
 #endif
 
   Vector3f right = Vector3f::cross(worldUp, front).normalized();
   Vector3f up = Vector3f::cross(front, right).normalized();
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   float A = -Vector3f::dot(right, eye);
   float B = -Vector3f::dot(up, eye);
   float C = -Vector3f::dot(front, eye);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   float A = Vector3f::dot(right, eye);
   float B = Vector3f::dot(up, eye);
   float C = Vector3f::dot(front, eye);
@@ -398,10 +395,10 @@ Matrix4::orthogonal(const float& width,
   m[0][0] = 2.0f / width;
   m[1][1] = 2.0f / height;
 
-#if GraphicsAPI == OpenGL
-#if HandSystem == LH
+#if GAPI_MATHTYPE == GAPI_GL
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 2.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = -2.0f / (zNear - zFar);
 #endif
 
@@ -412,10 +409,10 @@ Matrix4::orthogonal(const float& width,
   m[3][1] = 1; // -(top+bottom)/(top-bottom);
   m[3][2] = -(zFar + zNear) / (zFar - zNear);
 
-#elif GraphicsAPI == DirectX
-#if HandSystem == LH
+#elif GAPI_MATHTYPE == GAPI_DX
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 1.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
 #endif
 
@@ -440,10 +437,10 @@ Matrix4::orthogonal(const float& top,
   m[0][0] = 2.0f / width;
   m[1][1] = 2.0f / height;
 
-#if GraphicsAPI == OpenGL
-#if HandSystem == LH
+#if GAPI_MATHTYPE == GAPI_GL
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 2.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = -2.0f / (zNear - zFar);
 #endif
 
@@ -454,10 +451,10 @@ Matrix4::orthogonal(const float& top,
   m[3][1] = -(top + bottom) / (top - bottom);
   m[3][2] = -(zFar + zNear) / (zFar - zNear);
 
-#elif GraphicsAPI == DirectX
-#if HandSystem == LH
+#elif GAPI_MATHTYPE == GAPI_DX
+#if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 1.0f / (zFar - zNear);
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
 #endif
 
@@ -474,39 +471,63 @@ Matrix4::perspective(const float width,
                      const float height,
                      const float zNear,
                      const float zFar,
-                     const float FOV) {
+                     const float FOVangle) {
 
-  float halfFOV = FOV * 0.5;
-  float plane0[4] = { 1.0f / std::tanf(halfFOV), 0.0f,                                0.0f,                           0.0f };
-  float plane1[4] = { 0.0f,                      width / std::tanf(halfFOV) / height, 0.0f,                           0.0f };
-  float plane2[4] = { 0.0f,                      0.0f,                                zFar / (zFar - zNear),          1.0f };
-  float plane3[4] = { 0.0f,                      0.0f,                                -zNear * zFar / (zFar - zNear), 0.0f };
+  float FOVrads = Math::DEG2RAD * FOVangle;
 
+  float halfFOVrads = FOVrads * 0.5;
+  // float plane0[4] = { 1.0f / std::tanf(halfFOV), 0.0f,                                0.0f,                           0.0f };
+  // float plane1[4] = { 0.0f,                      width / std::tanf(halfFOV) / height, 0.0f,                           0.0f };
+  // float plane2[4] = { 0.0f,                      0.0f,                                zFar / (zFar - zNear),          1.0f };
+  // float plane3[4] = { 0.0f,                      0.0f,                                -zNear * zFar / (zFar - zNear), 0.0f };
+  // columns[0] = { plane0[0], plane0[1], plane0[2], plane0[3] }; // Column 1
+  // columns[1] = { plane1[0], plane1[1], plane1[2], plane1[3] }; // Column 2
+  // columns[2] = { plane2[0], plane2[1], plane2[2], plane2[3] }; // Column 3
+  // columns[3] = { plane3[0], plane3[1], plane3[2], plane3[3] }; // Column 4
 
-  columns[0] = { plane0[0], plane0[1], plane0[2], plane0[3] }; // Column 1
-  columns[1] = { plane1[0], plane1[1], plane1[2], plane1[3] }; // Column 2
-  columns[2] = { plane2[0], plane2[1], plane2[2], plane2[3] }; // Column 3
-  columns[3] = { plane3[0], plane3[1], plane3[2], plane3[3] }; // Column 4
+  *this = Matrix4(1.0f / std::tanf(halfFOVrads), 0.0f,                                    0.0f,                  0.0f,
+                  0.0f,                          width / std::tanf(halfFOVrads) / height, 0.0f,                  0.0f,
+                  0.0f,                          0.0f,                                    zFar / (zFar - zNear), - zNear * zFar / (zFar - zNear),
+                  0.0f,                          0.0f,                                    1.0f,                  0.0f);
+
 
   return *this;
 
 }
 
 
-// TODO: This is not the correct way to set the transform matrix
+// TODO: check if this is the correct way to set the transform matrix
 Vector3f
 Matrix4::transformPosition(const Vector3f& v) const {
-  return Vector3f(m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3],
-                  m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3],
-                  m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3]);
+  return Vector3f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] /* * 1.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] /* * 1.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] /* * 1.0f */);
 }
 
 // TODO: This is not the correct way to set the direction matrix
 Vector3f
 Matrix4::transformDirection(const Vector3f& v) const {
-  return Vector3f(m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
-                  m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
-                  m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z);
+  return Vector3f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z /* + m[3][0] * 0.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z /* + m[3][1] * 0.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z /* + m[3][2] * 0.0f */);
+}
+
+// TODO: check if this is the correct way to set the transform matrix
+Vector4f
+Matrix4::transformPositionV4(const Vector4f& v) const {
+  return Vector4f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] * v.w /* * 1.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] * v.w /* * 1.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] * v.w /* * 1.0f */,
+                  m[0][3] * v.x + m[1][3] * v.y + m[2][3] * v.z + m[3][3] * v.w /* * 1.0f */);
+}
+
+// TODO: This is not the correct way to set the direction matrix
+Vector4f
+Matrix4::transformDirectionV4(const Vector4f& v) const {
+  return Vector4f(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z /* + m[3][0] * 0.0f */,
+                  m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z /* + m[3][1] * 0.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z /* + m[3][2] * 0.0f */,
+                  m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z /* + m[3][2] * 0.0f */);
 }
 
 void
@@ -521,6 +542,7 @@ Matrix4::setPosition(const Vector3f& position) {
   m[3][0] = position.x;
   m[3][1] = position.y;
   m[3][2] = position.z;
+  m[3][3] = 1.0f;
 }
 
 void
@@ -543,11 +565,11 @@ Matrix4::rotateY(const float& angle) {
   float s = Math::sin(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   m[0][0] = temp.m[0][0] * c + temp.m[2][0] * s; m[2][0] =  temp.m[2][0] * c - temp.m[0][0] * s;
   m[0][1] = temp.m[0][1] * c + temp.m[2][1] * s; m[2][2] =  temp.m[2][1] * c - temp.m[0][1] * s;
   m[0][2] = temp.m[0][2] * c + temp.m[2][2] * s; m[2][1] =  temp.m[2][2] * c - temp.m[0][2] * s;
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[0][0] = temp.m[0][0] * c - temp.m[2][0] * s; m[2][0] = temp.m[2][0] * c + temp.m[0][0] * s;
   m[0][1] = temp.m[0][1] * c - temp.m[2][1] * s; m[2][2] = temp.m[2][1] * c + temp.m[0][1] * s;
   m[0][2] = temp.m[0][2] * c - temp.m[2][2] * s; m[2][1] = temp.m[2][2] * c + temp.m[0][2] * s;
@@ -562,11 +584,11 @@ Matrix4::rotateZ(const float& angle) {
   float c = Math::cos(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   m[0][0] = c * temp.m[0][0] + s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] - s * temp.m[0][0];
   m[0][1] = c * temp.m[0][1] + s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] - s * temp.m[0][1];
   m[0][2] = c * temp.m[0][2] + s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] - s * temp.m[0][2];
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   m[0][0] = c * temp.m[0][0] - s * temp.m[1][0]; m[1][0] = c * temp.m[1][0] + s * temp.m[0][0];
   m[0][1] = c * temp.m[0][1] - s * temp.m[1][1]; m[1][1] = c * temp.m[1][1] + s * temp.m[0][1];
   m[0][2] = c * temp.m[0][2] - s * temp.m[1][2]; m[1][2] = c * temp.m[1][2] + s * temp.m[0][2];
@@ -588,11 +610,11 @@ Matrix4::rotate(const float& angle, const Vector3f& axis) {
 
   Matrix4 rot;
 
-#if HandSystem == LH
+#if HANDSYSTEM == HANDSYS_LH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc - z * sin; rot.m[2][0] = x * z * omc + y * sin;
   rot.m[0][1] = y * x * omc + z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc - x * sin;
   rot.m[0][2] = z * x * omc - y * sin; rot.m[1][2] = z * y * omc + x * sin; rot.m[2][2] = cos + z * z * omc;
-#elif HandSystem == RH
+#elif HANDSYSTEM == HANDSYS_RH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc + z * sin; rot.m[2][0] = x * z * omc - y * sin;
   rot.m[0][1] = y * x * omc - z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc + x * sin;
   rot.m[0][2] = z * x * omc + y * sin; rot.m[1][2] = z * y * omc - x * sin; rot.m[2][2] = cos + z * z * omc;
@@ -609,21 +631,28 @@ Matrix4::rotate(const float& angle, const float& x, const float& y, const float&
 
 void
 Matrix4::rotate(const Quaternion& rotation) {
-  Matrix4 rotationMatrix = rotation.getRotationMatrix();
+  Matrix4 rotationMatrix = rotation.toMat3();
   *this *= rotationMatrix;
+}
+
+void
+Matrix4::rotate(const Vector3f& delta) {
+  Quaternion q1;
+  q1.fromEuler(Euler(delta));
+  this->rotate(q1);
 }
 
 void
 Matrix4::setRotation(const Vector3f& rotation) {
   Quaternion q;
-  q.fromEuler(Euler(rotation), 0);
-  Matrix4 temp = q.getRotationMatrix();
+  q.fromEuler(Euler(rotation));
+  Matrix4 temp = q.toMat3();
   *this = temp;
 }
 
 void
 Matrix4::setRotation(const Quaternion& rotation) {
-  *this = rotation.getRotationMatrix();
+  *this = rotation.toMat3();
 }
 
 void
@@ -655,6 +684,13 @@ Matrix4::scale(const float& scale) {
 }
 
 Vector3f
+Matrix4::getForwardVector() const {
+  return Vector3f(m[2][0], 
+                  m[2][1], 
+                  m[2][2]).normalized();
+}
+
+Vector3f
 Matrix4::getRightVector() const {
   return Vector3f(m[0][0], 
                   m[0][1], 
@@ -669,11 +705,34 @@ Matrix4::getUpVector() const {
 }
 
 Vector3f
-Matrix4::getForwardVector() const {
-  return Vector3f(m[2][0], 
-                  m[2][1], 
-                  m[2][2]).normalized();
+Matrix4::getEulerRotation() const {
+  Quaternion q = getQuatRotation();
+  Euler e = q.toEuler();
+  return Vector3f(e.x, e.y, e.z);
 }
+
+Quaternion
+Matrix4::getQuatRotation() const {
+  Quaternion q;
+  Matrix3 m = this->subMatrix();
+  // remove scale
+  Vector3f scale = this->getScale();
+  Matrix3 normM = m;
+
+  removeScaleFromRotation(scale, normM);
+
+  q.setRotationMatrix(normM);
+  return q;
+}
+
+void
+Matrix4::removeScaleFromRotation(Vector3f scale, Matrix3& rotation) const {
+  rotation.m[0][0] /= scale.x; rotation.m[0][1] /= scale.x; rotation.m[0][2] /= scale.x;
+  rotation.m[1][0] /= scale.y; rotation.m[1][1] /= scale.y; rotation.m[1][2] /= scale.y;
+  rotation.m[2][0] /= scale.z; rotation.m[2][1] /= scale.z; rotation.m[2][2] /= scale.z;
+  
+}
+
 
 Vector3f
 Matrix4::getPosition() const {
@@ -682,11 +741,20 @@ Matrix4::getPosition() const {
                   m[3][2]);
 }
 
-Matrix3x3
-Matrix4::subMatrix() {
-  return Matrix3x3(m[0][0], m[1][0], m[2][0],
-                   m[0][1], m[1][1], m[2][1],
-                   m[0][2], m[1][2], m[2][2]);
+Vector3f
+Matrix4::getScale() const {
+  Vector3f scale;
+  scale.x = std::sqrt(m[0][0] * m[0][0] + m[0][1] * m[0][1] + m[0][2] * m[0][2]);
+  scale.y = std::sqrt(m[1][0] * m[1][0] + m[1][1] * m[1][1] + m[1][2] * m[1][2]);
+  scale.z = std::sqrt(m[2][0] * m[2][0] + m[2][1] * m[2][1] + m[2][2] * m[2][2]);
+  return scale;
+}
+
+const Matrix3&
+Matrix4::subMatrix() const {
+  return Matrix3(m[0][0], m[1][0], m[2][0],
+                 m[0][1], m[1][1], m[2][1],
+                 m[0][2], m[1][2], m[2][2]);
 }
 
 String
@@ -701,8 +769,8 @@ Matrix4::toString() {
 const Matrix4 Matrix4::ZERO     = Matrix4(0.0f);
 
 const Matrix4 Matrix4::IDENTITY = Matrix4(1.0f, 0.0f, 0.0f, 0.0f,
-                                                0.0f, 1.0f, 0.0f, 0.0f,
-                                                0.0f, 0.0f, 1.0f, 0.0f,
-                                                0.0f, 0.0f, 0.0f, 1.0f);
+                                          0.0f, 1.0f, 0.0f, 0.0f,
+                                          0.0f, 0.0f, 1.0f, 0.0f,
+                                          0.0f, 0.0f, 0.0f, 1.0f);
 
 } // namespace CYLLENE_SDK

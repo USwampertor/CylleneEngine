@@ -449,6 +449,10 @@ public:
   static bool
   isNearlySame(const Vector2f& a, const Vector2f& b, const float& error = Math::SMALLNUMBER);
 
+  Vector2f
+  toNearestOctant() const;
+
+
   /**
     * @brief Returns the vector as a printable string
     * @param

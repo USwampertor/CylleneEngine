@@ -14,11 +14,13 @@
 
 #include "cyMathPrerequisites.h"
 
+#include "cyEulerHelpers.h"
+
 namespace CYLLENE_SDK {
 
 class Vector4f;
 class Vector3f;
-class Matrix3x3;
+class Matrix3;
 class Matrix4;
 
 struct CY_MATH_EXPORT Euler {
@@ -85,7 +87,7 @@ public:
     */
   Quaternion(const Vector4f other);
 
-  Quaternion(const Euler& euler, const int32& order);
+  Quaternion(const Euler& euler, const int32& order = EulOrdXYZs);
 
   /**
     * @brief [] operator overload, will return the value at a given position
@@ -301,7 +303,7 @@ public:
   slerp(const Quaternion& q1, const Quaternion& q2, float t);
 
   void
-  fromEuler(const Euler& euler, int32 order);
+  fromEuler(const Euler& euler);
 
   void
   setValues(const float& nx, const float& ny, const float& nz, const float& nw);
@@ -310,7 +312,7 @@ public:
   setValues(const Vector3f& vector, const float& scalar);
 
   void
-  setRotationMatrix(const Matrix3x3& m);
+  setRotationMatrix(const Matrix3& m);
 
   const Vector3f
   getVectorPart() const;
@@ -318,8 +320,14 @@ public:
   const float&
   getScalarPart() const;
 
-  const Matrix3x3
-  getRotationMatrix() const;
+  void
+  fromMat3(const Matrix3&);
+
+  const Matrix3
+  toMat3() const;
+
+  const Matrix4
+  toMat4() const;
 
   float 
   norm() const;
@@ -367,7 +375,7 @@ public:
   isReal() const;
 
   Euler
-  toEuler(const int32& order) const;
+  toEuler(const int32& order = EulOrdXYZs) const;
 
   Vector3f
   toVector3() const;

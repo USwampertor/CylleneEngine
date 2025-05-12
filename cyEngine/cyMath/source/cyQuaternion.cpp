@@ -9,12 +9,12 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #include "cyQuaternion.h"
 
-#include "cyEulerHelpers.h"
 #include "cyVector3f.h"
 #include "cyVector4f.h"
-#include "cyMatrix3x3.h"
+#include "cyMatrix3.h"
 #include "cyMath.h"
 #include "cyUtilities.h"
+#include "cyMatrix4.h"
 
 namespace CYLLENE_SDK {
 
@@ -22,7 +22,7 @@ namespace CYLLENE_SDK {
     : x(nx),
       y(ny),
       z(nz),
-      order(0) {}
+      order(EulOrdXYZs) {}
 
   Euler::Euler(const float& nx, const float& ny, const float& nz, const int32& norder)
     : x(nx),
@@ -34,7 +34,7 @@ namespace CYLLENE_SDK {
     : x(vector.x),
       y(vector.y),
       z(vector.z),
-      order(0) {}
+      order(EulOrdXYZs) {}
 
   Euler::Euler(const Vector4f& vector)
     : x(vector.x),
@@ -328,13 +328,13 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Quaternion::fromEuler(const Euler& euler, int32 order) {
+  Quaternion::fromEuler(const Euler& euler) {
     EulerAngles ea;
 
     ea.x = euler.x;
     ea.y = euler.y;
     ea.z = euler.z;
-    ea.w = static_cast<float>(order);
+    ea.w = euler.order;
 
     Quat q = Eul_ToQuat(ea);
 
@@ -361,9 +361,9 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Quaternion::setRotationMatrix(const Matrix3x3& m) {
+  Quaternion::setRotationMatrix(const Matrix3& m) {
 
-    Matrix3x3 tmp = m.transposed();
+    Matrix3 tmp = m.transposed();
 
     float sum = tmp._m.m00 + tmp._m.m11 + tmp._m.m22;
 
@@ -411,24 +411,86 @@ namespace CYLLENE_SDK {
     return w;
   }
 
-  const Matrix3x3
-  Quaternion::getRotationMatrix() const {
-    float x2 = x * x;
-    float y2 = y * y;
-    float z2 = z * z;
-    float xy = x * y;
-    float xz = x * z;
-    float yz = y * z;
-    float wx = w * x;
-    float wy = w * y;
-    float wz = w * z;
+  void
+  Quaternion::fromMat3(const Matrix3& m) {
+    float trace = m._m.m00 + m._m.m11 + m._m.m22;
+
+    if (trace > 0) {
+      float S = sqrt(trace + 1.0f) * 2.0f; // S = 4 * w
+      w = 0.25f * S;
+      x = (m._m.m21 - m._m.m12) / S;
+      y = (m._m.m02 - m._m.m20) / S;
+      z = (m._m.m10 - m._m.m01) / S;
+    }
+    else if ((m._m.m00 > m._m.m11) && (m._m.m00 > m._m.m22)) {
+      float S = sqrt(1.0f + m._m.m00 - m._m.m11 - m._m.m22) * 2.0f; // S = 4 * x
+      w = (m._m.m21 - m._m.m12) / S;
+      x = 0.25f * S;
+      y = (m._m.m01 + m._m.m10) / S;
+      z = (m._m.m02 + m._m.m20) / S;
+    }
+    else if (m._m.m11 > m._m.m22) {
+      float S = sqrt(1.0f + m._m.m11 - m._m.m00 - m._m.m22) * 2.0f; // S = 4 * y
+      w = (m._m.m02 - m._m.m20) / S;
+      x = (m._m.m01 + m._m.m10) / S;
+      y = 0.25f * S;
+      z = (m._m.m12 + m._m.m21) / S;
+    }
+    else {
+      float S = sqrt(1.0f + m._m.m22 - m._m.m00 - m._m.m11) * 2.0f; // S = 4 * z
+      w = (m._m.m10 - m._m.m01) / S;
+      x = (m._m.m02 + m._m.m20) / S;
+      y = (m._m.m12 + m._m.m21) / S;
+      z = 0.25f * S;
+    }
+
+    // Normalize (optional, but recommended for numerical stability)
+    normalize();
+  }
+
+  const Matrix3
+  Quaternion::toMat3() const {
+
+    Quaternion tmp = this->normalized();
+
+    float x2 = tmp.x * tmp.x;
+    float y2 = tmp.y * tmp.y;
+    float z2 = tmp.z * tmp.z;
+    float xy = tmp.x * tmp.y;
+    float xz = tmp.x * tmp.z;
+    float yz = tmp.y * tmp.z;
+    float wx = tmp.w * tmp.x;
+    float wy = tmp.w * tmp.y;
+    float wz = tmp.w * tmp.z;
 
     // Don't know if this is row major or column major
     // With the transposed, it should be row.
-    return Matrix3x3(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz), 2.0f * (xz + wy),
-                     2.0f * (xy + wz), 1.0f - 2.0f * (x2 + z2), 2.0f * (yz - wx),
-                     2.0f * (xz - wy), 2.0f * (yz + wx), 1.0f - 2.0f * (x2 + y2));// .transposed();
-    
+    return Matrix3(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz),         2.0f * (xz + wy),
+                     2.0f * (xy + wz),        1.0f - 2.0f * (x2 + z2),  2.0f * (yz - wx),
+                     2.0f * (xz - wy),        2.0f * (yz + wx),         1.0f - 2.0f * (x2 + y2));// .transposed();
+  }
+
+  const Matrix4
+  Quaternion::toMat4() const {
+
+    Quaternion tmp = this->normalized();
+
+    float x2 = tmp.x * tmp.x;
+    float y2 = tmp.y * tmp.y;
+    float z2 = tmp.z * tmp.z;
+    float xy = tmp.x * tmp.y;
+    float xz = tmp.x * tmp.z;
+    float yz = tmp.y * tmp.z;
+    float wx = tmp.w * tmp.x;
+    float wy = tmp.w * tmp.y;
+    float wz = tmp.w * tmp.z;
+
+    // Don't know if this is row major or column major
+    // With the transposed, it should be row.
+    return Matrix4(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz),         2.0f * (xz + wy),        0.0f,
+                   2.0f * (xy + wz),        1.0f - 2.0f * (x2 + z2),  2.0f * (yz - wx),        0.0f,
+                   2.0f * (xz - wy),        2.0f * (yz + wx),         1.0f - 2.0f * (x2 + y2), 0.0f,
+                   0.0f,                    0.0f,                     0.0f,                    1.0f);// .transposed();
   }
 
   float
