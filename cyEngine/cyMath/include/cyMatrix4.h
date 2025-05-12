@@ -282,6 +282,9 @@ class CY_MATH_EXPORT Matrix4
   Vector3f
   getPosition() const;
 
+  Matrix4
+  getRotationMatrix() const;
+
   Vector3f
   getScale() const;
 

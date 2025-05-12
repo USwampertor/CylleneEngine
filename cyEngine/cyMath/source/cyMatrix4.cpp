@@ -276,7 +276,7 @@ Matrix4::setTransformMatrix(const Vector3f& position,
   Matrix4 S = Matrix4::IDENTITY;  // Scale
   S.setScale(scale);
 
-  // Column-major: T × R × S
+  // Column-major: T ï¿½ R ï¿½ S
   Matrix4 M = T * (R * S);
   *this = M;
 
@@ -739,6 +739,33 @@ Matrix4::getPosition() const {
   return Vector3f(m[3][0], 
                   m[3][1], 
                   m[3][2]);
+}
+
+Matrix4
+getRotationMatrix() {
+  const Vector3f& scale = getScale();
+
+  Matrix4 rotationMatrix = Matrix4::IDENTITY;
+
+  CY_ASSERT(!Math::isNearSame(scale.x, 0.0f) &&
+            !Math::isNearSame(scale.y, 0.0f) &&
+            !Math::isNearSame(scale.z, 0.0f) &&
+            Utils::format("Trying to get rotation matrix with a scale component of 0",
+                          this->toString()).c_str());
+
+  rotationMatrix.m[0][0] /= scale.x;
+  rotationMatrix.m[0][1] /= scale.x;
+  rotationMatrix.m[0][2] /= scale.x;
+
+  rotationMatrix.m[1][0] /= scale.y;
+  rotationMatrix.m[1][1] /= scale.y;
+  rotationMatrix.m[1][2] /= scale.y;
+
+  rotationMatrix.m[2][0] /= scale.z;
+  rotationMatrix.m[2][1] /= scale.z;
+  rotationMatrix.m[2][2] /= scale.z;
+
+  return rotationMatrix;
 }
 
 Vector3f
