@@ -38,6 +38,12 @@ public:
 
   Euler(const Vector4f& vector);
 
+  Matrix4
+  getMatrixRotation(int32 rotationOrder = EulOrdXYZs) const;
+
+  Matrix4
+  getQuatRotation() const;
+
   String
   toString();
 
@@ -324,10 +330,10 @@ public:
   fromMat3(const Matrix3&);
 
   const Matrix3
-  toMat3() const;
+  getMatrix3Rotation() const;
 
   const Matrix4
-  toMat4() const;
+  getMatrix4Rotation() const;
 
   float 
   norm() const;
@@ -375,7 +381,7 @@ public:
   isReal() const;
 
   Euler
-  toEuler(const int32& order = EulOrdXYZs) const;
+  getEulerRotation(const int32& order = EulOrdXYZs) const;
 
   Vector3f
   toVector3() const;

@@ -704,25 +704,23 @@ Matrix4::getUpVector() const {
                   m[1][2]).normalized();
 }
 
-Vector3f
+Euler
 Matrix4::getEulerRotation() const {
-  Quaternion q = getQuatRotation();
-  Euler e = q.toEuler();
-  return Vector3f(e.x, e.y, e.z);
+  float eX = Math::atan2( m[2][1], m[2][2]);
+  float eY = Math::atan2(-m[2][0], Math::sqrt((m[2][1] * m[2][1]) + (m[2][2] * m[2][2])));
+  float eZ = Math::atan2( m[1][0], m[0][0]);
+  
+  return Euler(eX, eY, eZ);
 }
 
 Quaternion
 Matrix4::getQuatRotation() const {
   Quaternion q;
-  Matrix3 m = this->subMatrix();
-  // remove scale
-  Vector3f scale = this->getScale();
-  Matrix3 normM = m;
 
-  removeScaleFromRotation(scale, normM);
-
-  q.setRotationMatrix(normM);
-  return q;
+  Matrix4 rotationMatrix4 = getRotationMatrix();
+  Matrix3 rotationMatrix3 = rotationMatrix4->subMatrix();
+  
+  return q.setRotationMatrix(rotationMatrix3);
 }
 
 void
@@ -730,7 +728,6 @@ Matrix4::removeScaleFromRotation(Vector3f scale, Matrix3& rotation) const {
   rotation.m[0][0] /= scale.x; rotation.m[0][1] /= scale.x; rotation.m[0][2] /= scale.x;
   rotation.m[1][0] /= scale.y; rotation.m[1][1] /= scale.y; rotation.m[1][2] /= scale.y;
   rotation.m[2][0] /= scale.z; rotation.m[2][1] /= scale.z; rotation.m[2][2] /= scale.z;
-  
 }
 
 

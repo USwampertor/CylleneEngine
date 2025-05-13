@@ -42,6 +42,52 @@ namespace CYLLENE_SDK {
       z(vector.z),
       order(static_cast<int32>(vector.w)) {}
 
+
+  Matrix4
+  Euler::getMatrixRotation(int32 rotationOrder) const {
+    Matrix4 rotationX = Matrix4::IDENTITY;
+    Matrix4 rotationY = Matrix4::IDENTITY;
+    Matrix4 rotationZ = Matrix4::IDENTITY;
+
+    rotationX.rotateX(x);
+    rotationY.rotateY(y);
+    rotationZ.rotateZ(z);
+
+    Matrix4 m = Matrix4::IDENTITY;
+
+    switch (order) {
+      case EulOrdXYZs:
+        m = rotationX * rotationY * rotationZ;
+        break;
+      case EulOrdXZYs:
+        m = rotationX * rotationZ * rotationY;
+        break;
+      case EulOrdYXZs:
+        m = rotationY * rotationX * rotationZ;
+        break;
+      case EulOrdYZXs:
+        m = rotationY * rotationZ * rotationX;
+        break;
+      case EulOrdZXYs:
+        m = rotationZ * rotationX * rotationY;
+        break;
+      case EulOrdZYXs:
+        m = rotationZ * rotationY * rotationX;
+        break;
+      default:
+        break;
+    }
+    
+    return m;
+  }
+
+  Quaternion
+  Euler::getQuatRotation() const {
+    Quaternion q(*this, this->order);
+
+    return q;
+  }
+
   String
   Euler::toString() {
     return Utils::format("( %2.2f, %2.2f, %2.2f, %2.2f)", x, y, z, order);
@@ -449,7 +495,7 @@ namespace CYLLENE_SDK {
   }
 
   const Matrix3
-  Quaternion::toMat3() const {
+  Quaternion::getMatrix3Rotation() const {
 
     Quaternion tmp = this->normalized();
 
@@ -471,7 +517,7 @@ namespace CYLLENE_SDK {
   }
 
   const Matrix4
-  Quaternion::toMat4() const {
+  Quaternion::getMatrix4Rotation() const {
 
     Quaternion tmp = this->normalized();
 
@@ -570,7 +616,7 @@ namespace CYLLENE_SDK {
   }
 
   Euler
-  Quaternion::toEuler(const int32& order) const {
+  Quaternion::getEulerRotation(const int32& order) const {
     Quat q;
 
     q.x = x;

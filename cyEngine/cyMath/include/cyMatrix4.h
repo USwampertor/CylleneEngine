@@ -273,7 +273,7 @@ class CY_MATH_EXPORT Matrix4
   Vector3f
   getUpVector() const;
 
-  Vector3f
+  Euler
   getEulerRotation() const;
 
   Quaternion
