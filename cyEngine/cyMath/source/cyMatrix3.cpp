@@ -342,7 +342,7 @@ Matrix3::rotate(const float& angle, const float& x, const float& y, const float&
 
 void
 Matrix3::rotate(const Quaternion& rotation) {
-  Matrix3 rotationMatrix = rotation.toMat3();
+  Matrix3 rotationMatrix = rotation.getMatrix3Rotation();
   *this *= rotationMatrix;
 }
 
@@ -350,13 +350,13 @@ void
 Matrix3::setRotation(const Vector3f& rotation) {
   Quaternion q;
   q.fromEuler(Euler(rotation));
-  Matrix3 temp = q.toMat3();
+  Matrix3 temp = q.getMatrix3Rotation();
   *this = temp;
 }
 
 void
 Matrix3::setRotation(const Quaternion& rotation) {
-  *this = rotation.toMat3();
+  *this = rotation.getMatrix3Rotation();
 }
 
 void

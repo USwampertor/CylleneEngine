@@ -272,7 +272,7 @@ Matrix4::setTransformMatrix(const Vector3f& position,
   Matrix4 T = Matrix4::IDENTITY; // Translation
   T.setPosition(position);
 
-  Matrix4 R = rotation.toMat4(); // Rotation (from quaternion)
+  Matrix4 R = rotation.getMatrix4Rotation(); // Rotation (from quaternion)
   Matrix4 S = Matrix4::IDENTITY;  // Scale
   S.setScale(scale);
 
@@ -631,7 +631,7 @@ Matrix4::rotate(const float& angle, const float& x, const float& y, const float&
 
 void
 Matrix4::rotate(const Quaternion& rotation) {
-  Matrix4 rotationMatrix = rotation.toMat3();
+  Matrix4 rotationMatrix = rotation.getMatrix3Rotation();
   *this *= rotationMatrix;
 }
 
@@ -646,13 +646,13 @@ void
 Matrix4::setRotation(const Vector3f& rotation) {
   Quaternion q;
   q.fromEuler(Euler(rotation));
-  Matrix4 temp = q.toMat3();
+  Matrix4 temp = q.getMatrix3Rotation();
   *this = temp;
 }
 
 void
 Matrix4::setRotation(const Quaternion& rotation) {
-  *this = rotation.toMat3();
+  *this = rotation.getMatrix3Rotation();
 }
 
 void
@@ -718,9 +718,11 @@ Matrix4::getQuatRotation() const {
   Quaternion q;
 
   Matrix4 rotationMatrix4 = getRotationMatrix();
-  Matrix3 rotationMatrix3 = rotationMatrix4->subMatrix();
+  Matrix3 rotationMatrix3 = rotationMatrix4.subMatrix();
+
+  q.setRotationMatrix(rotationMatrix3);
   
-  return q.setRotationMatrix(rotationMatrix3);
+  return q;
 }
 
 void
@@ -739,14 +741,14 @@ Matrix4::getPosition() const {
 }
 
 Matrix4
-getRotationMatrix() {
+Matrix4::getRotationMatrix() const {
   const Vector3f& scale = getScale();
 
   Matrix4 rotationMatrix = Matrix4::IDENTITY;
 
   CY_ASSERT(!Math::isNearSame(scale.x, 0.0f) &&
             !Math::isNearSame(scale.y, 0.0f) &&
-            !Math::isNearSame(scale.z, 0.0f) &&
+            !Math::isNearSame(scale.z, 0.0f),
             Utils::format("Trying to get rotation matrix with a scale component of 0",
                           this->toString()).c_str());
 

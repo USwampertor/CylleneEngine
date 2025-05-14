@@ -44,7 +44,7 @@ namespace CYLLENE_SDK {
 
 
   Matrix4
-  Euler::getMatrixRotation(int32 rotationOrder) const {
+  Euler::getMatrix4Rotation(int32 rotationOrder) const {
     Matrix4 rotationX = Matrix4::IDENTITY;
     Matrix4 rotationY = Matrix4::IDENTITY;
     Matrix4 rotationZ = Matrix4::IDENTITY;

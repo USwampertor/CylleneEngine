@@ -22,6 +22,7 @@ class Vector4f;
 class Vector3f;
 class Matrix3;
 class Matrix4;
+class Quaternion;
 
 struct CY_MATH_EXPORT Euler {
 public:
@@ -39,9 +40,9 @@ public:
   Euler(const Vector4f& vector);
 
   Matrix4
-  getMatrixRotation(int32 rotationOrder = EulOrdXYZs) const;
+  getMatrix4Rotation(int32 rotationOrder = EulOrdXYZs) const;
 
-  Matrix4
+  Quaternion
   getQuatRotation() const;
 
   String
