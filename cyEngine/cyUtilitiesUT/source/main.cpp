@@ -49,7 +49,7 @@ TEST_SUITE("Modules") {
 }
 
 TEST_SUITE("Argument Parser") {
-
+  ArgumentParser parser;
 }
 
 TEST_SUITE("Crash Handler") {
@@ -68,7 +68,7 @@ TEST_SUITE("JSON") {
 }
 
 TEST_SUITE("File System") {
-
+  
 }
 
 TEST_SUITE("Regex") {
