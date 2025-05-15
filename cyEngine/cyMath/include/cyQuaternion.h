@@ -328,25 +328,19 @@ public:
   slerp(const Quaternion& q1, const Quaternion& q2, float t);
 
   void
-  fromEuler(const Euler& euler);
+  setRotation(const Euler& euler);
 
   void
-  fromMat3(const Matrix3& m);
+  setRotation(const Matrix3& m);
 
   void
-  fromMat4(const Matrix4& m);
+  setRotation(const Matrix4& m);
 
   void
   setValues(const float& nx, const float& ny, const float& nz, const float& nw);
 
   void 
   setValues(const Vector3f& vector, const float& scalar);
-
-  void
-  setRotationMatrix(const Matrix3& m, const int32& order = EulOrdXYZs);
-
-  void
-  setRotationMatrix(const Matrix4& m, const int32& order = EulOrdXYZs);
 
   const Vector3f
   getVectorPart() const;

@@ -473,19 +473,17 @@ Quaternion::slerp(const Quaternion& q1, const Quaternion& q2, float t) {
 }
 
 void
-Quaternion::fromEuler(const Euler& euler) {
-  *this = euler.getQuatRotation();
-
-  normalize();
+Quaternion::setRotation(const Euler& euler) {
+  *this = Quaternion(euler);
 }
 
 void
-Quaternion::fromMat3(const Matrix3& m) {
+Quaternion::setRotation(const Matrix3& m) {
   *this = Quaternion(m);
 }
 
 void
-Quaternion::fromMat4(const Matrix4& m) {
+Quaternion::setRotation(const Matrix4& m) {
   *this = Quaternion(m);
 }
 
@@ -503,18 +501,6 @@ Quaternion::setValues(const Vector3f& vector, const float& scalar) {
   y = vector.y;
   z = vector.z;
   w = scalar;
-}
-
-void
-Quaternion::setRotationMatrix(const Matrix3& m, const int32& order) {
-  Euler euler(m, order);
-  *this = euler.getQuatRotation();
-}
-
-void
-Quaternion::setRotationMatrix(const Matrix4& m, const int32& order) {
-  Euler euler(m, order);
-  *this = euler.getQuatRotation();
 }
 
 const Vector3f
@@ -610,6 +596,7 @@ void
 Quaternion::inverse() {
   *this = inversed();
 }
+
 Quaternion
 Quaternion::unitQuaternion() const {
   return scaled(Math::invSqrt(norm()));
