@@ -56,9 +56,9 @@ public:
     m_tMatrix.setScale(newScale);
   }
 
-  Quaternion&
+  Quaternion
   getRotation() {
-    m_tMatrix.getQuatRotation();
+    return m_tMatrix.getQuatRotation();
   }
 
   void
@@ -68,7 +68,8 @@ public:
 
   Vector3f
   getEulerRotation() {
-    return m_tMatrix.getEulerRotation();
+    Euler e = m_tMatrix.getEulerRotation();
+    return Vector3f(e.x, e.y, e.z);
   }
 
   void
