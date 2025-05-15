@@ -350,8 +350,7 @@ namespace CYLLENE_SDK {
     angleRad *= 8.0f;
     angleRad = Math::round(angleRad);
     angleRad = Math::mod(angleRad, 8.0f);
-    Quaternion q;
-    q.fromEuler(Vector3f(angleRad, 0, 0));
+    Quaternion q = Quaternion(Euler(angleRad, 0, 0));
     Vector3f res(*this);
     q.rotate(res);
     return Vector2f(res);

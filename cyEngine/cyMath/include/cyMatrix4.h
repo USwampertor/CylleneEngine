@@ -158,7 +158,6 @@ class CY_MATH_EXPORT Matrix4
             const float& v02, const float& v12, const float& v22, const float& v32,
             const float& v03, const float& v13, const float& v23, const float& v33);
 
-
   void
   setTransformMatrix(const Vector3f&    position,
                      const Quaternion&  rotation,
@@ -168,8 +167,8 @@ class CY_MATH_EXPORT Matrix4
   setTransformMatrix(const Vector3f& position, const Rotor& rotation);
 
   void
-  setLookAt(const Vector3f& eyePos, 
-            const Vector3f& targetPos, 
+  setLookAt(const Vector3f& eyePos,
+            const Vector3f& targetPos,
             const Vector3f& upDir);
 
   Matrix4
@@ -223,7 +222,7 @@ class CY_MATH_EXPORT Matrix4
   translate(const Vector3f& translation);
 
   void
-  setPosition(const Vector3f& position);
+  translate(const float& x, const float& y, const float& z);
 
   void
   rotateX(const float& angle);
@@ -241,10 +240,22 @@ class CY_MATH_EXPORT Matrix4
   rotate(const float& angle, const float& x, const float& y, const float& z);
 
   void
+  rotate(const Quaternion& rotation);
+
+  void
   rotate(const Vector3f& delta);
 
   void
-  rotate(const Quaternion& rotation);
+  scale(const Vector3f& newScale);
+
+  void
+  scale(const float& x, const float& y, const float& z);
+
+  void
+  scale(const float& newScale);
+
+  void
+  setPosition(const Vector3f& position);
 
   void
   setRotation(const Vector3f& rotation);
@@ -258,12 +269,6 @@ class CY_MATH_EXPORT Matrix4
   void
   setScale(const float& newScale);
 
-  void
-  scale(const Vector3f& newScale);
-
-  void
-  scale(const float& newScale);
-
   Vector3f
   getForwardVector() const;
   
@@ -273,6 +278,9 @@ class CY_MATH_EXPORT Matrix4
   Vector3f
   getUpVector() const;
 
+  Vector3f
+  getPosition() const;
+
   Euler
   getEulerRotation() const;
 
@@ -280,7 +288,7 @@ class CY_MATH_EXPORT Matrix4
   getQuatRotation() const;
 
   Vector3f
-  getPosition() const;
+  getScale() const;
 
   Matrix4
   getTranslationMatrix() const;
@@ -291,16 +299,11 @@ class CY_MATH_EXPORT Matrix4
   Matrix4
   getScaleMatrix() const;
 
-  Vector3f
-  getScale() const;
-
   const Matrix3&
   subMatrix() const;
 
   String
   toString();
-
-
 
   /**
     * ZERO filled Matrix

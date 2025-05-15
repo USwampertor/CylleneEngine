@@ -525,16 +525,20 @@ Quaternion::getMatrix3Rotation() const {
   float x2 = tmp.x * tmp.x;
   float y2 = tmp.y * tmp.y;
   float z2 = tmp.z * tmp.z;
+  float w2 = tmp.w * tmp.w;
+
   float xy = tmp.x * tmp.y;
   float xz = tmp.x * tmp.z;
+
   float yz = tmp.y * tmp.z;
+
   float wx = tmp.w * tmp.x;
   float wy = tmp.w * tmp.y;
   float wz = tmp.w * tmp.z;
 
-  return Matrix3(1.0f - 2.0f * (y2 + z2), 2.0f * (xy - wz),         2.0f * (xz + wy),
-                 2.0f * (xy + wz),        1.0f - 2.0f * (x2 + z2),  2.0f * (yz - wx),
-                 2.0f * (xz - wy),        2.0f * (yz + wx),         1.0f - 2.0f * (x2 + y2));
+  return Matrix3(1.0f - 2.0f * (y2 + z2),   2.0f * (xy - wz),           2.0f * (xz + wy),
+                 2.0f * (xy + wz),          1.0f - 2.0f * (x2 + z2),    2.0f * (yz - wx),
+                 2.0f * (xz - wy),          2.0f * (yz + wx),           1.0f - 2.0f * (x2 + y2));
 }
 
 const Matrix4

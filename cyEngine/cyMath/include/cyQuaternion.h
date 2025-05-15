@@ -18,8 +18,8 @@
 
 namespace CYLLENE_SDK {
 
-class Vector4f;
 class Vector3f;
+class Vector4f;
 class Matrix3;
 class Matrix4;
 class Quaternion;
