@@ -174,3 +174,10 @@ TEST_CASE("[window] Window creation") {
 
   }
 }
+
+
+TEST_SUITE("[components] Components") {
+  TEST_CASE("[components] Camera") {
+    TransformComponent t;
+  }
+}
