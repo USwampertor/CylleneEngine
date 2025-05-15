@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -42,6 +42,7 @@
     <ClInclude Include="include\cyResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
     <ClInclude Include="include\cyScene.h" />
+    <ClInclude Include="include\cySceneNode.h" />
     <ClInclude Include="include\cyScript.h" />
     <ClInclude Include="include\cyShader.h" />
     <ClInclude Include="include\cySkeleton.h" />
@@ -70,6 +71,7 @@
     <ClCompile Include="src\cyPluginManager.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyScene.cpp" />
+    <ClCompile Include="src\cySceneNode.cpp" />
     <ClCompile Include="src\cyScript.cpp" />
     <ClCompile Include="src\cyShader.cpp" />
     <ClCompile Include="src\cySkeleton.cpp" />
