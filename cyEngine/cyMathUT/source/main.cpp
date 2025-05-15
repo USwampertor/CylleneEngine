@@ -295,7 +295,7 @@ TEST_SUITE("Matrix4 Tests") {
       Vector3f forward = m.getForwardVector();
       CHECK(forward.x == doctest::Approx(0.0f));
       CHECK(forward.y == doctest::Approx(0.0f));
-      CHECK(forward.z == doctest::Approx(-1.0f)); // 1.0f
+      CHECK(forward.z == doctest::Approx(-1.0f));
     }
 
     SUBCASE("Y-Axis Rotation") {

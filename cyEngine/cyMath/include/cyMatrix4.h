@@ -160,8 +160,8 @@ class CY_MATH_EXPORT Matrix4
 
 
   void
-  setTransformMatrix(const Vector3f&    position, 
-                     const Quaternion&  rotation, 
+  setTransformMatrix(const Vector3f&    position,
+                     const Quaternion&  rotation,
                      const Vector3f&    scale);
 
   void
@@ -283,7 +283,13 @@ class CY_MATH_EXPORT Matrix4
   getPosition() const;
 
   Matrix4
+  getTranslationMatrix() const;
+
+  Matrix4
   getRotationMatrix() const;
+
+  Matrix4
+  getScaleMatrix() const;
 
   Vector3f
   getScale() const;

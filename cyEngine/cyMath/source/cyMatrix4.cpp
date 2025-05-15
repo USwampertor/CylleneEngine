@@ -326,14 +326,12 @@ Matrix4::inversed() {
   temp.transpose();
 
   temp *= Math::pow(this->determinant(), -1.0f);
-  return temp;
-  
+  return temp; 
 }
 
 void
 Matrix4::inverse() {
   *this = this->inversed();
-
 }
 
 const float
@@ -554,13 +552,10 @@ Matrix4::rotateX(const float& angle) {
   m[1][0] = c * temp.m[1][0] + s * temp.m[2][0]; m[2][1] = c * temp.m[2][0] - s * temp.m[1][0];
   m[1][1] = c * temp.m[1][1] + s * temp.m[2][1]; m[2][2] = c * temp.m[2][1] - s * temp.m[1][1];
   m[1][2] = c * temp.m[1][2] + s * temp.m[2][2]; m[2][3] = c * temp.m[2][2] - s * temp.m[1][2];
-  
-
 }
 
 void
 Matrix4::rotateY(const float& angle) {
-
   float c = Math::cos(angle * Math::DEG2RAD);
   float s = Math::sin(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
@@ -574,12 +569,10 @@ Matrix4::rotateY(const float& angle) {
   m[0][1] = temp.m[0][1] * c - temp.m[2][1] * s; m[2][2] = temp.m[2][1] * c + temp.m[0][1] * s;
   m[0][2] = temp.m[0][2] * c - temp.m[2][2] * s; m[2][1] = temp.m[2][2] * c + temp.m[0][2] * s;
 #endif 
-
 }
 
 void
 Matrix4::rotateZ(const float& angle) {
-
   float s = Math::sin(angle * Math::DEG2RAD);
   float c = Math::cos(angle * Math::DEG2RAD);
   Matrix4 temp = *this;
@@ -597,7 +590,6 @@ Matrix4::rotateZ(const float& angle) {
 
 void
 Matrix4::rotate(const float& angle, const Vector3f& axis) {
-
   float cos = Math::cos(Math::DEG2RAD * angle);
   float sin = Math::sin(Math::DEG2RAD * angle);
   float omc = 1.0f - cos;  // "One minus cos"
@@ -608,7 +600,7 @@ Matrix4::rotate(const float& angle, const Vector3f& axis) {
     x /= length; y /= length; z /= length;
   }
 
-  Matrix4 rot;
+  Matrix4 rot = Matrix4::IDENTITY;
 
 #if HANDSYSTEM == HANDSYS_LH
   rot.m[0][0] = cos + x * x * omc;     rot.m[1][0] = x * y * omc - z * sin; rot.m[2][0] = x * z * omc + y * sin;
@@ -619,10 +611,9 @@ Matrix4::rotate(const float& angle, const Vector3f& axis) {
   rot.m[0][1] = y * x * omc - z * sin; rot.m[1][1] = cos + y * y * omc;     rot.m[2][1] = y * z * omc + x * sin;
   rot.m[0][2] = z * x * omc + y * sin; rot.m[1][2] = z * y * omc - x * sin; rot.m[2][2] = cos + z * z * omc;
 #endif
+
   *this = *this * rot;
-
 }
-
 
 void
 Matrix4::rotate(const float& angle, const float& x, const float& y, const float& z) {
@@ -631,7 +622,7 @@ Matrix4::rotate(const float& angle, const float& x, const float& y, const float&
 
 void
 Matrix4::rotate(const Quaternion& rotation) {
-  Matrix4 rotationMatrix = rotation.getMatrix3Rotation();
+  Matrix4 rotationMatrix = rotation.getMatrix4Rotation();
   *this *= rotationMatrix;
 }
 
@@ -644,22 +635,35 @@ Matrix4::rotate(const Vector3f& delta) {
 
 void
 Matrix4::setRotation(const Vector3f& rotation) {
-  Quaternion q;
-  q.fromEuler(Euler(rotation));
-  Matrix4 temp = q.getMatrix3Rotation();
-  *this = temp;
+  Matrix4 T = getTranslationMatrix();
+  Matrix4 R = Matrix4::IDENTITY;
+  Matrix4 S = getScaleMatrix();
+
+  R.rotate(rotation);
+
+  *this = T * (R * S);
 }
 
 void
 Matrix4::setRotation(const Quaternion& rotation) {
-  *this = rotation.getMatrix3Rotation();
+  Matrix4 T = getTranslationMatrix();
+  Matrix4 R = Matrix4::IDENTITY;
+  Matrix4 S = getScaleMatrix();
+
+  R.rotate(rotation);
+
+  *this = T * (R * S);
 }
 
 void
 Matrix4::setScale(const float& newScale) {
-  m[0][0] = newScale;
-  m[1][1] = newScale;
-  m[2][2] = newScale;
+  Matrix4 T = getTranslationMatrix();
+  Matrix4 R = getRotationMatrix();
+  Matrix4 S = Matrix4::IDENTITY;
+
+  S.scale(newScale);
+
+  *this = T * (R * S);
 }
 
 void
@@ -741,6 +745,16 @@ Matrix4::getPosition() const {
 }
 
 Matrix4
+Matrix4::getTranslationMatrix() const {
+  Matrix4 translationMatrix = Matrix4::IDENTITY;
+  translationMatrix.m[3][0] = m[3][0];
+  translationMatrix.m[3][1] = m[3][1];
+  translationMatrix.m[3][2] = m[3][2];
+
+  return translationMatrix;
+}
+
+Matrix4
 Matrix4::getRotationMatrix() const {
   const Vector3f& scale = getScale();
 
@@ -767,12 +781,31 @@ Matrix4::getRotationMatrix() const {
   return rotationMatrix;
 }
 
+Matrix4
+Matrix4::getScaleMatrix() const {
+  Matrix4 rotationMatrix = Matrix4::IDENTITY;
+  const Vector3f& scale = getScale();
+
+  CY_ASSERT(!Math::isNearSame(scale.x, 0.0f) &&
+            !Math::isNearSame(scale.y, 0.0f) &&
+            !Math::isNearSame(scale.z, 0.0f),
+            Utils::format("Trying to get scale matrix with a scale component of 0",
+                          this->toString()).c_str());
+
+  rotationMatrix.m[0][0] = scale.x;
+  rotationMatrix.m[1][1] = scale.y;
+  rotationMatrix.m[2][2] = scale.z;
+
+  return rotationMatrix;
+}
+
 Vector3f
 Matrix4::getScale() const {
   Vector3f scale;
   scale.x = std::sqrt(m[0][0] * m[0][0] + m[0][1] * m[0][1] + m[0][2] * m[0][2]);
   scale.y = std::sqrt(m[1][0] * m[1][0] + m[1][1] * m[1][1] + m[1][2] * m[1][2]);
   scale.z = std::sqrt(m[2][0] * m[2][0] + m[2][1] * m[2][1] + m[2][2] * m[2][2]);
+
   return scale;
 }
 
