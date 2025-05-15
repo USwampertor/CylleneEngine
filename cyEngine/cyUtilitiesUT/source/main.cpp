@@ -6,6 +6,7 @@
 
 // Defining values for unit testing
 #include <cyUnitTesting.h>
+#include <cyArgumentParser.h>
 #include <cyLogger.h>
 #include <cyTime.h> 
 #include <cyDLLLoader.h>
