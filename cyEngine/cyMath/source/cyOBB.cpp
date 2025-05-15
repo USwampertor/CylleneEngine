@@ -23,20 +23,20 @@ OBB::intersects(const Primitive& other) {
     int axisCount = 0;
 
     // Add face normals of this OBB
-    axes[axisCount++] = m_orientation.toMat4().getRightVector();    // Local X-axis
-    axes[axisCount++] = m_orientation.toMat4().getUpVector();       // Local Y-axis
-    axes[axisCount++] = m_orientation.toMat4().getForwardVector();  // Local Z-axis
+    axes[axisCount++] = m_orientation.getMatrix4Rotation().getRightVector();    // Local X-axis
+    axes[axisCount++] = m_orientation.getMatrix4Rotation().getUpVector();       // Local Y-axis
+    axes[axisCount++] = m_orientation.getMatrix4Rotation().getForwardVector();  // Local Z-axis
 
     // Add face normals of the other OBB
-    axes[axisCount++] = otherOBB.m_orientation.toMat4().getRightVector();    
-    axes[axisCount++] = otherOBB.m_orientation.toMat4().getUpVector();       
-    axes[axisCount++] = otherOBB.m_orientation.toMat4().getForwardVector();  
+    axes[axisCount++] = otherOBB.m_orientation.getMatrix4Rotation().getRightVector();
+    axes[axisCount++] = otherOBB.m_orientation.getMatrix4Rotation().getUpVector();
+    axes[axisCount++] = otherOBB.m_orientation.getMatrix4Rotation().getForwardVector();
 
     // Add cross products of edge directions
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        axes[axisCount++] = Vector3f::cross(m_orientation.toMat4().columns[i], 
-                                            otherOBB.m_orientation.toMat4().columns[j]);
+        axes[axisCount++] = Vector3f::cross(m_orientation.getMatrix4Rotation().columns[i],
+                                            otherOBB.m_orientation.getMatrix4Rotation().columns[j]);
       }
     }
 
@@ -75,9 +75,9 @@ OBB::intersects(const Primitive& other) {
 
 float OBB::projectOntoAxis(const Vector3f& axis) const {
   // Project the half-extents of the OBB onto the axis
-  return std::abs(m_hExtents.x * Vector3f::dot(axis, m_orientation.toMat4().getRightVector())) +
-    std::abs(m_hExtents.y * Vector3f::dot(axis, m_orientation.toMat4().getUpVector())) +
-    std::abs(m_hExtents.z * Vector3f::dot(axis, m_orientation.toMat4().getForwardVector()));
+  return std::abs(m_hExtents.x * Vector3f::dot(axis, m_orientation.getMatrix4Rotation().getRightVector())) +
+         std::abs(m_hExtents.y * Vector3f::dot(axis, m_orientation.getMatrix4Rotation().getUpVector())) +
+         std::abs(m_hExtents.z * Vector3f::dot(axis, m_orientation.getMatrix4Rotation().getForwardVector()));
 }
 
 }

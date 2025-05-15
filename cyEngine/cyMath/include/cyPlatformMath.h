@@ -34,7 +34,7 @@ public:
   template<typename T>
   static T
   degToRad(T degree) {
-    return (degree * RAD2DEG);
+    return (degree * DEG2RAD);
   }
 
   /**
@@ -46,7 +46,7 @@ public:
   template<typename T>
   static T
   radToDeg(T rad) {
-    return (rad * DEG2RAD);
+    return (rad * RAD2DEG);
   }
 
   /**
