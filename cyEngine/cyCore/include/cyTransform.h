@@ -73,8 +73,7 @@ public:
 
   void
   setEulerAngle(const Vector3f& newEulerAngles) {
-    Euler e(newEulerAngles);
-    m_rotation.fromEuler(e);
+    m_tMatrix.setRotation(newEulerAngles);
   }
 
   void
@@ -84,7 +83,7 @@ public:
 
   void
   setTransform(const TransformComponent& other) {
-    m_tMatrix = other;
+    m_tMatrix = other.m_tMatrix;
   }
 
   void
@@ -119,9 +118,7 @@ public:
 
   void
   rotate(const Vector3f& deltaAngles) {
-    m_tMatrix.rot
-    Euler e(deltaAngles);
-    m_rotation += Quaternion(e, 0);
+    m_tMatrix.rotate(Quaternion(Euler(deltaAngles)));
   }
 
   void

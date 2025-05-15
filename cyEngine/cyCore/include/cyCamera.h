@@ -8,6 +8,13 @@
 
 namespace CYLLENE_SDK {
 
+
+  namespace CAMERA_TYPE
+  {
+    BETTER_ENUM(E, uint32, GENERAL, PERSPECTIVE, ORTHOGRAPHIC);
+  }
+
+
 class Camera : public Component
 {
 public:
@@ -19,21 +26,20 @@ public:
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eCAMERA; }
 
   void
-  setLookAt(const Vector3f& position,
-            const Vector3f& target, 
-            const Vector3f& up = Vector3f(0.0f, 1.0f, 0.0f));
-
-  void
   setPerspective(const float& newWidth, 
                  const float& newHeight, 
                  const float& newZNear, 
                  const float& newZFar, 
                  const float& newFOV);
+
+  void
+  setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f upDir);
+
+  void
+  changeCameraType(const CAMERA_TYPE::E& type);
+
 public:
 
-  // Vector3f m_position;
-  Vector3f m_target;
-  Vector3f m_up;
 
   float m_fov;
   float m_width;
@@ -41,7 +47,14 @@ public:
   float m_zNear;
   float m_zFar;
 
+  bool m_viewDirty;
+  bool projectionDirty;
+
+
+  // View Matrix is updated really by the transform component and then set as dirty
   Matrix4 m_view;
+
+
   Matrix4 m_projection;
 
 
