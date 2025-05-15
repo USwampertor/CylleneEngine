@@ -158,18 +158,17 @@ class CY_MATH_EXPORT Matrix4
             const float& v02, const float& v12, const float& v22, const float& v32,
             const float& v03, const float& v13, const float& v23, const float& v33);
 
-
   void
-  setTransformMatrix(const Vector3f&    position, 
-                     const Quaternion&  rotation, 
+  setTransformMatrix(const Vector3f&    position,
+                     const Quaternion&  rotation,
                      const Vector3f&    scale);
 
   void
   setTransformMatrix(const Vector3f& position, const Rotor& rotation);
 
   void
-  setLookAt(const Vector3f& eyePos, 
-            const Vector3f& targetPos, 
+  setLookAt(const Vector3f& eyePos,
+            const Vector3f& targetPos,
             const Vector3f& upDir);
 
   Matrix4
@@ -223,7 +222,7 @@ class CY_MATH_EXPORT Matrix4
   translate(const Vector3f& translation);
 
   void
-  setPosition(const Vector3f& position);
+  translate(const float& x, const float& y, const float& z);
 
   void
   rotateX(const float& angle);
@@ -244,6 +243,21 @@ class CY_MATH_EXPORT Matrix4
   rotate(const Quaternion& rotation);
 
   void
+  rotate(const Vector3f& delta);
+
+  void
+  scale(const Vector3f& newScale);
+
+  void
+  scale(const float& x, const float& y, const float& z);
+
+  void
+  scale(const float& newScale);
+
+  void
+  setPosition(const Vector3f& position);
+
+  void
   setRotation(const Vector3f& rotation);
 
   void
@@ -255,12 +269,6 @@ class CY_MATH_EXPORT Matrix4
   void
   setScale(const float& newScale);
 
-  void
-  scale(const Vector3f& newScale);
-
-  void
-  scale(const float& newScale);
-
   Vector3f
   getForwardVector() const;
   
@@ -271,19 +279,28 @@ class CY_MATH_EXPORT Matrix4
   getUpVector() const;
 
   Vector3f
+  getPosition() const;
+
+  Euler
   getEulerRotation() const;
 
   Quaternion
   getQuatRotation() const;
 
   Vector3f
-  getPosition() const;
-
-  Vector3f
   getScale() const;
 
-  Matrix3
-  subMatrix();
+  Matrix4
+  getTranslationMatrix() const;
+
+  Matrix4
+  getRotationMatrix() const;
+
+  Matrix4
+  getScaleMatrix() const;
+
+  const Matrix3&
+  subMatrix() const;
 
   String
   toString();
@@ -297,6 +314,13 @@ class CY_MATH_EXPORT Matrix4
     * IDENTITY matrix
     */
   static const Matrix4 IDENTITY;
+
+
+private:
+
+  void
+  removeScaleFromRotation(Vector3f scale, Matrix3& rotation) const;
+
 
 public:
 

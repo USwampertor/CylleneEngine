@@ -179,7 +179,7 @@ TEST_CASE("[vector2f] Testing vector2 functionality") {
   CHECK(Math::isNearSame(d, 2.82842712f, Math::EPSILONF));
 }
 
-TEST_CASE("[vector3f] Testing vector5 functionality") {
+TEST_CASE("[vector3f] Testing vector3 functionality") {
   Vector3f v0(0, 0, 0);
   CHECK(v0[0] == 0);
   v0 = { 2, 4, 5 };
@@ -287,47 +287,113 @@ TEST_SUITE("Matrix4 Tests") {
   }
 
   TEST_CASE("Rotation") {
-    SUBCASE("X-Axis Rotation") {
-      Matrix4 m;
-      m.identity();
-      m.rotateX(90.0f);
+    SUBCASE("Fixed X-Axis Rotation by 90 degrees") {
+      Matrix4 m = Matrix4::IDENTITY;
+      m.rotateX(Math::degToRad(90.0f));
 
       Vector3f forward = m.getForwardVector();
+      Vector3f right = m.getRightVector();
+      Vector3f up = m.getUpVector();
+
       CHECK(forward.x == doctest::Approx(0.0f));
-      CHECK(forward.y == doctest::Approx(0.0f));
-      CHECK(forward.z == doctest::Approx(-1.0f)); // 1.0f
+      CHECK(forward.y == doctest::Approx(1.0f));
+      CHECK(forward.z == doctest::Approx(0.0f));
+
+      CHECK(right.x == doctest::Approx(1.0f));
+      CHECK(right.y == doctest::Approx(0.0f));
+      CHECK(right.z == doctest::Approx(0.0f));
+
+      CHECK(up.x == doctest::Approx(0.0f));
+      CHECK(up.y == doctest::Approx(0.0f));
+      CHECK(up.z == doctest::Approx(-1.0f));
     }
 
-    SUBCASE("Y-Axis Rotation") {
-      Matrix4 m(0);
-      m.identity();
-      m.rotateY(90.0f);
+    SUBCASE("Arbitrary X-Axis Rotation by -33 degrees") {
+      Matrix4 m = Matrix4::IDENTITY;
+      m.rotate(-33.0f, 1.0f, 0.0f, 0.0f);
 
+      Vector3f forward = m.getForwardVector();
       Vector3f right = m.getRightVector();
+      Vector3f up = m.getUpVector();
+
+      CHECK(forward.x == doctest::Approx(0.0f));
+      CHECK(forward.y == doctest::Approx(0.54464f));
+      CHECK(forward.z == doctest::Approx(0.83867));
+
+      CHECK(right.x == doctest::Approx(1.0f));
+      CHECK(right.y == doctest::Approx(0.0f));
+      CHECK(right.z == doctest::Approx(0.0f));
+
+      CHECK(up.x == doctest::Approx(0.0f));
+      CHECK(up.y == doctest::Approx(0.83867f));
+      CHECK(up.z == doctest::Approx(-0.54464f));
+    }
+
+    SUBCASE("Fixed Y-Axis Rotation by 90 degrees") {
+      Matrix4 m = Matrix4::IDENTITY;
+      m.rotateY(Math::degToRad(90.0f));
+
+      Vector3f forward = m.getForwardVector();
+      Vector3f right = m.getRightVector();
+      Vector3f up = m.getUpVector();
+
+      CHECK(forward.x == doctest::Approx(-1.0f));
+      CHECK(forward.y == doctest::Approx(0.0f));
+      CHECK(forward.z == doctest::Approx(0.0f));
+
       CHECK(right.x == doctest::Approx(0.0f));
       CHECK(right.y == doctest::Approx(0.0f));
       CHECK(right.z == doctest::Approx(1.0f));
+
+      CHECK(up.x == doctest::Approx(0.0f));
+      CHECK(up.y == doctest::Approx(1.0f));
+      CHECK(up.z == doctest::Approx(0.0f));
     }
 
-    SUBCASE("Z-Axis Rotation") {
-      Matrix4 m;
-      m.identity();
-      m.rotateZ(90.0f);
+    SUBCASE("Fixed Z-Axis Rotation by 90 degrees") {
+      Matrix4 m = Matrix4::IDENTITY;
+      m.rotateZ(Math::degToRad(90.0f));
 
-      Vector3f up = m.getUpVector();
+      Vector3f forward = m.getForwardVector();
       Vector3f right = m.getRightVector();
-      CHECK(up.x == doctest::Approx(-1.0f));
-      CHECK(up.y == doctest::Approx(0.0f));
-      CHECK(up.z == doctest::Approx(0.0f));
-    
+      Vector3f up = m.getUpVector();
+
+      CHECK(forward.x == doctest::Approx(0.0f));
+      CHECK(forward.y == doctest::Approx(0.0f));
+      CHECK(forward.z == doctest::Approx(1.0f));
+
       CHECK(right.x == doctest::Approx(0.0f));
-      CHECK(right.y == doctest::Approx(1.0f));
+      CHECK(right.y == doctest::Approx(-1.0f));
       CHECK(right.z == doctest::Approx(0.0f));
+
+      CHECK(up.x == doctest::Approx(1.0f));
+      CHECK(up.y == doctest::Approx(0.0));
+      CHECK(up.z == doctest::Approx(0.0f));
+    }
+
+    SUBCASE("Fixed Z-Axis Rotation by 50 degrees") {
+      Matrix4 m = Matrix4::IDENTITY;
+      m.rotateZ(Math::degToRad(50.0f));
+
+      Vector3f forward = m.getForwardVector();
+      Vector3f right = m.getRightVector();
+      Vector3f up = m.getUpVector();
+
+      CHECK(forward.x == doctest::Approx(0.0f));
+      CHECK(forward.y == doctest::Approx(0.0f));
+      CHECK(forward.z == doctest::Approx(1.0f));
+
+      CHECK(right.x == doctest::Approx(0.64279f));
+      CHECK(right.y == doctest::Approx(-0.76604f));
+      CHECK(right.z == doctest::Approx(0.0f));
+
+      CHECK(up.x == doctest::Approx(0.76604f));
+      CHECK(up.y == doctest::Approx(0.64279f));
+      CHECK(up.z == doctest::Approx(0.0f));
     }
 
     SUBCASE("Arbitrary Axis Rotation") {
-      Matrix4 m;
-      m.identity();
+      Matrix4 m = Matrix4::IDENTITY;
       m.rotate(90.0f, Vector3f(1, 1, 0).normalized());
 
       Vector3f forward = m.getForwardVector();
@@ -342,54 +408,99 @@ TEST_SUITE("Matrix4 Tests") {
     m.identity();
     m.setScale(Vector3f(2, 3, 4));
 
+    Vector3f s = m.getScale();
+
     CHECK(m.m[0][0] == 2.0f);
     CHECK(m.m[1][1] == 3.0f);
     CHECK(m.m[2][2] == 4.0f);
 
+    CHECK(s.x == 2.0f);
+    CHECK(s.y == 3.0f);
+    CHECK(s.z == 4.0f);
+
     m.scale(Vector3f(0.5f, 1.0f, 0.25f));
+
     CHECK(m.m[0][0] == 1.0f);
     CHECK(m.m[1][1] == 3.0f);
     CHECK(m.m[2][2] == 1.0f);
+
+    s = m.getScale();
+
+    CHECK(s.x == 1.0f);
+    CHECK(s.y == 3.0f);
+    CHECK(s.z == 1.0f);
+  }
+
+  TEST_CASE("Extract Rotation (Quaternion) from Matrix4") {
+    SUBCASE("No Rotation (Identity)") {
+      CYLLENE_SDK::Matrix4 m; // Identity matrix
+      m.identity();
+
+      CYLLENE_SDK::Quaternion q = m.getQuatRotation();
+      CHECK(q.w == doctest::Approx(1.0f)); // Identity quaternion
+      CHECK(q.x == doctest::Approx(0.0f));
+      CHECK(q.y == doctest::Approx(0.0f));
+      CHECK(q.z == doctest::Approx(0.0f));
+    }
+
+    SUBCASE("90-Degree Rotation Around Z") {
+      CYLLENE_SDK::Matrix4 m;
+      m.identity();
+      m.setRotation(Vector3f(0, 0, Math::DEG2RAD * 90.0f)); // Rotate 90° around Z
+
+      Quaternion q = m.getQuatRotation();
+      // Expected quaternion for 90° around Z: (0, 0, sin(45°), cos(45°))
+      CHECK(q.w == doctest::Approx(std::cos(Math::DEG2RAD * 45.0f)));
+      CHECK(q.x == doctest::Approx(0.0f));
+      CHECK(q.y == doctest::Approx(0.0f));
+      CHECK(q.z == doctest::Approx(std::sin(Math::DEG2RAD * 45.0f)));
+    }
   }
 
   TEST_CASE("Transformation Composition") {
-    Matrix4 transform;
-    Quaternion rotation;
-    rotation.fromEuler(Euler(0, Math::DEG2RAD * 90.0f, 0, EulOrdXYZs));
+    Quaternion rotation = Quaternion(Euler(0, Math::degToRad(90.0f), 0));
     Vector3f translation(5, 3, 0);
-    Vector3f scale(1, 1, 1);
+    Vector3f scale(3, 7, 9);
+
+    Matrix4 transform;
     transform.setTransformMatrix(translation,
-                                 rotation,
-                                 scale);
+      rotation,
+      scale);
 
-    Vector3f pos = transform.getPosition();
-    CHECK(pos.x == 5.0f);
-    CHECK(pos.y == 3.0f);
-    CHECK(pos.z == 0.0f);
+    Vector3f transformPosition = transform.getPosition();
+    CHECK(transformPosition.x == doctest::Approx(5.0f));
+    CHECK(transformPosition.y == doctest::Approx(3.0f));
+    CHECK(transformPosition.z == doctest::Approx(0.0f));
 
-    Vector3f forward = transform.getForwardVector();
-    CHECK(forward.x == doctest::Approx(1.0f));
-    CHECK(forward.y == doctest::Approx(0.0f));
-    CHECK(forward.z == doctest::Approx(0.0f));
+    Vector3f transformForward = transform.getForwardVector();
+    CHECK(transformForward.x == doctest::Approx(-1.0f));
+    CHECK(transformForward.y == doctest::Approx(0.0f));
+    CHECK(transformForward.z == doctest::Approx(0.0f));
+
+    Vector3f transformScale = transform.getScale();
+    CHECK(transformScale.x == doctest::Approx(3.0f));
+    CHECK(transformScale.y == doctest::Approx(7.0f));
+    CHECK(transformScale.z == doctest::Approx(9.0f));
   }
 
   TEST_CASE("transform position") {
     Matrix4 transform;
-    Quaternion rotation;
-    rotation.fromEuler(Euler(0, Math::DEG2RAD * 90.0f, 0, EulOrdXYZs));
+    Quaternion rotation = Quaternion(Euler(0, Math::DEG2RAD * 90.0f, 0, EulOrdXYZs));
     Vector3f translation(5, 3, 0);
     Vector3f scale(1, 1, 1);
     transform.setTransformMatrix(translation,
-                                 rotation,
-                                 scale);
+      rotation,
+      scale);
     Vector3f point = transform.transformPosition(Vector3f(1, 2, 3));
+
+    // TODO: mising check
   }
 
   TEST_CASE("View Matrix") {
     Matrix4 view;
     view.view(Vector4f(0, 0, 5, 1),
-              Vector4f(0, 0, 0, 1),
-              Vector4f(0, 1, 0, 0));
+      Vector4f(0, 0, 0, 1),
+      Vector4f(0, 1, 0, 0));
 
     Vector3f forward = view.getForwardVector();
     CHECK(forward.x == doctest::Approx(0.0f));
@@ -423,9 +534,9 @@ TEST_SUITE("Matrix4 Tests") {
 
   TEST_CASE("Matrix Inversion") {
     Matrix4 m(1, 0, 0, 5,
-              0, 1, 0, 3,
-              0, 0, 1, 0,
-              0, 0, 0, 1);
+      0, 1, 0, 3,
+      0, 0, 1, 0,
+      0, 0, 0, 1);
 
     Matrix4 inv = m.inversed();
     Matrix4 identity = m * inv;
@@ -443,25 +554,104 @@ TEST_SUITE("Matrix4 Tests") {
     }
   }
 
-  TEST_CASE("Vector Transformation") {
-    Matrix4 m;
-    m.identity();
-    m.translate(Vector3f(5, 3, 0));
-    m.rotateY(90.0f);
+  TEST_CASE("Matrix transformPosition (Translate only)") {
+    Matrix4 m = Matrix4::IDENTITY;
+    m.translate(Vector3f(15, 7, -2));
 
-    Vector3f point(1, 0, 0);
+    Vector3f point(-5, 0, 1);
     Vector3f transformed = m.transformPosition(point);
 
-    CHECK(transformed.x == doctest::Approx(5.0f));
-    CHECK(transformed.y == doctest::Approx(3.0f));
-    CHECK(transformed.z == doctest::Approx(1.0f));
+    CHECK(transformed.x == doctest::Approx(10.0f));
+    CHECK(transformed.y == doctest::Approx(7.0f));
+    CHECK(transformed.z == doctest::Approx(-1.0f));
 
-    Vector3f dir(1, 0, 0);
+    Vector3f dir(1, -1, 0);
     Vector3f transformedDir = m.transformDirection(dir);
 
-    CHECK(transformedDir.x == doctest::Approx(0.0f));
-    CHECK(transformedDir.y == doctest::Approx(0.0f));
-    CHECK(transformedDir.z == doctest::Approx(1.0f));
+    CHECK(transformedDir.x == doctest::Approx(1.0f));
+    CHECK(transformedDir.y == doctest::Approx(-1.0f));
+    CHECK(transformedDir.z == doctest::Approx(0.0f));
+  }
+
+  TEST_CASE("Matrix transformPosition (Rotation only)") {
+    Matrix4 m = Matrix4::IDENTITY;
+    m.rotateY(Math::degToRad(90.0f));
+
+    Vector3f point(33, 2, 0);
+    Vector3f transformed = m.transformPosition(point);
+
+    CHECK(transformed.x == doctest::Approx(0.0f));
+    CHECK(transformed.y == doctest::Approx(2.0f));
+    CHECK(transformed.z == doctest::Approx(33.0f));
+
+    Vector3f dir(-1, -1, -1);
+    dir.normalize();
+
+    Vector3f transformedDir = m.transformDirection(dir);
+
+    Vector3f expectedResult(1, -1, -1);
+    expectedResult.normalize();
+
+    CHECK(transformedDir.x == doctest::Approx(expectedResult.x));
+    CHECK(transformedDir.y == doctest::Approx(expectedResult.y));
+    CHECK(transformedDir.z == doctest::Approx(expectedResult.z));
+  }
+
+  TEST_CASE("Matrix transformPosition (Scale only)") {
+    Matrix4 m = Matrix4::IDENTITY;
+    m.scale(Vector3f(100.0f, 0.2f, 1.0f));
+
+    Vector3f point(1.0f, 5.0f, 0.0f);
+    Vector3f transformed = m.transformPosition(point);
+
+    CHECK(transformed.x == doctest::Approx(100.0f));
+    CHECK(transformed.y == doctest::Approx(1.0f));
+    CHECK(transformed.z == doctest::Approx(0.0f));
+
+    Vector3f dir(1.0f, 1.0f, 1.0f);
+    dir.normalize();
+
+    Vector3f transformedDir = m.transformDirection(dir);
+    transformedDir.normalize();
+
+    Vector3f expectedResult(100.0f, 0.2f, 1.0f);
+    expectedResult.normalize();
+
+    CHECK(transformedDir.x == doctest::Approx(expectedResult.x));
+    CHECK(transformedDir.y == doctest::Approx(expectedResult.y));
+    CHECK(transformedDir.z == doctest::Approx(expectedResult.z));
+  }
+
+  TEST_CASE("Matrix transformPosition (Translation + Rotation)") {
+    Matrix4 m = Matrix4::IDENTITY;
+    m.rotateZ(Math::degToRad(90.0f));
+    m.translate(40.0f, -5.0f, 0.1);
+
+    Vector3f point(1.0f, 2.0f, 3.0f);
+    Vector3f transformed = m.transformPosition(point);
+
+    CHECK(transformed.x == doctest::Approx(42.0f));
+    CHECK(transformed.y == doctest::Approx(-6.0f));
+    CHECK(transformed.z == doctest::Approx( 3.1f));
+
+    Vector3f directionZ(0.0f, 0.0f, 1.0f);
+    Vector3f transformedDirZ = m.transformDirection(directionZ);
+    transformedDirZ.normalize();
+
+    CHECK(transformedDirZ.x == doctest::Approx(0.0f));
+    CHECK(transformedDirZ.y == doctest::Approx(0.0f));
+    CHECK(transformedDirZ.z == doctest::Approx(1.0f));
+
+    Vector3f direction(-1.0f, 1.0f, 0.0f);
+    direction.normalize();
+    Vector3f transformedDir = m.transformDirection(direction);
+    transformedDir.normalize();
+    Vector3f expectedDirection(1.0f, 1.0f, 0.0f);
+    expectedDirection.normalize();
+
+    CHECK(transformedDir.x == doctest::Approx(expectedDirection.x));
+    CHECK(transformedDir.y == doctest::Approx(expectedDirection.y));
+    CHECK(transformedDir.z == doctest::Approx(expectedDirection.z));
   }
 }
 
@@ -510,8 +700,7 @@ TEST_SUITE("Primitive Tests") {
       // OBB B: Centered at (3.0, 0, 0), slightly offset (should intersect)
       b.m_center = Vector3f(1.5f, 0, 0);
       b.m_hExtents = Vector3f(0.5f, 0.5f, 0.5f);
-      b.m_orientation = Quaternion(0, 0, 0, 1);  // No rotation
-      b.m_orientation.fromEuler(Euler(0, Math::DEG2RAD * 45.0f, 0, EulOrdXYZs));
+      b.m_orientation = Quaternion(Euler(0, Math::DEG2RAD * 45.0f, 0, EulOrdXYZs));
       // 
       //     // OBB B: Centered at (1.5, 0, 0), rotated 45° around Y (should intersect)
       //     b.center = Vector3f(1.5f, 0, 0);
