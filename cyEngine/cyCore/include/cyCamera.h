@@ -54,7 +54,7 @@ public:
   // View Matrix is updated really by the transform component and then set as dirty
   Matrix4 m_view;
 
-
+  // Projection is created after values are set
   Matrix4 m_projection;
 
 

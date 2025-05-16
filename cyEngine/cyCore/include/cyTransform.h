@@ -141,7 +141,7 @@ public:
     return toReturn;
   }
 
-private:
+public:
 
 //   Vector3f m_position;
 //   

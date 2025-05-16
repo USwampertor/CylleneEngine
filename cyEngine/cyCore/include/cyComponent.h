@@ -45,7 +45,7 @@ public:
   virtual ~Component() = default;
 
   void 
-  setOwner(Being* owner) {
+  setOwner(SPtr<Being> owner) {
     m_owner = owner;
   }
 
@@ -70,7 +70,7 @@ protected:
 
   COMPONENT_TYPE::E m_type = COMPONENT_TYPE::E::eNONE;
 
-  Being* m_owner = nullptr;
+  WPtr<Being> m_owner;
 };
 // 
 // class CY_CORE_EXPORT ModelComponent : public Component

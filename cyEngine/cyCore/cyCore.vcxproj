@@ -34,6 +34,10 @@
     <ClInclude Include="include\cyGameMode.h" />
     <ClInclude Include="include\cyGarbageCollector.h" />
     <ClInclude Include="include\cyImage.h" />
+    <ClInclude Include="include\cyInput.h" />
+    <ClInclude Include="include\cyInputAction.h" />
+    <ClInclude Include="include\cyInputManager.h" />
+    <ClInclude Include="include\cyInputMapping.h" />
     <ClInclude Include="include\cyMaterial.h" />
     <ClInclude Include="include\cyMesh.h" />
     <ClInclude Include="include\cyModel.h" />
@@ -64,6 +68,8 @@
     <ClCompile Include="src\cyGameMode.cpp" />
     <ClCompile Include="src\cyGarbageCollector.cpp" />
     <ClCompile Include="src\cyImage.cpp" />
+    <ClCompile Include="src\cyInputManager.cpp" />
+    <ClCompile Include="src\cyInputMapping.cpp" />
     <ClCompile Include="src\cyMaterial.cpp" />
     <ClCompile Include="src\cyMesh.cpp" />
     <ClCompile Include="src\cyModel.cpp" />
