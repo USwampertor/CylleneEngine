@@ -115,6 +115,9 @@ main(int argc, char* argv[])
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
 
+  Being cubeObject("cube");
+  cubeObject.createComponent<TransformComponent>();
+
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
