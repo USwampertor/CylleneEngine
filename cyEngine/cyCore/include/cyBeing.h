@@ -93,7 +93,7 @@ public:
     if (m_components.find(type) == m_components.end()) {
 
       m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
-      m_components.at(type)->setOwner(std::make_shared(this));
+      m_components.at(type)->setOwner(this);
     }
 
     // In any case, either existing or non existing, we can just return what is at
