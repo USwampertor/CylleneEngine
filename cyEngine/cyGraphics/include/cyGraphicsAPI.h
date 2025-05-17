@@ -4,8 +4,8 @@
 
 #include <cyColor.h>
 #include <cyModule.h>
-#include <cyShader.h>
-#include <cyTexture.h>
+#include <cyRShader.h>
+#include <cyRTexture.h>
 #include <cyVector2i.h>
 
 #include "cyGraphicsBuffer.h"
@@ -87,7 +87,7 @@ public:
 													 SPtr<GShaderResourceViewElement> srvParams) = 0;
 
 	virtual SPtr<GTexture>
-  createTexture2D(SPtr<TextureResource> texture,
+  createTexture2D(SPtr<RTexture> texture,
 									uint32 bindFlags, 
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
@@ -116,13 +116,13 @@ public:
 	compileShader(const String& data, const String& entry, const String& model) = 0;
 
 	virtual SPtr<GVertexShader>
-	createVertexShader(SPtr<ShaderResource> shader, const String& entry) = 0;
+	createVertexShader(SPtr<RShader> shader, const String& entry) = 0;
 
   virtual SPtr<GPixelShader>
-	createPixelShader(SPtr<ShaderResource> shader, const String& entry) = 0;
+	createPixelShader(SPtr<RShader> shader, const String& entry) = 0;
 	
   virtual SPtr<GGeometryShader>
-	createGeometryShader(SPtr<ShaderResource> shader, const String& entry) = 0;
+	createGeometryShader(SPtr<RShader> shader, const String& entry) = 0;
 
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,

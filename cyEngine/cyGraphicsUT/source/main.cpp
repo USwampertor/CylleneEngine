@@ -16,7 +16,7 @@ using namespace CYLLENE_SDK;
 int32
 main(int argc, char* argv[])
 {
-  void* createFunc = CYLLENE_SDK::DLLLoader::load("cyGraphicsDX11.dll", "createPluginAPI", false);
+  void* createFunc = CYLLENE_SDK::DLLLoader::load("cyDirectX11d.dll", "createPluginAPI", false);
   if (!createFunc) {
     // Handle error: DLL not found or function not exported
     return -1;
