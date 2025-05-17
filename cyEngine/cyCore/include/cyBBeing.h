@@ -27,7 +27,7 @@ namespace CYLLENE_SDK
 {
 
 
-class Sprite;
+class CSprite;
 
 /*
  *	@class	Being
@@ -157,7 +157,7 @@ private:
 
   bool m_markedToDestroy;
 
-  Sprite* m_gizmo;
+  CSprite* m_gizmo;
 };
 
 REGISTER_CLASS(BBeing);
