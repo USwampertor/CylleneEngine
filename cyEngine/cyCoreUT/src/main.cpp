@@ -27,6 +27,7 @@
 #include <cyTime.h>
 #include <cyTriangle.h>
 #include <cyCTransform.h>
+#include <cyCCamera.h> 
 #include <cyUnitTesting.h>
 #include <cyVector2f.h>
 #include <cyVertex.h>
@@ -88,6 +89,7 @@ TEST_CASE("[being] Creation of beings") {
   SPtr<BBeing> b2 = ClassRegister::createBeing<BBeing>();
   b1->setName("b1");
   b1->createComponent<CTransform>();
+  b1->createComponent<CCamera>();
 }
 
 TEST_CASE("[resource] Creation of textures") {
