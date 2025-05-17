@@ -239,7 +239,7 @@ GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
 
 
   if (FAILED(hr)) {
-    MessageBox(nullptr, "Error creating vertex buffer", "Error", MB_OK);
+    MessageBox(nullptr, "Error creating graphics buffer", "Error", MB_OK);
     return nullptr;
   }
 
