@@ -10,7 +10,7 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
-#include "cyResource.h"
+#include "cyRResource.h"
 
 #include <cyFileSystem.h>
 #include <cyLogger.h>
@@ -34,20 +34,20 @@
 namespace CYLLENE_SDK {
 
 class ModelResource;
-class MeshResource;
+class RMesh;
 
 // class Resource;
 
-class CY_CORE_EXPORT Codec
+class CY_CORE_EXPORT CDCodec
 {
 public:
 
   /**
    * Codec defining the type it is based on the resource it can load
    */
-  Codec(const RESOURCE_TYPE::E& type) : m_type(type) {}
+  CDCodec(const RESOURCE_TYPE::E& type) : m_type(type) {}
 
-  virtual ~Codec() = default;
+  virtual ~CDCodec() = default;
 
   static RESOURCE_TYPE::E 
   staticType() { 
@@ -145,7 +145,7 @@ private:
               JXR     = 36);
   }
 
-class CY_CORE_EXPORT ImageCodec : public Codec
+class CY_CORE_EXPORT ImageCodec : public CDCodec
 {
 public:
 
@@ -163,11 +163,11 @@ public:
   decode(const File& f) override;
 };
 
-class CY_CORE_EXPORT ModelCodec : public Codec
+class CY_CORE_EXPORT ModelCodec : public CDCodec
 {
 public:
 
-  ModelCodec() : Codec(ModelCodec::staticType()) {
+  ModelCodec() : CDCodec(ModelCodec::staticType()) {
     m_fileExtensions = { 
       "fbx",
       "dae",
@@ -219,11 +219,11 @@ public:
 
 };
 
-class CY_CORE_EXPORT ShaderCodec : public Codec
+class CY_CORE_EXPORT ShaderCodec : public CDCodec
 {
 public:
 
-  ShaderCodec() : Codec(ShaderCodec::staticType()) {
+  ShaderCodec() : CDCodec(ShaderCodec::staticType()) {
     m_fileExtensions = {
       "txt",
       "hlsl",
@@ -248,11 +248,11 @@ public:
 
 };
   
-class CY_CORE_EXPORT AudioCodec : public Codec
+class CY_CORE_EXPORT AudioCodec : public CDCodec
 {
 public:
 
-  AudioCodec() : Codec(AudioCodec::staticType()) {
+  AudioCodec() : CDCodec(AudioCodec::staticType()) {
     m_fileExtensions = {
       "wav", 
       "mp3", 

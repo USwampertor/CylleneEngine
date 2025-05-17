@@ -1,11 +1,11 @@
-#include "cyCamera.h"
-#include "cyTransform.h"
-#include "cyBeing.h"
+#include "cyCCamera.h"
+#include "cyCTransform.h"
+#include "cyBBeing.h"
 
 namespace CYLLENE_SDK {
 
 void
-Camera::setPerspective(const float& newWidth, 
+CCamera::setPerspective(const float& newWidth, 
                        const float& newHeight, 
                        const float& newZNear, 
                        const float& newZFar, 
@@ -19,18 +19,18 @@ Camera::setPerspective(const float& newWidth,
 }
 
 void
-Camera::setLookAt(const Vector3f& eyePos,
+CCamera::setLookAt(const Vector3f& eyePos,
                   const Vector3f& targetPos,
                   const Vector3f upDir) {
   if (m_owner != nullptr) {
-    m_owner->getComponent<TransformComponent>()->setLookAt(eyePos, targetPos, upDir);
+    m_owner->getComponent<CTransform>()->setLookAt(eyePos, targetPos, upDir);
     // TODO: Use the dirty flag system
-    m_view = m_owner->getComponent<TransformComponent>()->m_tMatrix;
+    m_view = m_owner->getComponent<CTransform>()->m_tMatrix;
   }
 }
 
 void
-Camera::changeCameraType(const CAMERA_TYPE::E& type) {
+CCamera::changeCameraType(const CAMERA_TYPE::E& type) {
 
 }
 

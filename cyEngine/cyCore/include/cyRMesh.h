@@ -1,0 +1,38 @@
+#pragma once
+
+#include "cyCorePrerequisites.h"
+
+#include "cyRMaterial.h"
+#include "cyRResource.h"
+#include "cyVertex.h"
+
+namespace CYLLENE_SDK {
+
+
+class CY_CORE_EXPORT RMesh : public RResource {
+  
+public:
+
+  RMesh() : RResource(RMesh::staticType()) {}
+  
+  static RESOURCE_TYPE::E 
+  staticType() { 
+    return RESOURCE_TYPE::E::eMESH; 
+  }
+
+  virtual void*
+  getData() override;
+
+  virtual void
+  setData(void* data) override;
+
+public:
+
+  Vector<Vertex> m_vertexBuffer;
+
+  Vector<uint32> m_indexBuffer;
+
+  SPtr<RMaterial> m_material;
+};
+
+}

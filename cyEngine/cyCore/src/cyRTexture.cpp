@@ -1,10 +1,10 @@
-#include "cyTexture.h"
+#include "cyRTexture.h"
 #include "cyMath.h"
 
 namespace CYLLENE_SDK {
 
 void*
-TextureResource::getData() {
+RTexture::getData() {
 //   std::tuple<TextureMetaData, Vector<Color>>* tupleData = 
 //     new std::tuple<TextureMetaData, Vector<Color>>(m_metadata, 
 //                                                    m_pixels);
@@ -13,7 +13,7 @@ TextureResource::getData() {
 }
 
 void
-TextureResource::setData(void* data) {
+RTexture::setData(void* data) {
 //   auto* tupleData = static_cast<std::tuple<TextureMetaData, Vector<Color>>*>(data);
 //   m_metadata = std::get<0>(*tupleData);
 //   m_pixels = std::get<1>(*tupleData);
@@ -22,7 +22,7 @@ TextureResource::setData(void* data) {
 }
 
 void
-TextureResource::adjustTextureAddress(float& u, 
+RTexture::adjustTextureAddress(float& u, 
                                       float& v, 
                                       const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */) {
   if (TEXTUREMODE::E::eWRAP == mode) {
@@ -46,12 +46,12 @@ TextureResource::adjustTextureAddress(float& u,
 }
 
 void
-TextureResource::setImage(const SPtr<ImageResource>& img) {
+RTexture::setImage(const SPtr<RImage>& img) {
   m_img = img;
 }
 
 Color
-TextureResource::sample(float u, 
+RTexture::sample(float u, 
                         float v, 
                         const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
                         const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
@@ -93,14 +93,14 @@ TextureResource::sample(float u,
 }
 
 Color
-TextureResource::sample(Vector2f uv, 
+RTexture::sample(Vector2f uv, 
                         const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
                         const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
   return sample(uv.x, uv.y, mode, sampler);
 }
 
 void
-TextureResource::draw(SPtr<ImageResource>& img,
+RTexture::draw(SPtr<RImage>& img,
                       int32_t x,
                       int32_t y,
                       const Rect& srcRect, 
