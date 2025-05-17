@@ -229,6 +229,31 @@ GraphicsDX11API::createTexture2D(SPtr<TextureResource> texture,
                                  SPtr<GShaderResourceView> ppSRV,
                                  SPtr<GRenderTargetView> ppRTV,
                                  SPtr<GDepthStencilView> ppDSV) {
+
+//   createTexture2D(Vector2i(texture->m_img->getWidth(), texture->m_img->getHeight()),
+//     bindFlags,
+//     cpuAccessFlags,
+//     DXGI_FORMAT_R32G32B32A32_FLOAT,
+//     D3D11_USAGE_DEFAULT,
+//     D3D11_BIND_SHADER_RESOURCE,
+//     cpuAccessFlags,
+//     mipFlags,
+//     ppSRV,
+//     ppRTV,
+//     ppDSV);
+
+//   if (m_pTexture) {
+//     m_pDeviceContext->updateSubresource()
+//     m_pDeviceContext->UpdateSubresource1(m_pTexture, 
+//                                                        0, 
+//                                                        nullptr, 
+//                                                        reinterpret_cast<void*>(m_img.m_pixels.data()), 
+//                                                        m_img.m_width * 16, // PITCH
+//                                                        0, 
+//                                                        0);
+//     
+//   }
+
   return nullptr;
 }
 
@@ -252,28 +277,7 @@ GraphicsDX11API::createTexture2D(const Vector2i& size,
   textureParams->cpuAccessFlags = cpuAccessFlags;
   textureParams->mipLevels = mipFlags;
 
-
-  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
-
-  if (ppSRV != nullptr) {
-    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
-      ppSRV = m_pDevice->createShaderResourceView(pTexture, nullptr);
-    }
-  }
-
-  if (ppSRV != nullptr) {
-    if (bindFlags & D3D11_BIND_RENDER_TARGET) {
-      ppRTV = m_pDevice->createRenderTargetView(pTexture, nullptr);
-    }
-  }
-
-  if (ppDSV != nullptr) {
-    if (bindFlags & D3D11_BIND_DEPTH_STENCIL) {
-      ppDSV = m_pDevice->createDepthStencilView(pTexture, nullptr);
-    }
-  }
-
-  return pTexture;
+  return createTexture2D(textureParams, ppSRV, ppRTV, ppDSV);
 }
 
 
@@ -282,7 +286,29 @@ GraphicsDX11API::createTexture2D(SPtr<GTextureElement> textureParams,
                                  SPtr<GShaderResourceView> ppSRV,
                                  SPtr<GRenderTargetView> ppRTV,
                                  SPtr<GDepthStencilView> ppDSV) {
-  return nullptr;
+
+  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
+
+  if (ppSRV != nullptr) {
+    if (textureParams->bindFlags & D3D11_BIND_SHADER_RESOURCE) {
+      ppSRV = m_pDevice->createShaderResourceView(pTexture, nullptr);
+    }
+  }
+
+  if (ppSRV != nullptr) {
+    if (textureParams->bindFlags & D3D11_BIND_RENDER_TARGET) {
+      ppRTV = m_pDevice->createRenderTargetView(pTexture, nullptr);
+    }
+  }
+
+  if (ppDSV != nullptr) {
+    if (textureParams->bindFlags & D3D11_BIND_DEPTH_STENCIL) {
+      ppDSV = m_pDevice->createDepthStencilView(pTexture, nullptr);
+    }
+  }
+
+  return pTexture;
+  
 }
 
 SPtr<GShaderBlob>

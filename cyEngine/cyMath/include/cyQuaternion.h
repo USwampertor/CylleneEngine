@@ -18,10 +18,15 @@
 
 namespace CYLLENE_SDK {
 
-class Vector4f;
 class Vector3f;
+class Vector4f;
 class Matrix3;
 class Matrix4;
+class Quaternion;
+
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// Euler ////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 struct CY_MATH_EXPORT Euler {
 public:
@@ -30,6 +35,8 @@ public:
 
   ~Euler() = default;
 
+  Euler(const int32& norder);
+
   Euler(const float& nx, const float& ny, const float& nz);
 
   Euler(const float& nx, const float& ny, const float& nz, const int32& norder);
@@ -37,6 +44,21 @@ public:
   Euler(const Vector3f& vector);
 
   Euler(const Vector4f& vector);
+
+  Euler(const Matrix3& rotationMatrix, const int32& order = EulOrdXYZs);
+
+  Euler(const Matrix4& rotationMatrix, const int32& order = EulOrdXYZs);
+
+  Euler(const Quaternion& rotationQuat, const int32& order = EulOrdXYZs);
+
+  Matrix4
+  getMatrix4Rotation() const;
+
+  Matrix3
+  getMatrix3Rotation() const;
+
+  Quaternion
+  getQuatRotation() const;
 
   String
   toString();
@@ -49,6 +71,9 @@ public:
   int32 order;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// Quaternion //////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 class CY_MATH_EXPORT Quaternion {
     
@@ -66,11 +91,7 @@ public:
     * @param float nz
     *
     */
-  Quaternion(const float& nx, const float& ny, const float& nz, const float& nw)
-    : x(nx),
-      y(ny),
-      z(nz),
-      w(nw) {}
+  Quaternion(const float& nx, const float& ny, const float& nz, const float& nw);
 
   /**
     * @brief Constructs without any transformation, passing values as is
@@ -87,7 +108,11 @@ public:
     */
   Quaternion(const Vector4f other);
 
-  Quaternion(const Euler& euler, const int32& order = EulOrdXYZs);
+  Quaternion(const Euler& euler);
+
+  Quaternion(const Matrix3& matrix);
+
+  Quaternion(const Matrix4& matrix);
 
   /**
     * @brief [] operator overload, will return the value at a given position
@@ -303,7 +328,13 @@ public:
   slerp(const Quaternion& q1, const Quaternion& q2, float t);
 
   void
-  fromEuler(const Euler& euler);
+  setRotation(const Euler& euler);
+
+  void
+  setRotation(const Matrix3& m);
+
+  void
+  setRotation(const Matrix4& m);
 
   void
   setValues(const float& nx, const float& ny, const float& nz, const float& nw);
@@ -311,20 +342,20 @@ public:
   void 
   setValues(const Vector3f& vector, const float& scalar);
 
-  void
-  setRotationMatrix(const Matrix3& m);
-
   const Vector3f
   getVectorPart() const;
 
   const float&
   getScalarPart() const;
 
+  Euler
+  getEulerRotation(const int32& order = EulOrdXYZs) const;
+
   const Matrix3
-  toMat3() const;
+  getMatrix3Rotation() const;
 
   const Matrix4
-  toMat4() const;
+  getMatrix4Rotation() const;
 
   float 
   norm() const;
@@ -370,9 +401,6 @@ public:
 
   bool
   isReal() const;
-
-  Euler
-  toEuler(const int32& order = EulOrdXYZs) const;
 
   Vector3f
   toVector3() const;

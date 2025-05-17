@@ -80,19 +80,29 @@ struct MessageBoxData
 namespace WINDOW_FLAGS
 {
   BETTER_ENUM(E, uint32,
-              CENTERED,
-              RESIZABLE,
-              MOVABLE,
-              CLOSABLE,
-              MINIMIZABLE,
-              MAXIMIZABLE,
-              CAN_FULLSCREEN,
-              TRANSPARENT,
-              FRAME,
-              SHADOW,
-              VISIBLE,
-              FULLSCREEN,
-              MODAL);    
+              CENTERED        = 1 << 0,
+              RESIZABLE       = 1 << 1,
+              MOVABLE         = 1 << 2,
+              CLOSABLE        = 1 << 3 ,
+              MINIMIZABLE     = 1 << 4 ,
+              MAXIMIZABLE     = 1 << 5,
+              CAN_FULLSCREEN  = 1 << 5,
+              TRANSPARENT     = 1 << 6,
+              FRAME           = 1 << 7,
+              SHADOW          = 1 << 8,
+              VISIBLE         = 1 << 9,
+              FULLSCREEN      = 1 << 10,
+              MODAL           = 1 << 11,
+              DEFAULT_WIN     = CENTERED |
+                                RESIZABLE |
+                                MOVABLE |
+                                CLOSABLE |
+                                MINIMIZABLE |
+                                MAXIMIZABLE |
+                                CAN_FULLSCREEN |
+                                FRAME |
+                                SHADOW |
+                                VISIBLE);
 }
 
 
@@ -121,12 +131,12 @@ public:
   createWindow(const String& title,
                const int32& width, 
                const int32& height, 
-               const int32& flags);
+               const int32& flags = WINDOW_FLAGS::E::DEFAULT_WIN);
 
   SPtr<WEventQueue>
   createWindow(const String& title,
                const Vector2i& size, 
-               const int32& flags);
+               const int32& flags = WINDOW_FLAGS::E::DEFAULT_WIN);
 
   SPtr<WEventQueue>
   createWindow(const WindowSettings& settings);

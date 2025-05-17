@@ -14,6 +14,10 @@
 #include <cyGInputLayout.h>
 #include <cyMatrix4.h>
 #include <cyModel.h>
+#include <cyBeing.h>
+#include <cyCamera.h>
+#include <cyTransform.h>
+#include <cyMath.h> 
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -78,10 +82,16 @@ main(int argc, char* argv[])
   }
 
   // camera shit
+  Being cameraEntity("Camera");
+  cameraEntity.createComponent<TransformComponent>();
+  Camera* camera = cameraEntity.createComponent<Camera>();
+  camera->setLookAt(Vector3f(0, 0, -30), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  camera->setPerspective(1280, 720, 0.1f, 200.0f, Math::PI * 0.25f);
+
 
   matrices.world = Matrix4::IDENTITY;
-  matrices.view = Matrix4::IDENTITY;
-  matrices.projection = Matrix4::IDENTITY;
+  matrices.view = camera->m_view;
+  matrices.projection = camera->m_projection;
 
   matrices.world.transpose();
   matrices.view.transpose();
@@ -99,7 +109,11 @@ main(int argc, char* argv[])
   File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
   SPtr<ModelResource> modelR = ResourceManager::instance().loadFromPath<ModelResource>(modelF.path());
 
+  SPtr<ImageResource> newImage = ResourceManager::instance().loadFromPath<ImageResource>(resourceDir.fullPath() + "/cube_tex.png");
+  SPtr<TextureResource> newTexture = ResourceManager::instance().create<TextureResource>("cubeTexture");
+  newTexture->setImage(newImage);
 
+  // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
 
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);

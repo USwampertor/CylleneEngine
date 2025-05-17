@@ -10,6 +10,7 @@ namespace CYLLENE_SDK {
 class Matrix4;
 class Matrix2;
 class Quaternion;
+struct Euler;
 
 class CY_MATH_EXPORT Matrix3
 {
@@ -166,6 +167,18 @@ class CY_MATH_EXPORT Matrix3
   determinant() const;
 
   void
+  setRotation(const Vector3f& rotation);
+
+  void
+  setRotation(const Quaternion& rotation);
+
+  void
+  setScale(const Vector3f& newScale);
+
+  void
+  setScale(const float& newScale);
+
+  void
   rotateX(const float& angle);
 
   void
@@ -184,19 +197,10 @@ class CY_MATH_EXPORT Matrix3
   rotate(const Quaternion& rotation);
 
   void
-  setRotation(const Vector3f& rotation);
-
-  void
-  setRotation(const Quaternion& rotation);
-
-  void
-  setScale(const Vector3f& newScale);
-
-  void
-  setScale(const float& newScale);
-
-  void
   scale(const Vector3f& newScale);
+
+  void
+  scale(const float& x, const float& y, const float& z);
 
   void
   scale(const float& newScale);
@@ -210,7 +214,7 @@ class CY_MATH_EXPORT Matrix3
   Vector3f
   getUpVector() const;
 
-  Vector3f
+  Euler
   getEulerRotation() const;
 
   Quaternion
@@ -218,6 +222,12 @@ class CY_MATH_EXPORT Matrix3
   
   Vector3f
   getScale() const;
+
+  Matrix3
+  getRotationMatrix() const;
+
+  Matrix3
+  getScaleMatrix() const;
 
   String
   toString();

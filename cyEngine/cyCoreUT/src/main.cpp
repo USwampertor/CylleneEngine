@@ -3,13 +3,13 @@
  * @file   	main.cpp
  * @author 	Marco "Swampy" Millan
  * @date 	2024/11/21
- * @brief
+ * @brief 	
  *
- *
+ * 
  */
- /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
- // #define SDL_MAIN_USE_CALLBACKS 1
+// #define SDL_MAIN_USE_CALLBACKS 1
 #include <iostream>
 
 #include <cyBeing.h>
@@ -172,5 +172,13 @@ TEST_CASE("[window] Window creation") {
       running = false;
     }
 
+  }
+}
+
+
+TEST_SUITE("[components] Components") {
+  TEST_CASE("[components] Camera") {
+    TransformComponent t;
+    t.reset();
   }
 }
