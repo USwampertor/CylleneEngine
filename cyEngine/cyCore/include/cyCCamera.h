@@ -15,7 +15,7 @@ namespace CYLLENE_SDK {
   }
 
 
-class CCamera : public CComponent
+class CY_CORE_EXPORT CCamera : public CComponent
 {
 public:
   
