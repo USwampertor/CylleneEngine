@@ -96,9 +96,9 @@ typedef Quat EulerAngles;    /* (x,y,z)=ang 1,2,3, w=order code  */
 
 EulerAngles Eul_(float ai, float aj, float ah, int32 order);
 Quat Eul_ToQuat(EulerAngles ea);
-void Eul_ToHMatrix(EulerAngles ea, HMatrix M);
-EulerAngles Eul_FromHMatrix(HMatrix M, int32 order);
-EulerAngles Eul_FromQuat(Quat q, int32 order);
+void Eul_ToHMatrix(EulerAngles ea, HMatrix& M);
+EulerAngles Eul_FromHMatrix(const HMatrix& M, const int32& order);
+EulerAngles Eul_FromQuat(const Quat& q, const int32& order);
 #endif
 
 }

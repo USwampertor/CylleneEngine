@@ -13,6 +13,7 @@
 #include "cyCorePrerequisites.h"
 
 #include "cyBeing.h"
+#include "cySceneNode.h"
 #include "cyGameMode.h"
 
 #include <cyJSON.h>
@@ -43,7 +44,7 @@ private:
 
   String m_name;
   UPtr<SceneSettings> m_settings;
-  Vector<SPtr<Being>> m_beings;
+  Vector<SPtr<SNode>> m_beings;
 
   Vector<SPtr<Being>> m_toRemove;
 };
