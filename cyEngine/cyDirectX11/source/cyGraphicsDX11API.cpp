@@ -222,7 +222,7 @@ GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
 }
 
 SPtr<GTexture>
-GraphicsDX11API::createTexture2D(SPtr<TextureResource> texture,
+GraphicsDX11API::createTexture2D(SPtr<RTexture> texture,
                                  uint32 bindFlags,
                                  uint32 cpuAccessFlags,
                                  uint32 mipFlags,
@@ -349,7 +349,7 @@ GraphicsDX11API::compileShader(const String& data,
 }
 
 SPtr<GVertexShader>
-GraphicsDX11API::createVertexShader(SPtr<ShaderResource> shader, 
+GraphicsDX11API::createVertexShader(SPtr<RShader> shader, 
                                     const String& entry) {
   SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "vs_5_0");
 
@@ -363,7 +363,7 @@ GraphicsDX11API::createVertexShader(SPtr<ShaderResource> shader,
 }
 
 SPtr<GPixelShader>
-GraphicsDX11API::createPixelShader(SPtr<ShaderResource> shader,
+GraphicsDX11API::createPixelShader(SPtr<RShader> shader,
                                    const String& entry) {
   SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "ps_5_0");
 
@@ -377,7 +377,7 @@ GraphicsDX11API::createPixelShader(SPtr<ShaderResource> shader,
 }
 
 SPtr<GGeometryShader>
-GraphicsDX11API::createGeometryShader(SPtr<ShaderResource> shader,
+GraphicsDX11API::createGeometryShader(SPtr<RShader> shader,
   const String& entry) {
   SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "gs_5_0");
   if (!sPtrShaderBlob->isCompiled) {

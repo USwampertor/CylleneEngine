@@ -7,16 +7,16 @@
 #include <cyWindow.h> 
 #include <cyLogger.h> 
 #include <cyResourceManager.h>
-#include <cyShader.h>
+#include <cyRShader.h>
 #include <cyFileSystem.h>
 #include <cyGShader.h>
 #include <cyTime.h>
 #include <cyGInputLayout.h>
 #include <cyMatrix4.h>
-#include <cyModel.h>
-#include <cyBeing.h>
-#include <cyCamera.h>
-#include <cyTransform.h>
+#include <cyRModel.h>
+#include <cyBBeing.h>
+#include <cyCCamera.h>
+#include <cyCTransform.h>
 #include <cyMath.h> 
 
 // Using namespace for ease of use
@@ -57,9 +57,9 @@ main(int argc, char* argv[])
 
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
   File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
-  SPtr<ShaderResource> vsShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderVSF.path());
+  SPtr<RShader> vsShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderVSF.path());
   File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
-  SPtr<ShaderResource> psShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderPSF.path());
+  SPtr<RShader> psShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderPSF.path());
 
   SPtr<GVertexShader> vShader = GraphicsDX11API::instance().createVertexShader(vsShaderR, 
                                                                                "vertex_main");
@@ -82,9 +82,9 @@ main(int argc, char* argv[])
   }
 
   // camera shit
-  Being cameraEntity("Camera");
-  cameraEntity.createComponent<TransformComponent>();
-  Camera* camera = cameraEntity.createComponent<Camera>();
+  BBeing cameraEntity("Camera");
+  cameraEntity.createComponent<CTransform>();
+  CCamera* camera = cameraEntity.createComponent<CCamera>();
   camera->setLookAt(Vector3f(0, 0, -30), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
   camera->setPerspective(1280, 720, 0.1f, 200.0f, Math::PI * 0.25f);
 
@@ -107,16 +107,16 @@ main(int argc, char* argv[])
   }
 
   File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
-  SPtr<ModelResource> modelR = ResourceManager::instance().loadFromPath<ModelResource>(modelF.path());
+  SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
 
-  SPtr<ImageResource> newImage = ResourceManager::instance().loadFromPath<ImageResource>(resourceDir.fullPath() + "/cube_tex.png");
-  SPtr<TextureResource> newTexture = ResourceManager::instance().create<TextureResource>("cubeTexture");
+  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/cube_tex.png");
+  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cubeTexture");
   newTexture->setImage(newImage);
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
 
-  Being cubeObject("cube");
-  cubeObject.createComponent<TransformComponent>();
+  BBeing cubeObject("cube");
+  cubeObject.createComponent<CTransform>();
 
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);

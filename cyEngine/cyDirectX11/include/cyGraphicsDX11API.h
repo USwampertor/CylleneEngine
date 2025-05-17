@@ -43,7 +43,7 @@ public:
 													 SPtr<GShaderResourceViewElement> srvParams) override;
 
 	virtual SPtr<GTexture>
-  createTexture2D(SPtr<TextureResource> texture,
+  createTexture2D(SPtr<RTexture> texture,
 									uint32 bindFlags, 
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
@@ -72,13 +72,13 @@ public:
 	compileShader(const String& data, const String& entry, const String& model) override;
 
 	virtual SPtr<GVertexShader>
-	createVertexShader(SPtr<ShaderResource> shader, const String& entry) override;
+	createVertexShader(SPtr<RShader> shader, const String& entry) override;
 
   virtual SPtr<GPixelShader>
-	createPixelShader(SPtr<ShaderResource> shader, const String& entry) override;
+	createPixelShader(SPtr<RShader> shader, const String& entry) override;
 	
   virtual SPtr<GGeometryShader>
-	createGeometryShader(SPtr<ShaderResource> shader, const String& entry) override;
+	createGeometryShader(SPtr<RShader> shader, const String& entry) override;
 
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,
