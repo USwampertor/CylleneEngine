@@ -2,15 +2,15 @@
 
 #include "cyCorePrerequisites.h"
 
-#include "cyResource.h"
+#include "cyRResource.h"
 
 namespace CYLLENE_SDK {
   
-class CY_CORE_EXPORT ShaderResource : public Resource {
+class CY_CORE_EXPORT RShader : public RResource {
 
 public:
 
-  ShaderResource() : Resource(ShaderResource::staticType()) {}
+  RShader() : RResource(RShader::staticType()) {}
 
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eSHADER;

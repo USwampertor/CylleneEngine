@@ -1,6 +1,6 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file   	cyBeing.h
+ * @file   	cyBBeing.h
  * @author 	Marco "Swampy" Millan
  * @date 	2024/11/20
  * @brief 	The smallest unit object that can exist, not exist, 
@@ -14,8 +14,8 @@
 #include "cyCorePrerequisites.h"
 
 #include "cyClassRegister.h"
-#include "cyComponent.h"
-#include "cyTransform.h"
+#include "cyCComponent.h"
+#include "cyCTransform.h"
 
 
 #include <cyUtilities.h>
@@ -35,7 +35,7 @@ class Sprite;
  *          are Being child classes
  *
  */
-class CY_CORE_EXPORT Being
+class CY_CORE_EXPORT BBeing
 {
 
   BODY();
@@ -44,11 +44,11 @@ public:
   /**
    * Default Constructor
    */
-  Being() = default;
+  BBeing() = default;
 
-  Being(const String& name) : m_name(name) {}
+  BBeing(const String& name) : m_name(name) {}
 
-  template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value>>
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
   addComponent(SPtr<T>& component) {
     // Is there already a component like this?
@@ -60,7 +60,7 @@ public:
     }
   }
 
-  template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value>>
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   T* 
   getComponent() {
     COMPONENT_TYPE::E type = T::staticType();
@@ -71,7 +71,7 @@ public:
   }
 
 
-  template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value>>
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
   removeComponent() {
     COMPONENT_TYPE::E type = T::staticType();
@@ -82,7 +82,7 @@ public:
   }
 
   template <typename T, 
-            typename = std::enable_if_t<std::is_base_of<Component, T>::value>, 
+            typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>, 
             typename ... Args>
   T* 
   createComponent(Args ... args) {
@@ -124,9 +124,9 @@ public:
   const bool& 
   isActive() { return m_isActive; }
 
-  TransformComponent*
+  CTransform*
   getTransform() {
-    return getComponent<TransformComponent>();
+    return getComponent<CTransform>();
   }
 
   const String& 
@@ -151,7 +151,7 @@ private:
   /**
    * The components that has the Being
    */
-  Map<COMPONENT_TYPE::E, SPtr<Component>> m_components;
+  Map<COMPONENT_TYPE::E, SPtr<CComponent>> m_components;
 
   bool m_isActive;
 
@@ -160,7 +160,7 @@ private:
   Sprite* m_gizmo;
 };
 
-REGISTER_CLASS(Being);
+REGISTER_CLASS(BBeing);
 
 }
 

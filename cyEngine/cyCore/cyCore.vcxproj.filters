@@ -21,13 +21,13 @@
     <ClInclude Include="include\cyCorePrerequisites.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyComponent.h">
+    <ClInclude Include="include\cyCComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyResource.h">
+    <ClInclude Include="include\cyRResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyAsset.h">
+    <ClInclude Include="include\cyRAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyCodec.h">
@@ -42,10 +42,10 @@
     <ClInclude Include="include\cyDefaultPrimitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyImage.h">
+    <ClInclude Include="include\cyRImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyMesh.h">
+    <ClInclude Include="include\cyRMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyVertex.h">
@@ -54,16 +54,16 @@
     <ClInclude Include="include\cyEngineAssets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyTransform.h">
+    <ClInclude Include="include\cyCTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyGarbageCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyMaterial.h">
+    <ClInclude Include="include\cyRMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyBeing.h">
+    <ClInclude Include="include\cyBBeing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyClassRegister.h">
@@ -81,31 +81,31 @@
     <ClInclude Include="include\cyPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyAudio.h">
+    <ClInclude Include="include\cyRAudio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyAudioAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyTexture.h">
+    <ClInclude Include="include\cyRTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyShader.h">
+    <ClInclude Include="include\cyRShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyModel.h">
+    <ClInclude Include="include\cyRModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cySkeleton.h">
+    <ClInclude Include="include\cyRSkeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyScript.h">
+    <ClInclude Include="include\cyRScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyCamera.h">
+    <ClInclude Include="include\cyCCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cySceneNode.h">
@@ -128,7 +128,7 @@
     <ClCompile Include="src\cyResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyAsset.cpp">
+    <ClCompile Include="src\cyRAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyCodec.cpp">
@@ -143,10 +143,10 @@
     <ClCompile Include="src\cyGarbageCollector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyMaterial.cpp">
+    <ClCompile Include="src\cyRMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyBeing.cpp">
+    <ClCompile Include="src\cyBBeing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyClassRegister.cpp">
@@ -164,31 +164,31 @@
     <ClCompile Include="src\cyPlugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyAudio.cpp">
+    <ClCompile Include="src\cyRAudio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyAudioAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyTexture.cpp">
+    <ClCompile Include="src\cyRTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyShader.cpp">
+    <ClCompile Include="src\cyRShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyMesh.cpp">
+    <ClCompile Include="src\cyRMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyModel.cpp">
+    <ClCompile Include="src\cyRModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cySkeleton.cpp">
+    <ClCompile Include="src\cyRSkeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyScript.cpp">
+    <ClCompile Include="src\cyRScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyImage.cpp">
+    <ClCompile Include="src\cyRImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyTriangle.cpp">
@@ -197,10 +197,10 @@
     <ClCompile Include="src\cyVertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyCamera.cpp">
+    <ClCompile Include="src\cyCCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cyTransform.cpp">
+    <ClCompile Include="src\cyCTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cySceneNode.cpp">

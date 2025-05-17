@@ -12,21 +12,21 @@
 // #define SDL_MAIN_USE_CALLBACKS 1
 #include <iostream>
 
-#include <cyBeing.h>
+#include <cyBBeing.h>
 #include <cyCoreUTPrerequisites.h>
 #include <cyCrashHandler.h>
 #include <cyFileSystem.h>
 #include <cyGameMode.h>
-#include <cyImage.h>
+#include <cyRImage.h>
 #include <cyLogger.h>
 #include <cyMath.h>
-#include <cyMesh.h>
-#include <cyModel.h>
+#include <cyRMesh.h>
+#include <cyRModel.h>
 #include <cyResourceManager.h>
-#include <cyTexture.h>
+#include <cyRTexture.h>
 #include <cyTime.h>
 #include <cyTriangle.h>
-#include <cyTransform.h>
+#include <cyCTransform.h>
 #include <cyUnitTesting.h>
 #include <cyVector2f.h>
 #include <cyVertex.h>
@@ -81,13 +81,13 @@ TEST_CASE("[module] testing module startup") {
 #define CLASSNAME(x) #x
 
 TEST_CASE("[being] Creation of beings") {
-  CHECK(Being::getClassName() == CLASSNAME(Being));
+  CHECK(BBeing::getClassName() == CLASSNAME(BBeing));
   CHECK(GameMode::getClassName() == CLASSNAME(GameMode));
 
-  SPtr<Being> b1 = ClassRegister::createBeing("Being");
-  SPtr<Being> b2 = ClassRegister::createBeing<Being>();
+  SPtr<BBeing> b1 = ClassRegister::createBeing("BBeing");
+  SPtr<BBeing> b2 = ClassRegister::createBeing<BBeing>();
   b1->setName("b1");
-  b1->createComponent<TransformComponent>();
+  b1->createComponent<CTransform>();
 }
 
 TEST_CASE("[resource] Creation of textures") {
@@ -96,7 +96,7 @@ TEST_CASE("[resource] Creation of textures") {
   File testImage = FileSystem::open(workingPath.fullPath() + "/../resources/gizmo.png");
   if (testImage.isFile() && testImage.exists()) {
     std::cout << testImage.path() << std::endl;
-    SPtr<ImageResource> r = ResourceManager::instance().loadFromPath<ImageResource>(testImage.path());
+    SPtr<RImage> r = ResourceManager::instance().loadFromPath<RImage>(testImage.path());
     CHECK(r->m_metadata.m_width == 32);
     CHECK(r->m_metadata.m_height == 32);
     CHECK(r->m_metadata.m_format == (+IMGEXT::E::PNG)._to_integral());
@@ -109,7 +109,7 @@ TEST_CASE("[resource] Creation of models") {
   File testModel = FileSystem::open(workingPath.fullPath() + "/../resources/cube.fbx");
   if (testModel.isFile() && testModel.exists()) {
     std::cout << testModel.path() << std::endl;
-    SPtr<ModelResource> r = ResourceManager::instance().loadFromPath<ModelResource>(testModel.path());
+    SPtr<RModel> r = ResourceManager::instance().loadFromPath<RModel>(testModel.path());
     CHECK(r->m_meshes.size() == 1);
     CHECK((r->m_meshes[0])->m_vertexBuffer.size() == 24);
     CHECK((r->m_meshes[0])->m_indexBuffer.size() == 36);
@@ -119,11 +119,11 @@ TEST_CASE("[resource] Creation of models") {
 TEST_CASE("[resources] Creation of shaders") {
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
   File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
-  SPtr<ShaderResource> vsShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderVSF.path());
+  SPtr<RShader> vsShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderVSF.path());
   CHECK(!vsShaderR->m_data.empty());
   File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
   CHECK(!vsShaderR->m_data.empty());
-  SPtr<ShaderResource> psShaderR = ResourceManager::instance().loadFromPath<ShaderResource>(shaderPSF.path());
+  SPtr<RShader> psShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderPSF.path());
 
 }
 
@@ -178,7 +178,7 @@ TEST_CASE("[window] Window creation") {
 
 TEST_SUITE("[components] Components") {
   TEST_CASE("[components] Camera") {
-    TransformComponent t;
+    CTransform t;
     t.reset();
   }
 }

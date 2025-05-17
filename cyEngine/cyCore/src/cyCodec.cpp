@@ -1,15 +1,15 @@
 #include "cyCodec.h"
 
-#include "cyAudio.h"
+#include "cyRAudio.h"
 #include "cyDefaultPrimitives.h"
-#include "cyImage.h"
-#include "cyMesh.h"
-#include "cyModel.h"
-#include "cyResource.h"
+#include "cyRImage.h"
+#include "cyRMesh.h"
+#include "cyRModel.h"
+#include "cyRResource.h"
 #include "cyResourceManager.h"
-#include "cyShader.h"
-#include "cySkeleton.h"
-#include "cyTexture.h"
+#include "cyRShader.h"
+#include "cyRSkeleton.h"
+#include "cyRTexture.h"
 #include "cyVertex.h"
 
 #include <cyJSON.h>
@@ -33,7 +33,7 @@
 namespace CYLLENE_SDK {
 
 
-ImageCodec::ImageCodec() : Codec(ImageCodec::staticType()) {
+ImageCodec::ImageCodec() : CDCodec(ImageCodec::staticType()) {
   for (auto extension : IMGEXT::E::_names()) {
     m_fileExtensions.push_back(Utils::toLowerCase(extension));
   }
@@ -119,7 +119,7 @@ ImageCodec::decode(const File& f) {
 }
   
 void
-processMesh(MeshResource& m, aiMesh* node) {
+processMesh(RMesh& m, aiMesh* node) {
 
   // Vertices
   for (uint32 i = 0; i < node->mNumVertices; ++i) {
@@ -177,17 +177,17 @@ processMesh(MeshResource& m, aiMesh* node) {
 
 
 void
-processNode(ModelResource& m, aiNode* node, const aiScene* scene) {
+processNode(RModel& m, aiNode* node, const aiScene* scene) {
   uint32 i = 0;
   for (i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    m.m_meshes.push_back(makeSharedPtr<MeshResource>());
+    m.m_meshes.push_back(makeSharedPtr<RMesh>());
     processMesh(*m.m_meshes.back().get(), mesh);
     m.m_hasSkeleton = false;
     if (mesh->HasBones()) { m.m_hasSkeleton = true; }
     if (scene->HasMaterials()) {
 
-      m.m_meshes.back()->m_material = makeSharedPtr<MaterialResource>();
+      m.m_meshes.back()->m_material = makeSharedPtr<RMaterial>();
       aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
       
     }
@@ -220,9 +220,9 @@ ModelCodec::decode(const File& f) {
   }
 
 
-  ModelResource model;
-  reinterpret_cast<Resource*>(&model)->m_name = p.fullPath().c_str();
-  reinterpret_cast<Resource*>(&model)->m_filePath = p;
+  RModel model;
+  reinterpret_cast<RResource*>(&model)->m_name = p.fullPath().c_str();
+  reinterpret_cast<RResource*>(&model)->m_filePath = p;
   
 
   Assimp::Importer importer;
@@ -426,7 +426,7 @@ ShaderCodec::decode(const File& f) {
 void*
 AudioCodec::decode(const File& f) {
     
-  SPtr<AudioResource> newResource;
+  SPtr<RAudio> newResource;
   // return REINTERPRETPOINTER(Resource, newResource);
   return nullptr;
 }

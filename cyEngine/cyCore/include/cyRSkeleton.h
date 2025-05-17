@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
-#include "cyResource.h"
+#include "cyRResource.h"
 
 #include <cyMatrix4.h>
 
@@ -34,7 +34,7 @@ public:
   Vector<Bone*> m_children;
 };
 
-class CY_CORE_EXPORT SkeletonResource : public Resource
+class CY_CORE_EXPORT RSkeleton : public RResource
 {
 public:
 

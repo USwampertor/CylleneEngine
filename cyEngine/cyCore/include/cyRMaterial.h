@@ -16,18 +16,18 @@
 
 #include "cyMatrix3.h"
 #include "cyMatrix4.h"
-#include "cyResource.h"
-#include "cyShader.h"
+#include "cyRResource.h"
+#include "cyRShader.h"
 #include "cyVector2f.h"
 #include "cyVector3f.h"
 #include "cyVector4f.h"
 
 namespace CYLLENE_SDK {
 
-class CY_CORE_EXPORT MaterialResource : public Resource
+class CY_CORE_EXPORT RMaterial : public RResource
 {
 public:
-  MaterialResource() : Resource(MaterialResource::staticType()) {}
+  RMaterial() : RResource(RMaterial::staticType()) {}
 
   static RESOURCE_TYPE::E staticType() { return RESOURCE_TYPE::E::eMATERIAL; }
 
@@ -149,7 +149,7 @@ public:
    *	@param	const SPtr<ShaderResource>& newShader the new shader to set
    */
   void
-  loadShader(const SPtr<ShaderResource>& newShader);
+  loadShader(const SPtr<RShader>& newShader);
 
   
 private:
@@ -164,7 +164,7 @@ private:
 
   Map<String, SPtr<void*>> m_components;
 
-  WPtr<ShaderResource> m_shader;
+  WPtr<RShader> m_shader;
 };
 
 }

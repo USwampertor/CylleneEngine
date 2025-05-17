@@ -18,18 +18,18 @@
 namespace CYLLENE_SDK
 {
 
-class Being;
+class BBeing;
 
 class CY_CORE_EXPORT ClassRegister
 {
 public:
-  using FabricatorFunc = std::function<SPtr<Being>()>;
+  using FabricatorFunc = std::function<SPtr<BBeing>()>;
 
   static void registerBeing(const String& beingClassName, 
                             FabricatorFunc creator);
 
   template<class... Args>
-  static SPtr<Being> createBeing(const String& beingClassName,
+  static SPtr<BBeing> createBeing(const String& beingClassName,
                                           Args&& ...args) {
     auto it = getBeingRegistry().find(beingClassName);
     if (it != getBeingRegistry().end()) {
@@ -38,7 +38,7 @@ public:
   }
 
   template<typename T,
-           typename = std::enable_if_t<std::is_base_of<Being, T>::value>,
+           typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>,
            class... Args>
   static SPtr<T> createBeing(Args&&... args) {
     auto it = getBeingRegistry().find(T::getClassName());
@@ -59,10 +59,10 @@ public:
 #define REGISTER_CLASS(beingClassName) \
     namespace { \
         const bool registered_##beingClassName = \
-          (ClassRegister::registerBeing(#beingClassName, []() -> SPtr<Being> { return  makeSharedPtr<Being>(); }), true); \
+          (ClassRegister::registerBeing(#beingClassName, []() -> SPtr<BBeing> { return  makeSharedPtr<BBeing>(); }), true); \
     }
 
-// Define as much variables that should exist in all Being classes
+// Define as much variables that should exist in all BBeing classes
 #define BODY()                                                                \
 public:                                                                       \
     static const String getClassName() {                                      \

@@ -1,11 +1,11 @@
 #pragma once
-#include "cyResource.h"
+#include "cyRResource.h"
 
 namespace CYLLENE_SDK {
 
-class CY_CORE_EXPORT ScriptResource : public Resource
+class CY_CORE_EXPORT RScript : public RResource
 {
-  ScriptResource() : Resource(ScriptResource::staticType()) {}
+  RScript() : RResource(RScript::staticType()) {}
 
   static RESOURCE_TYPE::E
     staticType() {

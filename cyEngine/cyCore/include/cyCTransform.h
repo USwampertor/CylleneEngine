@@ -11,7 +11,7 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
-#include "cyComponent.h"
+#include "cyCComponent.h"
 
 #include <cyVector3f.h>
 #include <cyEulerHelpers.h>
@@ -22,17 +22,17 @@
 
 namespace CYLLENE_SDK {
 
-class CY_CORE_EXPORT TransformComponent : public Component
+class CY_CORE_EXPORT CTransform : public CComponent
 {
 public:
   
   // TransformComponent() : Component(TransformComponent::staticType()) {}
 
 
-  TransformComponent(const Vector3f& position = Vector3f::ZERO,
+  CTransform(const Vector3f& position = Vector3f::ZERO,
                      const Vector3f& scale = Vector3f::ONE,
                      const Quaternion& rotation = Quaternion::IDENTITY)
-    : Component(TransformComponent::staticType()) {
+    : CComponent(CTransform::staticType()) {
         m_tMatrix.setTransformMatrix(position, rotation, scale);
       }
 
@@ -83,7 +83,7 @@ public:
   }
 
   void
-  setTransform(const TransformComponent& other) {
+  setTransform(const CTransform& other) {
     m_tMatrix = other.m_tMatrix;
   }
 
@@ -91,13 +91,13 @@ public:
   setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir);
 
 
-  WPtr<TransformComponent>&
+  WPtr<CTransform>&
   getParent() {
     // TODO: Check if parent is still valid
     return m_parent;
   }
 
-  Vector<WPtr<TransformComponent>>&
+  Vector<WPtr<CTransform>>&
   getChildren() {
     return m_children;
   }
@@ -151,9 +151,9 @@ public:
 
   Matrix4 m_tMatrix;
 
-  WPtr<TransformComponent> m_parent;
+  WPtr<CTransform> m_parent;
   
-  Vector<WPtr<TransformComponent>> m_children;
+  Vector<WPtr<CTransform>> m_children;
 };
 
 }
