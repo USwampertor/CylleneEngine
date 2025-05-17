@@ -2,18 +2,18 @@
 
 #include "cyCorePrerequisites.h"
 
-#include "cyMaterial.h"
-#include "cyResource.h"
+#include "cyRMaterial.h"
+#include "cyRResource.h"
 #include "cyVertex.h"
 
 namespace CYLLENE_SDK {
 
 
-class CY_CORE_EXPORT MeshResource : public Resource {
+class CY_CORE_EXPORT RMesh : public RResource {
   
 public:
 
-  MeshResource() : Resource(MeshResource::staticType()) {}
+  RMesh() : RResource(RMesh::staticType()) {}
   
   static RESOURCE_TYPE::E 
   staticType() { 
@@ -32,7 +32,7 @@ public:
 
   Vector<uint32> m_indexBuffer;
 
-  SPtr<MaterialResource> m_material;
+  SPtr<RMaterial> m_material;
 };
 
 }

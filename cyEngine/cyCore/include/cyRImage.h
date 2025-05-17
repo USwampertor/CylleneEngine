@@ -1,6 +1,6 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file 	cyImage.h
+ * @file 	cyRImage.h
  * @author 	Marco "Swampy" Millan
  * @date 	2022/09/30
  * @brief 	
@@ -10,7 +10,7 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"}
-#include "cyResource.h"
+#include "cyRResource.h"
 
 #include <cyColor.h>
 #include <cyRect.h>
@@ -93,14 +93,14 @@ public:
   uint32 m_bpp;
 };
 
-class CY_CORE_EXPORT ImageResource : public Resource
+class CY_CORE_EXPORT RImage : public RResource
 {
 public:
 
-  ImageResource() : Resource(ImageResource::staticType()) {}
+  RImage() : RResource(RImage::staticType()) {}
 
-  ImageResource(uint32 width, uint32 height, Vector<Pixel> vector, uint32 bpp = 32)
-    : Resource(ImageResource::staticType()),
+  RImage(uint32 width, uint32 height, Vector<Pixel> vector, uint32 bpp = 32)
+    : RResource(RImage::staticType()),
       m_metadata(width, height, bpp),
       m_pixels(vector) {}
 
@@ -130,7 +130,7 @@ public:
   create(const uint32& width, const uint32& height, const uint32& bpp);
 
   void
-  bitBlt(const SPtr<ImageResource>& srcImg,
+  bitBlt(const SPtr<RImage>& srcImg,
          const Rect& srcRect, 
          const Rect& dstRect, 
          const TEXTUREMODE::E& format = TEXTUREMODE::E::eNONE);

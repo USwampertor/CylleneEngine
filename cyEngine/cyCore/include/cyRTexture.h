@@ -1,8 +1,8 @@
 #pragma once
 #include "cyCorePrerequisites.h"
 
-#include "cyImage.h"
-#include "cyResource.h"
+#include "cyRImage.h"
+#include "cyRResource.h"
 
 #include <cyColor.h>
 #include <cyVector2f.h>
@@ -54,11 +54,11 @@ namespace CYLLENE_SDK {
   }
 
 
-class CY_CORE_EXPORT TextureResource : public Resource {
+class CY_CORE_EXPORT RTexture : public RResource {
 
 public:
 
-  TextureResource() : Resource(TextureResource::staticType()) {}
+  RTexture() : RResource(RTexture::staticType()) {}
 
   static RESOURCE_TYPE::E staticType() {
     return RESOURCE_TYPE::E::eTEXTURE; 
@@ -86,7 +86,7 @@ public:
 //              const uint32& height);
 
   void
-  setImage(const SPtr<ImageResource>&  img);
+  setImage(const SPtr<RImage>&  img);
 
   Color
   sample(float u, 
@@ -100,7 +100,7 @@ public:
          const SAMPLERFILTER::E& sampler = SAMPLERFILTER::E::ePOINT);
 
   void 
-  draw(SPtr<ImageResource>& img,
+  draw(SPtr<RImage>& img,
        int32_t x,
        int32_t y,
        const Rect& srcRect, 
@@ -126,7 +126,7 @@ public:
   /**
    * The image resource being used
    */
-  SPtr<ImageResource> m_img;
+  SPtr<RImage> m_img;
 };
 
 }

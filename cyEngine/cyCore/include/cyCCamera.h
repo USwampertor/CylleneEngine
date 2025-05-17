@@ -1,6 +1,6 @@
 #pragma once
 #include "cyCorePrerequisites.h"
-#include "cyComponent.h"
+#include "cyCComponent.h"
 
 #include <cyVector3f.h>
 #include <cyMatrix4.h>
@@ -15,13 +15,13 @@ namespace CYLLENE_SDK {
   }
 
 
-class Camera : public Component
+class CCamera : public CComponent
 {
 public:
   
-  Camera() : Component(Camera::staticType()) {}
+  CCamera() : CComponent(CCamera::staticType()) {}
 
-  ~Camera() = default;
+  ~CCamera() = default;
   
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eCAMERA; }
 

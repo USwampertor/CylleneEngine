@@ -4,11 +4,11 @@
 
 #include <cyFileSystem.h>
 
-#include "cyResource.h"
+#include "cyRResource.h"
 
 namespace CYLLENE_SDK {
 
-class CY_CORE_EXPORT Asset : public Resource {
+class CY_CORE_EXPORT RAsset : public RResource {
 public:
 
   Path              m_filePointer;

@@ -24,7 +24,7 @@ namespace CYLLENE_SDK {
 
 // Forward declaration
 class ResourceManager;
-class Codec;
+class CDCodec;
 class ModelCodec;
 
 
@@ -35,20 +35,20 @@ class ModelCodec;
  * Sample usage:
  *
  */
-class CY_CORE_EXPORT Resource {
+class CY_CORE_EXPORT RResource {
  public:
 
   /**
    * Default constructor
    */
-  Resource() = default;
+  RResource() = default;
 
   /*
    *	@brief Resource defining the type of object this can be
    *	@param const RESOURCE_TYPE::E& type the type the resource is
    *  @return	
    */
-  Resource(const RESOURCE_TYPE::E& type)
+  RResource(const RESOURCE_TYPE::E& type)
     : m_type(type),
       m_isDirty(false) {}
 
@@ -57,7 +57,7 @@ class CY_CORE_EXPORT Resource {
    *	@param		
    *  @return	
    */
-  Resource(const RESOURCE_TYPE::E& type, const Path& path)
+  RResource(const RESOURCE_TYPE::E& type, const Path& path)
     : m_type(type),
       m_isDirty(false),
       m_filePath(path),
@@ -66,7 +66,7 @@ class CY_CORE_EXPORT Resource {
   /**
    * virtual destructor
    */
-  virtual ~Resource() {}
+  virtual ~RResource() {}
 
   /*
    *	@brief  a static function to get the type a resource is as RESOURCE_TYPE::E enum	
@@ -164,7 +164,7 @@ class CY_CORE_EXPORT Resource {
    */
   friend class ResourceManager;
 
-  friend class Codec;
+  friend class CDCodec;
   friend class ModelCodec;
 
  protected:

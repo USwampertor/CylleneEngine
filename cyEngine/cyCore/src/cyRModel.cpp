@@ -1,8 +1,8 @@
-#include "cyModel.h"
+#include "cyRModel.h"
 
 #include <cyJSON.h>
 #include <cyResourceManager.h>
-#include <cyMesh.h>
+#include <cyRMesh.h>
 
 /*
 
@@ -38,12 +38,12 @@ animations{},
 
 namespace CYLLENE_SDK {
 void*
-ModelResource::getData() {
+RModel::getData() {
   return nullptr;
 }
 
 void
-ModelResource::setData(void* data) {
+RModel::setData(void* data) {
   JSONDocument d;
   String dataString = *reinterpret_cast<String*>(data);
   d.Parse(dataString);
@@ -52,7 +52,7 @@ ModelResource::setData(void* data) {
   // Meshes
   for (auto& mesh : d["meshes"].GetArray()) {
     String subMeshName = Utils::format("%s_sub%d", m_filePath.baseName().c_str(), subMeshIndex);
-    m_meshes.push_back(ResourceManager::instance().create<MeshResource>(subMeshName));
+    m_meshes.push_back(ResourceManager::instance().create<RMesh>(subMeshName));
 
       
     // Vertices

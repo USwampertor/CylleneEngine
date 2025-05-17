@@ -1,17 +1,17 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
-#include "cyResource.h"
+#include "cyRResource.h"
 
 namespace CYLLENE_SDK {
 
-class MeshResource;
+class RMesh;
 class SkeletonResource;
 
-class CY_CORE_EXPORT ModelResource : public Resource
+class CY_CORE_EXPORT RModel : public RResource
 {
 public:
-  ModelResource() : Resource(ModelResource::staticType()) {}
+  RModel() : RResource(RModel::staticType()) {}
   
   static RESOURCE_TYPE::E 
   staticType() { 
@@ -29,7 +29,7 @@ public:
 
 public:
 
-  Vector<SPtr<MeshResource>> m_meshes;
+  Vector<SPtr<RMesh>> m_meshes;
 
   SPtr<SkeletonResource> m_skeleton;
 

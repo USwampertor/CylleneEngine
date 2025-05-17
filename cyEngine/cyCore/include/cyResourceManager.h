@@ -3,9 +3,9 @@
 #include "cyCorePrerequisites.h"
 
 
-#include "cyResource.h"
+#include "cyRResource.h"
 #include "cyCodec.h"
-#include "cyTexture.h"
+#include "cyRTexture.h"
 
 #include <cyEvent.h>
 #include <cyJSON.h>
@@ -17,7 +17,7 @@
 namespace CYLLENE_SDK {
 
 class Device;
-class Codec;
+class CDCodec;
 
 class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 {
@@ -31,7 +31,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   onStartUp() override;
 
   template<typename T, 
-           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+           typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
   String 
   generateResourceID(const String& assetName) {
     RESOURCE_TYPE::E type = T::staticType();
@@ -40,7 +40,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   }
 
   template<typename T, 
-           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+           typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
   SPtr<T> 
   create(const String& assetPath) {
     String realName = generateResourceID<T>(assetPath);
@@ -54,7 +54,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   }
 
   template<typename T, 
-           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+           typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
   SPtr<T>
   loadFromPath(const String& assetPath) {
 
@@ -69,8 +69,8 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
     RESOURCE_TYPE::E type = T::staticType();
 
-    SPtr<Codec> codec;
-    codec = getCodec<Codec>(type);
+    SPtr<CDCodec> codec;
+    codec = getCodec<CDCodec>(type);
     
     if (!codec->canDecode(assetPath)) {
       // Throw error as this type of file is not compatible with the resource
@@ -90,7 +90,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   }
 
   template<typename T,
-           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>,
+           typename = std::enable_if_t<std::is_base_of<RResource, T>::value>,
            typename... Args>
   SPtr<T>
   loadFromMemory(Args...) {
@@ -98,7 +98,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   }
 
   template<typename T,
-           typename = std::enable_if_t<std::is_base_of<Resource, T>::value>>
+           typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
   /*
    *	@brief	loads an asset based on the relative location in the project
    *	@param		
@@ -134,7 +134,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
   // }
 
   template<typename T, 
-           typename = std::enable_if_t<std::is_base_of<Codec, T>::value>>
+           typename = std::enable_if_t<std::is_base_of<CDCodec, T>::value>>
   SPtr<T>
   getCodec(const RESOURCE_TYPE::E& type) {
 
@@ -179,9 +179,9 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 //   getCodec(const RESOURCE_TYPE::E& resType);
 
 
-  Map<SizeT, SPtr<Resource>> m_resources;
+  Map<SizeT, SPtr<RResource>> m_resources;
 
-  Map<String, SPtr<Codec>> m_codecs;
+  Map<String, SPtr<CDCodec>> m_codecs;
 
   Event<void> m_resourceLoaded;
 

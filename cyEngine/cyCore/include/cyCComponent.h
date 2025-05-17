@@ -5,7 +5,7 @@
 
 namespace CYLLENE_SDK {
 
-  class Being;
+  class BBeing;
 
   namespace COMPONENT_TYPE
   {
@@ -34,18 +34,18 @@ namespace CYLLENE_SDK {
                 eTRANSFORM);
   }
   
-class CY_CORE_EXPORT Component
+class CY_CORE_EXPORT CComponent
 {
 public:
 
-  Component() = default;
+  CComponent() = default;
 
-  Component(const COMPONENT_TYPE::E& type) : m_type(type) { }
+  CComponent(const COMPONENT_TYPE::E& type) : m_type(type) { }
 
-  virtual ~Component() = default;
+  virtual ~CComponent() = default;
 
   void 
-  setOwner(Being* owner) {
+  setOwner(BBeing* owner) {
     m_owner = owner;
   }
 
@@ -70,7 +70,7 @@ protected:
 
   COMPONENT_TYPE::E m_type = COMPONENT_TYPE::E::eNONE;
 
-  Being* m_owner = nullptr;
+  BBeing* m_owner = nullptr;
 };
 // 
 // class CY_CORE_EXPORT ModelComponent : public Component

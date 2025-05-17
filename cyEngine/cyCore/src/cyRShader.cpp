@@ -1,16 +1,16 @@
-#include "cyShader.h"
+#include "cyRShader.h"
 #include <cyJSON.h>
 #include <cyLogger.h>
 
 namespace CYLLENE_SDK {
 
 void*
-ShaderResource::getData() {
+RShader::getData() {
   return static_cast<void*>(&m_data);
 }
 
 void
-ShaderResource::setData(void* data) {
+RShader::setData(void* data) {
   JSONDocument d;
   String dataString = *reinterpret_cast<String*>(data);
   d.Parse(dataString);

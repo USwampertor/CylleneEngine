@@ -1,4 +1,4 @@
-#include "cyImage.h"
+#include "cyRImage.h"
 #include <cyMath.h>
 #include <cyVector2i.h>
 
@@ -15,7 +15,7 @@ mirrorCoord(int32 coord, int32 max) {
 }
 
 void*
-ImageResource::getData() {
+RImage::getData() {
   std::tuple<ImageMetadata, Vector<Color>>* tupleData = 
     new std::tuple<ImageMetadata, Vector<Color>>(m_metadata, 
                                                    m_pixels);
@@ -23,7 +23,7 @@ ImageResource::getData() {
 }
 
 void
-ImageResource::setData(void* data) {
+RImage::setData(void* data) {
   auto* tupleData = static_cast<std::tuple<ImageMetadata, Vector<Color>>*>(data);
   m_metadata = std::get<0>(*tupleData);
   m_pixels = std::get<1>(*tupleData);
@@ -32,7 +32,7 @@ ImageResource::setData(void* data) {
 }
 
 void
-ImageResource::create(const uint32& width, const uint32& height, const uint32& bpp) {
+RImage::create(const uint32& width, const uint32& height, const uint32& bpp) {
   m_metadata.m_width = width;
   m_metadata.m_height = height;
   m_metadata.m_bpp = bpp;
@@ -41,7 +41,7 @@ ImageResource::create(const uint32& width, const uint32& height, const uint32& b
 }
 
 void
-ImageResource::bitBlt(const SPtr<ImageResource>& srcImg, 
+RImage::bitBlt(const SPtr<RImage>& srcImg, 
                       const Rect& srcRect, 
                       const Rect& dstRect, 
                       const TEXTUREMODE::E& format) {
@@ -97,33 +97,33 @@ ImageResource::bitBlt(const SPtr<ImageResource>& srcImg,
 }
 
 void
-ImageResource::clear(const Color& color) {
+RImage::clear(const Color& color) {
   std::fill(m_pixels.begin(), m_pixels.end(), color);
 }
 
 Pixel&
-ImageResource::getPixel(const uint32& x, const uint32& y) {
+RImage::getPixel(const uint32& x, const uint32& y) {
   return m_pixels[(y * m_metadata.m_width) + x];
 }
 
 Pixel&
-ImageResource::getPixel(const Vector2i& pos) {
+RImage::getPixel(const Vector2i& pos) {
   return getPixel(pos.x, pos.y);
 }
 
 
 void
-ImageResource::setPixel(const uint32& x, const uint32& y, const Pixel& color /*= Pixel::CLEAR */) {
+RImage::setPixel(const uint32& x, const uint32& y, const Pixel& color /*= Pixel::CLEAR */) {
   m_pixels[(y * m_metadata.m_width) + x] = color;
 }
 
 void
-ImageResource::setPixel(const Vector2i& pos, const Pixel& color /*= Pixel::CLEAR */) {
+RImage::setPixel(const Vector2i& pos, const Pixel& color /*= Pixel::CLEAR */) {
   setPixel(pos.x, pos.y, color);
 }
 
 void
-ImageResource::filterPixel(const Rect& rect, const Pixel& color, const uint32& tolerance) {
+RImage::filterPixel(const Rect& rect, const Pixel& color, const uint32& tolerance) {
   for (uint32 desty = 0; desty < rect.height; ++desty) {
     for (uint32 destx = 0; destx < rect.width; ++destx) {
 
@@ -142,7 +142,7 @@ ImageResource::filterPixel(const Rect& rect, const Pixel& color, const uint32& t
 }
 
 void
-ImageResource::fromMemory(const Vector<Pixel>& pixels, const uint32& width, const uint32& height) {
+RImage::fromMemory(const Vector<Pixel>& pixels, const uint32& width, const uint32& height) {
   m_pixels = pixels;
   m_metadata.m_width;
   m_metadata.m_height;

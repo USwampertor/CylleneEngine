@@ -12,7 +12,7 @@
 
 #include "cyCorePrerequisites.h"
 
-#include "cyBeing.h"
+#include "cyBBeing.h"
 #include "cySceneNode.h"
 #include "cyGameMode.h"
 
@@ -46,7 +46,7 @@ private:
   UPtr<SceneSettings> m_settings;
   Vector<SPtr<SNode>> m_beings;
 
-  Vector<SPtr<Being>> m_toRemove;
+  Vector<SPtr<BBeing>> m_toRemove;
 };
 
 }

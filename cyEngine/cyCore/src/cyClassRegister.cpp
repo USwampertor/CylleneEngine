@@ -1,6 +1,6 @@
 #include "cyClassRegister.h"
 
-#include "cyBeing.h"
+#include "cyBBeing.h"
 
 namespace CYLLENE_SDK {
 
