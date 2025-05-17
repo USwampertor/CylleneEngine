@@ -24,6 +24,21 @@ public:
   ~CCamera() = default;
   
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eCAMERA; }
+  
+  virtual const String 
+  toString() override {
+    String toReturn;
+
+    toReturn = Utils::format("%2.f %2.f %s \n %s \n %s", 
+                             m_width,
+                             m_height,
+                             m_view.getPosition().toString().c_str(), 
+                             m_view.getEulerRotation().toString().c_str(),
+                             m_view.getScale().toString().c_str());
+
+    return toReturn;
+  }
+
 
   void
   setPerspective(const float& newWidth, 
