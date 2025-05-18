@@ -27,7 +27,7 @@ namespace CYLLENE_SDK {
                 eLIGHT3DDIRECTIONAL,
                 eLIGHT3DPOINT,
                 eLIGHT3DSPOT,
-                eMODEL,
+                eMESHRENDERER,
                 eSHADER,
                 eSPRITE,
                 eTEXT,
