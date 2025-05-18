@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cyCMeshRenderer.h" />
+    <ClInclude Include="include\cyCLight.h" />
     <ClInclude Include="include\cyRAsset.h" />
     <ClInclude Include="include\cyRAudio.h" />
     <ClInclude Include="include\cyAudioAPI.h" />
@@ -59,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
+    <ClCompile Include="src\cyCLight.cpp" />
     <ClCompile Include="src\cyRAsset.cpp" />
     <ClCompile Include="src\cyRAudio.cpp" />
     <ClCompile Include="src\cyAudioAPI.cpp" />

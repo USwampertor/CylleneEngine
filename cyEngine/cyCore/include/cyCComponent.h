@@ -19,6 +19,8 @@ namespace CYLLENE_SDK {
                 eCOLLIDER2D,
                 eCOLLIDER3D,
                 eLIGHTAMBIENT,
+                eLIGHT2D,
+                eLIGHT3D,
                 eLIGHT2DFREEFORM,
                 eLIGHT2DGLOBAL,
                 eLIGHT2DSPOT,
