@@ -64,17 +64,23 @@ main(int argc, char* argv[])
   File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
   SPtr<RShader> psShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderPSF.path());
 
-  SPtr<GVertexShader> vShader = GraphicsDX11API::instance().createVertexShader(vsShaderR, 
-                                                                               "vertex_main");
+  SPtr<GVertexShader> vShader = GraphicsDX11API::instance().createVertexShader(vsShaderR,
+    "vertex_main");
 
-  SPtr<GPixelShader> pShader = GraphicsDX11API::instance().createPixelShader(psShaderR, 
-                                                                             "pixel_main");
+  SPtr<GPixelShader> pShader = GraphicsDX11API::instance().createPixelShader(psShaderR,
+    "pixel_main");
 
 
   Vector<GInputLayoutElement> inputDescs = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "COLOR",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BONES", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
   };
 
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
@@ -126,8 +132,7 @@ main(int argc, char* argv[])
   cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
 
-  // SPtr<GMesh> gMesh;
-
+  SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
