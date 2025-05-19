@@ -222,6 +222,32 @@ GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
   return nullptr; 
 }
 
+SPtr<GMesh>
+GraphicsDX11API::createMesh(SPtr<RMesh> mesh) {
+
+  SPtr<GMesh> gMesh = std::make_shared<GMesh>();
+  gMesh->m_baseVertex = 0;
+  gMesh->m_numVertices = mesh->m_vertexBuffer.size();
+
+
+  Vector<char> vertexData;
+  vertexData.resize(mesh->m_vertexBuffer.size() * sizeof(Vertex));
+  memcpy(vertexData.data(), 
+         mesh->m_vertexBuffer.data(), 
+         mesh->m_vertexBuffer.size() * sizeof(Vertex));
+  gMesh->m_pVertexBuffer = createVertexBuffer(vertexData);
+  if (!gMesh->m_pVertexBuffer) {
+    // TODO: Throw a warning here
+  }
+  Vector<char> indexData;
+  gMesh->m_baseIndex = 0;
+  gMesh->m_numIndices = mesh->m_indexBuffer.size();
+  gMesh->m_pIndexBuffer = createIndexBuffer(indexData);
+
+
+
+}
+
 SPtr<GTexture>
 GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
   return createTexture2D(texture, D3D11_BIND_SHADER_RESOURCE, 0, 1, nullptr, nullptr);
@@ -401,8 +427,8 @@ SPtr<GraphicsBuffer>
 GraphicsDX11API::createVertexBuffer(const Vector<char>& data) {
   
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
-  // bufferParams->data = data;
-  // bufferParams->size = data.size();
+  bufferParams->data = data;
+  bufferParams->size = data.size();
   bufferParams->usage = D3D11_USAGE_DEFAULT;
   bufferParams->bindFlags = D3D11_BIND_VERTEX_BUFFER;
   bufferParams->cpuAccessFlags = 0;
@@ -414,8 +440,8 @@ SPtr<GraphicsBuffer>
 GraphicsDX11API::createIndexBuffer(const Vector<char>& data) {
 
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
-  // bufferParams->data = data;
-  // bufferParams->size = data.size();
+  bufferParams->data = data;
+  bufferParams->size = data.size();
   bufferParams->usage = D3D11_USAGE_DEFAULT;
   bufferParams->bindFlags = D3D11_BIND_INDEX_BUFFER;
   bufferParams->cpuAccessFlags = 0;

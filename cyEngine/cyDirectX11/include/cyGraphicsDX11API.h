@@ -42,6 +42,9 @@ public:
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
 													 SPtr<GShaderResourceViewElement> srvParams) override;
 
+	virtual SPtr<GMesh>
+	createMesh(SPtr<RMesh> mesh) override;
+
 	virtual SPtr<GTexture>
 	createTexture2D(SPtr<RTexture> texture) override;
 
