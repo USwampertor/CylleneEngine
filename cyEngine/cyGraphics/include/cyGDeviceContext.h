@@ -20,7 +20,7 @@ namespace CYLLENE_SDK
 struct GSubResourceElement
 {
   int32 index;
-  Vector<char> data;
+  void* data;
   int32 pitch;
   int32 depth;
 };
