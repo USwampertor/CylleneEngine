@@ -19,6 +19,7 @@
 #include "cyGSwapChain.h"
 #include "cyGTexture.h"
 #include "cyGMesh.h"
+#include "cyRMesh.h"
 
 namespace CYLLENE_SDK {
 
@@ -95,6 +96,9 @@ public:
 									// SPtr<GShaderResourceView> ppSRV = nullptr,
 									SPtr<GRenderTargetView>		ppRTV = nullptr,
 									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
+
+	virtual SPtr<GMesh>
+	createMesh(SPtr<RMesh> mesh) = 0;
 
 	virtual SPtr<GTexture>
 	createTexture2D(SPtr<RTexture> texture) = 0;
