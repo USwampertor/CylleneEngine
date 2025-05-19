@@ -48,7 +48,7 @@ GDX11DeviceContext::updateSubresource(SPtr<Graphic> resource, const GSubResource
   m_pDeviceContext->UpdateSubresource1(pResource, 
                                        data.index, 
                                        nullptr, 
-                                       data.data.data(), 
+                                       data.data, 
                                        data.pitch, 
                                        data.depth, 
                                        0);

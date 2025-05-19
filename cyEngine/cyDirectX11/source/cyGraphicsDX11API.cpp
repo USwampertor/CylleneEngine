@@ -224,9 +224,7 @@ GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
 
 SPtr<GTexture>
 GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
-  SPtr<GTexture> gTexture;
-
-  return gTexture;
+  return createTexture2D(texture, D3D11_BIND_SHADER_RESOURCE, 0, 1, nullptr, nullptr);
 }
 
 SPtr<GTexture>
@@ -253,36 +251,10 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture,
     data.index = 0;
     data.data = reinterpret_cast<void*>(texture->m_img->m_pixels.data());
     data.depth = 0;
-    data.pitch = texture->m_img->getWidth() * 16;
+    data.pitch = texture->m_img->getWidth() * 16; // TODO: When changing the size of our colors change this
     m_pDeviceContext->updateSubresource(gTexture, data);
-    // m_pDeviceContext->updateSubresource(gTexture, )
   }
-
-//   createTexture2D(Vector2i(texture->m_img->getWidth(), texture->m_img->getHeight()),
-//     bindFlags,
-//     cpuAccessFlags,
-//     DXGI_FORMAT_R32G32B32A32_FLOAT,
-//     D3D11_USAGE_DEFAULT,
-//     D3D11_BIND_SHADER_RESOURCE,
-//     cpuAccessFlags,
-//     mipFlags,
-//     ppSRV,
-//     ppRTV,
-//     ppDSV);
-
-//   if (m_pTexture) {
-//     m_pDeviceContext->updateSubresource()
-//     m_pDeviceContext->UpdateSubresource1(m_pTexture, 
-//                                                        0, 
-//                                                        nullptr, 
-//                                                        reinterpret_cast<void*>(m_img.m_pixels.data()), 
-//                                                        m_img.m_width * 16, // PITCH
-//                                                        0, 
-//                                                        0);
-//     
-//   }
-
-  return nullptr;
+  return gTexture;
 }
 
 

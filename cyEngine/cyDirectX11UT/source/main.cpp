@@ -117,10 +117,12 @@ main(int argc, char* argv[])
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
   SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
 
+
+
   BBeing cubeObject("cube");
-  // cubeObject.createComponent<CTransform>();
-  // cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
-  // cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
+  cubeObject.createComponent<CTransform>();
+  // cubeObject.createComponent<CMeshRenderer>();
+  cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
 
 
 
