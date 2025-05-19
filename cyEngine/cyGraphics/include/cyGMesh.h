@@ -15,7 +15,7 @@ public:
 
   GMesh() = default;
 
-  virtual ~GMesh() = default;
+  ~GMesh() = default;
 
 
   virtual void*
