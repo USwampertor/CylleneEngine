@@ -222,6 +222,13 @@ GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
 }
 
 SPtr<GTexture>
+GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
+  SPtr<GTexture> gTexture;
+
+  return gTexture;
+}
+
+SPtr<GTexture>
 GraphicsDX11API::createTexture2D(SPtr<RTexture> texture,
                                  uint32 bindFlags,
                                  uint32 cpuAccessFlags,

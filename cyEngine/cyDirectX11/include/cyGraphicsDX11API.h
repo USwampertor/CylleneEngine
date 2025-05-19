@@ -43,6 +43,9 @@ public:
 													 SPtr<GShaderResourceViewElement> srvParams) override;
 
 	virtual SPtr<GTexture>
+	createTexture2D(SPtr<RTexture> texture) override;
+
+	virtual SPtr<GTexture>
   createTexture2D(SPtr<RTexture> texture,
 									uint32 bindFlags, 
 									uint32 cpuAccessFlags = 0,

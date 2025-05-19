@@ -19,10 +19,12 @@ GDX11Texture::set(void* pHandle) {
 
 void
 GDX11Texture::bind() {
+
 }
 
 void*
 GDX11Texture::getBlob() {
+  return nullptr;
 }
 
 void*
