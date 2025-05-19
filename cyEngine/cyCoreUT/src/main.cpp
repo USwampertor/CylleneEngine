@@ -15,19 +15,21 @@
 #include <cyBBeing.h>
 #include <cyCoreUTPrerequisites.h>
 #include <cyCrashHandler.h>
+#include <cyCTransform.h>
+#include <cyCCamera.h> 
+#include <cyCLight.h>
+#include <cyCMeshRenderer.h>
 #include <cyFileSystem.h>
 #include <cyGameMode.h>
-#include <cyRImage.h>
 #include <cyLogger.h>
 #include <cyMath.h>
+#include <cyResourceManager.h>
+#include <cyRImage.h>
 #include <cyRMesh.h>
 #include <cyRModel.h>
-#include <cyResourceManager.h>
 #include <cyRTexture.h>
 #include <cyTime.h>
 #include <cyTriangle.h>
-#include <cyCTransform.h>
-#include <cyCCamera.h> 
 #include <cyUnitTesting.h>
 #include <cyVector2f.h>
 #include <cyVertex.h>
@@ -90,6 +92,8 @@ TEST_CASE("[being] Creation of beings") {
   b1->setName("b1");
   b1->createComponent<CTransform>();
   b1->createComponent<CCamera>();
+  b1->createComponent<CMeshRenderer>();
+  b1->createComponent<CLight>();
 }
 
 TEST_CASE("[resource] Creation of textures") {

@@ -7,13 +7,15 @@
 #include <cyWindow.h> 
 #include <cyLogger.h> 
 #include <cyResourceManager.h>
-#include <cyRShader.h>
 #include <cyFileSystem.h>
 #include <cyGShader.h>
+#include <cyGMesh.h>
+#include <cyGTexture.h>
 #include <cyTime.h>
 #include <cyGInputLayout.h>
 #include <cyMatrix4.h>
 #include <cyRModel.h>
+#include <cyRShader.h>
 #include <cyBBeing.h>
 #include <cyCCamera.h>
 #include <cyCTransform.h>
@@ -121,9 +123,10 @@ main(int argc, char* argv[])
 
   BBeing cubeObject("cube");
   cubeObject.createComponent<CTransform>();
-  // cubeObject.createComponent<CMeshRenderer>();
+  cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
 
+  SPtr<GMesh> gMesh;
 
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
