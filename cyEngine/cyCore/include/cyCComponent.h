@@ -3,6 +3,7 @@
 
 #include <cyEvent.h>
 
+
 namespace CYLLENE_SDK {
 
   class BBeing;
@@ -21,14 +22,6 @@ namespace CYLLENE_SDK {
                 eLIGHTAMBIENT,
                 eLIGHT2D,
                 eLIGHT3D,
-                eLIGHT2DFREEFORM,
-                eLIGHT2DGLOBAL,
-                eLIGHT2DSPOT,
-                eLIGHT2DSPRITE,
-                eLIGHT3DAREA,
-                eLIGHT3DDIRECTIONAL,
-                eLIGHT3DPOINT,
-                eLIGHT3DSPOT,
                 eMESHRENDERER,
                 eSHADER,
                 eSPRITE,
@@ -74,27 +67,6 @@ protected:
 
   BBeing* m_owner = nullptr;
 };
-// 
-// class CY_CORE_EXPORT ModelComponent : public Component
-// {
-// public:
-// 
-//   ModelComponent() : Component(ModelComponent::staticType()) {}
-// 
-//   ~ModelComponent() = default;
-// 
-//   virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eMODEL; }
-// };
-// 
-// class CY_CORE_EXPORT ShaderComponent : public Component
-// {
-// public:
-// 
-//   ShaderComponent() : Component(ShaderComponent::staticType()) {}
-// 
-//   ~ShaderComponent() = default;
-// 
-//   virtual COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eSHADER; }
-// };
+
 
 }

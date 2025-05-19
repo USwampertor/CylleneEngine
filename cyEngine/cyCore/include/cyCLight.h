@@ -12,8 +12,10 @@ namespace CYLLENE_SDK {
     BETTER_ENUM(E, uint32, AREA, DIRECTIONAL, DOT, GLOBAL, SPOTLIGHT);
   }
 
-class CY_CORE_EXPORT CLight : CComponent
+class CY_CORE_EXPORT CLight : public CComponent
 {
+public:
+
   CLight() : CComponent(CLight::staticType()) {}
 
   ~CLight() = default;
