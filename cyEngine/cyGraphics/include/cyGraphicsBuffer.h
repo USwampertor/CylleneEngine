@@ -6,7 +6,8 @@ namespace CYLLENE_SDK {
 
 struct GBufferElement
 {
-  uint32 byteWidth;
+  Vector<char> data;
+  uint32 byteSize;
   uint32 usage;
   uint32 bindFlags;
   uint32 cpuAccessFlags;
