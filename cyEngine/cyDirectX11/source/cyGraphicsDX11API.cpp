@@ -225,10 +225,11 @@ GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
 SPtr<GMesh>
 GraphicsDX11API::createMesh(SPtr<RMesh> mesh) {
 
+  // TODO: Given that this is now mostly wrapped, we may move this into the graphics branch
+
   SPtr<GMesh> gMesh = std::make_shared<GMesh>();
   gMesh->m_baseVertex = 0;
   gMesh->m_numVertices = mesh->m_vertexBuffer.size();
-
 
   Vector<char> vertexData;
   vertexData.resize(mesh->m_vertexBuffer.size() * sizeof(Vertex));
@@ -239,13 +240,19 @@ GraphicsDX11API::createMesh(SPtr<RMesh> mesh) {
   if (!gMesh->m_pVertexBuffer) {
     // TODO: Throw a warning here
   }
-  Vector<char> indexData;
   gMesh->m_baseIndex = 0;
   gMesh->m_numIndices = mesh->m_indexBuffer.size();
+
+  Vector<char> indexData;
+  indexData.resize(mesh->m_indexBuffer.size() * sizeof(uint32));
+  memcpy(indexData.data(), mesh->m_indexBuffer.data(), mesh->m_indexBuffer.size() * sizeof(uint32));
   gMesh->m_pIndexBuffer = createIndexBuffer(indexData);
 
+  if (!gMesh->m_pIndexBuffer) {
+    // TODO: Throw a warning here
+  }
 
-
+  return gMesh;
 }
 
 SPtr<GTexture>
@@ -428,7 +435,7 @@ GraphicsDX11API::createVertexBuffer(const Vector<char>& data) {
   
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
   bufferParams->data = data;
-  bufferParams->size = data.size();
+  bufferParams->byteSize = data.size();
   bufferParams->usage = D3D11_USAGE_DEFAULT;
   bufferParams->bindFlags = D3D11_BIND_VERTEX_BUFFER;
   bufferParams->cpuAccessFlags = 0;
@@ -441,7 +448,7 @@ GraphicsDX11API::createIndexBuffer(const Vector<char>& data) {
 
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
   bufferParams->data = data;
-  bufferParams->size = data.size();
+  bufferParams->byteSize = data.size();
   bufferParams->usage = D3D11_USAGE_DEFAULT;
   bufferParams->bindFlags = D3D11_BIND_INDEX_BUFFER;
   bufferParams->cpuAccessFlags = 0;
@@ -452,8 +459,8 @@ GraphicsDX11API::createIndexBuffer(const Vector<char>& data) {
 SPtr<GraphicsBuffer>
 GraphicsDX11API::createConstantBuffer(const Vector<char>& data) {
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
-  // bufferParams->data = data;
-  // bufferParams->size = data.size();
+  bufferParams->data = data;
+  bufferParams->byteSize = data.size();
   bufferParams->usage = D3D11_USAGE_DEFAULT;
   bufferParams->bindFlags = D3D11_BIND_CONSTANT_BUFFER;
   bufferParams->cpuAccessFlags = 0;

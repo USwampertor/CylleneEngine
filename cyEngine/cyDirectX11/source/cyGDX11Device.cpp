@@ -229,15 +229,16 @@ SPtr<GraphicsBuffer>
 GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
   
   D3D11_BUFFER_DESC desc;
+  memset(&desc, 0, sizeof(desc));
 
   desc.Usage = static_cast<D3D11_USAGE>(bufferParams->usage);
-  desc.ByteWidth = bufferParams->byteWidth;
+  desc.ByteWidth = bufferParams->byteSize;
   desc.BindFlags = bufferParams->bindFlags;
   desc.CPUAccessFlags = bufferParams->cpuAccessFlags;
   desc.MiscFlags = 0;
 
   D3D11_SUBRESOURCE_DATA initData;
-  // initData.pSysMem = data.data();
+  initData.pSysMem = bufferParams->data.data();
   initData.SysMemPitch = 0;
   initData.SysMemSlicePitch = 0;
   

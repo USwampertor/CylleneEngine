@@ -19,12 +19,12 @@ public:
   virtual void
   set(void* pHandle) override;
 
-  virtual void
-  setVertexBuffer(Vector<Vertex> vertexBuffer) override;
-  virtual void
-  setIndexBuffer(Vector<uint32> indexBuffer) override;
-  virtual void
-  setPrimitiveTopology(PRIMITIVE_TOPOLOGY::E topology) override;
+//   virtual void
+//   setVertexBuffer(Vector<Vertex> vertexBuffer) override;
+//   virtual void
+//   setIndexBuffer(Vector<uint32> indexBuffer) override;
+//   virtual void
+//   setPrimitiveTopology(PRIMITIVE_TOPOLOGY::E topology) override;
 };
 
 }
