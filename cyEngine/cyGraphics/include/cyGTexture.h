@@ -32,7 +32,7 @@ public:
   virtual void bind() = 0;
   virtual void* getBlob() = 0;
   virtual void* getResource() = 0;
-
+  int32 m_resourceIndex = -1;
 };
 
 
