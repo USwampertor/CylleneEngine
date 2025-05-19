@@ -56,7 +56,8 @@ public:
     if (m_components.find(type) == m_components.end()) {
       // There is no component like this, se we should be able to add it
       component->setOwner(this);
-      m_components.insert(Utils::makePair(type, component));
+      // m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
+      m_components.try_emplace(type, component);
     }
   }
 
@@ -91,8 +92,8 @@ public:
 
     // Is the component already created?
     if (m_components.find(type) == m_components.end()) {
-
-      m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
+      // m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
+      m_components.try_emplace(type, makeSharedPtr<T>(args ...));
       m_components.at(type)->setOwner(this);
     }
 
