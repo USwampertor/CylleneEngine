@@ -74,6 +74,7 @@ ImageCodec::decode(const File& f) {
   metadata.m_bpp            = FreeImage_GetBPP(reinterpret_cast<FIBITMAP*>(data));
   metadata.m_format         = format;
   metadata.m_colortype      = FreeImage_GetColorType(reinterpret_cast<FIBITMAP*>(data));
+  metadata.m_pitch          = FreeImage_GetPitch(reinterpret_cast<FIBITMAP*>(data));
 
   Vector<Color> colorData(metadata.m_height * metadata.m_width);
 

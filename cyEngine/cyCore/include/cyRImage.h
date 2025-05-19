@@ -84,13 +84,15 @@ public:
       m_width(width),
       m_height(height),
       m_colortype(colortype),
-      m_bpp(bpp) {}
+      m_bpp(bpp) {
+  }
 
   uint32 m_format;
   uint32 m_width;
   uint32 m_height;
   uint32 m_colortype;
   uint32 m_bpp;
+  uint32 m_pitch = 0;
 };
 
 class CY_CORE_EXPORT RImage : public RResource
