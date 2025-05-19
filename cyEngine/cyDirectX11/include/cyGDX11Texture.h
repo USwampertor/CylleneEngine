@@ -28,6 +28,7 @@ public:
   getResource() override;
 
   ID3D11Texture2D* m_texture = nullptr;
+  ID3D11ShaderResourceView* m_pSRV = nullptr;
 };
 
 }

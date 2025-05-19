@@ -17,6 +17,7 @@
 #include <cyBBeing.h>
 #include <cyCCamera.h>
 #include <cyCTransform.h>
+#include <cyCMeshRenderer.h>
 #include <cyMath.h> 
 
 // Using namespace for ease of use
@@ -114,9 +115,13 @@ main(int argc, char* argv[])
   newTexture->setImage(newImage);
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
+  SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
 
   BBeing cubeObject("cube");
   cubeObject.createComponent<CTransform>();
+  cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
+  cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
+
 
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
