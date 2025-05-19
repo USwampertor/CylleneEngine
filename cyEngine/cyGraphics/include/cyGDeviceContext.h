@@ -16,6 +16,16 @@
 
 namespace CYLLENE_SDK
 {
+
+struct GSubResourceElement
+{
+  int32 index;
+  Vector<char> data;
+  int32 pitch;
+  int32 depth;
+};
+
+
 class CY_GRAPHICS_EXPORT GDeviceContext : public Graphic
 {
 public:
@@ -31,7 +41,7 @@ public:
   setViewPort(uint32 numViewports, const GViewport& viewport) = 0;
 
   virtual void
-  updateSubresource(Graphic* resource, uint32 index, uint32 data) = 0;
+  updateSubresource(SPtr<Graphic> resource, const GSubResourceElement& data) = 0;
 
   virtual void
   setRenderTargets(uint32 numRenderTargets,
