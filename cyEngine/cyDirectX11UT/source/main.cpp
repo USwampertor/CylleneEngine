@@ -126,7 +126,7 @@ main(int argc, char* argv[])
   cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
 
-  SPtr<GMesh> gMesh;
+  // SPtr<GMesh> gMesh;
 
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);

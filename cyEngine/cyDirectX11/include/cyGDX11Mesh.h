@@ -6,12 +6,13 @@
 namespace CYLLENE_SDK
 {
 
+// DEPRECATED
 class CY_DX11_EXPORT GDX11Mesh : public GMesh
 {
 public:
   GDX11Mesh() = default;
   
-  virtual ~GDX11Mesh() override;
+  ~GDX11Mesh() = default;
 
   virtual void*
   get() override;

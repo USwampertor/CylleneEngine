@@ -3,10 +3,6 @@
 namespace CYLLENE_SDK
 {
 
-GDX11Mesh::~GDX11Mesh() {
-    
-}
-
 void* GDX11Mesh::get() {
   return nullptr;
 }
