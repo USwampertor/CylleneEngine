@@ -40,7 +40,7 @@ public:
   createRenderTargetView(SPtr<GTexture> renderTargetView, 
                          SPtr<GRenderTargetViewElement> rtvParams) override;
 
-  virtual SPtr<GShaderResourceView>
+  virtual void// SPtr<GShaderResourceView>
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
                            SPtr<GShaderResourceViewElement> srvParams) override;
 

@@ -162,7 +162,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
   return std::static_pointer_cast<GPixelShader>(sPtrShader);
 }
 
-SPtr<GShaderResourceView>
+void// SPtr<GShaderResourceView>
 GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
                                       SPtr<GShaderResourceViewElement> srvParams) {
   
@@ -175,8 +175,16 @@ GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(shaderResourceView);
   SPtr<GDX11ShaderResourceView> pShaderResourceView = std::make_shared<GDX11ShaderResourceView>();
 
-  m_pDevice->CreateShaderResourceView(pTexture->m_texture, &srvDesc, &pShaderResourceView->m_pSRV);
-  return std::static_pointer_cast<GShaderResourceView>(pShaderResourceView);
+  HRESULT hr = m_pDevice->CreateShaderResourceView(pTexture->m_texture, &srvDesc, &pShaderResourceView->m_pSRV);
+  
+  if (!FAILED(hr)) {
+    pTexture->m_pSRV = pShaderResourceView->m_pSRV;
+  }
+  else {
+    pTexture->m_pSRV = pShaderResourceView->m_pSRV;
+    // TODO: Show here a warning or error;
+  }
+  // return std::static_pointer_cast<GShaderResourceView>(pShaderResourceView);
 }
 
 

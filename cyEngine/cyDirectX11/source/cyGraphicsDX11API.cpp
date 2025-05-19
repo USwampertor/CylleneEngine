@@ -218,7 +218,8 @@ GraphicsDX11API::createSwapChain(SPtr<GDevice> device,
 SPtr<GShaderResourceView>
 GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
                                           SPtr<GShaderResourceViewElement> srvParams) {
-  return m_pDevice->createShaderResourceView(shaderResourceView, srvParams);
+  m_pDevice->createShaderResourceView(shaderResourceView, srvParams);
+  return nullptr; 
 }
 
 SPtr<GTexture>
@@ -233,9 +234,23 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture,
                                  uint32 bindFlags,
                                  uint32 cpuAccessFlags,
                                  uint32 mipFlags,
-                                 SPtr<GShaderResourceView> ppSRV,
+                                 // SPtr<GShaderResourceView> ppSRV,
                                  SPtr<GRenderTargetView> ppRTV,
                                  SPtr<GDepthStencilView> ppDSV) {
+
+  SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
+  textureParams->width = texture->m_img->getWidth();
+  textureParams->height = texture->m_img->getHeight();
+  textureParams->bindFlags = bindFlags | D3D11_BIND_SHADER_RESOURCE;
+  textureParams->format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  textureParams->usage = D3D11_USAGE_DEFAULT;
+  textureParams->cpuAccessFlags = cpuAccessFlags;
+  textureParams->mipLevels = mipFlags;
+
+  SPtr<GTexture> gTexture = createTexture2D(textureParams, ppRTV, ppDSV);
+  if (gTexture) {
+    // m_pDeviceContext->updateSubresource(gTexture, )
+  }
 
 //   createTexture2D(Vector2i(texture->m_img->getWidth(), texture->m_img->getHeight()),
 //     bindFlags,
@@ -272,7 +287,7 @@ GraphicsDX11API::createTexture2D(const Vector2i& size,
                                  uint32 usage, 
                                  uint32 cpuAccessFlags /* = 0 */, 
                                  uint32 mipFlags /* = 1 */, 
-                                 SPtr<GShaderResourceView> ppSRV /* = nullptr */, 
+                                 // SPtr<GShaderResourceView> ppSRV /* = nullptr */, 
                                  SPtr<GRenderTargetView> ppRTV /* = nullptr */, 
                                  SPtr<GDepthStencilView> ppDSV /* = nullptr */) {
   SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
@@ -284,25 +299,23 @@ GraphicsDX11API::createTexture2D(const Vector2i& size,
   textureParams->cpuAccessFlags = cpuAccessFlags;
   textureParams->mipLevels = mipFlags;
 
-  return createTexture2D(textureParams, ppSRV, ppRTV, ppDSV);
+  return createTexture2D(textureParams, /*ppSRV,*/ ppRTV, ppDSV);
 }
 
 
 SPtr<GTexture>
 GraphicsDX11API::createTexture2D(SPtr<GTextureElement> textureParams,
-                                 SPtr<GShaderResourceView> ppSRV,
+                                 // SPtr<GShaderResourceView> ppSRV,
                                  SPtr<GRenderTargetView> ppRTV,
                                  SPtr<GDepthStencilView> ppDSV) {
 
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
 
-  if (ppSRV != nullptr) {
-    if (textureParams->bindFlags & D3D11_BIND_SHADER_RESOURCE) {
-      ppSRV = m_pDevice->createShaderResourceView(pTexture, nullptr);
-    }
+  if (textureParams->bindFlags & D3D11_BIND_SHADER_RESOURCE) {
+    m_pDevice->createShaderResourceView(pTexture, nullptr);
   }
 
-  if (ppSRV != nullptr) {
+  if (ppRTV != nullptr) {
     if (textureParams->bindFlags & D3D11_BIND_RENDER_TARGET) {
       ppRTV = m_pDevice->createRenderTargetView(pTexture, nullptr);
     }

@@ -50,7 +50,7 @@ public:
 									uint32 bindFlags, 
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
-									SPtr<GShaderResourceView> ppSRV = nullptr,
+									// SPtr<GShaderResourceView> ppSRV = nullptr,
 									SPtr<GRenderTargetView> ppRTV = nullptr,
 									SPtr<GDepthStencilView> ppDSV = nullptr) override;
 
@@ -61,13 +61,13 @@ public:
 									uint32 usage,		
 									uint32 cpuAccessFlags = 0,
 									uint32 mipFlags = 1,
-									SPtr<GShaderResourceView> ppSRV = nullptr,
+									// SPtr<GShaderResourceView> ppSRV = nullptr,
 									SPtr<GRenderTargetView> ppRTV = nullptr,
 									SPtr<GDepthStencilView> ppDSV = nullptr) override;
 
 	virtual SPtr<GTexture>
 	createTexture2D(SPtr<GTextureElement> textureParams,
-									SPtr<GShaderResourceView> ppSRV = nullptr,
+									// SPtr<GShaderResourceView> ppSRV = nullptr,
 									SPtr<GRenderTargetView>		ppRTV = nullptr,
 									SPtr<GDepthStencilView>		ppDSV = nullptr) override;
 
