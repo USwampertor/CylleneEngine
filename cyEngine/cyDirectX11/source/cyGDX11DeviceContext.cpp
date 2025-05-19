@@ -43,8 +43,15 @@ GDX11DeviceContext::setViewPort(uint32 numViewports, const GViewport& viewport) 
 }
 
 void
-GDX11DeviceContext::updateSubresource(Graphic* resource, uint32 index, uint32 data) {
+GDX11DeviceContext::updateSubresource(SPtr<Graphic> resource, const GSubResourceElement& data) {
   ID3D11Resource* pResource = static_cast<ID3D11Resource*>(resource->get());
+  m_pDeviceContext->UpdateSubresource1(pResource, 
+                                       data.index, 
+                                       nullptr, 
+                                       data.data.data(), 
+                                       data.pitch, 
+                                       data.depth, 
+                                       0);
   // m_pDeviceContext->UpdateSubresource1(pResource, index, nullptr, &data, 0, 0);
 }
 

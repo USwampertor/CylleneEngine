@@ -26,7 +26,7 @@ public:
   setViewPort(uint32 numViewports, const GViewport& viewport) override;
 
   virtual void
-  updateSubresource(Graphic* resource, uint32 index, uint32 data) override;
+  updateSubresource(SPtr<Graphic> resource, const GSubResourceElement& data) override;
 
   virtual void
   setRenderTargets(uint32 numRenderTargets,

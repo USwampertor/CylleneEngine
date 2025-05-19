@@ -249,6 +249,12 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture,
 
   SPtr<GTexture> gTexture = createTexture2D(textureParams, ppRTV, ppDSV);
   if (gTexture) {
+    GSubResourceElement data;
+    data.index = 0;
+    data.data = reinterpret_cast<void*>(texture->m_img->m_pixels.data());
+    data.depth = 0;
+    data.pitch = texture->m_img->getWidth() * 16;
+    m_pDeviceContext->updateSubresource(gTexture, data);
     // m_pDeviceContext->updateSubresource(gTexture, )
   }
 
