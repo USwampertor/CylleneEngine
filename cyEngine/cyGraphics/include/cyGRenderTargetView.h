@@ -1,6 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 #include "cyGGraphic.h"
+#include "cyGTexture.h"
 
 namespace CYLLENE_SDK
 {
@@ -24,7 +25,12 @@ class CY_GRAPHICS_EXPORT GRenderTargetView : public GGraphic
 {
 public:
   GRenderTargetView() = default;
+  
   virtual ~GRenderTargetView() {}
+  
+  virtual SPtr<GTexture>
+  getTexture() = 0;
+
 };
 
 }

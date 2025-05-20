@@ -30,6 +30,7 @@ public:
   virtual ~GTexture() {}
   
   virtual void* getResource() = 0;
+
   int32 m_resourceIndex = -1;
 };
 
