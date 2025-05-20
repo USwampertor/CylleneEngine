@@ -37,15 +37,15 @@ namespace CYLLENE_SDK
     );
   }
 
-class CY_GRAPHICS_EXPORT Graphic
+class CY_GRAPHICS_EXPORT GGraphic
 {
 public:
   /*
    * You shouldn't be doing this but hey, to each their own 
    */
-  Graphic() = default;
+  GGraphic() = default;
   
-  virtual ~Graphic() {}
+  virtual ~GGraphic() {}
 
   // static GRAPHIC_TYPE::E
   // staticType() {

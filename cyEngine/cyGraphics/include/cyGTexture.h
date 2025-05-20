@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 namespace CYLLENE_SDK
 {
@@ -23,14 +23,12 @@ struct GTextureElement
 };
 
 
-class CY_GRAPHICS_EXPORT GTexture : public Graphic
+class CY_GRAPHICS_EXPORT GTexture : public GGraphic
 {
 public:
   GTexture() = default;
   virtual ~GTexture() {}
   
-  virtual void bind() = 0;
-  virtual void* getBlob() = 0;
   virtual void* getResource() = 0;
   int32 m_resourceIndex = -1;
 };

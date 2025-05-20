@@ -1,7 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
 #include "cyGraphicsBuffer.h"
@@ -26,7 +26,7 @@ struct GSubResourceElement
 };
 
 
-class CY_GRAPHICS_EXPORT GDeviceContext : public Graphic
+class CY_GRAPHICS_EXPORT GDeviceContext : public GGraphic
 {
 public:
 
@@ -41,7 +41,7 @@ public:
   setViewPort(uint32 numViewports, const GViewport& viewport) = 0;
 
   virtual void
-  updateSubresource(SPtr<Graphic> resource, const GSubResourceElement& data) = 0;
+  updateSubresource(SPtr<GGraphic> resource, const GSubResourceElement& data) = 0;
 
   virtual void
   setRenderTargets(uint32 numRenderTargets,

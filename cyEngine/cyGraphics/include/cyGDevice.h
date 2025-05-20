@@ -1,7 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
 #include "cyGraphicsBuffer.h"
@@ -57,7 +57,7 @@ struct GDeviceElement
   uint32 depthFormat;
 };
 
-class CY_GRAPHICS_EXPORT GDevice : public Graphic
+class CY_GRAPHICS_EXPORT GDevice : public GGraphic
 {
 public:
 

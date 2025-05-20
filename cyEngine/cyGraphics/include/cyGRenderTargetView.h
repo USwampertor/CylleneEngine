@@ -1,6 +1,6 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 namespace CYLLENE_SDK
 {
@@ -20,7 +20,7 @@ struct GRenderTargetViewElement
 
 };
 
-class CY_GRAPHICS_EXPORT GRenderTargetView : public Graphic
+class CY_GRAPHICS_EXPORT GRenderTargetView : public GGraphic
 {
 public:
   GRenderTargetView() = default;

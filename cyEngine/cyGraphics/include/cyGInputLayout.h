@@ -1,6 +1,6 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 namespace CYLLENE_SDK
 {
@@ -16,7 +16,7 @@ struct GInputLayoutElement
   uint32_t instanceDataStepRate;
 };
 
-class CY_GRAPHICS_EXPORT GInputLayout : public Graphic
+class CY_GRAPHICS_EXPORT GInputLayout : public GGraphic
 {
 public:
   GInputLayout() = default;
