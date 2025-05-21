@@ -1,6 +1,6 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 namespace CYLLENE_SDK {
 
@@ -19,7 +19,7 @@ struct GShaderResourceViewElement
 };
 
 
-class CY_GRAPHICS_EXPORT GShaderResourceView : public Graphic
+class CY_GRAPHICS_EXPORT GShaderResourceView : public GGraphic
 {
 public:
   GShaderResourceView() = default;

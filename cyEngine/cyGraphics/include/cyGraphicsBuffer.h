@@ -1,6 +1,6 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 namespace CYLLENE_SDK {
 
@@ -15,7 +15,7 @@ struct GBufferElement
   uint32 structureByteStride;
 };
 
-class CY_GRAPHICS_EXPORT GraphicsBuffer : public Graphic
+class CY_GRAPHICS_EXPORT GraphicsBuffer : public GGraphic
 {
 public:
 

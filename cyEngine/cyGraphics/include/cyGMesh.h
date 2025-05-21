@@ -1,7 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 #include "cyGraphicsBuffer.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 #include <cyVertex.h>
 
@@ -9,7 +9,7 @@
 namespace CYLLENE_SDK
 {
 
-class CY_GRAPHICS_EXPORT GMesh : public Graphic
+class CY_GRAPHICS_EXPORT GMesh : public GGraphic
 {
 public:
 

@@ -25,7 +25,7 @@
     <ClInclude Include="include\cyGInputLayout.h" />
     <ClInclude Include="include\cyGMesh.h" />
     <ClInclude Include="include\cyGModel.h" />
-    <ClInclude Include="include\cyGraphic.h" />
+    <ClInclude Include="include\cyGGraphic.h" />
     <ClInclude Include="include\cyGraphicsAPI.h" />
     <ClInclude Include="include\cyGraphicsBuffer.h" />
     <ClInclude Include="include\cyGraphicsPrerequisites.h" />
@@ -39,21 +39,7 @@
     <ClInclude Include="include\cyGViewport.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\cyGDepthStencilView.cpp" />
-    <ClCompile Include="source\cyGDevice.cpp" />
-    <ClCompile Include="source\cyGDeviceContext.cpp" />
-    <ClCompile Include="source\cyGInputLayout.cpp" />
-    <ClCompile Include="source\cyGMesh.cpp" />
-    <ClCompile Include="source\cyGModel.cpp" />
     <ClCompile Include="source\cyGraphicsAPI.cpp" />
-    <ClCompile Include="source\cyGraphicsBuffer.cpp" />
-    <ClCompile Include="source\cyGRasterizerState.cpp" />
-    <ClCompile Include="source\cyGSamplerState.cpp" />
-    <ClCompile Include="source\cyGShader.cpp" />
-    <ClCompile Include="source\cyGSwapChain.cpp" />
-    <ClCompile Include="source\cyGTexture.cpp" />
-    <ClCompile Include="source\cyGRenderTargetView.cpp" />
-    <ClCompile Include="source\cyGShaderResourceView.cpp" />
     <ClCompile Include="source\cyGViewport.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

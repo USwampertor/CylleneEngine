@@ -1,6 +1,6 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 #include "cyGMesh.h"
 
 namespace CYLLENE_SDK

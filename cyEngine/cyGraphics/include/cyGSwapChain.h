@@ -1,7 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 #include "cyGTexture.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 namespace CYLLENE_SDK
 {
@@ -24,7 +24,7 @@ struct GSwapChainElement
   uint32 flags;
 };
 
-class CY_GRAPHICS_EXPORT GSwapChain : public Graphic
+class CY_GRAPHICS_EXPORT GSwapChain : public GGraphic
 {
 public:
   GSwapChain() = default;

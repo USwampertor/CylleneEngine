@@ -1,6 +1,8 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
+#include "cyGTexture.h"
+#include "cyGDepthStencilView.h"
 
 namespace CYLLENE_SDK
 {
@@ -8,6 +10,8 @@ namespace CYLLENE_SDK
 struct GRenderTargetViewElement
 {
   void* resource;
+  int32 width;
+  int32 height;
   uint32 format;
   uint32 viewDimension;
   uint32 mipLevels;
@@ -17,14 +21,22 @@ struct GRenderTargetViewElement
   uint32 minLOD;
   uint32 maxLOD;
   uint32 flags;
-
 };
 
-class CY_GRAPHICS_EXPORT GRenderTargetView : public Graphic
+class CY_GRAPHICS_EXPORT GRenderTargetView : public GGraphic
 {
 public:
   GRenderTargetView() = default;
+  
   virtual ~GRenderTargetView() {}
+  
+  virtual SPtr<GTexture>
+  getTexture() = 0;
+
+  virtual SPtr<GDepthStencilView>
+  getDepthStencil() = 0;
+
+
 };
 
 }

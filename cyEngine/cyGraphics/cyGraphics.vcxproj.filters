@@ -42,7 +42,7 @@
     <ClInclude Include="include\cyGShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyGraphic.h">
+    <ClInclude Include="include\cyGGraphic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyGInputLayout.h">
@@ -77,49 +77,7 @@
     <ClCompile Include="source\cyGraphicsAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cyGShaderResourceView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGRenderTargetView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGraphicsBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGDepthStencilView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGInputLayout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGSwapChain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGDeviceContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\cyGViewport.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGRasterizerState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\cyGSamplerState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

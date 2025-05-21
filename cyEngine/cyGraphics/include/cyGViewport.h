@@ -1,13 +1,13 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 
 #include <cyRect.h>
 
 namespace CYLLENE_SDK
 {
 
-class CY_GRAPHICS_EXPORT GViewport : public Graphic
+class CY_GRAPHICS_EXPORT GViewport : public GGraphic
 {
 public:
   GViewport() = default;

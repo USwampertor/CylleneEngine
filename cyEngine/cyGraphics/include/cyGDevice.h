@@ -1,7 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 
-#include "cyGraphic.h"
+#include "cyGGraphic.h"
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
 #include "cyGraphicsBuffer.h"
@@ -57,7 +57,7 @@ struct GDeviceElement
   uint32 depthFormat;
 };
 
-class CY_GRAPHICS_EXPORT GDevice : public Graphic
+class CY_GRAPHICS_EXPORT GDevice : public GGraphic
 {
 public:
 
@@ -79,15 +79,15 @@ public:
                  Vector2i size) = 0;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView(SPtr<GTexture> depthStencilView,
+  createDepthStencilView(// SPtr<GTexture> depthStencilView,
                          SPtr<GDepthStencilViewElement> dsvParams) = 0;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView(SPtr<GTexture> renderTargetView, 
+  createRenderTargetView(// SPtr<GTexture> renderTargetView, 
                          SPtr<GRenderTargetViewElement> rtvParams) = 0;
 
   virtual void// SPtr<GShaderResourceView>
-  createShaderResourceView(SPtr<GTexture> shaderResourceView,
+  createShaderResourceView(// SPtr<GTexture> shaderResourceView,
                            SPtr<GShaderResourceViewElement> srvParams) = 0;
 
   virtual SPtr<GInputLayout>
