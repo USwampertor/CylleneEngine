@@ -1,5 +1,6 @@
 #pragma once
 #include "cyDirectX11Prerequisites.h"
+#include "cyGDX11Texture.h"
 
 #include <cyGDepthStencilView.h>
 
@@ -21,10 +22,14 @@ public:
   virtual void 
   set(void* pHandle) override;
 
-public:
+  virtual SPtr<GTexture>
+  getTexture() override;
 
-  ID3D11DepthStencilView* m_pDSV = nullptr;
+public:
   
+  ID3D11DepthStencilView* m_pDSV = nullptr;
+
+  SPtr<GDX11Texture> m_pTexture = nullptr;
 };
 
 }

@@ -17,5 +17,16 @@ GDX11RenderTargetView::set(void* pHandle) {
   m_pRTV = static_cast<ID3D11RenderTargetView*>(pHandle);
 }
 
+SPtr<GTexture>
+GDX11RenderTargetView::getTexture() {
+  return m_pTexture;
+}
+
+SPtr<GDepthStencilView>
+GDX11RenderTargetView::getDepthStencil() {
+  return m_pDSV;
+}
+
+
 
 }

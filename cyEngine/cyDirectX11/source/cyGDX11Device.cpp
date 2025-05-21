@@ -51,7 +51,7 @@ GDX11Device::queryInterface(SPtr<GSwapChain> swapChain,
 
 
 SPtr<GDepthStencilView>
-GDX11Device::createDepthStencilView(SPtr<GTexture> depthStencilView,
+GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
                                     SPtr<GDepthStencilViewElement> dsvParams) {
 
   D3D11_DEPTH_STENCIL_VIEW_DESC* dsvDesc = dsvParams != nullptr ? new CD3D11_DEPTH_STENCIL_VIEW_DESC() : nullptr;
@@ -65,7 +65,8 @@ GDX11Device::createDepthStencilView(SPtr<GTexture> depthStencilView,
   }
   
   SPtr<GDX11DepthStencilView> pDepthStencilView = std::make_shared<GDX11DepthStencilView>();
-  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
+
+  // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
 
   if (FAILED(m_pDevice->CreateDepthStencilView(pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
     return nullptr;
@@ -74,7 +75,7 @@ GDX11Device::createDepthStencilView(SPtr<GTexture> depthStencilView,
 }
 
 SPtr<GRenderTargetView>
-GDX11Device::createRenderTargetView(SPtr<GTexture> renderTargetView, 
+GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView, 
                                     SPtr<GRenderTargetViewElement> rtvParams) {
   
   D3D11_RENDER_TARGET_VIEW_DESC* rtvDesc = rtvParams ? new CD3D11_RENDER_TARGET_VIEW_DESC() : nullptr;
@@ -85,9 +86,12 @@ GDX11Device::createRenderTargetView(SPtr<GTexture> renderTargetView,
     rtvDesc->ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
   }
   SPtr<GDX11RenderTargetView> pRenderTargetView = std::make_shared<GDX11RenderTargetView>();
-  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
-
-  if (FAILED(m_pDevice->CreateRenderTargetView(pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
+  
+  SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
+  pRenderTargetView->m_pTexture = createTexture2D(pTextureElement);
+  
+  // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
+  if (FAILED(m_pDevice->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
     return nullptr;
   }
   return std::static_pointer_cast<GRenderTargetView>(pRenderTargetView);
@@ -163,7 +167,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
 }
 
 void// SPtr<GShaderResourceView>
-GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
+GDX11Device::createShaderResourceView(SPtr<GTexture>& shaderResourceView,
                                       SPtr<GShaderResourceViewElement> srvParams) {
   
   D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC();
@@ -173,18 +177,14 @@ GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
   srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(shaderResourceView);
-  SPtr<GDX11ShaderResourceView> pShaderResourceView = std::make_shared<GDX11ShaderResourceView>();
+  // SPtr<GDX11ShaderResourceView> pShaderResourceView = std::make_shared<GDX11ShaderResourceView>();
 
-  HRESULT hr = m_pDevice->CreateShaderResourceView(pTexture->m_texture, &srvDesc, &pShaderResourceView->m_pSRV);
+  HRESULT hr = m_pDevice->CreateShaderResourceView(pTexture->m_texture, &srvDesc, &pTexture->m_pSRV);
   
-  if (!FAILED(hr)) {
-    pTexture->m_pSRV = pShaderResourceView->m_pSRV;
+  if (FAILED(hr)) {
+    // TODO: Show an error here
+    pTexture->m_pSRV = nullptr; // pShaderResourceView->m_pSRV;
   }
-  else {
-    pTexture->m_pSRV = pShaderResourceView->m_pSRV;
-    // TODO: Show here a warning or error;
-  }
-  // return std::static_pointer_cast<GShaderResourceView>(pShaderResourceView);
 }
 
 

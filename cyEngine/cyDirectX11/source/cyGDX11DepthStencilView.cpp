@@ -17,4 +17,9 @@ GDX11DepthStencilView::set(void* pHandle) {
   m_pDSV = static_cast<ID3D11DepthStencilView*>(pHandle);
 }
 
+SPtr<GTexture>
+GDX11DepthStencilView::getTexture() {
+  return m_pTexture;
+}
+
 }
