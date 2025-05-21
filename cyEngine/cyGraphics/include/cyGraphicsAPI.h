@@ -84,7 +84,7 @@ public:
 									SPtr<GSwapChainElement> swapChainParams) = 0;
 
   virtual void // SPtr<GShaderResourceView>
-  createShaderResourceView(SPtr<GTexture> shaderResourceView,
+  createShaderResourceView(SPtr<GTexture>& shaderResourceView,
 													 SPtr<GShaderResourceViewElement> srvParams) = 0;
 
 	virtual SPtr<GMesh>

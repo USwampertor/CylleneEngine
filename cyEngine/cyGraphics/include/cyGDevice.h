@@ -86,8 +86,8 @@ public:
   createRenderTargetView(// SPtr<GTexture> renderTargetView, 
                          SPtr<GRenderTargetViewElement> rtvParams) = 0;
 
-  virtual void// SPtr<GShaderResourceView>
-  createShaderResourceView(// SPtr<GTexture> shaderResourceView,
+  virtual void // SPtr<GShaderResourceView>
+  createShaderResourceView(SPtr<GTexture>& shaderResourceView,
                            SPtr<GShaderResourceViewElement> srvParams) = 0;
 
   virtual SPtr<GInputLayout>
