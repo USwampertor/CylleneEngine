@@ -83,7 +83,7 @@ public:
 	createSwapChain(SPtr<GDevice> device, 
 									SPtr<GSwapChainElement> swapChainParams) = 0;
 
-  virtual SPtr<GShaderResourceView>
+  virtual void // SPtr<GShaderResourceView>
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
 													 SPtr<GShaderResourceViewElement> srvParams) = 0;
 
@@ -96,32 +96,32 @@ public:
 
 	virtual SPtr<GTexture>
 	createTexture2D(SPtr<RTexture> texture) = 0;
-
-	virtual SPtr<GTexture>
-  createTexture2D(SPtr<RTexture> texture,
-									uint32 bindFlags,
-									uint32 cpuAccessFlags = 0,
-									uint32 mipFlags = 1,
-									// SPtr<GShaderResourceView> ppSRV = nullptr,
-									SPtr<GRenderTargetView>		ppRTV = nullptr,
-									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
-	
-	virtual SPtr<GTexture>
-  createTexture2D(const Vector2i& size,
-									uint32 bindFlags,
-									uint32 format,
-									uint32 usage,		
-									uint32 cpuAccessFlags = 0,
-									uint32 mipFlags = 1,
-									// SPtr<GShaderResourceView> ppSRV = nullptr,
-									SPtr<GRenderTargetView>		ppRTV = nullptr,
-									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
+// 
+// 	virtual SPtr<GTexture>
+//   createTexture2D(SPtr<RTexture> texture,
+// 									uint32 bindFlags,
+// 									uint32 cpuAccessFlags = 0,
+// 									uint32 mipFlags = 1,
+// 									// SPtr<GShaderResourceView> ppSRV = nullptr,
+// 									SPtr<GRenderTargetView>		ppRTV = nullptr,
+// 									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
+// 	
+// 	virtual SPtr<GTexture>
+//   createTexture2D(const Vector2i& size,
+// 									uint32 bindFlags,
+// 									uint32 format,
+// 									uint32 usage,		
+// 									uint32 cpuAccessFlags = 0,
+// 									uint32 mipFlags = 1,
+// 									// SPtr<GShaderResourceView> ppSRV = nullptr,
+// 									SPtr<GRenderTargetView>		ppRTV = nullptr,
+// 									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
 
   virtual SPtr<GTexture>
-	createTexture2D(SPtr<GTextureElement> textureParams,
+	createTexture2D(SPtr<GTextureElement> textureParams) = 0; //,
 									// SPtr<GShaderResourceView> ppSRV = nullptr,
-									SPtr<GRenderTargetView>		ppRTV = nullptr,
-									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
+									// SPtr<GRenderTargetView>		ppRTV = nullptr,
+									// SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
 
 	//////////////////////////////////////////////////////////////////////////
 	// ENDS NEEDS REVISIONING
