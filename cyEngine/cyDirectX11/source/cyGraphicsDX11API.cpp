@@ -158,9 +158,9 @@ GraphicsDX11API::shutdown() {
 // }
 
 SPtr<GRenderTargetView>
-GraphicsDX11API::createRenderTargetView(SPtr<GTexture> shaderResourceView,
+GraphicsDX11API::createRenderTargetView(// SPtr<GTexture> shaderResourceView,
                                         SPtr<GRenderTargetViewElement> srvParams) {
-  return m_pDevice->createRenderTargetView(shaderResourceView, srvParams);
+  return m_pDevice->createRenderTargetView(srvParams);
 }
 
 SPtr<GDepthStencilView>

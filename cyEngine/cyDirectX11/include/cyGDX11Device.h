@@ -33,15 +33,15 @@ public:
                  Vector2i size) override;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView(SPtr<GTexture> depthStencilView,
+  createDepthStencilView(// SPtr<GTexture> depthStencilView,
                          SPtr<GDepthStencilViewElement> dsvParams) override;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView(SPtr<GTexture> renderTargetView, 
+  createRenderTargetView(// SPtr<GTexture> renderTargetView, 
                          SPtr<GRenderTargetViewElement> rtvParams) override;
 
   virtual void// SPtr<GShaderResourceView>
-  createShaderResourceView(SPtr<GTexture> shaderResourceView,
+  createShaderResourceView(// SPtr<GTexture> shaderResourceView,
                            SPtr<GShaderResourceViewElement> srvParams) override;
 
   virtual SPtr<GInputLayout>

@@ -27,52 +27,61 @@ public:
 //   createDeviceContext() override;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView(SPtr<GTexture> shaderResourceView,
+  createRenderTargetView(// SPtr<GTexture> shaderResourceView,
 												 SPtr<GRenderTargetViewElement> srvParams) override;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView(SPtr<GTexture> depthStencilView,
+  createDepthStencilView(// SPtr<GTexture> depthStencilView,
 												 SPtr<GDepthStencilViewElement> dsvParams) override;
 
 	virtual SPtr<GSwapChain>
 	createSwapChain(SPtr<GDevice> device, 
 									SPtr<GSwapChainElement> swapChainParams) override;
 
-  virtual SPtr<GShaderResourceView>
+  virtual void // SPtr<GShaderResourceView>
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
 													 SPtr<GShaderResourceViewElement> srvParams) override;
 
 	virtual SPtr<GMesh>
 	createMesh(SPtr<RMesh> mesh) override;
 
+	//////////////////////////////////////////////////////////////////////////
+	// NEEDS REVISIONING
+	//////////////////////////////////////////////////////////////////////////
+
+
 	virtual SPtr<GTexture>
 	createTexture2D(SPtr<RTexture> texture) override;
 
-	virtual SPtr<GTexture>
-  createTexture2D(SPtr<RTexture> texture,
-									uint32 bindFlags, 
-									uint32 cpuAccessFlags = 0,
-									uint32 mipFlags = 1,
-									// SPtr<GShaderResourceView> ppSRV = nullptr,
-									SPtr<GRenderTargetView> ppRTV = nullptr,
-									SPtr<GDepthStencilView> ppDSV = nullptr) override;
+	// virtual SPtr<GTexture>
+  // createTexture2D(SPtr<RTexture> texture,
+	// 								uint32 bindFlags, 
+	// 								uint32 cpuAccessFlags = 0,
+	// 								uint32 mipFlags = 1,
+	// 								// SPtr<GShaderResourceView> ppSRV = nullptr,
+	// 								SPtr<GRenderTargetView> ppRTV = nullptr,
+	// 								SPtr<GDepthStencilView> ppDSV = nullptr) override;
+	// 
+	// virtual SPtr<GTexture>
+  // createTexture2D(const Vector2i& size,
+	// 								uint32 bindFlags,
+	// 								uint32 format,
+	// 								uint32 usage,		
+	// 								uint32 cpuAccessFlags = 0,
+	// 								uint32 mipFlags = 1,
+	// 								// SPtr<GShaderResourceView> ppSRV = nullptr,
+	// 								SPtr<GRenderTargetView> ppRTV = nullptr,
+	// 								SPtr<GDepthStencilView> ppDSV = nullptr) override;
 
 	virtual SPtr<GTexture>
-  createTexture2D(const Vector2i& size,
-									uint32 bindFlags,
-									uint32 format,
-									uint32 usage,		
-									uint32 cpuAccessFlags = 0,
-									uint32 mipFlags = 1,
+	createTexture2D(SPtr<GTextureElement> textureParams) override; //,
 									// SPtr<GShaderResourceView> ppSRV = nullptr,
-									SPtr<GRenderTargetView> ppRTV = nullptr,
-									SPtr<GDepthStencilView> ppDSV = nullptr) override;
+									// SPtr<GRenderTargetView>		ppRTV = nullptr,
+									// SPtr<GDepthStencilView>		ppDSV = nullptr) override;
 
-	virtual SPtr<GTexture>
-	createTexture2D(SPtr<GTextureElement> textureParams,
-									// SPtr<GShaderResourceView> ppSRV = nullptr,
-									SPtr<GRenderTargetView>		ppRTV = nullptr,
-									SPtr<GDepthStencilView>		ppDSV = nullptr) override;
+	//////////////////////////////////////////////////////////////////////////
+	// ENDS NEEDS REVISIONING
+	//////////////////////////////////////////////////////////////////////////
 
 	virtual SPtr<GShaderBlob>
 	compileShader(const String& data, const String& entry, const String& model) override;
