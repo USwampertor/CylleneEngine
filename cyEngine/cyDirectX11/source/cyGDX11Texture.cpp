@@ -17,16 +17,6 @@ GDX11Texture::set(void* pHandle) {
   m_texture = static_cast<ID3D11Texture2D*>(pHandle);
 }
 
-void
-GDX11Texture::bind() {
-
-}
-
-void*
-GDX11Texture::getBlob() {
-  return nullptr;
-}
-
 void*
 GDX11Texture::getResource() {
   return m_pSRV;

@@ -1,7 +1,9 @@
 #pragma once
 #include "cyDirectX11Prerequisites.h"
 
+#include <cyGGraphic.h>
 #include <cyGDeviceContext.h>
+
 #include <d3d11_2.h>
 
 namespace CYLLENE_SDK
@@ -26,7 +28,7 @@ public:
   setViewPort(uint32 numViewports, const GViewport& viewport) override;
 
   virtual void
-  updateSubresource(SPtr<Graphic> resource, const GSubResourceElement& data) override;
+  updateSubresource(SPtr<GGraphic> resource, const GSubResourceElement& data) override;
 
   virtual void
   setRenderTargets(uint32 numRenderTargets,

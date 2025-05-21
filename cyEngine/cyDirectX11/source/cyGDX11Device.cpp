@@ -58,17 +58,20 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
 
   if (dsvDesc != nullptr) {
     // D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC();
-    dsvDesc->Flags = 0;
-    dsvDesc->Format; // = format;
+    // dsvDesc->Flags = 0;
+    dsvDesc->Format = static_cast<DXGI_FORMAT>(dsvParams->format);
     dsvDesc->Texture2D.MipSlice = 0;
     dsvDesc->ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
   }
   
   SPtr<GDX11DepthStencilView> pDepthStencilView = std::make_shared<GDX11DepthStencilView>();
 
+  SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
+  pDepthStencilView->m_pTexture = createTexture2D(pTextureElement);
+
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
 
-  if (FAILED(m_pDevice->CreateDepthStencilView(pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
+  if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilView->m_pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
     return nullptr;
   }
   return std::static_pointer_cast<GDepthStencilView>(pDepthStencilView);
@@ -94,6 +97,13 @@ GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView,
   if (FAILED(m_pDevice->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
     return nullptr;
   }
+
+  // TODO: Create Depth Stencil in case of flag on
+  if (true) {
+    SPtr<GDepthStencilViewElement> dsvparams = std::make_shared<GDepthStencilViewElement>();
+    pRenderTargetView->m_pDSV = createDepthStencilView(dsvparams);
+  }
+
   return std::static_pointer_cast<GRenderTargetView>(pRenderTargetView);
 }
 
@@ -121,6 +131,13 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
   if (FAILED(m_pDevice->CreateTexture2D(desc, nullptr, &pTexture->m_texture))) {
     return nullptr;
   }
+
+  // TODO: Create shader resource view in case of flag on
+  if (true) {
+    SPtr<GShaderResourceViewElement> pSRVParams = std::make_shared<GShaderResourceViewElement>();
+    createShaderResourceView(std::static_pointer_cast<GGraphic>(pTexture), pSRVParams);
+  }
+
   return std::static_pointer_cast<GTexture>(pTexture);
 }
 

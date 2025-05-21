@@ -18,12 +18,6 @@ public:
   virtual void
   set(void* pHandle) override;
 
-  virtual void 
-  bind() override;
-  
-  virtual void* 
-  getBlob() override;
-  
   virtual void* 
   getResource() override;
 
