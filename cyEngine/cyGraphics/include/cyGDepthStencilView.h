@@ -19,6 +19,7 @@ struct GDepthStencilViewElement
   uint32 minLOD;
   uint32 maxLOD;
   uint32 flags;
+  SPtr<GTexture> texture = nullptr;
 };
 
 class CY_GRAPHICS_EXPORT GDepthStencilView : public GGraphic
