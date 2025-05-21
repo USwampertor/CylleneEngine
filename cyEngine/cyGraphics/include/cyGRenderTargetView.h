@@ -21,6 +21,7 @@ struct GRenderTargetViewElement
   uint32 minLOD;
   uint32 maxLOD;
   uint32 flags;
+  SPtr<GTexture> texture = nullptr;
 };
 
 class CY_GRAPHICS_EXPORT GRenderTargetView : public GGraphic
