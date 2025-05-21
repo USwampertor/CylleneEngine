@@ -1,12 +1,15 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 #include "cyGGraphic.h"
+#include "cyGTexture.h"
 
 namespace CYLLENE_SDK
 {
 struct GDepthStencilViewElement
 {
   void* resource;
+  int32 width;
+  int32 height;
   uint32 format;
   uint32 viewDimension;
   uint32 mipLevels;
@@ -24,6 +27,9 @@ public:
   GDepthStencilView() = default;
 
   virtual ~GDepthStencilView() {}
+
+  virtual SPtr<GTexture>
+  getTexture() = 0;
 
 };
 }

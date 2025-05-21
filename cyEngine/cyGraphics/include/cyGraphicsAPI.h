@@ -56,7 +56,6 @@ public:
 	virtual void
   shutdown() = 0;
 
-
 	void
 	addToRenderPool(uint32 index);
 
@@ -73,11 +72,11 @@ public:
 //   createDeviceContext() = 0;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView(SPtr<GTexture> shaderResourceView,
+  createRenderTargetView(// SPtr<GTexture> shaderResourceView,
 												 SPtr<GRenderTargetViewElement> srvParams) = 0;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView(SPtr<GTexture> depthStencilView,
+  createDepthStencilView(// SPtr<GTexture> depthStencilView,
 												 SPtr<GDepthStencilViewElement> dsvParams) = 0;
 
 	virtual SPtr<GSwapChain>
@@ -88,6 +87,16 @@ public:
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
 													 SPtr<GShaderResourceViewElement> srvParams) = 0;
 
+	virtual SPtr<GMesh>
+	createMesh(SPtr<RMesh> mesh) = 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// NEEDS REVISIONING
+	//////////////////////////////////////////////////////////////////////////
+
+	virtual SPtr<GTexture>
+	createTexture2D(SPtr<RTexture> texture) = 0;
+
 	virtual SPtr<GTexture>
   createTexture2D(SPtr<RTexture> texture,
 									uint32 bindFlags,
@@ -96,13 +105,7 @@ public:
 									// SPtr<GShaderResourceView> ppSRV = nullptr,
 									SPtr<GRenderTargetView>		ppRTV = nullptr,
 									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
-
-	virtual SPtr<GMesh>
-	createMesh(SPtr<RMesh> mesh) = 0;
-
-	virtual SPtr<GTexture>
-	createTexture2D(SPtr<RTexture> texture) = 0;
-
+	
 	virtual SPtr<GTexture>
   createTexture2D(const Vector2i& size,
 									uint32 bindFlags,
@@ -119,6 +122,10 @@ public:
 									// SPtr<GShaderResourceView> ppSRV = nullptr,
 									SPtr<GRenderTargetView>		ppRTV = nullptr,
 									SPtr<GDepthStencilView>		ppDSV = nullptr) = 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// ENDS NEEDS REVISIONING
+	//////////////////////////////////////////////////////////////////////////
 
 	virtual SPtr<GShaderBlob>
 	compileShader(const String& data, const String& entry, const String& model) = 0;
@@ -183,7 +190,7 @@ public:
 	getDepthStencilView() const { return m_pDepthStencilView; }
 
   SPtr<GRenderTargetView>
-    getRenderTargetView(uint32 index) const {
+  getRenderTargetView(uint32 index) const {
 		if (index < m_pRTVs.size()) {
       return m_pRTVs[index];
 		}
