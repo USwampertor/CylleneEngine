@@ -158,8 +158,8 @@ GraphicsDX11API::shutdown() {
 // }
 
 SPtr<GRenderTargetView>
-GraphicsDX11API::createRenderTargetView(// SPtr<GTexture> shaderResourceView,
-                                        SPtr<GRenderTargetViewElement> srvParams) {
+GraphicsDX11API::createRenderTargetView(SPtr<GRenderTargetViewElement> srvParams,
+												                SPtr<GTexture> shaderResourceView) {
   return m_pDevice->createRenderTargetView(srvParams);
 }
 
@@ -507,7 +507,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   
   // pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
   SPtr<GRenderTargetViewElement> pRTVParams = std::make_shared<GRenderTargetViewElement>();
-  m_pRenderTargetView = pDevice->createRenderTargetView(pRTVParams);
+  m_pRenderTargetView = pDevice->createRenderTargetView(nullptr, pBackBuffer);
   // m_pRenderTargetView = pDevice->createRenderTargetView(pBackBuffer, nullptr);
 
   // TODO ?

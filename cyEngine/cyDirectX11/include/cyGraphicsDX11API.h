@@ -27,8 +27,8 @@ public:
 //   createDeviceContext() override;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView(// SPtr<GTexture> shaderResourceView,
-												 SPtr<GRenderTargetViewElement> srvParams) override;
+  createRenderTargetView(SPtr<GRenderTargetViewElement> srvParams,
+												 SPtr<GTexture> shaderResourceView = nullptr) override;
 
   virtual SPtr<GDepthStencilView>
   createDepthStencilView(// SPtr<GTexture> depthStencilView,

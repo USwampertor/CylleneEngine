@@ -79,7 +79,8 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
 
 SPtr<GRenderTargetView>
 GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView, 
-                                    SPtr<GRenderTargetViewElement> rtvParams) {
+                                    SPtr<GRenderTargetViewElement> rtvParams,
+                                    SPtr<GTexture> shaderResourceView = nullptr) {
   
   D3D11_RENDER_TARGET_VIEW_DESC* rtvDesc = rtvParams ? new CD3D11_RENDER_TARGET_VIEW_DESC() : nullptr;
   if (rtvDesc != nullptr) {
