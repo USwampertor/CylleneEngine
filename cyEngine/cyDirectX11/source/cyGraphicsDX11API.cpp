@@ -506,8 +506,9 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
     std::static_pointer_cast<GDX11Texture>(m_pSwapChain->getBuffer(0));
   
   // pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
-
-  m_pRenderTargetView = pDevice->createRenderTargetView(pBackBuffer, nullptr);
+  SPtr<GRenderTargetViewElement> pRTVParams = std::make_shared<GRenderTargetViewElement>();
+  m_pRenderTargetView = pDevice->createRenderTargetView(pRTVParams);
+  // m_pRenderTargetView = pDevice->createRenderTargetView(pBackBuffer, nullptr);
 
   // TODO ?
   DX11_SAFE_RELEASE(pBackBuffer->m_texture);
@@ -517,7 +518,11 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   // TODO: Change this to the new format
   //////////////////////////////////////////////////////////////////////////
 
-  SPtr<GDepthStencilViewElement> pDSVParams = std::make_shared<GDepthStencilViewElement>()
+  SPtr<GDepthStencilViewElement> pDSVParams = std::make_shared<GDepthStencilViewElement>();
+  pDSVParams->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+  pDSVParams->width = width;
+  pDSVParams->height = height;
+  pDSVParams->flags = D3D11_BIND_DEPTH_STENCIL;
   SPtr<GDepthStencilView> pDepthStencilView = createDepthStencilView(pDSVParams);
 
   // SPtr<GDX11Texture> pDepthStencil = 
