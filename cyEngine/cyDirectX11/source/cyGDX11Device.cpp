@@ -80,7 +80,7 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
 SPtr<GRenderTargetView>
 GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView, 
                                     SPtr<GRenderTargetViewElement> rtvParams,
-                                    SPtr<GTexture> shaderResourceView = nullptr) {
+                                    SPtr<GTexture> pTexture = nullptr) {
   
   D3D11_RENDER_TARGET_VIEW_DESC* rtvDesc = rtvParams ? new CD3D11_RENDER_TARGET_VIEW_DESC() : nullptr;
   if (rtvDesc != nullptr) {
@@ -92,7 +92,7 @@ GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView,
   SPtr<GDX11RenderTargetView> pRenderTargetView = std::make_shared<GDX11RenderTargetView>();
   
   SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
-  pRenderTargetView->m_pTexture = createTexture2D(pTextureElement);
+  pRenderTargetView->m_pTexture = pTexture == nullptr ? createTexture2D(pTextureElement) : pTexture;
   
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
   if (FAILED(m_pDevice->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
@@ -136,7 +136,7 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
   // TODO: Create shader resource view in case of flag on
   if (true) {
     SPtr<GShaderResourceViewElement> pSRVParams = std::make_shared<GShaderResourceViewElement>();
-    createShaderResourceView(std::static_pointer_cast<GGraphic>(pTexture), pSRVParams);
+    createShaderResourceView(pTexture, pSRVParams);
   }
 
   return std::static_pointer_cast<GTexture>(pTexture);
@@ -185,7 +185,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
 }
 
 void// SPtr<GShaderResourceView>
-GDX11Device::createShaderResourceView(SPtr<GTexture>& shaderResourceView,
+GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
                                       SPtr<GShaderResourceViewElement> srvParams) {
   
   D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC();

@@ -498,15 +498,14 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   }
 
   SPtr<GDX11Device> pDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
-  SPtr<GDX11DepthStencilView> pDepthStencilView = 
-    std::static_pointer_cast<GDX11DepthStencilView>(m_pDepthStencilView);
+  
   // SPtr<GDX11RenderTargetView> pRenderTargetView = std::static_pointer_cast<GDX11RenderTargetView>(m_pRenderTargetView);
   
   SPtr<GDX11Texture> pBackBuffer = 
     std::static_pointer_cast<GDX11Texture>(m_pSwapChain->getBuffer(0));
   
   // pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
-  SPtr<GRenderTargetViewElement> pRTVParams = std::make_shared<GRenderTargetViewElement>();
+  // SPtr<GRenderTargetViewElement> pRTVParams = std::make_shared<GRenderTargetViewElement>();
   m_pRenderTargetView = pDevice->createRenderTargetView(nullptr, pBackBuffer);
   // m_pRenderTargetView = pDevice->createRenderTargetView(pBackBuffer, nullptr);
 
@@ -517,7 +516,8 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
 
   // TODO: Change this to the new format
   //////////////////////////////////////////////////////////////////////////
-
+  SPtr<GDX11DepthStencilView> pDepthStencilView =
+    std::static_pointer_cast<GDX11DepthStencilView>(m_pDepthStencilView);
   SPtr<GDepthStencilViewElement> pDSVParams = std::make_shared<GDepthStencilViewElement>();
   pDSVParams->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
   pDSVParams->width = width;
@@ -531,16 +531,15 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   //                                                          DXGI_FORMAT_D24_UNORM_S8_UINT,
   //                                                          D3D11_USAGE_DEFAULT));
   // 
-  if (!pDepthStencilView->m_texture) {
+  if (!pDepthStencilView->m_pTexture) {
     MessageBox(nullptr, "Failed to create depth stencil", "Error", MB_OK);
     return;
   }
-
   
   // m_pDepthStencilView = m_pDevice->createDepthStencilView(pDepthStencil, nullptr);
   //////////////////////////////////////////////////////////////////////////
 
-  DX11_SAFE_RELEASE(pDepthStencil->m_texture);
+  DX11_SAFE_RELEASE(pDepthStencilView->m_pTexture->m_texture);
 }
 
 
