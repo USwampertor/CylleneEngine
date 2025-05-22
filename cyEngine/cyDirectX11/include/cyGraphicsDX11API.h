@@ -28,11 +28,11 @@ public:
 
   virtual SPtr<GRenderTargetView>
   createRenderTargetView(SPtr<GRenderTargetViewElement> srvParams,
-												 SPtr<GTexture> shaderResourceView = nullptr) override;
+												 SPtr<GTexture> texture = nullptr) override;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView(// SPtr<GTexture> depthStencilView,
-												 SPtr<GDepthStencilViewElement> dsvParams) override;
+  createDepthStencilView(SPtr<GDepthStencilViewElement> dsvParams,
+												 SPtr<GTexture> texture = nullptr) override;
 
 	virtual SPtr<GSwapChain>
 	createSwapChain(SPtr<GDevice> device, 

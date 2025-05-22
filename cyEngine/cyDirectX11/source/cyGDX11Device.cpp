@@ -52,7 +52,8 @@ GDX11Device::queryInterface(SPtr<GSwapChain> swapChain,
 
 SPtr<GDepthStencilView>
 GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
-                                    SPtr<GDepthStencilViewElement> dsvParams) {
+                                    SPtr<GDepthStencilViewElement> dsvParams,
+                                    SPtr<GTexture> texture) {
 
   D3D11_DEPTH_STENCIL_VIEW_DESC* dsvDesc = dsvParams != nullptr ? new CD3D11_DEPTH_STENCIL_VIEW_DESC() : nullptr;
 
@@ -67,7 +68,9 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
   SPtr<GDX11DepthStencilView> pDepthStencilView = std::make_shared<GDX11DepthStencilView>();
 
   SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
-  pDepthStencilView->m_pTexture = createTexture2D(pTextureElement);
+  pDepthStencilView->m_pTexture = (texture == nullptr) ? 
+                                  std::static_pointer_cast<GDX11Texture>(createTexture2D(pTextureElement)) : 
+                                  std::static_pointer_cast<GDX11Texture>(texture);
 
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
 
@@ -78,9 +81,8 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
 }
 
 SPtr<GRenderTargetView>
-GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView, 
-                                    SPtr<GRenderTargetViewElement> rtvParams,
-                                    SPtr<GTexture> pTexture = nullptr) {
+GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
+                                    SPtr<GTexture> pTexture) {
   
   D3D11_RENDER_TARGET_VIEW_DESC* rtvDesc = rtvParams ? new CD3D11_RENDER_TARGET_VIEW_DESC() : nullptr;
   if (rtvDesc != nullptr) {
@@ -92,7 +94,9 @@ GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView,
   SPtr<GDX11RenderTargetView> pRenderTargetView = std::make_shared<GDX11RenderTargetView>();
   
   SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
-  pRenderTargetView->m_pTexture = pTexture == nullptr ? createTexture2D(pTextureElement) : pTexture;
+  pRenderTargetView->m_pTexture = (pTexture == nullptr) ? 
+                                  std::static_pointer_cast<GDX11Texture>(createTexture2D(pTextureElement)) : 
+                                  std::static_pointer_cast<GDX11Texture>(pTexture);
   
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
   if (FAILED(m_pDevice->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
@@ -102,7 +106,7 @@ GDX11Device::createRenderTargetView(// SPtr<GTexture> renderTargetView,
   // TODO: Create Depth Stencil in case of flag on
   if (true) {
     SPtr<GDepthStencilViewElement> dsvparams = std::make_shared<GDepthStencilViewElement>();
-    pRenderTargetView->m_pDSV = createDepthStencilView(dsvparams);
+    pRenderTargetView->m_pDSV = std::static_pointer_cast<GDX11DepthStencilView>(createDepthStencilView(dsvparams));
   }
 
   return std::static_pointer_cast<GRenderTargetView>(pRenderTargetView);

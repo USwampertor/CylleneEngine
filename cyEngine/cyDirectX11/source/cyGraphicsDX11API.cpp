@@ -159,14 +159,14 @@ GraphicsDX11API::shutdown() {
 
 SPtr<GRenderTargetView>
 GraphicsDX11API::createRenderTargetView(SPtr<GRenderTargetViewElement> srvParams,
-												                SPtr<GTexture> shaderResourceView) {
-  return m_pDevice->createRenderTargetView(srvParams);
+												                SPtr<GTexture> texture) {
+  return m_pDevice->createRenderTargetView(srvParams, texture);
 }
 
 SPtr<GDepthStencilView>
-GraphicsDX11API::createDepthStencilView(// SPtr<GTexture> depthStencilView,
-                                        SPtr<GDepthStencilViewElement> dsvParams) {
-  return m_pDevice->createDepthStencilView(dsvParams);
+GraphicsDX11API::createDepthStencilView(SPtr<GDepthStencilViewElement> dsvParams,
+                                        SPtr<GTexture> texture) {
+  return m_pDevice->createDepthStencilView(dsvParams, texture);
 }
 
 SPtr<GSwapChain>
@@ -216,7 +216,7 @@ GraphicsDX11API::createSwapChain(SPtr<GDevice> device,
 }
 
 void // SPtr<GShaderResourceView>
-GraphicsDX11API::createShaderResourceView(SPtr<GTexture>& shaderResourceView,
+GraphicsDX11API::createShaderResourceView(SPtr<GTexture> shaderResourceView,
                                           SPtr<GShaderResourceViewElement> srvParams) {
   m_pDevice->createShaderResourceView(shaderResourceView, srvParams);
 }
@@ -498,19 +498,18 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   }
 
   SPtr<GDX11Device> pDevice = std::static_pointer_cast<GDX11Device>(m_pDevice);
-  
+
   // SPtr<GDX11RenderTargetView> pRenderTargetView = std::static_pointer_cast<GDX11RenderTargetView>(m_pRenderTargetView);
-  
-  SPtr<GDX11Texture> pBackBuffer = 
-    std::static_pointer_cast<GDX11Texture>(m_pSwapChain->getBuffer(0));
-  
+
+  SPtr<GTexture> pBackBuffer = m_pSwapChain->getBuffer(0);
+
   // pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
   // SPtr<GRenderTargetViewElement> pRTVParams = std::make_shared<GRenderTargetViewElement>();
   m_pRenderTargetView = pDevice->createRenderTargetView(nullptr, pBackBuffer);
   // m_pRenderTargetView = pDevice->createRenderTargetView(pBackBuffer, nullptr);
 
   // TODO ?
-  DX11_SAFE_RELEASE(pBackBuffer->m_texture);
+  DX11_SAFE_RELEASE(std::static_pointer_cast<GDX11Texture>(pBackBuffer)->m_texture);
 
 
 
@@ -523,7 +522,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   pDSVParams->width = width;
   pDSVParams->height = height;
   pDSVParams->flags = D3D11_BIND_DEPTH_STENCIL;
-  SPtr<GDepthStencilView> pDepthStencilView = createDepthStencilView(pDSVParams);
+  pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(createDepthStencilView(pDSVParams));
 
   // SPtr<GDX11Texture> pDepthStencil = 
   //   std::static_pointer_cast<GDX11Texture>(createTexture2D(Vector2i(width, height),
@@ -535,7 +534,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
     MessageBox(nullptr, "Failed to create depth stencil", "Error", MB_OK);
     return;
   }
-  
+
   // m_pDepthStencilView = m_pDevice->createDepthStencilView(pDepthStencil, nullptr);
   //////////////////////////////////////////////////////////////////////////
 
