@@ -83,11 +83,11 @@ public:
                          SPtr<GDepthStencilViewElement> dsvParams) = 0;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView(// SPtr<GTexture> renderTargetView, 
-                         SPtr<GRenderTargetViewElement> rtvParams) = 0;
+  createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
+												 SPtr<GTexture> texture = nullptr) = 0;
 
   virtual void // SPtr<GShaderResourceView>
-  createShaderResourceView(SPtr<GTexture>& shaderResourceView,
+  createShaderResourceView(SPtr<GTexture> shaderResourceView,
                            SPtr<GShaderResourceViewElement> srvParams) = 0;
 
   virtual SPtr<GInputLayout>

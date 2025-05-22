@@ -72,8 +72,8 @@ public:
 //   createDeviceContext() = 0;
 
   virtual SPtr<GRenderTargetView>
-  createRenderTargetView(// SPtr<GTexture> shaderResourceView,
-												 SPtr<GRenderTargetViewElement> srvParams) = 0;
+  createRenderTargetView(SPtr<GRenderTargetViewElement> srvParams,
+												 SPtr<GTexture> texture = nullptr) = 0;
 
   virtual SPtr<GDepthStencilView>
   createDepthStencilView(// SPtr<GTexture> depthStencilView,
@@ -84,7 +84,7 @@ public:
 									SPtr<GSwapChainElement> swapChainParams) = 0;
 
   virtual void // SPtr<GShaderResourceView>
-  createShaderResourceView(SPtr<GTexture>& shaderResourceView,
+  createShaderResourceView(SPtr<GTexture> shaderResourceView,
 													 SPtr<GShaderResourceViewElement> srvParams) = 0;
 
 	virtual SPtr<GMesh>
