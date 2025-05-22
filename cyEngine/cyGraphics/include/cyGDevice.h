@@ -79,8 +79,8 @@ public:
                  Vector2i size) = 0;
 
   virtual SPtr<GDepthStencilView>
-  createDepthStencilView(// SPtr<GTexture> depthStencilView,
-                         SPtr<GDepthStencilViewElement> dsvParams) = 0;
+  createDepthStencilView(SPtr<GDepthStencilViewElement> dsvParams,
+                         SPtr<GTexture> texture = nullptr) = 0;
 
   virtual SPtr<GRenderTargetView>
   createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
