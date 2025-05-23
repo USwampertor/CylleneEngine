@@ -61,6 +61,9 @@ public:
   virtual SPtr<GRasterizerState>
   createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) override;
 
+  virtual SPtr<GSamplerState>
+  createSamplerState(SPtr<GSamplerStateElement> samplerParams) override; 
+
   virtual SPtr<GTexture>
   createTexture2D(SPtr<GTextureElement> textureParams) override;
 

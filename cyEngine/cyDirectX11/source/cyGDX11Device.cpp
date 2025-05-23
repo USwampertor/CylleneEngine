@@ -7,6 +7,9 @@
 #include "cyDX11GraphicsBuffer.h"
 #include "cyGDX11RasterizerState.h"
 #include "cyGDX11ShaderResourceView.h"
+#include "cyGDX11SamplerState.h"
+#include "cyWindow.h"
+#include "cyRTexture.h"
 
 namespace CYLLENE_SDK {
 
@@ -84,6 +87,7 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
 
   if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilView->m_pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Depth Stencil view");
     return nullptr;
   }
   return std::static_pointer_cast<GDepthStencilView>(pDepthStencilView);
@@ -110,6 +114,7 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
   
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
   if (FAILED(m_pDevice->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Render target view");
     return nullptr;
   }
 
@@ -174,7 +179,7 @@ GDX11Device::createVertexShader(SPtr<GShaderBlob> blob) {
 
 
   if (FAILED(hr)) {
-    MessageBox(nullptr, "Error creating Vertex Shader", "Error", MB_OK);
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Vertex Shader");
     return nullptr;
   }
 
@@ -195,7 +200,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
 
 
   if (FAILED(hr)) {
-    MessageBox(nullptr, "Error creating Vertex Shader", "Error", MB_OK);
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Pixel Shader");
     return nullptr;
   }
 
@@ -219,6 +224,7 @@ GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
   
   if (FAILED(hr)) {
     // TODO: Show an error here
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Shader resource view");
     pTexture->m_pSRV = nullptr; // pShaderResourceView->m_pSRV;
   }
 }
@@ -254,7 +260,7 @@ GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
   
   
   if (FAILED(hr)) {
-    MessageBox(nullptr, "Error creating Input layout", "Error", MB_OK);
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Input layout");
     return nullptr;
   }
   return std::static_pointer_cast<GInputLayout>(sPtrInputLayout);
@@ -284,22 +290,82 @@ GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
 
 
   if (FAILED(hr)) {
-    MessageBox(nullptr, "Error creating graphics buffer", "Error", MB_OK);
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating graphics buffer");
     return nullptr;
   }
 
   return std::static_pointer_cast<GraphicsBuffer>(pBuffer);
 }
 
+SPtr<GSamplerState>
+GDX11Device::createSamplerState(SPtr<GSamplerStateElement> samplerParams) {
+  CD3D11_SAMPLER_DESC descSS(D3D11_DEFAULT);
+
+  SPtr<GDX11SamplerState> pSamplerState = std::make_shared<GDX11SamplerState>();
+
+  if (samplerParams != nullptr) {
+    descSS.Filter = samplerParams->filter == SAMPLERFILTER::E::ePOINT ? D3D11_FILTER_MIN_MAG_MIP_POINT :
+                    samplerParams->filter == SAMPLERFILTER::E::eLINEAR ? D3D11_FILTER_MIN_MAG_MIP_LINEAR :
+                    D3D11_FILTER_ANISOTROPIC;
+    descSS.AddressU = samplerParams->addressU == TEXTUREMODE::E::eWRAP ? D3D11_TEXTURE_ADDRESS_WRAP :
+                      samplerParams->addressU == TEXTUREMODE::E::eMIRROR ? D3D11_TEXTURE_ADDRESS_MIRROR :
+                      samplerParams->addressU == TEXTUREMODE::E::eCLAMP ? D3D11_TEXTURE_ADDRESS_CLAMP :
+                      D3D11_TEXTURE_ADDRESS_BORDER;
+
+    descSS.AddressV = samplerParams->addressV == TEXTUREMODE::E::eWRAP ? D3D11_TEXTURE_ADDRESS_WRAP :
+                      samplerParams->addressV == TEXTUREMODE::E::eMIRROR ? D3D11_TEXTURE_ADDRESS_MIRROR :
+                      samplerParams->addressV == TEXTUREMODE::E::eCLAMP ? D3D11_TEXTURE_ADDRESS_CLAMP :
+                      D3D11_TEXTURE_ADDRESS_BORDER;
+    
+    descSS.AddressW = samplerParams->addressW == TEXTUREMODE::E::eWRAP ? D3D11_TEXTURE_ADDRESS_WRAP :
+                      samplerParams->addressW == TEXTUREMODE::E::eMIRROR ? D3D11_TEXTURE_ADDRESS_MIRROR :
+                      samplerParams->addressW == TEXTUREMODE::E::eCLAMP ? D3D11_TEXTURE_ADDRESS_CLAMP :
+                      D3D11_TEXTURE_ADDRESS_BORDER;
+
+    descSS.MipLODBias = samplerParams->mipLODBias;
+    descSS.MaxAnisotropy = samplerParams->maxAnisotropy;
+    descSS.ComparisonFunc = static_cast<D3D11_COMPARISON_FUNC>(samplerParams->comparisonFunc);
+    descSS.BorderColor[0] = samplerParams->borderColor[0];
+    descSS.BorderColor[1] = samplerParams->borderColor[1];
+    descSS.BorderColor[2] = samplerParams->borderColor[2];
+    descSS.BorderColor[3] = samplerParams->borderColor[3];
+    descSS.MinLOD = samplerParams->minLOD;
+    descSS.MaxLOD = samplerParams->maxLOD;
+  }
+
+  
+  if (FAILED(m_pDevice->CreateSamplerState(&descSS, &pSamplerState->m_pSamplerState))) {
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Sampler State");
+    return nullptr;
+  }
+  return std::static_pointer_cast<GSamplerState>(pSamplerState);
+
+}
+
 SPtr<GRasterizerState>
 GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
   CD3D11_RASTERIZER_DESC1 descRD(D3D11_DEFAULT);
 
+  if (rasterizerParams != nullptr) {
+    descRD.FillMode = static_cast<D3D11_FILL_MODE>(rasterizerParams->fillMode);
+    descRD.CullMode = static_cast<D3D11_CULL_MODE>(rasterizerParams->cullMode);
+    descRD.FrontCounterClockwise = rasterizerParams->counterWise;
+    descRD.DepthBias = rasterizerParams->depthBias;
+    descRD.DepthBiasClamp = rasterizerParams->depthBiasClamp;
+    descRD.SlopeScaledDepthBias = rasterizerParams->slopScaledDepthBias;
+    descRD.DepthClipEnable = rasterizerParams->clipEnabled;
+    descRD.ScissorEnable = rasterizerParams->scissorEnable;
+    descRD.MultisampleEnable = rasterizerParams->multisampleEnable;
+    descRD.AntialiasedLineEnable = rasterizerParams->antialiasedLineEnable;
+    descRD.ForcedSampleCount = rasterizerParams->forcedSampleCount;
+  }
+
+
   SPtr<GDX11RasterizerState> pRasterizerState = std::make_shared<GDX11RasterizerState>();
 
-  m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState);
+  // m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState);
   if (FAILED(m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState))) {
-    MessageBox(nullptr, "Error creating Rasterizer State", "Error", MB_OK);
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Rasterizer State");
     return nullptr;
   }
   return std::static_pointer_cast<GRasterizerState>(pRasterizerState);
