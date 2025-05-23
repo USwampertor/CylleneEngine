@@ -196,6 +196,9 @@ GDX11DeviceContext::setSamplers(uint32 slot,
 void
 GDX11DeviceContext::drawIndexed(SPtr<GMesh> mesh) {
   SPtr<GDX11Mesh> pMesh = std::static_pointer_cast<GDX11Mesh>(mesh);
+
+  m_pDeviceContext->DrawIndexed(pMesh->m_numIndices, pMesh->m_baseIndex, pMesh->m_baseVertex);
+
   // m_pDeviceContext->DrawIndexed(pMesh->m_indexCount,
   //                               pMesh->m_startIndexLocation,
   //                               pMesh->m_baseVertexLocation);

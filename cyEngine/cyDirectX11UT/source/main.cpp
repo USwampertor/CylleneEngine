@@ -242,6 +242,8 @@ main(int argc, char* argv[])
     gbVector.push_back(constantBuffer);
     GraphicsDX11API::instance().getDeviceContext()->setConstantBuffer(0, 1, gbVector);
 
+    GraphicsDX11API::instance().getDeviceContext()->drawIndexed(gMesh);
+
     // GraphicsDX11API::instance().clear(Color::MISSING);
     GraphicsDX11API::instance().present();
   }
