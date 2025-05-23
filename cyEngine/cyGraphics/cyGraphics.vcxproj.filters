@@ -72,6 +72,9 @@
     <ClInclude Include="include\cyGSamplerState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyGGraphicPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyGraphicsAPI.cpp">

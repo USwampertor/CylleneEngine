@@ -22,6 +22,7 @@
     <ClInclude Include="include\cyGDepthStencilView.h" />
     <ClInclude Include="include\cyGDevice.h" />
     <ClInclude Include="include\cyGDeviceContext.h" />
+    <ClInclude Include="include\cyGGraphicPass.h" />
     <ClInclude Include="include\cyGInputLayout.h" />
     <ClInclude Include="include\cyGMesh.h" />
     <ClInclude Include="include\cyGModel.h" />
