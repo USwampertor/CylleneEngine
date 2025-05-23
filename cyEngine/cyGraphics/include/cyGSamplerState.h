@@ -1,8 +1,9 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 #include "cyGGraphic.h"
-#include "cyRImage.h"
-#include "cyRTexture.h"
+
+#include <cyRImage.h>
+#include <cyRTexture.h>
 
 namespace CYLLENE_SDK
 {

@@ -24,6 +24,8 @@ class CY_GRAPHICS_EXPORT GShaderResourceView : public GGraphic
 public:
   GShaderResourceView() = default;
   virtual ~GShaderResourceView() {}
+
+  int32 m_resourceIndex = -1;
 };
 
 }

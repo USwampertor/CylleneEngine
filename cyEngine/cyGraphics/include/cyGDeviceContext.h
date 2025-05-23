@@ -92,7 +92,7 @@ public:
                     Vector<SPtr<GraphicsBuffer>> buffers) = 0;
 
   virtual void
-  setShaderResource(SPtr<GShaderResourceView> resource,
+  setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
                     uint32 slot,
                     uint32 numViews) = 0;
 

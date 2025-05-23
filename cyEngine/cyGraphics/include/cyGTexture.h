@@ -2,6 +2,7 @@
 
 #include "cyGraphicsPrerequisites.h"
 #include "cyGGraphic.h"
+#include "cyGShaderResourceView.h"
 
 namespace CYLLENE_SDK
 {
@@ -29,9 +30,8 @@ public:
   GTexture() = default;
   virtual ~GTexture() {}
   
-  virtual void* getResource() = 0;
+  virtual SPtr<GShaderResourceView> getResource() = 0;
 
-  int32 m_resourceIndex = -1;
 };
 
 
