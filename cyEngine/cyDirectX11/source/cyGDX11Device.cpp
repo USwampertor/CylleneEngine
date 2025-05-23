@@ -67,7 +67,16 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
   
   SPtr<GDX11DepthStencilView> pDepthStencilView = std::make_shared<GDX11DepthStencilView>();
 
+  // TODO: Make some standard values for a Depth Stencil texture
   SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
+  pTextureElement->width = 1;
+  pTextureElement->height = 1;
+  pTextureElement->cpuAccessFlags = 0;
+  pTextureElement->mipLevels = 1;
+  pTextureElement->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+  pTextureElement->usage = D3D11_USAGE_DEFAULT;
+  pTextureElement->bindFlags = D3D11_BIND_DEPTH_STENCIL;
+
   pDepthStencilView->m_pTexture = (texture == nullptr) ? 
                                   std::static_pointer_cast<GDX11Texture>(createTexture2D(pTextureElement)) : 
                                   std::static_pointer_cast<GDX11Texture>(texture);
@@ -93,6 +102,7 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
   }
   SPtr<GDX11RenderTargetView> pRenderTargetView = std::make_shared<GDX11RenderTargetView>();
   
+  // TODO: Make some standard values for a Render Target texture
   SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
   pRenderTargetView->m_pTexture = (pTexture == nullptr) ? 
                                   std::static_pointer_cast<GDX11Texture>(createTexture2D(pTextureElement)) : 
@@ -103,12 +113,12 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
     return nullptr;
   }
 
-  // TODO: Create Depth Stencil in case of flag on
-  if (true) {
-    SPtr<GDepthStencilViewElement> dsvparams = std::make_shared<GDepthStencilViewElement>();
-    pRenderTargetView->m_pDSV = std::static_pointer_cast<GDX11DepthStencilView>(createDepthStencilView(dsvparams));
+  if (rtvParams) {
+    if (rtvParams->flags | D3D11_BIND_DEPTH_STENCIL) {
+      SPtr<GDepthStencilViewElement> dsvparams = std::make_shared<GDepthStencilViewElement>();
+      pRenderTargetView->m_pDSV = std::static_pointer_cast<GDX11DepthStencilView>(createDepthStencilView(dsvparams));
+    }
   }
-
   return std::static_pointer_cast<GRenderTargetView>(pRenderTargetView);
 }
 
@@ -138,8 +148,12 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
   }
 
   // TODO: Create shader resource view in case of flag on
-  if (true) {
+  if (textureParams->bindFlags | D3D11_BIND_SHADER_RESOURCE) {
     SPtr<GShaderResourceViewElement> pSRVParams = std::make_shared<GShaderResourceViewElement>();
+
+    pSRVParams->format = textureParams->format;
+    pSRVParams->mipLevels = textureParams->mipLevels == 1 ? 1 : -1;
+
     createShaderResourceView(pTexture, pSRVParams);
   }
 

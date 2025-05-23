@@ -144,6 +144,11 @@ GraphicsDX11API::initialize(void* pHandle) {
     return;
   }
   queryInterface(scDesc.Width, scDesc.Height);
+
+  GViewport vp;
+  vp.setViewport(0, 0, scDesc.Width, scDesc.Height);
+  m_pDeviceContext->setViewPort(1, vp);
+
 }
 
 
@@ -328,7 +333,8 @@ GraphicsDX11API::createTexture2D(SPtr<GTextureElement> textureParams) { //,
                                  // SPtr<GRenderTargetView> ppRTV,
                                  // SPtr<GDepthStencilView> ppDSV) {
 
-  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
+  return m_pDevice->createTexture2D(textureParams);
+  //SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(m_pDevice->createTexture2D(textureParams));
 
 //   if (textureParams->bindFlags & D3D11_BIND_SHADER_RESOURCE) {
 //     m_pDevice->createShaderResourceView(pTexture, nullptr);
@@ -346,7 +352,6 @@ GraphicsDX11API::createTexture2D(SPtr<GTextureElement> textureParams) { //,
 //     }
 //   }
 
-  return pTexture;
   
 }
 
@@ -505,7 +510,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
 
   // pDevice->m_pDevice->CreateRenderTargetView(pBackBuffer->m_texture, nullptr, &pRenderTargetView->m_pRTV);
   // SPtr<GRenderTargetViewElement> pRTVParams = std::make_shared<GRenderTargetViewElement>();
-  m_pRenderTargetView = pDevice->createRenderTargetView(nullptr, pBackBuffer);
+  m_pRenderTargetView = createRenderTargetView(nullptr, pBackBuffer);
   // m_pRenderTargetView = pDevice->createRenderTargetView(pBackBuffer, nullptr);
 
   // TODO ?
@@ -515,14 +520,17 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
 
   // TODO: Change this to the new format
   //////////////////////////////////////////////////////////////////////////
-  SPtr<GDX11DepthStencilView> pDepthStencilView =
-    std::static_pointer_cast<GDX11DepthStencilView>(m_pDepthStencilView);
-  SPtr<GDepthStencilViewElement> pDSVParams = std::make_shared<GDepthStencilViewElement>();
-  pDSVParams->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-  pDSVParams->width = width;
-  pDSVParams->height = height;
-  pDSVParams->flags = D3D11_BIND_DEPTH_STENCIL;
-  pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(createDepthStencilView(pDSVParams));
+  SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
+  textureParams->width = width;
+  textureParams->height = height;
+  textureParams->cpuAccessFlags = 0;
+  textureParams->mipLevels = 1;
+  textureParams->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+  textureParams->usage = D3D11_USAGE_DEFAULT;
+  textureParams->bindFlags = D3D11_BIND_DEPTH_STENCIL;
+  SPtr<GTexture> pDepthStencil = createTexture2D(textureParams);
+
+  m_pDepthStencilView = createDepthStencilView(nullptr, pDepthStencil);
 
   // SPtr<GDX11Texture> pDepthStencil = 
   //   std::static_pointer_cast<GDX11Texture>(createTexture2D(Vector2i(width, height),
@@ -530,7 +538,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   //                                                          DXGI_FORMAT_D24_UNORM_S8_UINT,
   //                                                          D3D11_USAGE_DEFAULT));
   // 
-  if (!pDepthStencilView->m_pTexture) {
+  if (!m_pDepthStencilView) {
     MessageBox(nullptr, "Failed to create depth stencil", "Error", MB_OK);
     return;
   }
@@ -538,7 +546,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   // m_pDepthStencilView = m_pDevice->createDepthStencilView(pDepthStencil, nullptr);
   //////////////////////////////////////////////////////////////////////////
 
-  DX11_SAFE_RELEASE(pDepthStencilView->m_pTexture->m_texture);
+  DX11_SAFE_RELEASE(std::static_pointer_cast<GDX11Texture>(pDepthStencil)->m_texture);
 }
 
 

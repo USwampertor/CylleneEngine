@@ -48,7 +48,7 @@ main(int argc, char* argv[])
 
   WindowManager::startUp();
   WindowManager::instance().init();
-  WindowManager::instance().createWindow("Test", Vector2i(1280, 720), 0);
+  WindowManager::instance().createWindow("Test", Vector2i(1280, 720));
 
   void* hwnd = WindowManager::instance().getWindowHandle(0);
 
@@ -73,14 +73,14 @@ main(int argc, char* argv[])
 
   Vector<GInputLayoutElement> inputDescs = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BONES", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 48,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 64,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BONES", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 72,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    0, 88,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 104,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
   };
 
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
@@ -118,13 +118,12 @@ main(int argc, char* argv[])
   File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
   SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
 
-  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/cube_tex.png");
+  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/galina.bmp");
   SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cubeTexture");
   newTexture->setImage(newImage);
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
   SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
-
 
 
   BBeing cubeObject("cube");
@@ -133,6 +132,21 @@ main(int argc, char* argv[])
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
 
   SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
+
+  // TODO: Create Render Target and Depth stencil for 
+  
+  // SPtr<GRasterizerElement> defaultRasDesc = std::make_shared<GRasterizerElement>();
+  // SPtr<GRasterizerState> defaultRasterizer = GraphicsDX11API::instance().getDevice()->createRasterizerState();
+  // 
+  // // TODO: Create other rasterizers
+  // 
+  // // TODO: Do sampler states
+  // SPtr<GSamplerStateElement> linearSamplerDesc = std::make_shared<GSamplerStateElement>();
+  // SPtr<GSamplerState> linearSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(linearSamplerDesc);
+
+  // TODO: Create other sampler states
+
+
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
@@ -153,6 +167,7 @@ main(int argc, char* argv[])
         break;
       case xwin::EventType::Close:
         WindowManager::instance().destroyWindow(0);
+        running = false;
         break;
       default:
         // Do nothing
@@ -161,7 +176,33 @@ main(int argc, char* argv[])
     }
 
     GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
-    GraphicsDX11API::instance().clear(Color::MISSING);
+    Vector<SPtr<GRenderTargetView>> targets;
+    targets.push_back(GraphicsDX11API::instance().m_pRenderTargetView);
+    GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(1, 
+                                                                     targets, 
+                                                                     GraphicsDX11API::instance().m_pDepthStencilView);
+
+    
+    GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(GraphicsDX11API::instance().m_pRenderTargetView, Color::CLEAR);
+
+    // TODO: Clear render target from reflection
+
+    GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(GraphicsDX11API::instance().m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0F, 0);
+
+    // TODO: Clear depth stencil
+
+    GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vShader);
+    GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pShader);
+
+    uint32 vertexStride = sizeof(Vertex);
+    uint32 indexStride = sizeof(unsigned short);
+    uint32 vertexOffset = 0;
+
+    // GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
+    // GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+    // GraphicsDX11API::instance().clear(Color::MISSING);
     GraphicsDX11API::instance().present();
   }
   
@@ -170,19 +211,19 @@ main(int argc, char* argv[])
 
   return 0;
 
-  doctest::Context dcontext;
-
-  dcontext.applyCommandLine(argc, argv);
-
-  int32 res = dcontext.run();
-
-  if (dcontext.shouldExit()) {
-    return res;
-  }
-
-  dcontext.clearFilters();
-
-  return res + EXIT_SUCCESS;
+//   doctest::Context dcontext;
+// 
+//   dcontext.applyCommandLine(argc, argv);
+// 
+//   int32 res = dcontext.run();
+// 
+//   if (dcontext.shouldExit()) {
+//     return res;
+//   }
+// 
+//   dcontext.clearFilters();
+// 
+//   return res + EXIT_SUCCESS;
 }
 
 
