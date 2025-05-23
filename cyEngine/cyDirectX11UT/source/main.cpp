@@ -214,7 +214,7 @@ main(int argc, char* argv[])
     vertexOffsets.push_back(vertexOffset);
     GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
-    GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(gMesh->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(gMesh->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     Vector<SPtr<GShaderResourceView>> srvVector;
     srvVector.push_back(newGTexture->getResource());
