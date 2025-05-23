@@ -118,8 +118,8 @@ main(int argc, char* argv[])
   File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
   SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
 
-  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/galina.bmp");
-  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cubeTexture");
+  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/cube_base.png");
+  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cubeBase");
   newTexture->setImage(newImage);
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
@@ -133,29 +133,35 @@ main(int argc, char* argv[])
 
   SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
 
-  // TODO: Create Render Target and Depth stencil for 
+  // TODO: Create Render Target and Depth stencil for mirror effect
   
-  // SPtr<GRasterizerElement> defaultRasDesc = std::make_shared<GRasterizerElement>();
-  // SPtr<GRasterizerState> defaultRasterizer = GraphicsDX11API::instance().getDevice()->createRasterizerState();
-  // 
-  // // TODO: Create other rasterizers
-  // 
-  // // TODO: Do sampler states
-  // SPtr<GSamplerStateElement> linearSamplerDesc = std::make_shared<GSamplerStateElement>();
-  // SPtr<GSamplerState> linearSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(linearSamplerDesc);
+  SPtr<GRasterizerElement> defaultRasDesc = std::make_shared<GRasterizerElement>();
+  SPtr<GRasterizerState> defaultRasterizer = GraphicsDX11API::instance().getDevice()->createRasterizerState(defaultRasDesc);
+  
+  // TODO: Create other rasterizers
+  
+  // TODO: Do sampler states
+  SPtr<GSamplerStateElement> samplerDesc = std::make_shared<GSamplerStateElement>();
+  samplerDesc->filter = SAMPLERFILTER::E::ePOINT;
+  samplerDesc->addressU = TEXTUREMODE::E::eCLAMP;
+  samplerDesc->addressV = TEXTUREMODE::E::eCLAMP;
+  SPtr<GSamplerState> pointSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
+  samplerDesc->filter = SAMPLERFILTER::E::eLINEAR;
+  SPtr<GSamplerState> linearSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
 
   // TODO: Create other sampler states
-
-
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
   Time::instance().update();
   bool running = true;
   float timer = 0.0f;
+  float deltaTime;
   while (running) {
     eventQueue->update();
     Time::instance().update();
+    DELTA_TYPE::E deltaType = DELTA_TYPE::E::MILLISECOND;
+    deltaTime = Time::instance().deltaTime(deltaType);
     if (!eventQueue->empty()) {
       WindowEvent event = eventQueue->front();
       eventQueue->pop();
@@ -189,7 +195,7 @@ main(int argc, char* argv[])
 
     GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(GraphicsDX11API::instance().m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0F, 0);
 
-    // TODO: Clear depth stencil
+    // TODO: Clear depth stencil from reflection
 
     GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vShader);
     GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pShader);
@@ -198,9 +204,42 @@ main(int argc, char* argv[])
     uint32 indexStride = sizeof(unsigned short);
     uint32 vertexOffset = 0;
 
-    // GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
-    // GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
+    GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    Vector<SPtr<GraphicsBuffer>> vertexBuffer;
+    vertexBuffer.push_back(gMesh->m_pVertexBuffer);
+    Vector<uint32> vertexStrides;
+    vertexStrides.push_back(vertexStride);
+    Vector<uint32> vertexOffsets;
+    vertexOffsets.push_back(vertexOffset);
+    GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
+    GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(gMesh->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+    // TODO: Set Shader resources PLURAL
+    // GraphicsDX11API::instance().getDeviceContext()->setShaderResource();
+    
+    Vector<SPtr<GSamplerState>> ssVec1;
+    Vector<SPtr<GSamplerState>> ssVec2;
+    ssVec1.push_back(pointSampler);
+    ssVec2.push_back(linearSampler);
+    GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
+    GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
+
+    matrices.view = camera->m_view;
+    matrices.view.transpose();
+    matrices.projection = camera->m_projection;
+    matrices.projection.transpose();
+    matrices.world = cubeObject.getTransform()->m_tMatrix;
+    matrices.world.transpose();
+    data.clear();
+    data.resize(sizeof(matrices));
+    memcpy(data.data(), &matrices, sizeof(matrices));
+
+    GraphicsDX11API::instance().writeToBuffer(constantBuffer, data);
+    Vector<SPtr<GraphicsBuffer>> gbVector;
+    gbVector.push_back(constantBuffer);
+    GraphicsDX11API::instance().getDeviceContext()->setConstantBuffer(0, 1, gbVector);
 
     // GraphicsDX11API::instance().clear(Color::MISSING);
     GraphicsDX11API::instance().present();

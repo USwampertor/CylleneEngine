@@ -8,8 +8,9 @@
 #include "cyGDX11RasterizerState.h"
 #include "cyGDX11ShaderResourceView.h"
 #include "cyGDX11SamplerState.h"
-#include "cyWindow.h"
-#include "cyRTexture.h"
+
+#include <cyWindow.h>
+#include <cyRTexture.h>
 
 namespace CYLLENE_SDK {
 
