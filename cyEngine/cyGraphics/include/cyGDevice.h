@@ -106,6 +106,9 @@ public:
   virtual SPtr<GRasterizerState>
   createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) = 0;
 
+  virtual SPtr<GSamplerState>
+  createSamplerState(SPtr<GSamplerStateElement> samplerParams) = 0; 
+
   virtual SPtr<GTexture>
   createTexture2D(SPtr<GTextureElement> textureParams) = 0;
 
