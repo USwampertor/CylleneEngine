@@ -189,7 +189,7 @@ main(int argc, char* argv[])
                                                                      GraphicsDX11API::instance().m_pDepthStencilView);
 
     
-    GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(GraphicsDX11API::instance().m_pRenderTargetView, Color::CLEAR);
+    GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(GraphicsDX11API::instance().m_pRenderTargetView, Color::MISSING);
 
     // TODO: Clear render target from reflection
 
@@ -216,8 +216,9 @@ main(int argc, char* argv[])
 
     GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(gMesh->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-    // TODO: Set Shader resources PLURAL
-    // GraphicsDX11API::instance().getDeviceContext()->setShaderResource();
+    Vector<SPtr<GShaderResourceView>> srvVector;
+    srvVector.push_back(newGTexture->getResource());
+    GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
     
     Vector<SPtr<GSamplerState>> ssVec1;
     Vector<SPtr<GSamplerState>> ssVec2;

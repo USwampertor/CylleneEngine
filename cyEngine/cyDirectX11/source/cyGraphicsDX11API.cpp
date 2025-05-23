@@ -93,7 +93,7 @@ GraphicsDX11API::initialize(void* pHandle) {
   }
 
   pDevice->QueryInterface(__uuidof(ID3D11Device1),
-  reinterpret_cast<void**>(&sPtrDevice->m_pDevice));
+  reinterpret_cast<void**>(&sPtrDevice->m_pd3d11Device));
 
   pDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1),
   reinterpret_cast<void**>(&sPtrDeviceContext->m_pDeviceContext));
@@ -118,7 +118,7 @@ GraphicsDX11API::initialize(void* pHandle) {
 
   IDXGIDevice1* pDXGIDevice = nullptr;
 
-  sPtrDevice->m_pDevice->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGIDevice);
+  sPtrDevice->m_pd3d11Device->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGIDevice);
 
   IDXGIAdapter* pDXGIAdapter = nullptr;
   pDXGIDevice->GetAdapter(&pDXGIAdapter);
@@ -129,7 +129,7 @@ GraphicsDX11API::initialize(void* pHandle) {
   SPtr<GDX11SwapChain> sPtrSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
 
   hr =
-  pFactory2->CreateSwapChainForHwnd(sPtrDevice->m_pDevice,
+  pFactory2->CreateSwapChainForHwnd(sPtrDevice->m_pd3d11Device,
                                     hwnd,
                                     &scDesc,
                                     nullptr,
@@ -182,7 +182,7 @@ GraphicsDX11API::createSwapChain(SPtr<GDevice> device,
 
   IDXGIDevice1* pDXGIDevice = nullptr;
   
-  sPtrDevice->m_pDevice->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGIDevice);
+  sPtrDevice->m_pd3d11Device->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGIDevice);
 
   IDXGIAdapter* pDXGIAdapter = nullptr;
   pDXGIDevice->GetAdapter(&pDXGIAdapter);
@@ -209,7 +209,7 @@ GraphicsDX11API::createSwapChain(SPtr<GDevice> device,
   scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 
   HRESULT hr =
-    pFactory2->CreateSwapChainForHwnd(sPtrDevice->m_pDevice,
+    pFactory2->CreateSwapChainForHwnd(sPtrDevice->m_pd3d11Device,
                                       hwnd,
                                       &scDesc,
                                       nullptr,

@@ -167,12 +167,18 @@ GDX11DeviceContext::setConstantBuffer(uint32 slot,
 }
 
 void
-GDX11DeviceContext::setShaderResource(SPtr<GShaderResourceView> resource,
+GDX11DeviceContext::setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
                                       uint32 slot,
                                       uint32 numViews) {
-  SPtr<GDX11ShaderResourceView> pShaderResourceView = 
-    std::static_pointer_cast<GDX11ShaderResourceView>(resource);
-  m_pDeviceContext->PSSetShaderResources(slot, numViews, &pShaderResourceView->m_pSRV);
+  Vector<ID3D11ShaderResourceView*> pBuffers;
+  for (uint32 i = 0; i < numViews; ++i) {
+    SPtr<GDX11ShaderResourceView> pBuffer = std::static_pointer_cast<GDX11ShaderResourceView>(resource[i]);
+    pBuffers.push_back(pBuffer->m_pd3d11SRV);
+  }
+  m_pDeviceContext->PSSetShaderResources(slot, numViews, pBuffers.data());
+//   SPtr<GDX11ShaderResourceView> pShaderResourceView = 
+//     std::static_pointer_cast<GDX11ShaderResourceView>(resource);
+//   m_pDeviceContext->PSSetShaderResources(slot, numViews, &pShaderResourceView->m_pSRV);
 }
 
 void

@@ -17,9 +17,9 @@ GDX11Texture::set(void* pHandle) {
   m_texture = static_cast<ID3D11Texture2D*>(pHandle);
 }
 
-void*
+SPtr<GShaderResourceView>
 GDX11Texture::getResource() {
-  return m_pSRV;
+  return std::static_pointer_cast<GShaderResourceView>(m_pSRV);
 }
 
 

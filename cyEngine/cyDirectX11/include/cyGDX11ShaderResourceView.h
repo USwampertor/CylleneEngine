@@ -21,7 +21,7 @@ public:
 
 public:
 
-  ID3D11ShaderResourceView* m_pSRV = nullptr;
+  ID3D11ShaderResourceView* m_pd3d11SRV = nullptr;
 
 };
 

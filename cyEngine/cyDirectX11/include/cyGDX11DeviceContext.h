@@ -79,9 +79,9 @@ public:
                     Vector<SPtr<GraphicsBuffer>> buffers) override;
 
   virtual void
-  setShaderResource(SPtr<GShaderResourceView> resource,
-                    uint32 slot,
-                    uint32 numViews) override;
+  setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
+                     uint32 slot,
+                     uint32 numViews) override;
 
   virtual void
   setSamplers(uint32 slot,

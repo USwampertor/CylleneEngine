@@ -15,14 +15,14 @@
 namespace CYLLENE_SDK {
 
 GDX11Device::~GDX11Device() {
-  DX11_SAFE_RELEASE(m_pDevice);
+  DX11_SAFE_RELEASE(m_pd3d11Device);
 }
 void* GDX11Device::get() {
-  return m_pDevice;
+  return m_pd3d11Device;
 }
 
 void GDX11Device::set(void* pHandle) {
-  m_pDevice = static_cast<ID3D11Device1*>(pHandle);
+  m_pd3d11Device = static_cast<ID3D11Device1*>(pHandle);
 }
 
 void 
@@ -87,7 +87,7 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
 
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
 
-  if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilView->m_pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
+  if (FAILED(m_pd3d11Device->CreateDepthStencilView(pDepthStencilView->m_pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
     WindowManager::instance().ShowErrorMessage("Error", "Error creating Depth Stencil view");
     return nullptr;
   }
@@ -114,7 +114,7 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
                                   std::static_pointer_cast<GDX11Texture>(pTexture);
   
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
-  if (FAILED(m_pDevice->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
+  if (FAILED(m_pd3d11Device->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
     WindowManager::instance().ShowErrorMessage("Error", "Error creating Render target view");
     return nullptr;
   }
@@ -149,7 +149,7 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
     desc->SampleDesc.Quality = 0;
     desc->Usage = static_cast<D3D11_USAGE>(textureParams->usage);
   }
-  if (FAILED(m_pDevice->CreateTexture2D(desc, nullptr, &pTexture->m_texture))) {
+  if (FAILED(m_pd3d11Device->CreateTexture2D(desc, nullptr, &pTexture->m_texture))) {
     return nullptr;
   }
 
@@ -173,7 +173,7 @@ GDX11Device::createVertexShader(SPtr<GShaderBlob> blob) {
   SPtr<GDX11VertexShader> sPtrShader = std::make_shared<GDX11VertexShader>();
   sPtrShader->m_pBlob = sPtrShaderBlob;
   
-  HRESULT hr = m_pDevice->CreateVertexShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
+  HRESULT hr = m_pd3d11Device->CreateVertexShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
                                              sPtrShaderBlob->m_pBlob->GetBufferSize(),
                                              nullptr,
                                              &sPtrShader->m_pVertexShader);
@@ -194,7 +194,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
   SPtr<GDX11PixelShader> sPtrShader = std::make_shared<GDX11PixelShader>();
   sPtrShader->m_pBlob = sPtrShaderBlob;
 
-  HRESULT hr = m_pDevice->CreatePixelShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
+  HRESULT hr = m_pd3d11Device->CreatePixelShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
                                             sPtrShaderBlob->m_pBlob->GetBufferSize(),
                                             nullptr,
                                             &sPtrShader->m_pPixelShader);
@@ -219,9 +219,10 @@ GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
   srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
   SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(shaderResourceView);
-  // SPtr<GDX11ShaderResourceView> pShaderResourceView = std::make_shared<GDX11ShaderResourceView>();
+  pTexture->m_pSRV = std::make_shared<GDX11ShaderResourceView>();
 
-  HRESULT hr = m_pDevice->CreateShaderResourceView(pTexture->m_texture, &srvDesc, &pTexture->m_pSRV);
+
+  HRESULT hr = m_pd3d11Device->CreateShaderResourceView(pTexture->m_texture, &srvDesc, &pTexture->m_pSRV->m_pd3d11SRV);
   
   if (FAILED(hr)) {
     // TODO: Show an error here
@@ -253,7 +254,7 @@ GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
 
   SPtr<GDX11VertexShader> sPtrVertexShader = std::static_pointer_cast<GDX11VertexShader>(desc);
 
-  HRESULT hr = m_pDevice->CreateInputLayout(d3d11Descriptor.data(),
+  HRESULT hr = m_pd3d11Device->CreateInputLayout(d3d11Descriptor.data(),
                                             d3d11Descriptor.size(),
                                 /*pShader*/ sPtrVertexShader->m_pBlob->m_pBlob->GetBufferPointer(),
                                 /*pShader*/ sPtrVertexShader->m_pBlob->m_pBlob->GetBufferSize(),
@@ -287,7 +288,7 @@ GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
   
   SPtr<DX11GraphicsBuffer> pBuffer = std::make_shared<DX11GraphicsBuffer>();
 
-  HRESULT hr = m_pDevice->CreateBuffer(&desc, &initData, &pBuffer->m_pBuffer);
+  HRESULT hr = m_pd3d11Device->CreateBuffer(&desc, &initData, &pBuffer->m_pBuffer);
 
 
   if (FAILED(hr)) {
@@ -335,7 +336,7 @@ GDX11Device::createSamplerState(SPtr<GSamplerStateElement> samplerParams) {
   }
 
   
-  if (FAILED(m_pDevice->CreateSamplerState(&descSS, &pSamplerState->m_pSamplerState))) {
+  if (FAILED(m_pd3d11Device->CreateSamplerState(&descSS, &pSamplerState->m_pSamplerState))) {
     WindowManager::instance().ShowErrorMessage("Error", "Error creating Sampler State");
     return nullptr;
   }
@@ -365,7 +366,7 @@ GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
   SPtr<GDX11RasterizerState> pRasterizerState = std::make_shared<GDX11RasterizerState>();
 
   // m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState);
-  if (FAILED(m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState))) {
+  if (FAILED(m_pd3d11Device->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState))) {
     WindowManager::instance().ShowErrorMessage("Error", "Error creating Rasterizer State");
     return nullptr;
   }

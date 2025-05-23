@@ -1,5 +1,6 @@
 #pragma once
 #include "cyDirectX11Prerequisites.h"
+#include "cyGDX11ShaderResourceView.h"
 #include <cyGTexture.h>
 #include <d3d11_2.h>
 
@@ -18,11 +19,12 @@ public:
   virtual void
   set(void* pHandle) override;
 
-  virtual void* 
+  virtual SPtr<GShaderResourceView>
   getResource() override;
 
   ID3D11Texture2D* m_texture = nullptr;
-  ID3D11ShaderResourceView* m_pSRV = nullptr;
+  SPtr<GDX11ShaderResourceView> m_pSRV = nullptr;
+  // ID3D11ShaderResourceView* m_pSRV = nullptr;
 };
 
 }
