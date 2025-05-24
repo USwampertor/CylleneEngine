@@ -2,6 +2,7 @@
 #include "cyCorePrerequisites.h"
 #include "cyCComponent.h"
 
+#include "cyRModel.h"
 #include "cyRMesh.h"
 
 #include <cyUtilities.h>
@@ -26,6 +27,9 @@ public:
   setMesh(const SPtr<RMesh>& newMesh) {
     m_mesh = newMesh;
   }
+
+  void
+  setModel(const SPtr<RModel>& newModel);
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eMESHRENDERER; }
 
