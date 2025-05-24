@@ -472,26 +472,48 @@ Matrix4::perspective(const float width,
                      const float zNear,
                      const float zFar,
                      const float FOVangle) {
+  const float aspect = width / height;
 
-  float FOVrads = Math::DEG2RAD * FOVangle;
+  const float FOVrads = Math::DEG2RAD * FOVangle;
+  const float halfFOVrads = FOVrads * 0.5f;
 
-  float halfFOVrads = FOVrads * 0.5;
-  // float plane0[4] = { 1.0f / std::tanf(halfFOV), 0.0f,                                0.0f,                           0.0f };
-  // float plane1[4] = { 0.0f,                      width / std::tanf(halfFOV) / height, 0.0f,                           0.0f };
-  // float plane2[4] = { 0.0f,                      0.0f,                                zFar / (zFar - zNear),          1.0f };
-  // float plane3[4] = { 0.0f,                      0.0f,                                -zNear * zFar / (zFar - zNear), 0.0f };
-  // columns[0] = { plane0[0], plane0[1], plane0[2], plane0[3] }; // Column 1
-  // columns[1] = { plane1[0], plane1[1], plane1[2], plane1[3] }; // Column 2
-  // columns[2] = { plane2[0], plane2[1], plane2[2], plane2[3] }; // Column 3
-  // columns[3] = { plane3[0], plane3[1], plane3[2], plane3[3] }; // Column 4
+  const float rangeInv = 1.0f / (zFar - zNear);
 
-  *this = Matrix4(1.0f / std::tanf(halfFOVrads), 0.0f,                                    0.0f,                  0.0f,
-                  0.0f,                          width / std::tanf(halfFOVrads) / height, 0.0f,                  0.0f,
-                  0.0f,                          0.0f,                                    zFar / (zFar - zNear), - zNear * zFar / (zFar - zNear),
-                  0.0f,                          0.0f,                                    1.0f,                  0.0f);
+#if GAPI_MATHTYPE == GAPI_GL
+  const float f = 1.0f / std::tanf(halfFOVrads);
 
+  *this = Matrix4(f / aspect,      0.0f,    0.0f,                              0.0f,
+                  0.0f,            f,       0.0f,                              0.0f,
+                  0.0f,            0.0f,    (zFar + zNear) * rangeInv,        -1.0f,
+                  0.0f,            0.0f,    (2.0f * zFar * zNear) * rangeInv,  0.0f);
+#elif GAPI_MATHTYPE == GAPI_DX
+  const float f = 1.0f / std::tanf(halfFOVrads);
 
+  *this = Matrix4(f / aspect,     0.0f,        0.0f,                       0.0f,
+                  0.0f,           f,           0.0f,                       0.0f,
+                  0.0f,           0.0f,        zFar * rangeInv,            1.0f,
+                  0.0f,           0.0f,       -zNear * zFar * rangeInv,    0.0f);
+#endif
   return *this;
+//   float FOVrads = Math::DEG2RAD * FOVangle;
+// 
+//   float halfFOVrads = FOVrads * 0.5;
+//   // float plane0[4] = { 1.0f / std::tanf(halfFOV), 0.0f,                                0.0f,                           0.0f };
+//   // float plane1[4] = { 0.0f,                      width / std::tanf(halfFOV) / height, 0.0f,                           0.0f };
+//   // float plane2[4] = { 0.0f,                      0.0f,                                zFar / (zFar - zNear),          1.0f };
+//   // float plane3[4] = { 0.0f,                      0.0f,                                -zNear * zFar / (zFar - zNear), 0.0f };
+//   // columns[0] = { plane0[0], plane0[1], plane0[2], plane0[3] }; // Column 1
+//   // columns[1] = { plane1[0], plane1[1], plane1[2], plane1[3] }; // Column 2
+//   // columns[2] = { plane2[0], plane2[1], plane2[2], plane2[3] }; // Column 3
+//   // columns[3] = { plane3[0], plane3[1], plane3[2], plane3[3] }; // Column 4
+// 
+//   *this = Matrix4(1.0f / std::tanf(halfFOVrads), 0.0f,                                    0.0f,                  0.0f,
+//                   0.0f,                          width / std::tanf(halfFOVrads) / height, 0.0f,                  0.0f,
+//                   0.0f,                          0.0f,                                    zFar / (zFar - zNear), - zNear * zFar / (zFar - zNear),
+//                   0.0f,                          0.0f,                                    1.0f,                  0.0f);
+// 
+// 
+//   return *this;
 }
 
 
