@@ -386,7 +386,10 @@ GraphicsDX11API::compileShader(const String& data,
     return sPtrShaderBlob;
   }
   sPtrShaderBlob->size = pBlob->GetBufferSize();
-
+  sPtrShaderBlob->entry = entry;
+  sPtrShaderBlob->model = model;
+  sPtrShaderBlob->type = 0; // TODO: Make something to define the type of shader
+  sPtrShaderBlob->data = data;
   sPtrShaderBlob->isCompiled = true;
   sPtrShaderBlob->m_pBlob = pBlob;
   return std::static_pointer_cast<GShaderBlob>(sPtrShaderBlob);

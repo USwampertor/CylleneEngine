@@ -8,14 +8,29 @@ struct PixelInput
 {
   float4 position : SV_POSITION;
   float4 color : TEXCOORD0;
+  float3 normal : TEXCOORD2;
+  float3 tangent : TEXCOORD4;
+  float3 binormal : BINORMAL0;
   float2 texCoord : TEXCOORD1;
+  float3 posW : TEXCOORD3;
 };
+
 
 float4 pixel_main(PixelInput Input) : SV_TARGET {
   
-  float4 color = txColor.Sample(samLinear, Input.texCoord);
+  return float4(Input.texCoord, 0.0f, 1.0f);
   
-  return color;
+  // float4 color = txColor.Sample(samLinear, Input.texCoord);
+  // return color;
   
-  // return float4(Input.texCoord, 0.0f, 1.0f);
 }
+// With the sun
+// float4 pixel_main(PixelInput Input) : SV_Target
+// {
+//   float3 lightPos = float3(100.0f, 100.0f, 100.0f);
+//   float lightDir = normalize(lightPos);
+//   float diffuseIncidence = dot(lightDir, Input.normal);
+//   float4 color = txColor.Sample(samLinear, Input.texCoord);
+//   color.rgb *= diffuseIncidence;
+//   return color;
+// }

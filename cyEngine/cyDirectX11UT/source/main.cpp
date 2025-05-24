@@ -94,7 +94,7 @@ main(int argc, char* argv[])
   BBeing cameraEntity("Camera");
   cameraEntity.createComponent<CTransform>();
   CCamera* camera = cameraEntity.createComponent<CCamera>();
-  camera->setLookAt(Vector3f(0, 0, -30), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  camera->setLookAt(Vector3f(0, 0, -100), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
   camera->setPerspective(1280, 720, 0.1f, 200.0f, Math::PI * 0.25f);
 
 
