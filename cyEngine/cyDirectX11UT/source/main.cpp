@@ -94,7 +94,7 @@ main(int argc, char* argv[])
   BBeing cameraEntity("Camera");
   cameraEntity.createComponent<CTransform>();
   CCamera* camera = cameraEntity.createComponent<CCamera>();
-  camera->setLookAt(Vector3f(-2, 2, -2), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  camera->setLookAt(Vector3f(-10, 10, -10), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
   camera->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
 
 
@@ -118,7 +118,7 @@ main(int argc, char* argv[])
   File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
   SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
 
-  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/beto2.png");
+  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/cube_base.png");
   SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cube_base");
   newTexture->setImage(newImage);
 
@@ -130,6 +130,7 @@ main(int argc, char* argv[])
   cubeObject.createComponent<CTransform>();
   cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
+  // cubeObject.getTransform()->setScale(Vector3f(0.1, 0.1, 0.1));
 
   SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
 
@@ -199,7 +200,7 @@ main(int argc, char* argv[])
 
     // TODO: Clear render target from reflection
 
-    GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(GraphicsDX11API::instance().m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0F, 0);
+    GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(GraphicsDX11API::instance().m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // TODO: Clear depth stencil from reflection
 
@@ -238,11 +239,11 @@ main(int argc, char* argv[])
 
     // cubeObject.getTransform()->setScale(Vector3f(Math::sin()));
 
-    // Quaternion rotationQuat(Euler(0.0f, timer * 5.0f, 0.0f));
-    // Vector3f eyePosition = Vector3f(0.0f, 4.0f, -5.0f);
-    // eyePosition = rotationQuat.rotate(eyePosition);
+    Quaternion rotationQuat(Euler(0.0f, timer * 5.0f, 0.0f));
+    Vector3f eyePosition = Vector3f(0.0f, 4.0f, -5.0f);
+    eyePosition = rotationQuat.rotate(eyePosition);
 
-    // camera->setLookAt(eyePosition, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+    camera->setLookAt(eyePosition, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
     cubeObject.getTransform()->setPosition(Vector3f(0.0f, Math::sin(timer), 0.0f));
     matrices.world = cubeObject.getTransform()->m_tMatrix; // Matrix4::IDENTITY; // cubeObject.getTransform()->m_tMatrix;
     matrices.view = camera->m_view;
