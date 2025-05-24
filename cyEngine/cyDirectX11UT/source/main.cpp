@@ -94,8 +94,8 @@ main(int argc, char* argv[])
   BBeing cameraEntity("Camera");
   cameraEntity.createComponent<CTransform>();
   CCamera* camera = cameraEntity.createComponent<CCamera>();
-  camera->setLookAt(Vector3f(0, 0, -100), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
-  camera->setPerspective(1280, 720, 0.1f, 200.0f, Math::PI * 0.25f);
+  camera->setLookAt(Vector3f(-2, 2, -2), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  camera->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
 
 
   matrices.world = Matrix4::IDENTITY;
@@ -115,11 +115,11 @@ main(int argc, char* argv[])
     return -1;
   }
 
-  File modelF = FileSystem::open(resourceDir.fullPath() + "/saq.fbx");
+  File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
   SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
 
   SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/beto2.png");
-  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("saqBase");
+  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cube_base");
   newTexture->setImage(newImage);
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
@@ -148,8 +148,9 @@ main(int argc, char* argv[])
   SPtr<GSamplerState> pointSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
   samplerDesc->filter = SAMPLERFILTER::E::eLINEAR;
   SPtr<GSamplerState> linearSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
+  samplerDesc->filter = SAMPLERFILTER::E::eTRILINEAL;
+  SPtr<GSamplerState> anisoSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
 
-  // TODO: Create other sampler states
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
@@ -160,8 +161,13 @@ main(int argc, char* argv[])
   while (running) {
     eventQueue->update();
     Time::instance().update();
+
     DELTA_TYPE::E deltaType = DELTA_TYPE::E::MILLISECOND;
     deltaTime = Time::instance().deltaTime(deltaType);
+    timer += deltaTime * 0.001f;
+    // cubeObject.getTransform()->rotate(Vector3f(0, deltaTime * Math::DEG2RAD * 0.1f,0));
+
+    
     if (!eventQueue->empty()) {
       WindowEvent event = eventQueue->front();
       eventQueue->pop();
@@ -227,11 +233,20 @@ main(int argc, char* argv[])
     GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
     GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
 
+    float t = Math::sin(timer) * 0.5f + 0.5f;
+    // camera->setPerspective(1280, 720, 0.1f, 1000.0f, 30 + (60.0f * t));
+
+    // cubeObject.getTransform()->setScale(Vector3f(Math::sin()));
+
+    // Quaternion rotationQuat(Euler(0.0f, timer * 5.0f, 0.0f));
+    // Vector3f eyePosition = Vector3f(0.0f, 4.0f, -5.0f);
+    // eyePosition = rotationQuat.rotate(eyePosition);
+
+    // camera->setLookAt(eyePosition, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+    cubeObject.getTransform()->setPosition(Vector3f(0.0f, Math::sin(timer), 0.0f));
+    matrices.world = cubeObject.getTransform()->m_tMatrix; // Matrix4::IDENTITY; // cubeObject.getTransform()->m_tMatrix;
     matrices.view = camera->m_view;
-    matrices.view.transpose();
     matrices.projection = camera->m_projection;
-    matrices.projection.transpose();
-    matrices.world = cubeObject.getTransform()->m_tMatrix;
     matrices.world.transpose();
     data.clear();
     data.resize(sizeof(matrices));

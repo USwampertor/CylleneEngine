@@ -38,7 +38,7 @@ cbuffer MatrixCollection : register(b0)
 PixelInput vertex_main(VertexInput Input, uint vertex_index : SV_VertexID) {
   PixelInput Output;
   Output.position = float4(Input.position, 1);
-  
+  // Output.position.z = 10.0f;
   Output.position = mul(Output.position, World);
   Output.position = mul(Output.position, View);
   Output.position = mul(Output.position, Projection);

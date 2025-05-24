@@ -18,10 +18,10 @@ struct PixelInput
 
 float4 pixel_main(PixelInput Input) : SV_TARGET {
   
-  return float4(Input.texCoord, 0.0f, 1.0f);
+  float4 color = txColor.Sample(samLinear, Input.texCoord);
+  return color;
+  // return float4(Input.texCoord, 0.0f, 1.0f);
   
-  // float4 color = txColor.Sample(samLinear, Input.texCoord);
-  // return color;
   
 }
 // With the sun

@@ -270,7 +270,16 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
   textureParams->usage = D3D11_USAGE_DEFAULT;
   textureParams->cpuAccessFlags = 0;
   textureParams->mipLevels = 1;
-  return createTexture2D(textureParams);
+  SPtr<GTexture> pTexture = createTexture2D(textureParams);
+  if (pTexture) {
+    GSubResourceElement subresourceParams;
+    subresourceParams.data = texture->m_img->m_pixels.data();
+    subresourceParams.pitch = texture->m_img->m_metadata.m_width * 16;
+    subresourceParams.index = 0;
+    subresourceParams.depth = 0;
+    m_pDeviceContext->updateSubresource(pTexture, subresourceParams);
+  }
+  return pTexture;
 }
 
 // SPtr<GTexture>
