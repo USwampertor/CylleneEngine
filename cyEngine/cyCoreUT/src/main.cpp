@@ -120,6 +120,20 @@ TEST_CASE("[resource] Creation of models") {
     CHECK((r->m_meshes[0])->m_vertexBuffer.size() == 24);
     CHECK((r->m_meshes[0])->m_indexBuffer.size() == 36);
   }
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  File testModel2 = FileSystem::open(resourceDir.fullPath() + "/Mabis.fbx");
+  if (testModel2.isFile() && testModel2.exists()) {
+    std::cout << testModel2.path() << std::endl;
+    SPtr<RModel> r = ResourceManager::instance().loadFromPath<RModel>(testModel2.path());
+    SPtr<BBeing> b = ClassRegister::createBeing<BBeing>();
+    b->setName("b1");
+    b->createComponent<CTransform>();
+    SPtr<CMeshRenderer> model = b->createComponent<CMeshRenderer>();
+    model->setModel(r);
+
+    CHECK(b->getTransform()->getChildren().size() == r->m_meshes.size());
+  }
+
 }
 
 TEST_CASE("[resources] Creation of shaders") {

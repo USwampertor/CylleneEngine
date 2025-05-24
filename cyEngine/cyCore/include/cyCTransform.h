@@ -161,12 +161,6 @@ public:
 
 public:
 
-//   Vector3f m_position;
-//   
-//   Vector3f m_scale;
-//   
-//   Quaternion m_rotation;
-
   Matrix4 m_tMatrix;
 
   WPtr<CTransform> m_parent;
