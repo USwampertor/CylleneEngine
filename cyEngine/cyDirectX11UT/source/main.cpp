@@ -94,7 +94,7 @@ main(int argc, char* argv[])
   BBeing cameraEntity("Camera");
   cameraEntity.createComponent<CTransform>();
   CCamera* camera = cameraEntity.createComponent<CCamera>();
-  camera->setLookAt(Vector3f(-10, 10, -10), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  camera->setLookAt(Vector3f(-1, 1, -1), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
   camera->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
 
 
@@ -118,7 +118,7 @@ main(int argc, char* argv[])
   File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
   SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
 
-  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/cube_base.png");
+  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/roger2.png");
   SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cube_base");
   newTexture->setImage(newImage);
 
@@ -130,7 +130,7 @@ main(int argc, char* argv[])
   cubeObject.createComponent<CTransform>();
   cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
-  // cubeObject.getTransform()->setScale(Vector3f(0.1, 0.1, 0.1));
+  cubeObject.getTransform()->setScale(Vector3f(2, 2, 2));
 
   SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
 
@@ -239,7 +239,7 @@ main(int argc, char* argv[])
 
     // cubeObject.getTransform()->setScale(Vector3f(Math::sin()));
 
-    Quaternion rotationQuat(Euler(0.0f, timer * 5.0f, 0.0f));
+    Quaternion rotationQuat(Euler(timer * 0.5, timer * 0.5, timer * 0.5));
     Vector3f eyePosition = Vector3f(0.0f, 4.0f, -5.0f);
     eyePosition = rotationQuat.rotate(eyePosition);
 
