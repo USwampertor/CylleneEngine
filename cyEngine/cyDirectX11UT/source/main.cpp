@@ -115,18 +115,18 @@ main(int argc, char* argv[])
     return -1;
   }
 
-  File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
+  File modelF = FileSystem::open(resourceDir.fullPath() + "/saq.fbx");
   SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
 
-  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/cube_base.png");
-  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cubeBase");
+  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/beto2.png");
+  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("saqBase");
   newTexture->setImage(newImage);
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
   SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
 
 
-  BBeing cubeObject("cube");
+  BBeing cubeObject("saq");
   cubeObject.createComponent<CTransform>();
   cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
