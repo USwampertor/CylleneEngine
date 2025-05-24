@@ -57,6 +57,18 @@ public:
   virtual const String
   toString() = 0;
 
+  virtual void 
+  onCreate() {}
+
+  virtual void 
+  onInit() {}
+
+  virtual void 
+  onDestroy() {}
+
+  virtual void 
+  init() {}
+
 public:
 
   Event<void> m_onUpdate;

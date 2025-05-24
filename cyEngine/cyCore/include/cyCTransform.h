@@ -26,15 +26,23 @@ class CY_CORE_EXPORT CTransform : public CComponent
 {
 public:
   
-  // TransformComponent() : Component(TransformComponent::staticType()) {}
+  CTransform(const CTransform& other) : 
+    CComponent(CTransform::staticType()) {
+    m_tMatrix = other.m_tMatrix;
+    m_parent.reset();
+    m_parent = { other.m_parent };
+    m_children = other.m_children;
+  }
 
 
   CTransform(const Vector3f& position = Vector3f::ZERO,
-                     const Vector3f& scale = Vector3f::ONE,
-                     const Quaternion& rotation = Quaternion::IDENTITY)
-    : CComponent(CTransform::staticType()) {
-        m_tMatrix.setTransformMatrix(position, rotation, scale);
-      }
+             const Vector3f& scale = Vector3f::ONE,
+             const Quaternion& rotation = Quaternion::IDENTITY,
+    const SPtr<CTransform>& parent = nullptr) : CComponent(CTransform::staticType()) {
+    m_tMatrix.setTransformMatrix(position, rotation, scale);
+    m_parent.reset();
+    m_parent = { parent }; // TODO: Maybe this can be changed to setParent(parent);
+  }
 
   const Vector3f&
   getPosition() {
@@ -127,6 +135,16 @@ public:
     m_tMatrix.identity();
   }
 
+  void attachChildren(const SPtr<CTransform>& newChild);
+
+  void removeChildren(const String& name);
+
+  void removeChildrenAt(const uint32& index);
+
+  WPtr<CTransform> getChild(const String& name);
+
+  void setParent(const SPtr<CTransform>& newParent);
+
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eTRANSFORM; }
 
   virtual const String 
@@ -142,12 +160,6 @@ public:
   }
 
 public:
-
-//   Vector3f m_position;
-//   
-//   Vector3f m_scale;
-//   
-//   Quaternion m_rotation;
 
   Matrix4 m_tMatrix;
 
