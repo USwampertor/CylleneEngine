@@ -93,7 +93,7 @@ main(int argc, char* argv[])
   // camera shit
   BBeing cameraEntity("Camera");
   cameraEntity.createComponent<CTransform>();
-  CCamera* camera = cameraEntity.createComponent<CCamera>();
+  SPtr<CCamera> camera = cameraEntity.createComponent<CCamera>();
   camera->setLookAt(Vector3f(-1, 1, -1), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
   camera->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
 

@@ -48,6 +48,7 @@
     <ClInclude Include="include\cyRResource.h" />
     <ClInclude Include="include\cyResourceManager.h" />
     <ClInclude Include="include\cyScene.h" />
+    <ClInclude Include="include\cySceneGraph.h" />
     <ClInclude Include="include\cySceneNode.h" />
     <ClInclude Include="include\cyRScript.h" />
     <ClInclude Include="include\cyRShader.h" />
@@ -81,6 +82,7 @@
     <ClCompile Include="src\cyPluginManager.cpp" />
     <ClCompile Include="src\cyResourceManager.cpp" />
     <ClCompile Include="src\cyScene.cpp" />
+    <ClCompile Include="src\cySceneGraph.cpp" />
     <ClCompile Include="src\cySceneNode.cpp" />
     <ClCompile Include="src\cyRScript.cpp" />
     <ClCompile Include="src\cyRShader.cpp" />
