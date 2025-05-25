@@ -86,6 +86,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
     SPtr<T> newResource = create<T>(p.baseName());
     newResource->setData(codec->decode(f));
+    m_resourceLoaded.invoke(newResource);
     return REINTERPRETPOINTER(T, newResource);
   }
 
@@ -183,7 +184,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   Map<String, SPtr<CDCodec>> m_codecs;
 
-  Event<void> m_resourceLoaded;
+  Event<void, SPtr<RResource>> m_resourceLoaded;
 
   Event<void> m_resourceCreated;
 
