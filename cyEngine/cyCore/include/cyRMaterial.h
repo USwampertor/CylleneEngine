@@ -21,6 +21,7 @@
 #include "cyVector2f.h"
 #include "cyVector3f.h"
 #include "cyVector4f.h"
+#include "cyRTexture.h"
 
 namespace CYLLENE_SDK {
 
@@ -151,6 +152,9 @@ public:
   void
   loadShader(const SPtr<RShader>& newShader);
 
+
+  // TODO: Change this eventually to a more complex structure that uses the reflection
+  Map<String, SPtr<RTexture>> m_textures;
   
 private:
 
@@ -165,6 +169,7 @@ private:
   Map<String, SPtr<void*>> m_components;
 
   WPtr<RShader> m_shader;
+
 };
 
 }

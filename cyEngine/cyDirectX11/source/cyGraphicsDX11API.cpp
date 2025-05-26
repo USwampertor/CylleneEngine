@@ -18,6 +18,11 @@
 #include <cyLogger.h>
 #include <cyWindow.h>
 #include <cyUtilities.h>
+#include <cyResourceManager.h>
+#include <cyCMeshRenderer.h>
+#include <cyBBeing.h>
+#include <cyRMaterial.h>
+#include <cyRTexture.h>
 
 namespace CYLLENE_SDK {
 
@@ -149,12 +154,14 @@ GraphicsDX11API::initialize(void* pHandle) {
   vp.setViewport(0, 0, scDesc.Width, scDesc.Height);
   m_pDeviceContext->setViewPort(1, vp);
 
+  ResourceManager::instance().m_resourceLoaded +=
+    std::bind(&GraphicsAPI::registerResource, this, std::placeholders::_1);
 }
 
 
 void
 GraphicsDX11API::shutdown() {
-
+  
 }
 
 // SPtr<GDevice>
@@ -574,9 +581,14 @@ GraphicsDX11API::clear(const Color& color) {
 
 void
 GraphicsDX11API::draw(SPtr<CCamera> refCamera, SPtr<BBeing> refBeing) {
-
+  struct MatrixCollection
+  {
+    Matrix4 world;
+    Matrix4 view;
+    Matrix4 projection;
+  } matrices;
   // Get reference to textures needed and meshes needed
-  // Vector<SPtr<GTexture>> textures = refBeing->getComponent<>();
+  // Vector<SPtr<GTexture>> textures = refBeing->getComponent<CMeshRenderer>();
   // 
   // 
   // Vector<SPtr<GraphicsBuffer>> vertexBuffer;

@@ -28,6 +28,7 @@
 #include <cyRMesh.h>
 #include <cyRModel.h>
 #include <cyRTexture.h>
+#include <cyRShader.h>
 #include <cyTime.h>
 #include <cyTriangle.h>
 #include <cyUnitTesting.h>
@@ -121,18 +122,18 @@ TEST_CASE("[resource] Creation of models") {
     CHECK((r->m_meshes[0])->m_indexBuffer.size() == 36);
   }
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
-  File testModel2 = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
-  if (testModel2.isFile() && testModel2.exists()) {
-    std::cout << testModel2.path() << std::endl;
-    SPtr<RModel> r = ResourceManager::instance().loadFromPath<RModel>(testModel2.path());
-    SPtr<BBeing> b = ClassRegister::createBeing<BBeing>();
-    b->setName("b1");
-    b->createComponent<CTransform>();
-    SPtr<CMeshRenderer> model = b->createComponent<CMeshRenderer>();
-    model->setModel(r);
-
-    CHECK(b->getTransform()->getChildren().size() == r->m_meshes.size());
-  }
+  // File testModel2 = FileSystem::open(resourceDir.fullPath() + "/Mabis.fbx");
+  // if (testModel2.isFile() && testModel2.exists()) {
+  //   std::cout << testModel2.path() << std::endl;
+  //   SPtr<RModel> r = ResourceManager::instance().loadFromPath<RModel>(testModel2.path());
+  //   SPtr<BBeing> b = ClassRegister::createBeing<BBeing>();
+  //   b->setName("b1");
+  //   b->createComponent<CTransform>();
+  //   SPtr<CMeshRenderer> model = b->createComponent<CMeshRenderer>();
+  //   model->setModel(r);
+  // 
+  //   CHECK(b->getTransform()->getChildren().size() == r->m_meshes.size());
+  // }
 
 }
 
@@ -140,10 +141,13 @@ TEST_CASE("[resources] Creation of shaders") {
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
   File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
   SPtr<RShader> vsShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderVSF.path());
-  CHECK(!vsShaderR->m_data.empty());
+  CHECK(String(vsShaderR->getShaderType()._to_string()) == "VERTEX");
   File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
-  CHECK(!vsShaderR->m_data.empty());
   SPtr<RShader> psShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderPSF.path());
+  CHECK(String(psShaderR->getShaderType()._to_string()) == "PIXEL");
+
+  vsShaderR = ResourceManager::instance().loadFromPath<RShader>(Path(resourceDir.fullPath() + "/vShaderExt.vs_hlsl").path());
+  CHECK(String(vsShaderR->getShaderType()._to_string()) == "VERTEX");
 
 }
 

@@ -123,7 +123,8 @@ main(int argc, char* argv[])
   newTexture->setImage(newImage);
 
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
-  SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
+  String testName = GraphicsDX11API::instance().generateResourceID<RTexture>("cube_base");
+  SPtr<GTexture> newGTexture = GraphicsDX11API::instance().m_textureRenderPool[Hash<String>()(testName)];// GraphicsDX11API::instance().createTexture2D(newTexture);
 
 
   BBeing cubeObject("saq");

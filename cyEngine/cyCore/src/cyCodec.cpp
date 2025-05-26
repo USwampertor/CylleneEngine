@@ -387,7 +387,75 @@ ModelCodec::decode(const File& f) {
   return reinterpret_cast<void*>(new String(d.stringify()));
 }
 
+SHADER_TYPE::E detectShaderTypeFromFirstLine(const String& firstLine, 
+                                             const SHADER_LANGUAGE::E& language) {
+  // Convert first line to lowercase for case-insensitive comparison
+  String lineLower = firstLine;
+  lineLower = Utils::toLowerCase(lineLower);
+//   std::transform(lineLower.begin(), lineLower.end(), lineLower.begin(),
+//     [](unsigned char c) { return std::tolower(c); });
 
+  // Remove leading/trailing whitespace
+  lineLower = lineLower.substr(lineLower.find_first_not_of(" \t"));
+  lineLower = lineLower.substr(0, lineLower.find_last_not_of(" \t") + 1);
+
+  // Check for explicit type declarations
+  if (lineLower.find("//type:") == 0 || lineLower.find("#type") == 0) {
+    String typeStr = lineLower.substr(lineLower.find(':') + 1);
+    typeStr = typeStr.substr(0, typeStr.find_first_of(" \t\n\r"));
+
+    if (typeStr == "vertex") return SHADER_TYPE::E::VERTEX;
+    if (typeStr == "pixel" || typeStr == "fragment") return SHADER_TYPE::E::PIXEL;
+    if (typeStr == "geometry") return SHADER_TYPE::E::GEOMETRY;
+    if (typeStr == "compute") return SHADER_TYPE::E::COMPUTE;
+    if (typeStr == "domain") return SHADER_TYPE::E::TDOMAIN;
+    if (typeStr == "hull") return SHADER_TYPE::E::THULL;
+    if (typeStr == "tesscontrol") return SHADER_TYPE::E::TCONTROL;
+    if (typeStr == "tesseval") return SHADER_TYPE::E::TEVAL;
+  }
+
+  // Fallback to extension-based detection if no explicit type
+  return SHADER_TYPE::E::UNKNOWN;
+}
+
+SHADER_TYPE::E determineShaderType(const Path& filename, const String& firstLine) {
+  // First try explicit type declaration
+  SHADER_LANGUAGE::E language = SHADER_LANGUAGE::E::UNKNOWN;
+
+  if (filename.extension()      == String(".hlsl")) language = SHADER_LANGUAGE::E::HLSL;
+  else if (filename.extension() == String(".glsl")) language = SHADER_LANGUAGE::E::GLSL;
+  else if (filename.extension() == String(".vert") || 
+           filename.extension() == String(".vs_hlsl") ||
+           filename.extension() == String(".vs_glsl")) return SHADER_TYPE::E::VERTEX;
+  else if (filename.extension() == String(".frag") || 
+           filename.extension() == String(".ps_hlsl")  ||
+           filename.extension() == String(".ps_glsl")  ||
+           filename.extension() == String(".pix")) return SHADER_TYPE::E::PIXEL;
+  else if (filename.extension() == String(".geom")) return SHADER_TYPE::E::GEOMETRY;
+  else if (filename.extension() == String(".comp")) return SHADER_TYPE::E::COMPUTE;
+  else if (filename.extension() == String(".tese")) return SHADER_TYPE::E::TEVAL;
+  else if (filename.extension() == String(".tesc")) return SHADER_TYPE::E::TCONTROL;
+  else if (filename.extension() == String(".hs")) return SHADER_TYPE::E::THULL;
+  else if (filename.extension() == String(".ds")) return SHADER_TYPE::E::TDOMAIN;
+
+  // If we have language info but no extension hint, use first line content
+  if (language != SHADER_LANGUAGE::E::UNKNOWN) {
+    SHADER_TYPE::E stage = detectShaderTypeFromFirstLine(firstLine, language);
+    if (stage != SHADER_TYPE::E::UNKNOWN) return stage;
+  }
+
+  // Final fallback - check for common patterns in first line
+  String lineLower = firstLine;
+  lineLower = Utils::toLowerCase(lineLower);
+
+  if (lineLower.find("vertex") != String::npos) return SHADER_TYPE::E::VERTEX;
+  if (lineLower.find("pixel") != String::npos || lineLower.find("fragment") != String::npos)
+    return SHADER_TYPE::E::PIXEL;
+  if (lineLower.find("geometry") != String::npos) return SHADER_TYPE::E::GEOMETRY;
+  if (lineLower.find("compute") != String::npos) return SHADER_TYPE::E::COMPUTE;
+
+  return SHADER_TYPE::E::UNKNOWN;
+}
   
 void*
 ShaderCodec::decode(const File& f) {
@@ -395,26 +463,37 @@ ShaderCodec::decode(const File& f) {
   // Create a copy so there is no dangling pointers
   Path p(f.path());
   String tmp = f.readFile();
+
     
   // This is a temporal hack which SHOULD work
   void* data = reinterpret_cast<void*>(tmp.c_str()[0]);
     
-  // auto tmpPointer = new ShaderResource(pathToResource, data);
-  // return SPtr<Resource>(tmpPointer);
-  // 
-  // delete(data);
-
-  // SPtr<ShaderResource> newResource =
-  //   ResourceManager::instance().create<ShaderResource>(p.baseName());
+  
 
   bool isBlob = p.extension().compare(".blob") == 0;
 
   JSONDocument d;
   d.SetObject();
 
-  JSONDocument::AllocatorType& allocator = d.GetAllocator();
+  SHADER_TYPE::E shaderType = SHADER_TYPE::E::UNKNOWN;
+  SHADER_LANGUAGE::E shaderLanguage = SHADER_LANGUAGE::E::UNKNOWN;
 
+  if (p.extension() == String(".cysl")) { 
+    // Shader is Cyllene Shader Language and inside tells wtf is extract from there
+  }
+  else {
+
+    IStringStream iss(tmp);
+
+    String line;
+    std::getline(iss, line);
+
+    shaderType = determineShaderType(p, line);
+  }
+
+  JSONDocument::AllocatorType& allocator = d.GetAllocator();
   d.AddMember("type", "shader", allocator);
+  d.AddMember("shaderType", shaderType._to_integral(), allocator);
   d.AddMember("isBlob", isBlob, allocator);
   d.AddMember("data", tmp, allocator);
 
