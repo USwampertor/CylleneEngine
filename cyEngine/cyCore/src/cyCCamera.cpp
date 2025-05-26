@@ -19,6 +19,18 @@ CCamera::setPerspective(const float& newWidth,
 }
 
 void
+CCamera::setOrthogonal(const float& newWidth,
+                       const float& newHeight,
+                       const float& newZNear,
+                       const float& newZFar) {
+  m_width = newWidth;
+  m_height = newHeight;
+  m_zNear = newZNear;
+  m_zFar = newZFar;
+  m_projection.orthogonal(m_width, m_height, m_zNear, m_zFar);
+}
+
+void
 CCamera::setLookAt(const Vector3f& eyePos,
                   const Vector3f& targetPos,
                   const Vector3f upDir) {

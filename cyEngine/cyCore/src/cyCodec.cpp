@@ -377,13 +377,13 @@ ModelCodec::decode(const File& f) {
   d.AddMember("meshes", jsonMeshes, allocator);
 
   // create a blob from our resources
-  OfStream ofs(Utils::format("%s/%s.cym", 
-                             f.parentDirectory().path().c_str(), 
+  OfStream ofs(Utils::format("%s/%s.cym",
+                             f.parentDirectory().path().c_str(),
                              f.fileName().c_str()).c_str());
   JSONOStream os(ofs);
   JSONWriter<JSONOStream> writer(os);
   d.Accept(writer);
-
+    
   return reinterpret_cast<void*>(new String(d.stringify()));
 }
 

@@ -51,7 +51,7 @@ RModel::setData(void* data) {
     
   // Meshes
   for (auto& mesh : d["meshes"].GetArray()) {
-    String subMeshName = Utils::format("%s_sub%d", m_filePath.baseName().c_str(), subMeshIndex);
+    String subMeshName = Utils::format("%s_sub%d", m_name.c_str(), subMeshIndex);
     m_meshes.push_back(ResourceManager::instance().create<RMesh>(subMeshName));
 
       

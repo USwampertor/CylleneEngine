@@ -102,6 +102,9 @@ public:
               Vector<SPtr<GSamplerState>> samplers) = 0;
 
   virtual void
+  unbindShaderResource(uint32 slot) = 0;
+
+  virtual void
   drawIndexed(SPtr<GMesh> mesh) = 0;
 
 };

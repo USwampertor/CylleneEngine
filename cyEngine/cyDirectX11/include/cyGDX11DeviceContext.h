@@ -89,6 +89,9 @@ public:
               Vector<SPtr<GSamplerState>> samplers) override;
 
   virtual void
+  unbindShaderResource(uint32 slot) override;
+
+  virtual void
   drawIndexed(SPtr<GMesh> mesh) override;
 
 public:
