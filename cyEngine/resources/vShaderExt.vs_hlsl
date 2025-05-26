@@ -1,4 +1,3 @@
-//type:vertex
 Texture2D txColor : register(t0);
 
 SamplerState samPoint   : register(s0);
