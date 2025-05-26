@@ -46,6 +46,9 @@ public:
   virtual void
   setData(void* data) override;
 
+  SHADER_TYPE::E
+  getShaderType() { return m_shaderType; }
+
 public:
 
   /**
@@ -61,7 +64,7 @@ public:
   /**
    * The type of shader this is intended to be used for
    */
-  SHADER_TYPE::E m_type = SHADER_TYPE::E::UNKNOWN;
+  SHADER_TYPE::E m_shaderType = SHADER_TYPE::E::UNKNOWN;
 
 };
 }
