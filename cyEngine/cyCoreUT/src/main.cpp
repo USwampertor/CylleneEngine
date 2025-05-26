@@ -149,7 +149,6 @@ TEST_CASE("[resources] Creation of shaders") {
   vsShaderR = ResourceManager::instance().loadFromPath<RShader>(Path(resourceDir.fullPath() + "/vShaderExt.vs_hlsl").path());
   CHECK(String(vsShaderR->getShaderType()._to_string()) == "VERTEX");
 
-
 }
 
 

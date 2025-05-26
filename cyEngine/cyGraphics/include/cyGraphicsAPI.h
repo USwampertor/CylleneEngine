@@ -248,10 +248,23 @@ public:
     }
     else if (resource->getType() == RESOURCE_TYPE::E::eSHADER) {
       SPtr<RShader> shader = std::reinterpret_pointer_cast<RShader>(resource);
-      // SPtr<GShader> newGShader = createVertexShader(shader);
-      // if (newGShader != nullptr) {
-      //   m_shaderRenderPool.try_emplace(Hash<String>()(realName), newGShader);
-      // }
+			SPtr<GShader> newGShader;
+			SHADER_TYPE::E shaderType = shader->getShaderType();
+
+			// TODO: Simplify this. We can make just a ShaderElement with default params and
+			// maybe wrap the createvertex/pixel/compute into a createshader function
+			// TODO: Finish implementing other shaders
+
+			if ( +SHADER_TYPE::E::VERTEX == shaderType) {
+				newGShader = createVertexShader(shader, "vertex_main");
+			}
+			else if (+SHADER_TYPE::E::PIXEL == shaderType) {
+        newGShader = createPixelShader(shader, "pixel_main");
+			}
+			
+      if (newGShader != nullptr) {
+        m_shaderRenderPool.try_emplace(Hash<String>()(realName), newGShader);
+      }
     }
   }
 
