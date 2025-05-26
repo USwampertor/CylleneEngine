@@ -50,6 +50,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     SPtr<T> newResource = makeSharedPtr<T>();
     newResource->m_name = assetPath;
     m_resources.insert(Utils::makePair(Hash<String>()(realName), newResource));
+    m_resourceCreated.invoke(newResource);
     return newResource;
   }
 
@@ -186,10 +187,10 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   Event<void, SPtr<RResource>> m_resourceLoaded;
 
-  Event<void> m_resourceCreated;
+  Event<void, SPtr<RResource>> m_resourceCreated;
 
-  Event<void> m_resourcesSerialized;
+  Event<void, SPtr<RResource>> m_resourcesSerialized;
 
-  Event<void> m_resourcesDeserialized;
+  Event<void, SPtr<RResource>> m_resourcesDeserialized;
 };
 }
