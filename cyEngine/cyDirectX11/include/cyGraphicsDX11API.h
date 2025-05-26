@@ -122,6 +122,9 @@ public:
 	clear(const Color& color) override;
 
 	virtual void
+	draw(SPtr<CCamera> refCamera, SPtr<BBeing> redObject) override;
+
+	virtual void
 	present() override;
 
 	virtual void

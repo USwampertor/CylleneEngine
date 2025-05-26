@@ -573,6 +573,55 @@ GraphicsDX11API::clear(const Color& color) {
 }
 
 void
+GraphicsDX11API::draw(SPtr<CCamera> refCamera, SPtr<BBeing> refBeing) {
+
+  // Get reference to textures needed and meshes needed
+  // Vector<SPtr<GTexture>> textures = refBeing->getComponent<>();
+  // 
+  // 
+  // Vector<SPtr<GraphicsBuffer>> vertexBuffer;
+  // vertexBuffer.push_back(refMesh->m_pVertexBuffer);
+  // 
+  // Vector<uint32> vertexStrides;
+  // vertexStrides.push_back(vertexStride);
+  // 
+  // Vector<uint32> vertexOffsets;
+  // vertexOffsets.push_back(vertexOffset);
+  // 
+  // GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
+  // 
+  // GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+  // 
+  // Vector<SPtr<GShaderResourceView>> srvVector;
+  // srvVector.push_back(refTexture->getResource());
+  // 
+  // GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
+  // 
+  // Vector<SPtr<GSamplerState>> ssVec1;
+  // Vector<SPtr<GSamplerState>> ssVec2;
+  // ssVec1.push_back(pointSampler);
+  // ssVec2.push_back(linearSampler);
+  // GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
+  // GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
+  // 
+  // matrices.world = refObject.getTransform()->m_tMatrix;
+  // matrices.view = refCamera->m_view;
+  // matrices.projection = refCamera->m_projection;
+  // matrices.world.transpose();
+  // 
+  // matrixData.clear();
+  // matrixData.resize(sizeof(matrices));
+  // memcpy(matrixData.data(), &matrices, sizeof(matrices));
+  // 
+  // GraphicsDX11API::instance().writeToBuffer(matrixConstantBuffer, matrixData);
+  // Vector<SPtr<GraphicsBuffer>> gbVector;
+  // gbVector.push_back(matrixConstantBuffer);
+  // GraphicsDX11API::instance().getDeviceContext()->setConstantBuffer(1, 1, gbVector);
+  // 
+  // GraphicsDX11API::instance().getDeviceContext()->drawIndexed(refMesh);
+}
+
+void
 GraphicsDX11API::present() {
   SPtr<GDX11SwapChain> pSwapChain = std::static_pointer_cast<GDX11SwapChain>(m_pSwapChain);
   pSwapChain->m_pSwapChain->Present(0, 0);
