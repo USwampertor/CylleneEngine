@@ -3,6 +3,7 @@
 #include "cyUtilitiesPrerequisites.h"
 #include "cyUtilities.h"
 #include <functional>
+#include <utility> // Add this for std::forward
 
 namespace CYLLENE_SDK
 {
@@ -27,11 +28,11 @@ public:
   }
 
   void 
-  invoke(Args... args)
+  invoke(Args&&... args)
   {
     for (auto& e : m_events)
     {
-      e(std::forward(args...));
+      e(std::forward<Args>(args)...);
     }
   }
 
@@ -64,5 +65,3 @@ private:
 
 };
 }
-
-
