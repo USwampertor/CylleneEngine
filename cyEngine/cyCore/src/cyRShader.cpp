@@ -26,7 +26,7 @@ RShader::setData(void* data) {
 
   int32 shaderTypeVal = d["shaderType"].GetInt();
 
-  m_type = SHADER_TYPE::E::_from_integral(shaderTypeVal);
+  m_shaderType = SHADER_TYPE::E::_from_integral(shaderTypeVal);
   m_data = d["data"].GetString();
   m_isBlob = d["isBlob"].GetBool();
 

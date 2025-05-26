@@ -141,13 +141,13 @@ TEST_CASE("[resources] Creation of shaders") {
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
   File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
   SPtr<RShader> vsShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderVSF.path());
-  CHECK(String(vsShaderR->m_type._to_string()) == "VERTEX");
+  CHECK(String(vsShaderR->getShaderType()._to_string()) == "VERTEX");
   File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
   SPtr<RShader> psShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderPSF.path());
-  CHECK(String(psShaderR->m_type._to_string()) == "PIXEL");
+  CHECK(String(psShaderR->getShaderType()._to_string()) == "PIXEL");
 
   vsShaderR = ResourceManager::instance().loadFromPath<RShader>(Path(resourceDir.fullPath() + "/vShaderExt.vs_hlsl").path());
-  CHECK(String(vsShaderR->m_type._to_string()) == "VERTEX");
+  CHECK(String(vsShaderR->getShaderType()._to_string()) == "VERTEX");
 
 
 }
