@@ -246,6 +246,13 @@ public:
 				m_textureRenderPool.try_emplace(Hash<String>()(realName), newGTexture);
 			}
     }
+    else if (resource->getType() == RESOURCE_TYPE::E::eSHADER) {
+      SPtr<RShader> shader = std::reinterpret_pointer_cast<RShader>(resource);
+      // SPtr<GShader> newGShader = createVertexShader(shader);
+      // if (newGShader != nullptr) {
+      //   m_shaderRenderPool.try_emplace(Hash<String>()(realName), newGShader);
+      // }
+    }
   }
 
 
@@ -282,6 +289,9 @@ public:
 
 	Map<uint32, SPtr<GTexture>>
 	m_textureRenderPool;
+
+	Map<uint32, SPtr<GShader>>
+	m_shaderRenderPool;
 
 };
 
