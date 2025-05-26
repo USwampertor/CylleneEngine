@@ -108,7 +108,7 @@ private:
               BMP     = 0,
               ICO     = 1,
               JPEG    = 2,
-              JNG     = 3,
+              JPG     = 3,
               KOALA   = 4,
               LBM     = 5,
               IFF     = LBM,
@@ -227,10 +227,23 @@ public:
     m_fileExtensions = {
       "txt",
       "hlsl",
+      "vs_hlsl",
+      "ps_hlsl",
       "glsl",
+      "vs_glsl",
+      "ps_glsl",
       "rqsl",
       "blob",
       "frag",
+      "cysl",
+      "vert",
+      "geom",
+      "comp",
+      "tesc",
+      "tese",
+      "hs",
+      "ds",
+      "pix"
     };
   }
 
