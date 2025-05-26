@@ -8,12 +8,17 @@
 #include <cyUnitTesting.h>
 #include <cyArgumentParser.h>
 #include <cyLogger.h>
+#include <cyEvent.h>
 #include <cyTime.h> 
 #include <cyDLLLoader.h>
 #include <cyJSON.h>
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
+void
+testFunction(int foo) {
+  std::cout << foo << std::endl;
+}
 
 /*
  *	@brief  Unit Testing main for Utilities
@@ -61,6 +66,19 @@ TEST_SUITE("DLL Loading") {
 }
 
 TEST_SUITE("Events") {
+
+  TEST_CASE("Basic event operations") {
+
+    Event<void, int> e;
+    int callbackValue = 0;
+
+    Callback<void, int> callback = testFunction;
+
+    SUBCASE("Add and invoke listener") {
+      e.addListener(testFunction);
+      e.invoke(42);
+    }
+  }
 
 }
 
