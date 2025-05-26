@@ -2,10 +2,16 @@
 
 #include "cyGraphicsPrerequisites.h"
 
+
+// TODO: Check what things can be fast forwarded
 #include <cyColor.h>
+#include <cyCCamera.h>
+#include <cyBBeing.h>
 #include <cyModule.h>
 #include <cyRShader.h>
 #include <cyRTexture.h>
+#include <cyRMesh.h>
+#include <cyRResource.h>
 #include <cyVector2i.h>
 
 #include "cyGraphicsBuffer.h"
@@ -19,7 +25,6 @@
 #include "cyGSwapChain.h"
 #include "cyGTexture.h"
 #include "cyGMesh.h"
-#include "cyRMesh.h"
 
 namespace CYLLENE_SDK {
 
@@ -166,6 +171,9 @@ public:
 	clear(const Color& color) = 0;
 
 	virtual void
+	draw(SPtr<CCamera> refCamera, SPtr<BBeing> redObject) = 0;
+
+	virtual void
 	present() = 0;
 
 	virtual void
@@ -189,7 +197,7 @@ public:
   SPtr<GDepthStencilView>
 	getDepthStencilView() const { return m_pDepthStencilView; }
 
-  SPtr<GRenderTargetView>
+	SPtr<GRenderTargetView>
   getRenderTargetView(uint32 index) const {
 		if (index < m_pRTVs.size()) {
       return m_pRTVs[index];
@@ -199,7 +207,7 @@ public:
 		}
   }
 
-  SPtr<GDepthStencilView>
+	SPtr<GDepthStencilView>
 	getDepthStencilView(uint32 index) const {
 		if (index < m_pDSVs.size()) {
       return m_pDSVs[index];
@@ -208,6 +216,39 @@ public:
       return nullptr;
 		}
   }
+
+	template<typename T,
+	typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
+	String
+	generateResourceID(const String& assetName) {
+	  RESOURCE_TYPE::E type = T::staticType();
+	  String realName = Utils::format("%s_%s", type._to_string(), assetName.c_str());
+	  return realName;
+	}
+
+	void
+  registerResource(SPtr<RResource> resource) {
+		RESOURCE_TYPE::E type = resource->getType();
+    String realName = Utils::format("%s_%s", type._to_string(), resource->getName().c_str());
+    
+    // Check if resource is mesh or texture
+    if (resource->getType() == RESOURCE_TYPE::E::eMESH) {
+      SPtr<RMesh> mesh = std::reinterpret_pointer_cast<RMesh>(resource);
+      SPtr<GMesh> newGMesh = createMesh(mesh);
+      if (newGMesh != nullptr) {
+        m_meshRenderPool.try_emplace(Hash<String>()(realName), newGMesh);
+      }
+    }
+    else if (resource->getType() == RESOURCE_TYPE::E::eTEXTURE) {
+      SPtr<RTexture> texture = std::reinterpret_pointer_cast<RTexture>(resource);
+			SPtr<GTexture> newGTexture = createTexture2D(texture);
+			if (newGTexture != nullptr) {
+				m_textureRenderPool.try_emplace(Hash<String>()(realName), newGTexture);
+			}
+    }
+  }
+
+
 
 public:
 
@@ -236,8 +277,11 @@ public:
   Vector<SPtr<GDepthStencilView>>
   m_pDSVs;
 
-	Vector<SPtr<GMesh>>
-	m_renderPool;
+	Map<uint32, SPtr<GMesh>>
+	m_meshRenderPool;
+
+	Map<uint32, SPtr<GTexture>>
+	m_textureRenderPool;
 
 };
 
