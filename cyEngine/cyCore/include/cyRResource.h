@@ -38,10 +38,10 @@ class ModelCodec;
 class CY_CORE_EXPORT RResource {
  public:
 
-  /**
-   * Default constructor
-   */
-  RResource() = default;
+//   /**
+//    * Default constructor
+//    */
+//   RResource() = default;
 
   /*
    *	@brief Resource defining the type of object this can be
@@ -104,7 +104,10 @@ class CY_CORE_EXPORT RResource {
    *  @return	the name of the resource
    */
   const String& 
-  getName() { return m_filePath.baseName(); }
+  getName() { return m_name; }
+
+  void
+  setName(const String& newName) { m_name = newName; }
   
   /*
    *	@brief	Returns the extension the resource is as a file 
