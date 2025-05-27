@@ -60,17 +60,26 @@ GDX11DeviceContext::setRenderTargets(uint32 numRenderTargets,
                                      Vector<SPtr<GRenderTargetView>> renderTargets,
                                      SPtr<GDepthStencilView> depthStencil) {
 
-  SPtr<GDX11DepthStencilView> pDepthStencilView = 
-    std::static_pointer_cast<GDX11DepthStencilView>(depthStencil);
+  ID3D11DepthStencilView* pDSV = nullptr;
+  if (depthStencil != nullptr) {
+    SPtr<GDX11DepthStencilView> pDepthStencilView = std::static_pointer_cast<GDX11DepthStencilView>(depthStencil);
+    pDSV = pDepthStencilView->m_pDSV;
+  }
   Vector<ID3D11RenderTargetView*> pRTVs;
   
   for (uint32 i = 0; i < numRenderTargets; ++i) {
-    SPtr<GDX11RenderTargetView> pRenderTargetView = 
-      std::static_pointer_cast<GDX11RenderTargetView>(renderTargets[i]);
-    pRTVs.push_back(pRenderTargetView->m_pRTV);
+    if (renderTargets[i] != nullptr) {
+      SPtr<GDX11RenderTargetView> pRenderTargetView = std::static_pointer_cast<GDX11RenderTargetView>(renderTargets[i]);
+      pRTVs.push_back(pRenderTargetView->m_pRTV);
+    }
+    else {
+      pRTVs.push_back(nullptr);
+    }
   }
 
-  m_pDeviceContext->OMSetRenderTargets(numRenderTargets, pRTVs.data(), pDepthStencilView->m_pDSV);
+  m_pDeviceContext->OMSetRenderTargets(numRenderTargets, pRTVs.data(), pDSV);
+
+
 }
 
 void
@@ -99,6 +108,12 @@ void
 GDX11DeviceContext::setVertexShader(SPtr<GVertexShader> shader, 
                                     void* classInstance /* = nullptr */, 
                                     uint32 numClasses /* = 0 */) {
+
+  if (shader == nullptr) {
+    m_pDeviceContext->VSSetShader(nullptr, nullptr, 0);
+    return;
+  }
+
   SPtr<GDX11VertexShader> pVertexShader = std::static_pointer_cast<GDX11VertexShader>(shader);
   m_pDeviceContext->VSSetShader(pVertexShader->m_pVertexShader, 
                                 static_cast<ID3D11ClassInstance* const*>(classInstance), 
@@ -109,6 +124,11 @@ void
 GDX11DeviceContext::setPixelShader(SPtr<GPixelShader> shader,
                                    void* classInstance /* = nullptr */,
                                    uint32 numClasses /* = 0 */) {
+  if (shader == nullptr) {
+    m_pDeviceContext->PSSetShader(nullptr, nullptr, 0); 
+    return;
+  }
+
   SPtr<GDX11PixelShader> pPixelShader = std::static_pointer_cast<GDX11PixelShader>(shader);
   m_pDeviceContext->PSSetShader(pPixelShader->m_pPixelShader, 
                                 static_cast<ID3D11ClassInstance* const*>(classInstance), 
@@ -119,6 +139,11 @@ void
 GDX11DeviceContext::setGeometryShader(SPtr<GGeometryShader> shader,
                                       void* classInstance /* = nullptr */,
                                       uint32 numClasses /* = 0 */) {
+  if (shader == nullptr) {
+    m_pDeviceContext->GSSetShader(nullptr, nullptr, 0);
+    return;
+  }
+
   SPtr<GDX11GeometryShader> pGeometryShader = std::static_pointer_cast<GDX11GeometryShader>(shader);
   m_pDeviceContext->GSGetShader(&pGeometryShader->m_pGeometryShader,
                                 static_cast<ID3D11ClassInstance**>(classInstance), 
@@ -129,6 +154,11 @@ void
 GDX11DeviceContext::setComputeShader(SPtr<GComputeShader> shader,
                                       void* classInstance /* = nullptr */,
                                       uint32 numClasses /* = 0 */) {
+  if (shader == nullptr) {
+    m_pDeviceContext->CSSetShader(nullptr, nullptr, 0);
+    return;
+  }
+
   SPtr<GDX11ComputeShader> pComputeShader = std::static_pointer_cast<GDX11ComputeShader>(shader);
   m_pDeviceContext->CSSetShader(pComputeShader->m_pComputeShader,
                                 static_cast<ID3D11ClassInstance* const*>(classInstance),
@@ -140,6 +170,11 @@ void
 GDX11DeviceContext::setShader(SPtr<GShader> shader,
                               void* classInstance /* = nullptr */,
                               uint32 numClasses /* = 0 */) {
+  if (shader == nullptr) {
+    m_pDeviceContext->VSSetShader(nullptr, nullptr, 0);
+    return;
+  }
+
   // TODO: Implement this
 //   SPtr<GDX11ComputeShader> pComputeShader = std::static_pointer_cast<GDX11ComputeShader>(shader);
 //   m_pDeviceContext->CSSetShader(pComputeShader->m_pComputeShader,
@@ -189,9 +224,9 @@ GDX11DeviceContext::setIndexBuffer(SPtr<GraphicsBuffer> buffer,
 }
 
 void
-GDX11DeviceContext::setConstantBuffer(uint32 slot,
-                                      uint32 numBuffers,
-                                      Vector<SPtr<GraphicsBuffer>> buffers) {
+GDX11DeviceContext::setVSConstantBuffer(uint32 slot,
+                                        uint32 numBuffers,
+                                        Vector<SPtr<GraphicsBuffer>> buffers) {
   Vector<ID3D11Buffer*> pBuffers;
   for (uint32 i = 0; i < numBuffers; ++i) {
     SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffers[i]);
@@ -199,6 +234,31 @@ GDX11DeviceContext::setConstantBuffer(uint32 slot,
   }
   m_pDeviceContext->VSSetConstantBuffers(slot, numBuffers, pBuffers.data());
 }
+
+void
+GDX11DeviceContext::setPSConstantBuffer(uint32 slot,
+                                        uint32 numBuffers,
+                                        Vector<SPtr<GraphicsBuffer>> buffers) {
+  Vector<ID3D11Buffer*> pBuffers;
+  for (uint32 i = 0; i < numBuffers; ++i) {
+    SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffers[i]);
+    pBuffers.push_back(pBuffer->m_pBuffer);
+  }
+  m_pDeviceContext->PSSetConstantBuffers(slot, numBuffers, pBuffers.data());
+}
+
+void
+GDX11DeviceContext::setCSConstantBuffer(uint32 slot,
+                                        uint32 numBuffers,
+                                        Vector<SPtr<GraphicsBuffer>> buffers) {
+  Vector<ID3D11Buffer*> pBuffers;
+  for (uint32 i = 0; i < numBuffers; ++i) {
+    SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffers[i]);
+    pBuffers.push_back(pBuffer->m_pBuffer);
+  }
+  m_pDeviceContext->CSSetConstantBuffers(slot, numBuffers, pBuffers.data());
+}
+
 
 void
 GDX11DeviceContext::setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
@@ -214,6 +274,14 @@ GDX11DeviceContext::setShaderResources(Vector<SPtr<GShaderResourceView>> resourc
 //     std::static_pointer_cast<GDX11ShaderResourceView>(resource);
 //   m_pDeviceContext->PSSetShaderResources(slot, numViews, &pShaderResourceView->m_pSRV);
 }
+
+void 
+GDX11DeviceContext::unbindShaderResource(uint32 slot) {
+  Vector<ID3D11ShaderResourceView*> nullBuffer;
+  nullBuffer.push_back(nullptr);
+  m_pDeviceContext->PSSetShaderResources(slot, 1, nullBuffer.data());
+}
+
 
 void
 GDX11DeviceContext::setSamplers(uint32 slot,

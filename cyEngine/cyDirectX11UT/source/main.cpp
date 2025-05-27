@@ -257,7 +257,7 @@ main(int argc, char* argv[])
     GraphicsDX11API::instance().writeToBuffer(constantBuffer, data);
     Vector<SPtr<GraphicsBuffer>> gbVector;
     gbVector.push_back(constantBuffer);
-    GraphicsDX11API::instance().getDeviceContext()->setConstantBuffer(0, 1, gbVector);
+    GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, gbVector);
 
     GraphicsDX11API::instance().getDeviceContext()->drawIndexed(gMesh);
 

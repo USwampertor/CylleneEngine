@@ -89,14 +89,27 @@ public:
                  uint32 offset) override;
 
   virtual void
-  setConstantBuffer(uint32 slot,
-                    uint32 numBuffers,
-                    Vector<SPtr<GraphicsBuffer>> buffers) override;
+  setVSConstantBuffer(uint32 slot,
+                      uint32 numBuffers,
+                      Vector<SPtr<GraphicsBuffer>> buffers) override;
+
+  virtual void
+  setPSConstantBuffer(uint32 slot,
+                      uint32 numBuffers,
+                      Vector<SPtr<GraphicsBuffer>> buffers) override;
+
+  virtual void
+  setCSConstantBuffer(uint32 slot,
+                      uint32 numBuffers,
+                      Vector<SPtr<GraphicsBuffer>> buffers) override;
 
   virtual void
   setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
                      uint32 slot,
                      uint32 numViews) override;
+
+  virtual void
+  unbindShaderResource(uint32 slot) override;
 
   virtual void
   setSamplers(uint32 slot,
