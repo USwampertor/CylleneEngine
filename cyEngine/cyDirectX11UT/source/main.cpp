@@ -25,12 +25,30 @@
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
-struct MatrixCollection
+struct ShaderConstants
+{
+  float time;
+  // float align1;
+  // float align2;
+  // float align3;
+} shaderConstants;
+
+struct PerObjectConstantBuffer
 {
   Matrix4 world;
+} perObjectConstants;
+
+struct PerPassConstantBuffer
+{
   Matrix4 view;
   Matrix4 projection;
-} matrices;
+} perPassConstants;
+
+struct ShadowConstantBuffer
+{
+  Matrix4 shadowView;
+  Matrix4 shadowProjection;
+} shadowConstants;
 
 /*
  *	@brief  Unit Testing main for Utilities
@@ -59,28 +77,47 @@ main(int argc, char* argv[])
   SPtr<GDeviceContext> context = GraphicsDX11API::instance().getDeviceContext();
 
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
-  File shaderVSF = FileSystem::open(resourceDir.fullPath() + "/vertexShader.hlsl");
-  SPtr<RShader> vsShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderVSF.path());
-  File shaderPSF = FileSystem::open(resourceDir.fullPath() + "/pixelShader.hlsl");
-  SPtr<RShader> psShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderPSF.path());
 
-  SPtr<GVertexShader> vShader = GraphicsDX11API::instance().createVertexShader(vsShaderR,
-    "vertex_main");
+  auto compileVertexShader = [&](const String fileName, SPtr<RShader>& shaderResource, SPtr<GVertexShader>& vertexShader) {
+    File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + fileName);
+    shaderResource = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+    vertexShader = GraphicsDX11API::instance().createVertexShader(shaderResource, "vertex_main");
+    };
 
-  SPtr<GPixelShader> pShader = GraphicsDX11API::instance().createPixelShader(psShaderR,
-    "pixel_main");
+  auto compilePixelShader = [&](const String fileName, SPtr<RShader>& shaderResource, SPtr<GPixelShader>& pixelShader) {
+    File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + fileName);
+    shaderResource = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+    pixelShader = GraphicsDX11API::instance().createPixelShader(shaderResource, "pixel_main");
+    };
 
+  SPtr<RShader> vsShadowR;
+  SPtr<GVertexShader> vShadowShader;
+  compileVertexShader("shadowVertex.hlsl", vsShadowR, vShadowShader);
+
+  SPtr<RShader> vsShaderR;
+  SPtr<GVertexShader> vShader;
+  compileVertexShader("vertexShader.hlsl", vsShaderR, vShader);
+  SPtr<RShader> psShaderR;
+  SPtr<GPixelShader> pShader;
+  compilePixelShader("pixelShader.hlsl", psShaderR, pShader);
+
+  SPtr<RShader> vsSAQR;
+  SPtr<GVertexShader> vSAQShader;
+  compileVertexShader("saqVertexShader.hlsl", vsSAQR, vSAQShader);
+  SPtr<RShader> psSAQR;
+  SPtr<GPixelShader> pSAQShader;
+  compilePixelShader("saqPixelShader.hlsl", psSAQR, pSAQShader);
 
   Vector<GInputLayoutElement> inputDescs = {
-    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 48,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 64,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BONES", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 72,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    0, 88,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,    0, 104,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TANGENT",  0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 24,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 36,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0, 48,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,        0, 64,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BONES",    0, DXGI_FORMAT_R32G32B32A32_SINT,   0, 72,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "WEIGHTS",  0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0, 88,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,   0, 104, D3D11_INPUT_PER_VERTEX_DATA, 0 },
   };
 
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
@@ -90,52 +127,155 @@ main(int argc, char* argv[])
     return -1;
   }
 
+  // shadow camera shit
+  BBeing shadowCameraEntity("ShadowCamera");
+  shadowCameraEntity.createComponent<CTransform>();
+  SPtr<CCamera> shadowCamera = shadowCameraEntity.createComponent<CCamera>();
+  shadowCamera->setLookAt(Vector3f(25, 30, 5), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  shadowCamera->setPerspective(1024, 1024, 0.1f, 100.0f, 60.0f);
+  //shadowCamera->setOrthogonal(30, 30, 0.1f, 100.0f);
+
   // camera shit
   BBeing cameraEntity("Camera");
   cameraEntity.createComponent<CTransform>();
   SPtr<CCamera> camera = cameraEntity.createComponent<CCamera>();
-  camera->setLookAt(Vector3f(-1, 1, -1), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  camera->setLookAt(Vector3f(-6, 20, -20), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
   camera->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
+  //camera->setOrthogonal(128.f * 0.5f, 72.f * 0.5f, 0.1f, 200.0f);
 
+  Vector<char> shaderConstantsData;
+  shaderConstantsData.resize(sizeof(ShaderConstants));
+  memset(shaderConstantsData.data(), 0, sizeof(ShaderConstants));
 
-  matrices.world = Matrix4::IDENTITY;
-  matrices.view = camera->m_view;
-  matrices.projection = camera->m_projection;
-
-  matrices.world.transpose();
-  matrices.view.transpose();
-  matrices.projection.transpose();
-
-  Vector<char> data;
-  data.resize(sizeof(MatrixCollection));
-  memcpy(data.data(), &matrices, sizeof(MatrixCollection));
-  SPtr<GraphicsBuffer> constantBuffer = GraphicsDX11API::instance().createConstantBuffer(data);
-  if (!constantBuffer) {
+  shaderConstantsData.resize(sizeof(PerObjectConstantBuffer));
+  SPtr<GraphicsBuffer> shaderConstantsBuffer = GraphicsDX11API::instance().createConstantBuffer(shaderConstantsData);
+  if (!shaderConstantsBuffer) {
     WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
     return -1;
   }
 
-  File modelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
-  SPtr<RModel> modelR = ResourceManager::instance().loadFromPath<RModel>(modelF.path());
+  Vector<char> constantBufferData;
 
-  SPtr<RImage> newImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/roger2.png");
-  SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cube_base");
-  newTexture->setImage(newImage);
+  constantBufferData.resize(sizeof(PerObjectConstantBuffer));
+  memset(constantBufferData.data(), 0, sizeof(PerObjectConstantBuffer));
+  SPtr<GraphicsBuffer> perObjectCB = GraphicsDX11API::instance().createConstantBuffer(constantBufferData);
+  if (!perObjectCB) {
+    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    return -1;
+  }
 
-  SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
-  // String testName = GraphicsDX11API::instance().generateResourceID<RTexture>("cube_base");
-  // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().m_textureRenderPool[Hash<String>()(testName)];// GraphicsDX11API::instance().createTexture2D(newTexture);
+  constantBufferData.resize(sizeof(PerPassConstantBuffer));
+  memset(constantBufferData.data(), 0, sizeof(PerPassConstantBuffer));
+  SPtr<GraphicsBuffer> perPassCB = GraphicsDX11API::instance().createConstantBuffer(constantBufferData);
+  if (!perPassCB) {
+    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    return -1;
+  }
 
+  constantBufferData.resize(sizeof(ShadowConstantBuffer));
+  memset(constantBufferData.data(), 0, sizeof(ShadowConstantBuffer));
+  SPtr<GraphicsBuffer> shadowCB = GraphicsDX11API::instance().createConstantBuffer(constantBufferData);
+  if (!shadowCB) {
+    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    return -1;
+  }
 
-  BBeing cubeObject("saq");
-  cubeObject.createComponent<CTransform>();
-  cubeObject.createComponent<CMeshRenderer>(modelR->m_meshes[0]);
-  cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
-  cubeObject.getTransform()->setScale(Vector3f(2, 2, 2));
+  SPtr<RImage> checkerImage;
+  SPtr<RTexture> checkerTexture;
+  SPtr<GTexture> checkerGTexture;
+  {
+    checkerImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/cube_base.png");
 
-  SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
+    checkerTexture = ResourceManager::instance().create<RTexture>("checker");
+    checkerTexture->setImage(checkerImage);
+
+    checkerGTexture = GraphicsDX11API::instance().createTexture2D(checkerTexture);
+  }
+
+  SPtr<RImage> sampleImage;
+  SPtr<RTexture> sampleTexture;
+  SPtr<GTexture> sampleGTexture;
+  {
+    checkerImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/beto.png");
+
+    sampleTexture = ResourceManager::instance().create<RTexture>("sample_texture");
+    sampleTexture->setImage(checkerImage);
+
+    sampleGTexture = GraphicsDX11API::instance().createTexture2D(sampleTexture);
+  }
+
+  BBeing cubeObject("cube");
+  File cubeModelF;
+  SPtr<RModel> cubeModelR;
+  SPtr<GMesh> cubeMesh;
+  {
+    cubeModelF = FileSystem::open(resourceDir.fullPath() + "/cube.fbx");
+    cubeModelR = ResourceManager::instance().loadFromPath<RModel>(cubeModelF.path());
+
+    cubeMesh = GraphicsDX11API::instance().createMesh(cubeModelR->m_meshes[0]);
+
+    cubeObject.createComponent<CTransform>();
+    cubeObject.createComponent<CMeshRenderer>(cubeModelR->m_meshes[0]);
+
+    cubeObject.getTransform()->setPosition(Vector3f(0.0f, 50.0f, 0.0f));
+    cubeObject.getTransform()->setScale(Vector3f(3.0f, 3.0f, 3.0f));
+  }
+
+  BBeing floorObject("floor");
+  File floorModelF;
+  SPtr<RModel> floorModelR;
+  SPtr<GMesh> floorMesh;
+  {
+    floorModelF = FileSystem::open(resourceDir.fullPath() + "/saq.fbx");
+    floorModelR = ResourceManager::instance().loadFromPath<RModel>(floorModelF.path());
+
+    floorMesh = GraphicsDX11API::instance().createMesh(floorModelR->m_meshes[0]);
+
+    floorObject.createComponent<CTransform>();
+    floorObject.createComponent<CMeshRenderer>(floorModelR->m_meshes[0]);
+
+    floorObject.getTransform()->setPosition(Vector3f(0, 0, 0));
+    floorObject.getTransform()->setScale(Vector3f(20, 20, 1));
+    floorObject.getTransform()->setRotation(Euler(270.0f * Math::DEG2RAD, 0.0f, 0.0f));
+  }
+
 
   // TODO: Create Render Target and Depth stencil for mirror effect
+  SPtr<GTextureElement> shadowDepthStencilTextureDesc = std::make_shared<GTextureElement>();
+  shadowDepthStencilTextureDesc->width          = 1024;
+  shadowDepthStencilTextureDesc->height         = 1024;
+  shadowDepthStencilTextureDesc->mipLevels      = 1;
+  shadowDepthStencilTextureDesc->arraySize      = 1;
+  shadowDepthStencilTextureDesc->format         = DXGI_FORMAT_R32_TYPELESS;
+  shadowDepthStencilTextureDesc->sampleCount    = 1;
+  shadowDepthStencilTextureDesc->sampleQuality  = 0;
+  shadowDepthStencilTextureDesc->usage          = D3D11_USAGE_DEFAULT;
+  shadowDepthStencilTextureDesc->bindFlags      = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+  shadowDepthStencilTextureDesc->cpuAccessFlags = 0;
+  shadowDepthStencilTextureDesc->miscFlags      = 0;
+  SPtr<GTexture> shadowDepthStencilTexture = GraphicsDX11API::instance().createTexture2D(shadowDepthStencilTextureDesc);
+
+  SPtr<GDepthStencilViewElement> shadowDepthStencilDesc = std::make_shared<GDepthStencilViewElement>();
+  shadowDepthStencilDesc->format  = DXGI_FORMAT_D32_FLOAT;
+  shadowDepthStencilDesc->width   = 1024;
+  shadowDepthStencilDesc->height  = 1024;
+  shadowDepthStencilDesc->flags   = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+  shadowDepthStencilDesc->viewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+  SPtr<GDepthStencilView> shadowDepthStencil = GraphicsDX11API::instance().getDevice()->createDepthStencilView(shadowDepthStencilDesc, shadowDepthStencilTexture);
+
+  SPtr<GRenderTargetViewElement> colorRenderTargetDesc = std::make_shared<GRenderTargetViewElement>();
+  colorRenderTargetDesc->format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  colorRenderTargetDesc->width = 1280;
+  colorRenderTargetDesc->height = 720;
+  colorRenderTargetDesc->flags   = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_UNORDERED_ACCESS;
+  SPtr<GRenderTargetView> colorRenderTarget = GraphicsDX11API::instance().getDevice()->createRenderTargetView(colorRenderTargetDesc);
+  
+  SPtr<GRenderTargetViewElement> positionRenderTargetDesc = std::make_shared<GRenderTargetViewElement>();
+  positionRenderTargetDesc->format  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  positionRenderTargetDesc->width   = 1280;
+  positionRenderTargetDesc->height  = 720;
+  positionRenderTargetDesc->flags   = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
+  SPtr<GRenderTargetView> positionRenderTarget = GraphicsDX11API::instance().getDevice()->createRenderTargetView(positionRenderTargetDesc);
   
   SPtr<GRasterizerElement> defaultRasDesc = std::make_shared<GRasterizerElement>();
   SPtr<GRasterizerState> defaultRasterizer = GraphicsDX11API::instance().getDevice()->createRasterizerState(defaultRasDesc);
@@ -144,21 +284,23 @@ main(int argc, char* argv[])
   
   // TODO: Do sampler states
   SPtr<GSamplerStateElement> samplerDesc = std::make_shared<GSamplerStateElement>();
-  samplerDesc->filter = SAMPLERFILTER::E::ePOINT;
   samplerDesc->addressU = TEXTUREMODE::E::eCLAMP;
   samplerDesc->addressV = TEXTUREMODE::E::eCLAMP;
+
+  samplerDesc->filter = SAMPLERFILTER::E::ePOINT;
   SPtr<GSamplerState> pointSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
+
   samplerDesc->filter = SAMPLERFILTER::E::eLINEAR;
   SPtr<GSamplerState> linearSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
+
   samplerDesc->filter = SAMPLERFILTER::E::eTRILINEAL;
   SPtr<GSamplerState> anisoSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
-
 
   SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
   Time::instance().update();
   bool running = true;
-  float timer = 0.0f;
+  float time = 0.0f;
   float deltaTime;
   while (running) {
     eventQueue->update();
@@ -166,10 +308,8 @@ main(int argc, char* argv[])
 
     DELTA_TYPE::E deltaType = DELTA_TYPE::E::MILLISECOND;
     deltaTime = Time::instance().deltaTime(deltaType);
-    timer += deltaTime * 0.001f;
-    // cubeObject.getTransform()->rotate(Vector3f(0, deltaTime * Math::DEG2RAD * 0.1f,0));
+    time += deltaTime * 0.001f;
 
-    
     if (!eventQueue->empty()) {
       WindowEvent event = eventQueue->front();
       eventQueue->pop();
@@ -189,79 +329,204 @@ main(int argc, char* argv[])
       }
     }
 
-    GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
-    Vector<SPtr<GRenderTargetView>> targets;
-    targets.push_back(GraphicsDX11API::instance().m_pRenderTargetView);
-    GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(1, 
-                                                                     targets, 
-                                                                     GraphicsDX11API::instance().m_pDepthStencilView);
+    const uint32 vertexStride = sizeof(Vertex);
+    const uint32 indexStride = sizeof(unsigned short);
+    const uint32 vertexOffset = 0;
 
+    SPtr<GRenderTargetView> backBufferRT = GraphicsDX11API::instance().m_pRenderTargetView;
+    SPtr<GDepthStencilView> backBufferDS = GraphicsDX11API::instance().m_pDepthStencilView;
     
-    GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(GraphicsDX11API::instance().m_pRenderTargetView, Color::MISSING);
+    auto draw = [&](SPtr<CCamera> refCamera, BBeing& refObject, const SPtr<GMesh>& refMesh, const SPtr<GTexture>* refTexture) {
+      Vector<SPtr<GraphicsBuffer>> vertexBuffer;
+      vertexBuffer.push_back(refMesh->m_pVertexBuffer);
 
-    // TODO: Clear render target from reflection
+      Vector<uint32> vertexStrides;
+      vertexStrides.push_back(vertexStride);
 
-    GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(GraphicsDX11API::instance().m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+      Vector<uint32> vertexOffsets;
+      vertexOffsets.push_back(vertexOffset);
 
-    // TODO: Clear depth stencil from reflection
+      GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
-    GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vShader);
-    GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pShader);
+      GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-    uint32 vertexStride = sizeof(Vertex);
-    uint32 indexStride = sizeof(unsigned short);
-    uint32 vertexOffset = 0;
+      if (refTexture != nullptr) {
+        Vector<SPtr<GShaderResourceView>> srvVector;
+        srvVector.push_back(refTexture->get()->getResource());
 
-    GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
-    GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    Vector<SPtr<GraphicsBuffer>> vertexBuffer;
-    vertexBuffer.push_back(gMesh->m_pVertexBuffer);
-    Vector<uint32> vertexStrides;
-    vertexStrides.push_back(vertexStride);
-    Vector<uint32> vertexOffsets;
-    vertexOffsets.push_back(vertexOffset);
-    GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
+        GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
+      }
 
-    GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(gMesh->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      perObjectConstants.world = refObject.getTransform()->m_tMatrix;
+      perObjectConstants.world.transpose();
 
-    Vector<SPtr<GShaderResourceView>> srvVector;
-    srvVector.push_back(newGTexture->getResource());
-    GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
-    
-    Vector<SPtr<GSamplerState>> ssVec1;
-    Vector<SPtr<GSamplerState>> ssVec2;
-    ssVec1.push_back(pointSampler);
-    ssVec2.push_back(linearSampler);
-    GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
-    GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
+      constantBufferData.clear();
+      constantBufferData.resize(sizeof(perObjectConstants));
+      memcpy(constantBufferData.data(), &perObjectConstants, sizeof(perObjectConstants));
 
-    float t = Math::sin(timer) * 0.5f + 0.5f;
-    // camera->setPerspective(1280, 720, 0.1f, 1000.0f, 30 + (60.0f * t));
+      GraphicsDX11API::instance().writeToBuffer(perObjectCB, constantBufferData);
+      Vector<SPtr<GraphicsBuffer>> gbVector;
+      gbVector.push_back(perObjectCB);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
 
-    // cubeObject.getTransform()->setScale(Vector3f(Math::sin()));
+      GraphicsDX11API::instance().getDeviceContext()->drawIndexed(refMesh);
+    };
 
-    Quaternion rotationQuat(Euler(timer * 0.5, timer * 0.5, timer * 0.5));
-    Vector3f eyePosition = Vector3f(0.0f, 4.0f, -5.0f);
-    eyePosition = rotationQuat.rotate(eyePosition);
+    shaderConstants.time = time;
+    memcpy(shaderConstantsData.data(), &shaderConstants, sizeof(shaderConstants));
+    GraphicsDX11API::instance().writeToBuffer(shaderConstantsBuffer, shaderConstantsData);
 
-    camera->setLookAt(eyePosition, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
-    cubeObject.getTransform()->setPosition(Vector3f(0.0f, Math::sin(timer), 0.0f));
-    matrices.world = cubeObject.getTransform()->m_tMatrix; // Matrix4::IDENTITY; // cubeObject.getTransform()->m_tMatrix;
-    matrices.view = camera->m_view;
-    matrices.projection = camera->m_projection;
-    matrices.world.transpose();
-    data.clear();
-    data.resize(sizeof(matrices));
-    memcpy(data.data(), &matrices, sizeof(matrices));
+    // Clear
+    {
+      GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(shadowDepthStencil,
+                                                                            D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    GraphicsDX11API::instance().writeToBuffer(constantBuffer, data);
-    Vector<SPtr<GraphicsBuffer>> gbVector;
-    gbVector.push_back(constantBuffer);
-    GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(colorRenderTarget, Color::BLACK);
+      GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(colorRenderTarget.get()->getDepthStencil(),
+                                                                            D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+      
+      GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(positionRenderTarget, Color::BLACK);
 
-    GraphicsDX11API::instance().getDeviceContext()->drawIndexed(gMesh);
+      GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(backBufferRT, Color::MISSING);
+      GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(backBufferDS,
+                                                                            D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    }
 
-    // GraphicsDX11API::instance().clear(Color::MISSING);
+    // Shadow pass
+    {
+      GraphicsDX11API::instance().setViewport(0, 0, 1024, 1024);
+
+      GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vShadowShader);
+      GraphicsDX11API::instance().getDeviceContext()->setPixelShader(nullptr);
+
+      GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+      Vector<SPtr<GRenderTargetView>> nullRTs;
+      nullRTs.push_back(nullptr);
+      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(1,
+                                                                       nullRTs,
+                                                                       shadowDepthStencil);
+      
+      perPassConstants.view       = shadowCamera->m_view;
+      perPassConstants.projection = shadowCamera->m_projection;
+
+      constantBufferData.clear();
+      constantBufferData.resize(sizeof(perPassConstants));
+      memcpy(constantBufferData.data(), &perPassConstants, sizeof(perPassConstants));
+
+      GraphicsDX11API::instance().writeToBuffer(perPassCB, constantBufferData);
+      Vector<SPtr<GraphicsBuffer>> gbVector;
+      gbVector.push_back(perPassCB);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
+
+      draw(shadowCamera, floorObject, floorMesh, nullptr);
+      draw(shadowCamera, cubeObject, cubeMesh, nullptr);
+    }
+
+    // Color pass
+    {
+      GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
+
+      GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vShader);
+      GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pShader);
+
+      GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+      Vector<SPtr<GRenderTargetView>> targets;
+      targets.push_back(colorRenderTarget);
+      targets.push_back(positionRenderTarget);
+      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(2,
+                                                                       targets, 
+                                                                       colorRenderTarget.get()->getDepthStencil());
+
+      Vector<SPtr<GraphicsBuffer>> scVector;
+      scVector.push_back(shaderConstantsBuffer);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
+
+      perPassConstants.view       = camera->m_view;
+      perPassConstants.projection = camera->m_projection;
+
+      constantBufferData.clear();
+      constantBufferData.resize(sizeof(perPassConstants));
+      memcpy(constantBufferData.data(), &perPassConstants, sizeof(perPassConstants));
+
+      GraphicsDX11API::instance().writeToBuffer(perPassCB, constantBufferData);
+      Vector<SPtr<GraphicsBuffer>> gbVector;
+      gbVector.push_back(perPassCB);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
+
+      Vector<SPtr<GSamplerState>> ssVec1;
+      Vector<SPtr<GSamplerState>> ssVec2;
+      ssVec1.push_back(pointSampler);
+      ssVec2.push_back(linearSampler);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
+
+      draw(camera, floorObject, floorMesh, &checkerGTexture);
+
+      cubeObject.getTransform()->setPosition(Vector3f(0.0f, 3.0f + Math::cos(time), 0.0f));
+      cubeObject.getTransform()->setRotation(Euler(0.2f * time * 3.0f,
+                                             0.2f * time * 1.0f,
+                                             0.2f * time * 9.0f));
+      draw(camera, cubeObject, cubeMesh, &sampleGTexture);
+    }
+
+    // Composition
+    {
+      GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
+
+      GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vSAQShader);
+      GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pSAQShader);
+
+      GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+      Vector<SPtr<GRenderTargetView>> targets;
+      targets.push_back(backBufferRT);
+      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(1, 
+                                                                       targets, 
+                                                                       backBufferDS);
+
+      shadowConstants.shadowView        = shadowCamera->m_view;
+      shadowConstants.shadowProjection  = shadowCamera->m_projection;
+
+      constantBufferData.clear();
+      constantBufferData.resize(sizeof(shadowConstants));
+      memcpy(constantBufferData.data(), &shadowConstants, sizeof(shadowConstants));
+
+      GraphicsDX11API::instance().writeToBuffer(shadowCB, constantBufferData);
+      Vector<SPtr<GraphicsBuffer>> gbVector;
+      gbVector.push_back(shadowCB);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(3, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(3, 1, gbVector);
+      
+      Vector<SPtr<GSamplerState>> ssVec1;
+      Vector<SPtr<GSamplerState>> ssVec2;
+      ssVec1.push_back(pointSampler);
+      ssVec2.push_back(linearSampler);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
+
+      Vector<SPtr<GShaderResourceView>> srvVector;
+      srvVector.push_back(colorRenderTarget->getTexture()->getResource());
+      srvVector.push_back(positionRenderTarget->getTexture()->getResource());
+      srvVector.push_back(shadowDepthStencil->getTexture()->getResource());
+
+      GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 3);
+
+      draw(camera, floorObject, floorMesh, nullptr);
+
+      GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(0);
+      GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(1);
+      GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(2);
+    }
+
     GraphicsDX11API::instance().present();
   }
   

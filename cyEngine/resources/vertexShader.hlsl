@@ -1,9 +1,9 @@
 //type:vertex
 Texture2D txColor : register(t0);
 
-SamplerState samPoint   : register(s0);
-SamplerState samLinear  : register(s1);
-SamplerState samAniso   : register(s2);
+SamplerState samPoint : register(s0);
+SamplerState samLinear : register(s1);
+SamplerState samAniso : register(s2);
 
 struct VertexInput
 {
@@ -29,20 +29,37 @@ struct PixelInput
   float3 posW : TEXCOORD3;
 };
 
-cbuffer MatrixCollection : register(b0)
+cbuffer ShaderConstants : register(b0)
+{
+  float time;
+  float align1;
+  float align2;
+  float align3;
+}
+
+cbuffer PerObjectConstantBuffer : register(b1)
 {
   float4x4 World;
+}
+
+cbuffer PerPassConstantBuffer : register(b2)
+{
   float4x4 View;
   float4x4 Projection;
 }
 
-PixelInput vertex_main(VertexInput Input, uint vertex_index : SV_VertexID) {
-  PixelInput Output;
+PixelInput vertex_main(VertexInput Input, uint vertex_index : SV_VertexID)
+{
+  PixelInput Output = (PixelInput) 0;
+    
   Output.position = float4(Input.position, 1);
-  // Output.position.z = 10.0f;
+    
   Output.position = mul(Output.position, World);
+  Output.posW = Output.position.xyz;
+    
   Output.position = mul(Output.position, View);
   Output.position = mul(Output.position, Projection);
+    
   Output.normal = mul(float4(Input.normal, 0), World).xyz;
   Output.tangent = Input.tangent;
   Output.binormal = Input.binormal;
@@ -52,3 +69,4 @@ PixelInput vertex_main(VertexInput Input, uint vertex_index : SV_VertexID) {
   
   return Output;
 }
+

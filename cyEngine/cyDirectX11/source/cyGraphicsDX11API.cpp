@@ -600,11 +600,13 @@ GraphicsDX11API::queryInterface(const Vector2i & size) {
 
 void
 GraphicsDX11API::clear(const Color& color) {
-  
+  m_pDeviceContext->clearRenderTargetView(m_pRenderTargetView, color);
+  m_pDeviceContext->clearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void
 GraphicsDX11API::draw(SPtr<CCamera> refCamera, SPtr<BBeing> refBeing) {
+  // TODO: Some of this objects are still placeholders
   struct MatrixCollection
   {
     Matrix4 world;
