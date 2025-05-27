@@ -69,6 +69,21 @@ public:
                  uint32 numClasses = 0) = 0;
 
   virtual void
+  setGeometryShader(SPtr<GGeometryShader> shader, 
+                    void* classInstance = nullptr, 
+                    uint32 numClasses = 0) = 0;
+
+  virtual void
+  setComputeShader(SPtr<GComputeShader> shader, 
+                   void* classInstance = nullptr, 
+                   uint32 numClasses = 0) = 0;
+
+  virtual void
+  setShader(SPtr<GShader> shader, 
+            void* classInstance = nullptr, 
+            uint32 numClasses = 0) = 0;
+
+  virtual void
   setInputLayout(SPtr<GInputLayout> layout) = 0;
 
   virtual void

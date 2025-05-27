@@ -74,6 +74,11 @@ public:
   virtual ~GGeometryShader() = default;
 };
 
-
+class GComputeShader : public GShader
+{
+public:
+  GComputeShader() = default;
+  virtual ~GComputeShader() = default;
+};
 
 }
