@@ -268,7 +268,7 @@ public:
         newGShader = createPixelShader(shader, "pixel_main");
 			}
 			else if (+SHADER_TYPE::E::COMPUTE == shaderType) {
-				// newGShader = createComputeShader(shader, "compute_main");
+				newGShader = createComputeShader(shader, "compute_main");
 			}
 			
       if (newGShader != nullptr) {
