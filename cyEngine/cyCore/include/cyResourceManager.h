@@ -54,6 +54,17 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     return newResource;
   }
 
+  template<typename T,
+           typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
+  SPtr<T>
+  get(const String& assetName) {
+    String realName = generateResourceID<T>(assetName);
+    if (m_resources.find(Hash<String>()(realName)) != m_resources.end()) {
+      return REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
+    }
+    return nullptr;
+  }
+
   template<typename T, 
            typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
   SPtr<T>
@@ -86,6 +97,7 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     // i.e C:/Foo/Bar/image.png -> /ProjectDir/SelectedFolder/image.png
 
     SPtr<T> newResource = create<T>(p.baseName());
+    newResource->m_filePath = p;
     newResource->setData(codec->decode(f));
     m_resourceLoaded.invoke(newResource);
     return REINTERPRETPOINTER(T, newResource);
