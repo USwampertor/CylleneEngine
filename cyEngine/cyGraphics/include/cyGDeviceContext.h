@@ -102,14 +102,27 @@ public:
                  uint32 offset) = 0;
 
   virtual void
-  setConstantBuffer(uint32 slot,
-                    uint32 numBuffers,
-                    Vector<SPtr<GraphicsBuffer>> buffers) = 0;
+  setVSConstantBuffer(uint32 slot,
+                      uint32 numBuffers,
+                      Vector<SPtr<GraphicsBuffer>> buffers) = 0;
+
+  virtual void
+  setPSConstantBuffer(uint32 slot,
+                      uint32 numBuffers,
+                      Vector<SPtr<GraphicsBuffer>> buffers) = 0;
+
+  virtual void
+  setCSConstantBuffer(uint32 slot,
+                      uint32 numBuffers,
+                      Vector<SPtr<GraphicsBuffer>> buffers) = 0;
 
   virtual void
   setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
                     uint32 slot,
                     uint32 numViews) = 0;
+
+  virtual void
+  unbindShaderResource(uint32 slot) = 0;
 
   virtual void
   setSamplers(uint32 slot,
