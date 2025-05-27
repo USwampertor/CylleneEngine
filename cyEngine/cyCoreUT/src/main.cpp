@@ -131,7 +131,11 @@ TEST_CASE("[resource] Creation of models") {
     b->createComponent<CTransform>();
     SPtr<CMeshRenderer> model = b->createComponent<CMeshRenderer>();
     model->setModel(r);
-  
+    std::cout << r->getName() << std::endl;
+    for (int i = 0; i < r->m_meshes.size(); ++i) {
+      std::cout << r->m_meshes[i]->getName() << std::endl;
+
+    }
     CHECK(b->getTransform()->getChildren().size() == r->m_meshes.size());
   }
 
