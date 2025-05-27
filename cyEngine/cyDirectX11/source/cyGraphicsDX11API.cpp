@@ -441,7 +441,7 @@ GraphicsDX11API::createPixelShader(SPtr<RShader> shader,
 
 SPtr<GGeometryShader>
 GraphicsDX11API::createGeometryShader(SPtr<RShader> shader,
-  const String& entry) {
+                                      const String& entry) {
   SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "gs_5_0");
   if (!sPtrShaderBlob->isCompiled) {
     return nullptr;
@@ -449,6 +449,30 @@ GraphicsDX11API::createGeometryShader(SPtr<RShader> shader,
   SPtr<GGeometryShader> sPtrShader; // = m_pDevice->createGeometryShader(sPtrShaderBlob);
   return sPtrShader;
 }
+
+SPtr<GGeometryShader>
+GraphicsDX11API::createComputeShader(SPtr<RShader> shader,
+                                     const String& entry) {
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, "cs_5_0");
+  if (!sPtrShaderBlob->isCompiled) {
+    return nullptr;
+  }
+  SPtr<GGeometryShader> sPtrShader; // = m_pDevice->createGeometryShader(sPtrShaderBlob);
+  return sPtrShader;
+}
+
+SPtr<GShader>
+GraphicsDX11API::createShader(SPtr<RShader> shader,
+                              const String& entry) {
+  String model;
+  SPtr<GShaderBlob> sPtrShaderBlob = compileShader(shader->m_data, entry, model);
+  if (!sPtrShaderBlob->isCompiled) {
+    return nullptr;
+  }
+  SPtr<GGeometryShader> sPtrShader; // = m_pDevice->createGeometryShader(sPtrShaderBlob);
+  return sPtrShader;
+}
+
 
 SPtr<GInputLayout>
 GraphicsDX11API::createInputLayout(const Vector<GInputLayoutElement>& descriptor, 

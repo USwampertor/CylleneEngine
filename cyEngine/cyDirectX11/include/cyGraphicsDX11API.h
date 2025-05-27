@@ -95,6 +95,12 @@ public:
   virtual SPtr<GGeometryShader>
 	createGeometryShader(SPtr<RShader> shader, const String& entry) override;
 
+	virtual SPtr<GGeometryShader>
+	createComputeShader(SPtr<RShader> shader, const String& entry) override;
+
+	virtual SPtr<GShader>
+	createShader(SPtr<RShader> shader, const String& entry) override;
+
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,
 										SPtr<GVertexShader> desc) override;
