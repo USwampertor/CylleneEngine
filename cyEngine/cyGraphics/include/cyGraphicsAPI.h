@@ -144,6 +144,12 @@ public:
   virtual SPtr<GGeometryShader>
 	createGeometryShader(SPtr<RShader> shader, const String& entry) = 0;
 
+	virtual SPtr<GGeometryShader>
+	createComputeShader(SPtr<RShader> shader, const String& entry) = 0;
+
+	virtual SPtr<GShader>
+	createShader(SPtr<RShader> shader, const String& entry) = 0;
+
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,
 										SPtr<GVertexShader> desc) = 0;
