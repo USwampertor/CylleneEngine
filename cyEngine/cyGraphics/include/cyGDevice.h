@@ -100,6 +100,15 @@ public:
   virtual SPtr<GPixelShader>
   createPixelShader(SPtr<GShaderBlob> blob) = 0;
 
+  virtual SPtr<GGeometryShader>
+  createGeometryShader(SPtr<GShaderBlob> blob) = 0;
+
+  virtual SPtr<GComputeShader>
+  createComputeShader(SPtr<GShaderBlob> blob) = 0;
+
+  virtual SPtr<GShader>
+  createShader(SPtr<GShaderBlob> blob) = 0;
+
   virtual SPtr<GraphicsBuffer>
   createGraphicsBuffer(SPtr<GBufferElement> bufferParams) = 0;
 
