@@ -141,7 +141,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib;cppfsd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -166,7 +166,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib;cppfs.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -187,7 +187,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilitiesd.lib;cyMathd.lib;cyCored.lib;cyGraphicsd.lib;cppfsd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
@@ -212,7 +212,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;dxguid.lib;dxgi.lib;d3d11.lib;d3dcompiler.lib;cyUtilities.lib;cyMath.lib;cyCore.lib;cyGraphics.lib;cppfs.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
     </Link>
