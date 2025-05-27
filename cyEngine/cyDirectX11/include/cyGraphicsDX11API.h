@@ -95,7 +95,7 @@ public:
   virtual SPtr<GGeometryShader>
 	createGeometryShader(SPtr<RShader> shader, const String& entry) override;
 
-	virtual SPtr<GGeometryShader>
+	virtual SPtr<GComputeShader>
 	createComputeShader(SPtr<RShader> shader, const String& entry) override;
 
 	virtual SPtr<GShader>
