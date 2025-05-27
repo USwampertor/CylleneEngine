@@ -229,7 +229,7 @@ public:
 	void
   registerResource(SPtr<RResource> resource) {
 		RESOURCE_TYPE::E type = resource->getType();
-    String realName = Utils::format("%s_%s", type._to_string(), resource->getName().c_str());
+    String realName = Utils::format("%s_%s", type._to_string(), resource->getPath().baseName().c_str());
     
     // Check if resource is mesh or texture
     if (resource->getType() == RESOURCE_TYPE::E::eMESH) {
@@ -260,6 +260,9 @@ public:
 			}
 			else if (+SHADER_TYPE::E::PIXEL == shaderType) {
         newGShader = createPixelShader(shader, "pixel_main");
+			}
+			else if (+SHADER_TYPE::E::COMPUTE == shaderType) {
+				// newGShader = createComputeShader(shader, "compute_main");
 			}
 			
       if (newGShader != nullptr) {

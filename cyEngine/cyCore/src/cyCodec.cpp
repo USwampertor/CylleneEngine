@@ -120,7 +120,7 @@ ImageCodec::decode(const File& f) {
 }
   
 void
-processMesh(RMesh& m, aiMesh* node) {
+processMesh(SPtr<RMesh>& m, aiMesh* node) {
 
   // Vertices
   for (uint32 i = 0; i < node->mNumVertices; ++i) {
@@ -162,7 +162,7 @@ processMesh(RMesh& m, aiMesh* node) {
       v.m_normal = Vector3f(v.m_tangent ^ v.m_binormal);
     }
 
-    m.m_vertexBuffer.push_back(v);
+    m->m_vertexBuffer.push_back(v);
 
 
   }
@@ -171,24 +171,27 @@ processMesh(RMesh& m, aiMesh* node) {
   for (uint32 f = 0; f < node->mNumFaces; ++f) {
     aiFace face = node->mFaces[f];
     for (uint32 j = 0; j < face.mNumIndices; ++j) {
-      m.m_indexBuffer.push_back(face.mIndices[j]);
+      m->m_indexBuffer.push_back(face.mIndices[j]);
     }
   }
 }
 
 
 void
-processNode(RModel& m, aiNode* node, const aiScene* scene) {
+processNode(SPtr<RModel>& m, aiNode* node, const aiScene* scene) {
   uint32 i = 0;
   for (i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    m.m_meshes.push_back(makeSharedPtr<RMesh>());
-    processMesh(*m.m_meshes.back().get(), mesh);
-    m.m_hasSkeleton = false;
-    if (mesh->HasBones()) { m.m_hasSkeleton = true; }
-    if (scene->HasMaterials()) {
+    // String childName = Utils::format("%s_sub%d", m->getPath().baseName().c_str(), i);
+    // SPtr<RMesh> newMesh = 
 
-      m.m_meshes.back()->m_material = makeSharedPtr<RMaterial>();
+    m->m_meshes.push_back(makeSharedPtr<RMesh>());
+    processMesh(m->m_meshes.back(), mesh);
+    m->m_hasSkeleton = false;
+    if (mesh->HasBones()) { m->m_hasSkeleton = true; }
+    if (scene->HasMaterials()) {
+      // TODO: Get default material
+      m->m_meshes.back()->m_material = makeSharedPtr<RMaterial>();
       aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
       
     }
@@ -221,9 +224,9 @@ ModelCodec::decode(const File& f) {
   }
 
 
-  RModel model;
-  reinterpret_cast<RResource*>(&model)->m_name = p.fullPath().c_str();
-  reinterpret_cast<RResource*>(&model)->m_filePath = p;
+  SPtr<RModel> model = makeSharedPtr<RModel>(); // ResourceManager::instance().get<RModel>(p.baseName());
+  // reinterpret_cast<RResource*>(&model)->m_name = p.fullPath().c_str();
+  // reinterpret_cast<RResource*>(&model)->m_filePath = p;
   
 
   Assimp::Importer importer;
@@ -286,73 +289,73 @@ ModelCodec::decode(const File& f) {
 
   // meshes
   JSONValue jsonMeshes(rapidjson::kArrayType);
-  for (uint32 i = 0; i < model.m_meshes.size(); ++i) {
+  for (uint32 i = 0; i < model->m_meshes.size(); ++i) {
     JSONValue jsonMesh(rapidjson::kObjectType);
 
     // vertices
     JSONValue jsonVertices(rapidjson::kArrayType);
-    for (uint32 j = 0; j < model.m_meshes[i]->m_vertexBuffer.size(); ++j) {
+    for (uint32 j = 0; j < model->m_meshes[i]->m_vertexBuffer.size(); ++j) {
       // vertex
       JSONValue jsonVertex(rapidjson::kObjectType);
 
       JSONValue jsonPos(rapidjson::kArrayType);
-      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.x, allocator);
-      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.y, allocator);
-      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.z, allocator);
+      jsonPos.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_position.x, allocator);
+      jsonPos.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_position.y, allocator);
+      jsonPos.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_position.z, allocator);
       jsonVertex.AddMember("position", jsonPos, allocator);
     
 
 
       JSONValue jsonUV(rapidjson::kArrayType);
-      jsonUV.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_uv.x, allocator);
-      jsonUV.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_uv.y, allocator);
+      jsonUV.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_uv.x, allocator);
+      jsonUV.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_uv.y, allocator);
       jsonVertex.AddMember("uv", jsonUV, allocator);
 
 
       JSONValue jsonNormal(rapidjson::kArrayType);
-      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.x, allocator);
-      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.y, allocator);
-      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.z, allocator);
+      jsonNormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_normal.x, allocator);
+      jsonNormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_normal.y, allocator);
+      jsonNormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_normal.z, allocator);
       jsonVertex.AddMember("normal", jsonNormal, allocator);
 
       JSONValue jsonTangent(rapidjson::kArrayType);
-      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.x, allocator);
-      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.y, allocator);
-      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.z, allocator);
+      jsonTangent.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_tangent.x, allocator);
+      jsonTangent.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_tangent.y, allocator);
+      jsonTangent.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_tangent.z, allocator);
       jsonVertex.AddMember("tangent", jsonTangent, allocator);
 
       JSONValue jsonBinormal(rapidjson::kArrayType);
-      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.x, allocator);
-      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.y, allocator);
-      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.z, allocator);
+      jsonBinormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_binormal.x, allocator);
+      jsonBinormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_binormal.y, allocator);
+      jsonBinormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_binormal.z, allocator);
       jsonVertex.AddMember("binormal", jsonBinormal, allocator);
 
       JSONValue jsonColor(rapidjson::kArrayType);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.r, allocator);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.g, allocator);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.b, allocator);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.a, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.r, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.g, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.b, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.a, allocator);
       jsonVertex.AddMember("color", jsonColor, allocator);
 
       JSONValue jsonBoneIDs(rapidjson::kArrayType);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[0], allocator);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[1], allocator);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[2], allocator);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[3], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[0], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[1], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[2], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[3], allocator);
       jsonVertex.AddMember("boneIDs", jsonBoneIDs, allocator);
     
       JSONValue jsonBoneWeights(rapidjson::kArrayType);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[0], allocator);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[1], allocator);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[2], allocator);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[3], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[0], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[1], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[2], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[3], allocator);
       jsonVertex.AddMember("boneWeights", jsonBoneWeights, allocator);
 
       JSONValue jsonCustomData(rapidjson::kArrayType);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[0], allocator);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[1], allocator);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[2], allocator);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[3], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[0], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[1], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[2], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[3], allocator);
       jsonVertex.AddMember("customData", jsonCustomData, allocator);
 
       jsonVertices.PushBack(jsonVertex, allocator);
@@ -361,8 +364,8 @@ ModelCodec::decode(const File& f) {
 
     // indices
     JSONValue jsonIndices(rapidjson::kArrayType);
-    for (uint32 j = 0; j < model.m_meshes[i]->m_indexBuffer.size(); ++j) {
-      jsonIndices.PushBack(model.m_meshes[i]->m_indexBuffer[j], allocator);
+    for (uint32 j = 0; j < model->m_meshes[i]->m_indexBuffer.size(); ++j) {
+      jsonIndices.PushBack(model->m_meshes[i]->m_indexBuffer[j], allocator);
     }
     jsonMesh.AddMember("indices", jsonIndices, allocator);
 
