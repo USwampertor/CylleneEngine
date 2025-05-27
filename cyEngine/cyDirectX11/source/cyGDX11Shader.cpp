@@ -45,4 +45,49 @@ GDX11PixelShader::get() {
   return m_pPixelShader;
 }
 
+
+GDX11GeometryShader::~GDX11GeometryShader()
+{
+  DX11_SAFE_RELEASE(m_pGeometryShader);
+  DX11_SAFE_RELEASE(m_pBlob->m_pBlob);
+}
+
+void*
+GDX11GeometryShader::getShader() {
+  return m_pGeometryShader;
+}
+
+void
+GDX11GeometryShader::set(void* pHandle) {
+  m_pGeometryShader = static_cast<ID3D11GeometryShader*>(pHandle);
+}
+
+void*
+GDX11GeometryShader::get() {
+  return m_pGeometryShader;
+}
+
+
+GDX11ComputeShader::~GDX11ComputeShader()
+{
+  DX11_SAFE_RELEASE(m_pComputeShader);
+  DX11_SAFE_RELEASE(m_pBlob->m_pBlob);
+}
+
+void*
+GDX11ComputeShader::getShader() {
+  return m_pComputeShader;
+}
+
+void
+GDX11ComputeShader::set(void* pHandle) {
+  m_pComputeShader = static_cast<ID3D11ComputeShader*>(pHandle);
+}
+
+void*
+GDX11ComputeShader::get() {
+  return m_pComputeShader;
+}
+
+
 }

@@ -469,7 +469,7 @@ GraphicsDX11API::createShader(SPtr<RShader> shader,
   if (!sPtrShaderBlob->isCompiled) {
     return nullptr;
   }
-  SPtr<GGeometryShader> sPtrShader = m_pDevice->createShader(sPtrShaderBlob);
+  SPtr<GShader> sPtrShader = m_pDevice->createShader(sPtrShaderBlob);
   return sPtrShader;
 }
 

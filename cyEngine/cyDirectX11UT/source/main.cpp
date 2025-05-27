@@ -122,7 +122,7 @@ main(int argc, char* argv[])
   SPtr<RTexture> newTexture = ResourceManager::instance().create<RTexture>("cube_base");
   newTexture->setImage(newImage);
 
-  // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
+  SPtr<GTexture> newGTexture = GraphicsDX11API::instance().createTexture2D(newTexture);
   // String testName = GraphicsDX11API::instance().generateResourceID<RTexture>("cube_base");
   // SPtr<GTexture> newGTexture = GraphicsDX11API::instance().m_textureRenderPool[Hash<String>()(testName)];// GraphicsDX11API::instance().createTexture2D(newTexture);
 
@@ -133,7 +133,7 @@ main(int argc, char* argv[])
   cubeObject.getTransform()->setPosition(Vector3f(0, 0, 0));
   cubeObject.getTransform()->setScale(Vector3f(2, 2, 2));
 
-  // SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
+  SPtr<GMesh> gMesh = GraphicsDX11API::instance().createMesh(modelR->m_meshes[0]);
 
   // TODO: Create Render Target and Depth stencil for mirror effect
   

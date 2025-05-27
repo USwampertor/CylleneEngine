@@ -85,5 +85,71 @@ public:
 
 };
 
+class CY_DX11_EXPORT GDX11GeometryShader : public GGeometryShader
+{
+public:
+
+  GDX11GeometryShader() = default;
+
+  virtual ~GDX11GeometryShader() override;
+  
+  virtual void*
+  getBlob() override {
+    return reinterpret_cast<void*>(m_pBlob.get());
+  }
+
+  virtual void*
+  getShader();
+
+  virtual void
+  set(void* pHandle) override;
+
+  virtual void*
+  get() override;
+
+
+public:
+
+  SPtr<GDX11ShaderBlob> m_pBlob = nullptr;
+
+
+  ID3D11GeometryShader* m_pGeometryShader = nullptr;
+
+};
+
+
+class CY_DX11_EXPORT GDX11ComputeShader : public GComputeShader
+{
+public:
+
+  GDX11ComputeShader() = default;
+
+  virtual ~GDX11ComputeShader() override;
+  
+  virtual void*
+  getBlob() override {
+    return reinterpret_cast<void*>(m_pBlob.get());
+  }
+
+  virtual void*
+  getShader();
+
+  virtual void
+  set(void* pHandle) override;
+
+  virtual void*
+  get() override;
+
+
+public:
+
+  SPtr<GDX11ShaderBlob> m_pBlob = nullptr;
+
+
+  ID3D11ComputeShader* m_pComputeShader = nullptr;
+
+};
+
+
 
 }

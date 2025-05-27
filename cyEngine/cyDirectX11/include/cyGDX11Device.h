@@ -55,6 +55,15 @@ public:
   virtual SPtr<GPixelShader>
   createPixelShader(SPtr<GShaderBlob> blob) override;
 
+  virtual SPtr<GGeometryShader>
+  createGeometryShader(SPtr<GShaderBlob> blob) override;
+
+  virtual SPtr<GComputeShader>
+  createComputeShader(SPtr<GShaderBlob> blob) override;
+
+  virtual SPtr<GShader>
+  createShader(SPtr<GShaderBlob> blob) override;
+
   virtual SPtr<GraphicsBuffer>
   createGraphicsBuffer(SPtr<GBufferElement> bufferParams) override;
 

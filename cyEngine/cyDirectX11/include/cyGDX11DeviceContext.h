@@ -56,6 +56,21 @@ public:
                  uint32 numClasses = 0) override;
 
   virtual void
+  setGeometryShader(SPtr<GGeometryShader> shader, 
+                    void* classInstance = nullptr, 
+                    uint32 numClasses = 0) override;
+
+  virtual void
+  setComputeShader(SPtr<GComputeShader> shader, 
+                   void* classInstance = nullptr, 
+                   uint32 numClasses = 0) override;
+
+  virtual void
+  setShader(SPtr<GShader> shader, 
+            void* classInstance = nullptr, 
+            uint32 numClasses = 0) override;
+
+  virtual void
   setInputLayout(SPtr<GInputLayout> layout) override;
 
   virtual void

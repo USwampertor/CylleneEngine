@@ -195,9 +195,9 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
   sPtrShader->m_pBlob = sPtrShaderBlob;
 
   HRESULT hr = m_pd3d11Device->CreatePixelShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
-                                            sPtrShaderBlob->m_pBlob->GetBufferSize(),
-                                            nullptr,
-                                            &sPtrShader->m_pPixelShader);
+                                                 sPtrShaderBlob->m_pBlob->GetBufferSize(),
+                                                 nullptr,
+                                                 &sPtrShader->m_pPixelShader);
 
 
   if (FAILED(hr)) {
@@ -207,6 +207,76 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
 
   return std::static_pointer_cast<GPixelShader>(sPtrShader);
 }
+
+SPtr<GGeometryShader>
+GDX11Device::createGeometryShader(SPtr<GShaderBlob> blob) {
+  SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::static_pointer_cast<GDX11ShaderBlob>(blob);
+
+  SPtr<GDX11GeometryShader> sPtrShader = std::make_shared<GDX11GeometryShader>();
+  sPtrShader->m_pBlob = sPtrShaderBlob;
+
+  HRESULT hr = m_pd3d11Device->CreateGeometryShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
+                                                    sPtrShaderBlob->m_pBlob->GetBufferSize(),
+                                                    nullptr,
+                                                    &sPtrShader->m_pGeometryShader);
+
+
+  if (FAILED(hr)) {
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Geometry Shader");
+    return nullptr;
+  }
+
+  return std::static_pointer_cast<GGeometryShader>(sPtrShader);
+}
+
+SPtr<GComputeShader>
+GDX11Device::createComputeShader(SPtr<GShaderBlob> blob) {
+  SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::static_pointer_cast<GDX11ShaderBlob>(blob);
+
+  SPtr<GDX11ComputeShader> sPtrShader = std::make_shared<GDX11ComputeShader>();
+  sPtrShader->m_pBlob = sPtrShaderBlob;
+
+  HRESULT hr = m_pd3d11Device->CreateComputeShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
+                                                   sPtrShaderBlob->m_pBlob->GetBufferSize(),
+                                                   nullptr,
+                                                   &sPtrShader->m_pComputeShader);
+
+
+  if (FAILED(hr)) {
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Compute Shader");
+    return nullptr;
+  }
+
+  return std::static_pointer_cast<GComputeShader>(sPtrShader);
+}
+
+SPtr<GShader>
+GDX11Device::createShader(SPtr<GShaderBlob> blob) {
+  SPtr<GDX11ShaderBlob> sPtrShaderBlob = std::static_pointer_cast<GDX11ShaderBlob>(blob);
+
+  return nullptr;
+
+  // TODO: Implement this so this function is more agnostic-like
+  // The idea is that this function may take information from the blob to know what
+  // type of shader to create
+
+//   SPtr<GDX11ComputeShader> sPtrShader = std::make_shared<GDX11ComputeShader>();
+//   sPtrShader->m_pBlob = sPtrShaderBlob;
+// 
+//   HRESULT hr = m_pd3d11Device->CreateComputeShader(sPtrShaderBlob->m_pBlob->GetBufferPointer(),
+//                                                    sPtrShaderBlob->m_pBlob->GetBufferSize(),
+//                                                    nullptr,
+//                                                    &sPtrShader->m_pComputeShader);
+// 
+// 
+//   if (FAILED(hr)) {
+//     WindowManager::instance().ShowErrorMessage("Error", "Error creating Compute Shader");
+//     return nullptr;
+//   }
+// 
+//   return std::static_pointer_cast<GComputeShader>(sPtrShader);
+}
+
 
 void// SPtr<GShaderResourceView>
 GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,

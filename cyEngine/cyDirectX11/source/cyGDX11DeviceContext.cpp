@@ -116,6 +116,40 @@ GDX11DeviceContext::setPixelShader(SPtr<GPixelShader> shader,
 }
 
 void
+GDX11DeviceContext::setGeometryShader(SPtr<GGeometryShader> shader,
+                                      void* classInstance /* = nullptr */,
+                                      uint32 numClasses /* = 0 */) {
+  SPtr<GDX11GeometryShader> pGeometryShader = std::static_pointer_cast<GDX11GeometryShader>(shader);
+  m_pDeviceContext->GSGetShader(&pGeometryShader->m_pGeometryShader,
+                                static_cast<ID3D11ClassInstance**>(classInstance), 
+                                &numClasses);
+}
+
+void
+GDX11DeviceContext::setComputeShader(SPtr<GComputeShader> shader,
+                                      void* classInstance /* = nullptr */,
+                                      uint32 numClasses /* = 0 */) {
+  SPtr<GDX11ComputeShader> pComputeShader = std::static_pointer_cast<GDX11ComputeShader>(shader);
+  m_pDeviceContext->CSSetShader(pComputeShader->m_pComputeShader,
+                                static_cast<ID3D11ClassInstance* const*>(classInstance),
+                                numClasses);
+}
+
+
+void
+GDX11DeviceContext::setShader(SPtr<GShader> shader,
+                              void* classInstance /* = nullptr */,
+                              uint32 numClasses /* = 0 */) {
+  // TODO: Implement this
+//   SPtr<GDX11ComputeShader> pComputeShader = std::static_pointer_cast<GDX11ComputeShader>(shader);
+//   m_pDeviceContext->CSSetShader(pComputeShader->m_pComputeShader,
+//                                 static_cast<ID3D11ClassInstance* const*>(classInstance),
+//                                 numClasses);
+}
+
+
+
+void
 GDX11DeviceContext::setInputLayout(SPtr<GInputLayout> layout) {
   SPtr<GDX11InputLayout> pInputLayout = std::static_pointer_cast<GDX11InputLayout>(layout);
   m_pDeviceContext->IASetInputLayout(pInputLayout->m_pInputLayout);
