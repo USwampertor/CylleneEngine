@@ -52,7 +52,7 @@ public:
   clearRenderTargetView(SPtr<GRenderTargetView> renderTarget,
                         const Color& color) = 0;
 
-  virtual void 
+  virtual void
   clearDepthStencilView(SPtr<GDepthStencilView> depthStencil,
                         uint32 clearFlags,
                         float depth, 
@@ -131,6 +131,14 @@ public:
 
   virtual void
   drawIndexed(SPtr<GMesh> mesh) = 0;
+
+  virtual void
+  dispatch(Vector3f threadGroupCount) = 0;
+
+  virtual void
+  drawInstanced(SPtr<GMesh> mesh, uint32 instances) = 0;
+
+
 
 };
 }
