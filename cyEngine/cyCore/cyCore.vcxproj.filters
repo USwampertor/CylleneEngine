@@ -132,6 +132,9 @@
     <ClInclude Include="include\cySceneGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyCParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -228,6 +231,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cySceneGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCParticleEmitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
