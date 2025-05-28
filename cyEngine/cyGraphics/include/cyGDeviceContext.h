@@ -133,6 +133,9 @@ public:
   drawIndexed(SPtr<GMesh> mesh) = 0;
 
   virtual void
+  drawIndexedInstanced(SPtr<GMesh> mesh, uint32 instances) = 0;
+
+  virtual void
   dispatch(Vector3f threadGroupCount) = 0;
 
   virtual void
