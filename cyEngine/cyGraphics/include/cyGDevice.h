@@ -2,6 +2,7 @@
 #include "cyGraphicsPrerequisites.h"
 
 #include "cyGGraphic.h"
+#include "cyGBlendState.h"
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
 #include "cyGraphicsBuffer.h"
@@ -114,6 +115,9 @@ public:
 
   virtual SPtr<GRasterizerState>
   createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) = 0;
+
+  virtual SPtr<GBlendState>
+  createBlendState(SPtr<GBlendElement> blendParams) = 0;
 
   virtual SPtr<GSamplerState>
   createSamplerState(SPtr<GSamplerStateElement> samplerParams) = 0; 

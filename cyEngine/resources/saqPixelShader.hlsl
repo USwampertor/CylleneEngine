@@ -51,5 +51,12 @@ pixel_main(PixelInput Input) : SV_TARGET {
     float isDepth = step((currentDepth - 0.00001f), shadowDepth);
     //float isDepth = step((currentDepth - 0.005f), shadowDepth);
     
+    [branch]
+    if (position.x == 0 &&
+        position.y == 0 &&
+        position.z == 0) {
+        isDepth = 1.0f;
+    }
+    
     return float4(color * isDepth, 1.0f);
 }

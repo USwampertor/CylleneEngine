@@ -1,4 +1,5 @@
 #include "cyGDX11Device.h"
+#include "cyGDX11BlendState.h"
 #include "cyGDX11Texture.h"
 #include "cyGDX11DepthStencilView.h"
 #include "cyGDX11RenderTargetView.h"
@@ -474,7 +475,6 @@ GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
     descRD.ForcedSampleCount = rasterizerParams->forcedSampleCount;
   }
 
-
   SPtr<GDX11RasterizerState> pRasterizerState = std::make_shared<GDX11RasterizerState>();
 
   // m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState);
@@ -482,8 +482,45 @@ GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
     WindowManager::instance().ShowErrorMessage("Error", "Error creating Rasterizer State");
     return nullptr;
   }
+
   return std::static_pointer_cast<GRasterizerState>(pRasterizerState);
 }
 
+SPtr<GBlendState>
+GDX11Device::createBlendState(SPtr<GBlendElement> blendParams) {
+  D3D11_BLEND_DESC1 blendState;
+
+  blendState.AlphaToCoverageEnable = false;
+  blendState.IndependentBlendEnable = false;
+
+  blendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+  blendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+  blendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+  blendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+  blendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+  blendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+  blendState.RenderTarget[0].LogicOpEnable = false;
+  blendState.RenderTarget[0].LogicOp = D3D11_LOGIC_OP_NOOP;
+
+  if (blendParams != nullptr) {
+    blendState.RenderTarget[0].BlendEnable = blendParams->enabled;
+    blendState.RenderTarget[0].RenderTargetWriteMask = blendParams->writeMask;
+  }
+  else {
+    blendState.RenderTarget[0].BlendEnable = false;
+    blendState.RenderTarget[0].RenderTargetWriteMask = BLEND_MASK::E::ALL_CHANNELS;
+  }
+
+  SPtr<GDX11BlendState> pBlendState = std::make_shared<GDX11BlendState>();
+
+  if (FAILED(m_pd3d11Device->CreateBlendState1(&blendState, &pBlendState->m_pBlendState))) {
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Blend State");
+    return nullptr;
+  }
+
+  return std::static_pointer_cast<GBlendState>(pBlendState);
 }
 
+}

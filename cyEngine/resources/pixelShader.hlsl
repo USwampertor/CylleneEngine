@@ -34,6 +34,9 @@ cbuffer PerObjectConstantBuffer : register(b1)
 
 cbuffer PerPassConstantBuffer : register(b2)
 {
+  float4   CameraForward;
+  float4   CameraRight;
+  float4   CameraUp;
   float4x4 View;
   float4x4 Projection;
 }

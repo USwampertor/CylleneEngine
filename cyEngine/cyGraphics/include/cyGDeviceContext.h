@@ -1,6 +1,7 @@
 #pragma once
 #include "cyGraphicsPrerequisites.h"
 
+#include "cyGBlendState.h"
 #include "cyGGraphic.h"
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
@@ -42,6 +43,9 @@ public:
 
   virtual void
   updateSubresource(SPtr<GGraphic> resource, const GSubResourceElement& data) = 0;
+
+  virtual void
+  setBlendState(SPtr<GBlendState> blendState) = 0;
 
   virtual void
   setRenderTargets(uint32 numRenderTargets,
@@ -132,5 +136,8 @@ public:
   virtual void
   drawIndexed(SPtr<GMesh> mesh) = 0;
 
+  virtual void
+  drawInstancedIndexed(SPtr<GMesh> mesh, uint32 instances) = 0;
 };
+
 }

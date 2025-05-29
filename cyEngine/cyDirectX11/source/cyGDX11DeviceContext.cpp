@@ -1,5 +1,6 @@
 #include "cyGDX11DeviceContext.h"
 
+#include "cyGDX11BlendState.h"
 #include "cyGDX11DepthStencilView.h"
 #include "cyGDX11RenderTargetView.h"
 #include "cyGDX11Shader.h"
@@ -53,6 +54,19 @@ GDX11DeviceContext::updateSubresource(SPtr<GGraphic> resource, const GSubResourc
                                        data.depth, 
                                        0);
   // m_pDeviceContext->UpdateSubresource1(pResource, index, nullptr, &data, 0, 0);
+}
+
+void
+GDX11DeviceContext::setBlendState(SPtr<GBlendState> blendState) {
+  if (blendState == nullptr) {
+    m_pDeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+    return;
+  }
+
+  SPtr<GDX11BlendState> pBlendState = std::static_pointer_cast<GDX11BlendState>(blendState);
+  m_pDeviceContext->OMSetBlendState(pBlendState->m_pBlendState,
+                                    nullptr,
+                                    0xffffffff);
 }
 
 void
@@ -186,6 +200,10 @@ GDX11DeviceContext::setShader(SPtr<GShader> shader,
 
 void
 GDX11DeviceContext::setInputLayout(SPtr<GInputLayout> layout) {
+  if (layout == nullptr) {
+    m_pDeviceContext->IASetInputLayout(nullptr);
+    return;
+  }
   SPtr<GDX11InputLayout> pInputLayout = std::static_pointer_cast<GDX11InputLayout>(layout);
   m_pDeviceContext->IASetInputLayout(pInputLayout->m_pInputLayout);
 }
@@ -304,6 +322,13 @@ GDX11DeviceContext::drawIndexed(SPtr<GMesh> mesh) {
   // m_pDeviceContext->DrawIndexed(pMesh->m_indexCount,
   //                               pMesh->m_startIndexLocation,
   //                               pMesh->m_baseVertexLocation);
+}
+
+void
+GDX11DeviceContext::drawInstancedIndexed(SPtr<GMesh> mesh, uint32 instances) {
+  SPtr<GDX11Mesh> pMesh = std::static_pointer_cast<GDX11Mesh>(mesh);
+
+  m_pDeviceContext->DrawIndexedInstanced(pMesh->m_numIndices, instances, pMesh->m_baseIndex, pMesh->m_baseVertex, 0);
 }
 
 // 

@@ -31,6 +31,9 @@ public:
   updateSubresource(SPtr<GGraphic> resource, const GSubResourceElement& data) override;
 
   virtual void
+  setBlendState(SPtr<GBlendState> blendState) override;
+
+  virtual void
   setRenderTargets(uint32 numRenderTargets,
                    Vector<SPtr<GRenderTargetView>> renderTargets,
                    SPtr<GDepthStencilView> depthStencil) override;
@@ -118,6 +121,9 @@ public:
 
   virtual void
   drawIndexed(SPtr<GMesh> mesh) override;
+
+  virtual void
+  drawInstancedIndexed(SPtr<GMesh> mesh, uint32 instances) override;
 
 public:
 

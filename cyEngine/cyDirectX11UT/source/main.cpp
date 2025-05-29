@@ -28,9 +28,9 @@ using namespace CYLLENE_SDK;
 struct ShaderConstants
 {
   float time;
-  // float align1;
-  // float align2;
-  // float align3;
+  float align1;
+  float align2;
+  float align3;
 } shaderConstants;
 
 struct PerObjectConstantBuffer
@@ -40,6 +40,9 @@ struct PerObjectConstantBuffer
 
 struct PerPassConstantBuffer
 {
+  Vector4f cameraForward;
+  Vector4f cameraRight;
+  Vector4f cameraUp;
   Matrix4 view;
   Matrix4 projection;
 } perPassConstants;
@@ -108,6 +111,13 @@ main(int argc, char* argv[])
   SPtr<GPixelShader> pSAQShader;
   compilePixelShader("saqPixelShader.hlsl", psSAQR, pSAQShader);
 
+  SPtr<RShader> vsParticleR;
+  SPtr<GVertexShader> vParticleShader;
+  compileVertexShader("particleVertexShader.hlsl", vsParticleR, vParticleShader);
+  SPtr<RShader> psParticleR;
+  SPtr<GPixelShader> pParticleShader;
+  compilePixelShader("particlePixelShader.hlsl", psParticleR, pParticleShader);
+
   Vector<GInputLayoutElement> inputDescs = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -117,7 +127,7 @@ main(int argc, char* argv[])
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,        0, 64,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "BONES",    0, DXGI_FORMAT_R32G32B32A32_SINT,   0, 72,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "WEIGHTS",  0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0, 88,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,   0, 104, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,   0, 104, D3D11_INPUT_PER_VERTEX_DATA, 0 }
   };
 
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
@@ -139,15 +149,13 @@ main(int argc, char* argv[])
   BBeing cameraEntity("Camera");
   cameraEntity.createComponent<CTransform>();
   SPtr<CCamera> camera = cameraEntity.createComponent<CCamera>();
-  camera->setLookAt(Vector3f(-6, 20, -20), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  camera->setLookAt(Vector3f(-6, 15, -20), Vector3f(0, 5, 0), Vector3f(0, 1, 0));
   camera->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
   //camera->setOrthogonal(128.f * 0.5f, 72.f * 0.5f, 0.1f, 200.0f);
 
   Vector<char> shaderConstantsData;
   shaderConstantsData.resize(sizeof(ShaderConstants));
   memset(shaderConstantsData.data(), 0, sizeof(ShaderConstants));
-
-  shaderConstantsData.resize(sizeof(PerObjectConstantBuffer));
   SPtr<GraphicsBuffer> shaderConstantsBuffer = GraphicsDX11API::instance().createConstantBuffer(shaderConstantsData);
   if (!shaderConstantsBuffer) {
     WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
@@ -196,12 +204,24 @@ main(int argc, char* argv[])
   SPtr<RTexture> sampleTexture;
   SPtr<GTexture> sampleGTexture;
   {
-    checkerImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/beto.png");
+    sampleImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/beto.png");
 
     sampleTexture = ResourceManager::instance().create<RTexture>("sample_texture");
-    sampleTexture->setImage(checkerImage);
+    sampleTexture->setImage(sampleImage);
 
     sampleGTexture = GraphicsDX11API::instance().createTexture2D(sampleTexture);
+  }
+
+  SPtr<RImage> particleImage;
+  SPtr<RTexture> particleRTexture;
+  SPtr<GTexture> particleGTexture;
+  {
+    particleImage = ResourceManager::instance().loadFromPath<RImage>(resourceDir.fullPath() + "/particle.png");
+
+    particleRTexture = ResourceManager::instance().create<RTexture>("particle_texture");
+    particleRTexture->setImage(particleImage);
+
+    particleGTexture = GraphicsDX11API::instance().createTexture2D(particleRTexture);
   }
 
   BBeing cubeObject("cube");
@@ -237,6 +257,15 @@ main(int argc, char* argv[])
     floorObject.getTransform()->setPosition(Vector3f(0, 0, 0));
     floorObject.getTransform()->setScale(Vector3f(20, 20, 1));
     floorObject.getTransform()->setRotation(Euler(270.0f * Math::DEG2RAD, 0.0f, 0.0f));
+  }
+
+  BBeing saqObject("SAQ");
+  SPtr<GMesh> saqMesh;
+  {
+    saqMesh = GraphicsDX11API::instance().createMesh(floorModelR->m_meshes[0]);
+
+    saqObject.createComponent<CTransform>();
+    saqObject.createComponent<CMeshRenderer>(floorModelR->m_meshes[0]);
   }
 
 
@@ -279,6 +308,16 @@ main(int argc, char* argv[])
   
   SPtr<GRasterizerElement> defaultRasDesc = std::make_shared<GRasterizerElement>();
   SPtr<GRasterizerState> defaultRasterizer = GraphicsDX11API::instance().getDevice()->createRasterizerState(defaultRasDesc);
+
+  SPtr<GBlendElement> defaultBlendDesc = std::make_shared<GBlendElement>();
+  defaultBlendDesc->enabled = false;
+  defaultBlendDesc->writeMask = BLEND_MASK::E::ALL_CHANNELS;
+  SPtr<GBlendState> defaultBlend = GraphicsDX11API::instance().getDevice()->createBlendState(defaultBlendDesc);
+
+  SPtr<GBlendElement> alphaBlendDesc = std::make_shared<GBlendElement>();
+  alphaBlendDesc->enabled = true;
+  alphaBlendDesc->writeMask = BLEND_MASK::E::ALL_CHANNELS;
+  SPtr<GBlendState> alphaBlend = GraphicsDX11API::instance().getDevice()->createBlendState(alphaBlendDesc);
   
   // TODO: Create other rasterizers
   
@@ -336,7 +375,7 @@ main(int argc, char* argv[])
     SPtr<GRenderTargetView> backBufferRT = GraphicsDX11API::instance().m_pRenderTargetView;
     SPtr<GDepthStencilView> backBufferDS = GraphicsDX11API::instance().m_pDepthStencilView;
     
-    auto draw = [&](SPtr<CCamera> refCamera, BBeing& refObject, const SPtr<GMesh>& refMesh, const SPtr<GTexture>* refTexture) {
+    auto draw = [&](BBeing& refObject, const SPtr<GMesh>& refMesh, const SPtr<GTexture>* refTexture) {
       Vector<SPtr<GraphicsBuffer>> vertexBuffer;
       vertexBuffer.push_back(refMesh->m_pVertexBuffer);
 
@@ -409,8 +448,11 @@ main(int argc, char* argv[])
                                                                        nullRTs,
                                                                        shadowDepthStencil);
       
-      perPassConstants.view       = shadowCamera->m_view;
-      perPassConstants.projection = shadowCamera->m_projection;
+      perPassConstants.cameraForward  = shadowCamera->m_view.getForwardVector();
+      perPassConstants.cameraRight    = shadowCamera->m_view.getRightVector();
+      perPassConstants.cameraUp       = shadowCamera->m_view.getUpVector();
+      perPassConstants.view           = shadowCamera->m_view;
+      perPassConstants.projection     = shadowCamera->m_projection;
 
       constantBufferData.clear();
       constantBufferData.resize(sizeof(perPassConstants));
@@ -422,8 +464,8 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
       GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
 
-      draw(shadowCamera, floorObject, floorMesh, nullptr);
-      draw(shadowCamera, cubeObject, cubeMesh, nullptr);
+      draw(floorObject, floorMesh, nullptr);
+      draw(cubeObject, cubeMesh, nullptr);
     }
 
     // Color pass
@@ -448,8 +490,11 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
       GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
 
-      perPassConstants.view       = camera->m_view;
-      perPassConstants.projection = camera->m_projection;
+      perPassConstants.cameraForward  = camera->m_view.getForwardVector();
+      perPassConstants.cameraRight    = camera->m_view.getRightVector();
+      perPassConstants.cameraUp       = camera->m_view.getUpVector();
+      perPassConstants.view           = camera->m_view;
+      perPassConstants.projection     = camera->m_projection;
 
       constantBufferData.clear();
       constantBufferData.resize(sizeof(perPassConstants));
@@ -468,13 +513,98 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
       GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
 
-      draw(camera, floorObject, floorMesh, &checkerGTexture);
+      draw(floorObject, floorMesh, &checkerGTexture);
 
       cubeObject.getTransform()->setPosition(Vector3f(0.0f, 3.0f + Math::cos(time), 0.0f));
       cubeObject.getTransform()->setRotation(Euler(0.2f * time * 3.0f,
                                              0.2f * time * 1.0f,
                                              0.2f * time * 9.0f));
-      draw(camera, cubeObject, cubeMesh, &sampleGTexture);
+      draw(cubeObject, cubeMesh, &sampleGTexture);
+    }
+
+    // Particles pass
+    {
+      GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
+
+      GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vParticleShader);
+      GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pParticleShader);
+
+      GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+      Vector<SPtr<GRenderTargetView>> targets;
+      targets.push_back(colorRenderTarget);
+      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(1,
+                                                                       targets,
+                                                                       colorRenderTarget.get()->getDepthStencil());
+
+      GraphicsDX11API::instance().getDeviceContext()->setBlendState(alphaBlend);
+      
+      Vector<SPtr<GraphicsBuffer>> scVector;
+      scVector.push_back(shaderConstantsBuffer);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
+
+      perPassConstants.cameraForward  = camera->m_view.getForwardVector();
+      perPassConstants.cameraRight    = camera->m_view.getRightVector();
+      perPassConstants.cameraUp       = camera->m_view.getUpVector();
+      perPassConstants.view           = camera->m_view;
+      perPassConstants.projection     = camera->m_projection;
+
+      constantBufferData.clear();
+      constantBufferData.resize(sizeof(perPassConstants));
+      memcpy(constantBufferData.data(), &perPassConstants, sizeof(perPassConstants));
+
+      GraphicsDX11API::instance().writeToBuffer(perPassCB, constantBufferData);
+      Vector<SPtr<GraphicsBuffer>> gbVector;
+      gbVector.push_back(perPassCB);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
+
+      Vector<SPtr<GSamplerState>> ssVec1;
+      Vector<SPtr<GSamplerState>> ssVec2;
+      ssVec1.push_back(pointSampler);
+      ssVec2.push_back(linearSampler);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
+
+      //draw(camera, saqObject, saqMesh, &particleGTexture);
+
+      Vector<SPtr<GraphicsBuffer>> vertexBuffer;
+      vertexBuffer.push_back(saqMesh->m_pVertexBuffer);
+
+      Vector<uint32> vertexStrides;
+      vertexStrides.push_back(vertexStride);
+
+      Vector<uint32> vertexOffsets;
+      vertexOffsets.push_back(vertexOffset);
+
+      GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
+
+      GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(saqMesh->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+      Vector<SPtr<GShaderResourceView>> srvVector;
+      srvVector.push_back(particleGTexture->getResource());
+
+      GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
+
+      perObjectConstants.world = saqObject.getTransform()->m_tMatrix;
+      perObjectConstants.world.transpose();
+
+      constantBufferData.clear();
+      constantBufferData.resize(sizeof(perObjectConstants));
+      memcpy(constantBufferData.data(), &perObjectConstants, sizeof(perObjectConstants));
+
+      GraphicsDX11API::instance().writeToBuffer(perObjectCB, constantBufferData);
+      gbVector.clear();
+      gbVector.push_back(perObjectCB);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
+
+      //GraphicsDX11API::instance().getDeviceContext()->drawIndexed(saqMesh);
+      GraphicsDX11API::instance().getDeviceContext()->drawInstancedIndexed(saqMesh, 100);
+
+      GraphicsDX11API::instance().getDeviceContext()->setBlendState(defaultBlend);
     }
 
     // Composition
@@ -520,13 +650,13 @@ main(int argc, char* argv[])
 
       GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 3);
 
-      draw(camera, floorObject, floorMesh, nullptr);
+      draw(saqObject, saqMesh, nullptr);
 
       GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(0);
       GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(1);
       GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(2);
     }
-
+    
     GraphicsDX11API::instance().present();
   }
   
