@@ -119,6 +119,19 @@ public:
   virtual void
   drawIndexed(SPtr<GMesh> mesh) override;
 
+  virtual void
+  drawIndexedInstanced(SPtr<GMesh> mesh, uint32 instances) override;
+
+  virtual void
+  drawIndexedInstancedIndirect(Vector<SPtr<GraphicsBuffer>>, 
+                               uint32 instances) override;
+
+  virtual void
+  dispatch(Vector3f threadGroupCount) override;
+
+  virtual void
+  drawInstanced(SPtr<GMesh> mesh, uint32 instances) override;
+
 public:
 
   ID3D11DeviceContext1* m_pDeviceContext = nullptr;

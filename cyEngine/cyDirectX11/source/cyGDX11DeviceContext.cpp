@@ -306,6 +306,37 @@ GDX11DeviceContext::drawIndexed(SPtr<GMesh> mesh) {
   //                               pMesh->m_baseVertexLocation);
 }
 
+void
+GDX11DeviceContext::drawIndexedInstanced(SPtr<GMesh> mesh, uint32 instances) {
+  SPtr<GDX11Mesh> pMesh = std::static_pointer_cast<GDX11Mesh>(mesh);
+  m_pDeviceContext->DrawIndexedInstanced(pMesh->m_numIndices, instances, pMesh->m_baseIndex, pMesh->m_baseVertex, 0);
+}
+
+void
+GDX11DeviceContext::drawIndexedInstancedIndirect(Vector<SPtr<GraphicsBuffer>> buffer, uint32 instances) {
+
+  Vector<ID3D11Buffer*> pBuffers;
+  for (uint32 i = 0; i < buffer.size(); ++i) {
+    SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffer[i]);
+    pBuffers.push_back(pBuffer->m_pBuffer);
+  }
+  m_pDeviceContext->DrawIndexedInstancedIndirect(pBuffers[0], 0);
+}
+
+
+void
+GDX11DeviceContext::dispatch(Vector3f threadGroupCount) {
+  m_pDeviceContext->Dispatch(static_cast<uint32>(threadGroupCount.x),
+                             static_cast<uint32>(threadGroupCount.y),
+                             static_cast<uint32>(threadGroupCount.z));
+}
+
+void
+GDX11DeviceContext::drawInstanced(SPtr<GMesh> mesh, uint32 instances) {
+  SPtr<GDX11Mesh> pMesh = std::static_pointer_cast<GDX11Mesh>(mesh);
+  m_pDeviceContext->DrawInstanced(pMesh->m_numVertices, instances, pMesh->m_baseVertex, 0);
+}
+
 // 
 // void
 // GDX11DeviceContext::setShaderResources(Vector<SPtr<GShaderResourceView>> resource,
