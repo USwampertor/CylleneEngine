@@ -2,6 +2,7 @@
 #include "cyGraphicsPrerequisites.h"
 
 #include "cyGGraphic.h"
+#include "cyGBlendState.h"
 #include "cyGDepthStencilView.h"
 #include "cyGInputLayout.h"
 #include "cyGraphicsBuffer.h"
@@ -123,6 +124,9 @@ public:
 
   virtual void
   unbindShaderResource(uint32 slot) = 0;
+
+  virtual void
+  setBlendState(SPtr<GBlendState> blendState) = 0;
 
   virtual void
   setSamplers(uint32 slot,
