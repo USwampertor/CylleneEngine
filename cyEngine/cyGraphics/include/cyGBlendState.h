@@ -23,6 +23,7 @@ struct GBlendElement
 
 class CY_GRAPHICS_EXPORT GBlendState : public GGraphic
 {
+public:
   GBlendState() = default;
   virtual ~GBlendState() {}
 };
