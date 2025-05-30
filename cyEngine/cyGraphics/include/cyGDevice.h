@@ -117,7 +117,7 @@ public:
   createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) = 0;
 
   virtual SPtr<GBlendState>
-  createBlendState(SPtr<GBlendState> blendParams) = 0;
+  createBlendState(SPtr<GBlendElement> blendParams) = 0;
 
   virtual SPtr<GSamplerState>
   createSamplerState(SPtr<GSamplerStateElement> samplerParams) = 0; 
