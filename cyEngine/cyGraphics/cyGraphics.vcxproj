@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyGBlendState.h" />
     <ClInclude Include="include\cyGDepthStencilView.h" />
     <ClInclude Include="include\cyGDevice.h" />
     <ClInclude Include="include\cyGDeviceContext.h" />
