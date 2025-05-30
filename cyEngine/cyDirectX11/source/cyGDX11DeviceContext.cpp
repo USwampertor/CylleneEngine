@@ -1,5 +1,6 @@
 #include "cyGDX11DeviceContext.h"
 
+#include "cyGDX11BlendState.h"
 #include "cyGDX11DepthStencilView.h"
 #include "cyGDX11RenderTargetView.h"
 #include "cyGDX11Shader.h"
@@ -280,6 +281,17 @@ GDX11DeviceContext::unbindShaderResource(uint32 slot) {
   Vector<ID3D11ShaderResourceView*> nullBuffer;
   nullBuffer.push_back(nullptr);
   m_pDeviceContext->PSSetShaderResources(slot, 1, nullBuffer.data());
+}
+
+void
+GDX11DeviceContext::setBlendState(SPtr<GBlendState> blendState) {
+  if (blendState == nullptr) {
+    m_pDeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+    return;
+  }
+
+  SPtr<GDX11BlendState> pBlendState = std::static_pointer_cast<GDX11BlendState>(blendState);
+  m_pDeviceContext->OMSetBlendState(pBlendState->m_pBlendState, nullptr, 0xffffffff);
 }
 
 

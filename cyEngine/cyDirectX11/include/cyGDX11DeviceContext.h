@@ -112,6 +112,9 @@ public:
   unbindShaderResource(uint32 slot) override;
 
   virtual void
+  setBlendState(SPtr<GBlendState> blendState) override;
+
+  virtual void
   setSamplers(uint32 slot,
               uint32 numSamplers,
               Vector<SPtr<GSamplerState>> samplers) override;

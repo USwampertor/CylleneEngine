@@ -4,8 +4,9 @@
 
 namespace CYLLENE_SDK {
 
-class GDX11BlendState : public GBlendState
+class CY_DX11_EXPORT GDX11BlendState : public GBlendState
 {
+public:
   GDX11BlendState() = default;
   
   virtual ~GDX11BlendState() override;

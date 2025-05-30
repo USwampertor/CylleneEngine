@@ -70,6 +70,9 @@ public:
   virtual SPtr<GRasterizerState>
   createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) override;
 
+  virtual SPtr<GBlendState>
+  createBlendState(SPtr<GBlendElement> blendParams) override;
+
   virtual SPtr<GSamplerState>
   createSamplerState(SPtr<GSamplerStateElement> samplerParams) override; 
 

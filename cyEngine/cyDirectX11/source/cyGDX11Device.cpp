@@ -8,6 +8,7 @@
 #include "cyGDX11RasterizerState.h"
 #include "cyGDX11ShaderResourceView.h"
 #include "cyGDX11SamplerState.h"
+#include "cyGDX11BlendState.h"
 
 #include <cyWindow.h>
 #include <cyRTexture.h>
@@ -410,6 +411,43 @@ GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
 
   return std::static_pointer_cast<GraphicsBuffer>(pBuffer);
 }
+SPtr<GBlendState>
+GDX11Device::createBlendState(SPtr<GBlendElement> blendParams) {
+  D3D11_BLEND_DESC1 blendState;
+
+  blendState.AlphaToCoverageEnable = false;
+  blendState.IndependentBlendEnable = false;
+
+  blendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+  blendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+  blendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+  blendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+  blendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+  blendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+  blendState.RenderTarget[0].LogicOpEnable = false;
+  blendState.RenderTarget[0].LogicOp = D3D11_LOGIC_OP_NOOP;
+
+  if (blendParams != nullptr) {
+    blendState.RenderTarget[0].BlendEnable = blendParams->enabled;
+    blendState.RenderTarget[0].RenderTargetWriteMask = blendParams->writeMask;
+  }
+  else {
+    blendState.RenderTarget[0].BlendEnable = false;
+    blendState.RenderTarget[0].RenderTargetWriteMask = BLEND_MASK::E::ALL;
+  }
+
+  SPtr<GDX11BlendState> pBlendState = std::make_shared<GDX11BlendState>();
+
+  if (FAILED(m_pd3d11Device->CreateBlendState1(&blendState, &pBlendState->m_pBlendState))) {
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Blend State");
+    return nullptr;
+  }
+
+  return std::static_pointer_cast<GBlendState>(pBlendState);
+}
+
 
 SPtr<GSamplerState>
 GDX11Device::createSamplerState(SPtr<GSamplerStateElement> samplerParams) {
