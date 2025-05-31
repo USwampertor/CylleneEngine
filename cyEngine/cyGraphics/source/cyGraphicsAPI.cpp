@@ -18,6 +18,10 @@ GraphicsAPI::registerToRenderPool(uint32 index) {
 
 }
 
+bool
+GraphicsAPI::registerGraphicPass(SPtr<GGraphicPass> newPass) {
+  return true;
+}
 
 
 

@@ -26,6 +26,7 @@
 #include "cyGSwapChain.h"
 #include "cyGTexture.h"
 #include "cyGMesh.h"
+#include "cyGGraphicPass.h"
 
 namespace CYLLENE_SDK {
 
@@ -70,6 +71,9 @@ public:
 
 	void 
 	registerToRenderPool(uint32 index);
+
+	bool
+	registerGraphicPass(SPtr<GGraphicPass> newPass);
 
 // 	virtual SPtr<GDevice>
 // 	createDevice(const GDeviceElement& deviceParams) = 0;
