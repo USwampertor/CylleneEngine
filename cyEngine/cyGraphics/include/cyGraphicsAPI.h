@@ -11,6 +11,7 @@
 #include <cyRShader.h>
 #include <cyRTexture.h>
 #include <cyRMesh.h>
+#include <cyRModel.h>
 #include <cyRResource.h>
 #include <cyVector2i.h>
 
@@ -25,6 +26,7 @@
 #include "cyGSwapChain.h"
 #include "cyGTexture.h"
 #include "cyGMesh.h"
+#include "cyGGraphicPass.h"
 
 namespace CYLLENE_SDK {
 
@@ -69,6 +71,9 @@ public:
 
 	void 
 	registerToRenderPool(uint32 index);
+
+	bool
+	registerGraphicPass(SPtr<GGraphicPass> newPass);
 
 // 	virtual SPtr<GDevice>
 // 	createDevice(const GDeviceElement& deviceParams) = 0;
@@ -238,12 +243,19 @@ public:
     String realName = Utils::format("%s_%s", type._to_string(), resource->getPath().baseName().c_str());
     
     // Check if resource is mesh or texture
-    if (resource->getType() == RESOURCE_TYPE::E::eMESH) {
-      SPtr<RMesh> mesh = std::reinterpret_pointer_cast<RMesh>(resource);
-      SPtr<GMesh> newGMesh = createMesh(mesh);
-      if (newGMesh != nullptr) {
-        m_meshRenderPool.try_emplace(Hash<String>()(realName), newGMesh);
-      }
+    if (resource->getType() == RESOURCE_TYPE::E::eMODEL) {
+      SPtr<RModel> model = std::reinterpret_pointer_cast<RModel>(resource);
+
+			for (auto& mesh : model->m_meshes) {
+        SPtr<GMesh> newGMesh = createMesh(mesh);
+        if (newGMesh != nullptr) {
+					type = RESOURCE_TYPE::E::eMESH;
+          realName = Utils::format("%s_%s", type._to_string(), mesh->getName().c_str());
+          m_meshRenderPool.try_emplace(Hash<String>()(realName), newGMesh);
+        }
+			}
+
+      
     }
     else if (resource->getType() == RESOURCE_TYPE::E::eTEXTURE) {
       SPtr<RTexture> texture = std::reinterpret_pointer_cast<RTexture>(resource);
