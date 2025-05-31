@@ -23,8 +23,8 @@ namespace CYLLENE_SDK {
 
 struct SceneSettings
 {
-  Vector2f m_gravity;
-  UPtr<GameMode> m_gameMode;
+  Vector2f m_gravity = { 0 , 0 };
+  UPtr<GameMode> m_gameMode = nullptr;
 };
 
 /*
@@ -36,9 +36,40 @@ class CY_CORE_EXPORT Scene
 {
 public:
   Scene() = default;
-  ~Scene() = default;
 
-  Scene(const String& name);
+  Scene(const String& name)
+    : m_name(name) {}
+  
+  ~Scene() = default;
+  
+  void 
+  init();
+
+  void
+  onSceneLoaded();
+
+  void
+  onSceneUnloaded();
+
+  JSONDocument
+  serialize();
+
+  void
+  deserialize(const JSONValue& sceneData);
+
+  UPtr<SceneSettings>& getSettings() {
+    return m_settings;
+  }
+
+  const String& getName() const {
+    return m_name;
+  }
+
+  friend class SceneManager;
+
+protected:
+
+  Vector<SPtr<BBeing>> m_toRemove;
 
 private:
 
@@ -46,7 +77,6 @@ private:
   UPtr<SceneSettings> m_settings;
   Vector<SPtr<SNode>> m_beings;
 
-  Vector<SPtr<BBeing>> m_toRemove;
 };
 
 }
