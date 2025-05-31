@@ -12,7 +12,15 @@ public:
   GGraphicPass() = default;
   virtual ~GGraphicPass() {}
 
-  int32 m_layerID = -1;
+  virtual void initialize() = 0;
+  virtual void execute() = 0;
+  virtual void cleanup() = 0;
+  virtual void shutdown() = 0;
+
+  WPtr<GGraphicPass> m_nextPass;
+  WPtr<GGraphicPass> m_previousPass;
+
+  int32 m_passID = -1;
 };
 
 class GShadowPass : public GGraphicPass
@@ -35,6 +43,20 @@ class GLightingPass : public GGraphicPass
 public:
   GLightingPass() = default;
   virtual ~GLightingPass() {}
+};
+
+class GTransparencyPass : public GGraphicPass
+{
+public:
+  GTransparencyPass() = default;
+  virtual ~GTransparencyPass() {}
+};
+
+class GPostProcessPass : public GGraphicPass
+{
+public:
+  GPostProcessPass() = default;
+  virtual ~GPostProcessPass() {}
 };
 
 }

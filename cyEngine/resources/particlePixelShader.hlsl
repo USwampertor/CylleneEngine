@@ -55,7 +55,7 @@ pixel_main(PixelInput Input)
   PixelOutput Output = (PixelOutput)0;
     
   float4 albedo = txColor.Sample(samPoint, Input.texCoord);
-    
+  clip(albedo.a <= 0.5f ? -1.0f : 1.0f); // discard if alpha is too low
   Output.color = float4(1.0f, 1.0f, 1.0f, albedo.a);
     
   return Output;

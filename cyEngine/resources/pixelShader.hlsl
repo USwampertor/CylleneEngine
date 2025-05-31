@@ -75,7 +75,7 @@ pixel_main(PixelInput Input)
   {
     float d = p * TAU;
     float3 lightPos = float3(sin(d + time * 1.0) * lightoffset,
-                             1.0f + cos(time),
+                             3.0f + cos(time),
                              cos(d + time * 3.0) * lightoffset);
     
     float lightAtt = 1.0f - min(1.0f, length(lightPos - position) / lightRadius);
