@@ -324,6 +324,8 @@ public:
 	Map<uint32, SPtr<GShader>>
 	m_shaderRenderPool;
 
+  List<SPtr<GGraphicPass>>
+	m_graphicPasses;
 };
 
 
