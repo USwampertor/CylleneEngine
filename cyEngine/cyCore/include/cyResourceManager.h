@@ -50,7 +50,19 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     SPtr<T> newResource = makeSharedPtr<T>();
     newResource->m_name = assetPath;
     m_resources.insert(Utils::makePair(Hash<String>()(realName), newResource));
+    m_resourceCreated.invoke(newResource);
     return newResource;
+  }
+
+  template<typename T,
+           typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
+  SPtr<T>
+  get(const String& assetName) {
+    String realName = generateResourceID<T>(assetName);
+    if (m_resources.find(Hash<String>()(realName)) != m_resources.end()) {
+      return REINTERPRETPOINTER(T, m_resources.at(Hash<String>()(realName)));
+    }
+    return nullptr;
   }
 
   template<typename T, 
@@ -85,7 +97,9 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
     // i.e C:/Foo/Bar/image.png -> /ProjectDir/SelectedFolder/image.png
 
     SPtr<T> newResource = create<T>(p.baseName());
+    newResource->m_filePath = p;
     newResource->setData(codec->decode(f));
+    m_resourceLoaded.invoke(newResource);
     return REINTERPRETPOINTER(T, newResource);
   }
 
@@ -183,12 +197,12 @@ class CY_CORE_EXPORT ResourceManager : public Module<ResourceManager>
 
   Map<String, SPtr<CDCodec>> m_codecs;
 
-  Event<void> m_resourceLoaded;
+  Event<void, SPtr<RResource>> m_resourceLoaded;
 
-  Event<void> m_resourceCreated;
+  Event<void, SPtr<RResource>> m_resourceCreated;
 
-  Event<void> m_resourcesSerialized;
+  Event<void, SPtr<RResource>> m_resourcesSerialized;
 
-  Event<void> m_resourcesDeserialized;
+  Event<void, SPtr<RResource>> m_resourcesDeserialized;
 };
 }

@@ -120,7 +120,7 @@ ImageCodec::decode(const File& f) {
 }
   
 void
-processMesh(RMesh& m, aiMesh* node) {
+processMesh(SPtr<RMesh>& m, aiMesh* node) {
 
   // Vertices
   for (uint32 i = 0; i < node->mNumVertices; ++i) {
@@ -162,7 +162,7 @@ processMesh(RMesh& m, aiMesh* node) {
       v.m_normal = Vector3f(v.m_tangent ^ v.m_binormal);
     }
 
-    m.m_vertexBuffer.push_back(v);
+    m->m_vertexBuffer.push_back(v);
 
 
   }
@@ -171,24 +171,27 @@ processMesh(RMesh& m, aiMesh* node) {
   for (uint32 f = 0; f < node->mNumFaces; ++f) {
     aiFace face = node->mFaces[f];
     for (uint32 j = 0; j < face.mNumIndices; ++j) {
-      m.m_indexBuffer.push_back(face.mIndices[j]);
+      m->m_indexBuffer.push_back(face.mIndices[j]);
     }
   }
 }
 
 
 void
-processNode(RModel& m, aiNode* node, const aiScene* scene) {
+processNode(SPtr<RModel>& m, aiNode* node, const aiScene* scene) {
   uint32 i = 0;
   for (i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    m.m_meshes.push_back(makeSharedPtr<RMesh>());
-    processMesh(*m.m_meshes.back().get(), mesh);
-    m.m_hasSkeleton = false;
-    if (mesh->HasBones()) { m.m_hasSkeleton = true; }
-    if (scene->HasMaterials()) {
+    // String childName = Utils::format("%s_sub%d", m->getPath().baseName().c_str(), i);
+    // SPtr<RMesh> newMesh = 
 
-      m.m_meshes.back()->m_material = makeSharedPtr<RMaterial>();
+    m->m_meshes.push_back(makeSharedPtr<RMesh>());
+    processMesh(m->m_meshes.back(), mesh);
+    m->m_hasSkeleton = false;
+    if (mesh->HasBones()) { m->m_hasSkeleton = true; }
+    if (scene->HasMaterials()) {
+      // TODO: Get default material
+      m->m_meshes.back()->m_material = makeSharedPtr<RMaterial>();
       aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
       
     }
@@ -221,9 +224,9 @@ ModelCodec::decode(const File& f) {
   }
 
 
-  RModel model;
-  reinterpret_cast<RResource*>(&model)->m_name = p.fullPath().c_str();
-  reinterpret_cast<RResource*>(&model)->m_filePath = p;
+  SPtr<RModel> model = makeSharedPtr<RModel>(); // ResourceManager::instance().get<RModel>(p.baseName());
+  // reinterpret_cast<RResource*>(&model)->m_name = p.fullPath().c_str();
+  // reinterpret_cast<RResource*>(&model)->m_filePath = p;
   
 
   Assimp::Importer importer;
@@ -286,73 +289,73 @@ ModelCodec::decode(const File& f) {
 
   // meshes
   JSONValue jsonMeshes(rapidjson::kArrayType);
-  for (uint32 i = 0; i < model.m_meshes.size(); ++i) {
+  for (uint32 i = 0; i < model->m_meshes.size(); ++i) {
     JSONValue jsonMesh(rapidjson::kObjectType);
 
     // vertices
     JSONValue jsonVertices(rapidjson::kArrayType);
-    for (uint32 j = 0; j < model.m_meshes[i]->m_vertexBuffer.size(); ++j) {
+    for (uint32 j = 0; j < model->m_meshes[i]->m_vertexBuffer.size(); ++j) {
       // vertex
       JSONValue jsonVertex(rapidjson::kObjectType);
 
       JSONValue jsonPos(rapidjson::kArrayType);
-      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.x, allocator);
-      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.y, allocator);
-      jsonPos.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_position.z, allocator);
+      jsonPos.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_position.x, allocator);
+      jsonPos.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_position.y, allocator);
+      jsonPos.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_position.z, allocator);
       jsonVertex.AddMember("position", jsonPos, allocator);
     
 
 
       JSONValue jsonUV(rapidjson::kArrayType);
-      jsonUV.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_uv.x, allocator);
-      jsonUV.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_uv.y, allocator);
+      jsonUV.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_uv.x, allocator);
+      jsonUV.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_uv.y, allocator);
       jsonVertex.AddMember("uv", jsonUV, allocator);
 
 
       JSONValue jsonNormal(rapidjson::kArrayType);
-      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.x, allocator);
-      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.y, allocator);
-      jsonNormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_normal.z, allocator);
+      jsonNormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_normal.x, allocator);
+      jsonNormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_normal.y, allocator);
+      jsonNormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_normal.z, allocator);
       jsonVertex.AddMember("normal", jsonNormal, allocator);
 
       JSONValue jsonTangent(rapidjson::kArrayType);
-      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.x, allocator);
-      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.y, allocator);
-      jsonTangent.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_tangent.z, allocator);
+      jsonTangent.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_tangent.x, allocator);
+      jsonTangent.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_tangent.y, allocator);
+      jsonTangent.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_tangent.z, allocator);
       jsonVertex.AddMember("tangent", jsonTangent, allocator);
 
       JSONValue jsonBinormal(rapidjson::kArrayType);
-      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.x, allocator);
-      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.y, allocator);
-      jsonBinormal.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_binormal.z, allocator);
+      jsonBinormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_binormal.x, allocator);
+      jsonBinormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_binormal.y, allocator);
+      jsonBinormal.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_binormal.z, allocator);
       jsonVertex.AddMember("binormal", jsonBinormal, allocator);
 
       JSONValue jsonColor(rapidjson::kArrayType);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.r, allocator);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.g, allocator);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.b, allocator);
-      jsonColor.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_color.a, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.r, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.g, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.b, allocator);
+      jsonColor.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_color.a, allocator);
       jsonVertex.AddMember("color", jsonColor, allocator);
 
       JSONValue jsonBoneIDs(rapidjson::kArrayType);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[0], allocator);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[1], allocator);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[2], allocator);
-      jsonBoneIDs.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneIDs[3], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[0], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[1], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[2], allocator);
+      jsonBoneIDs.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneIDs[3], allocator);
       jsonVertex.AddMember("boneIDs", jsonBoneIDs, allocator);
     
       JSONValue jsonBoneWeights(rapidjson::kArrayType);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[0], allocator);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[1], allocator);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[2], allocator);
-      jsonBoneWeights.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_boneWeights[3], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[0], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[1], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[2], allocator);
+      jsonBoneWeights.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_boneWeights[3], allocator);
       jsonVertex.AddMember("boneWeights", jsonBoneWeights, allocator);
 
       JSONValue jsonCustomData(rapidjson::kArrayType);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[0], allocator);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[1], allocator);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[2], allocator);
-      jsonCustomData.PushBack(model.m_meshes[i]->m_vertexBuffer[j].m_customData[3], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[0], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[1], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[2], allocator);
+      jsonCustomData.PushBack(model->m_meshes[i]->m_vertexBuffer[j].m_customData[3], allocator);
       jsonVertex.AddMember("customData", jsonCustomData, allocator);
 
       jsonVertices.PushBack(jsonVertex, allocator);
@@ -361,8 +364,8 @@ ModelCodec::decode(const File& f) {
 
     // indices
     JSONValue jsonIndices(rapidjson::kArrayType);
-    for (uint32 j = 0; j < model.m_meshes[i]->m_indexBuffer.size(); ++j) {
-      jsonIndices.PushBack(model.m_meshes[i]->m_indexBuffer[j], allocator);
+    for (uint32 j = 0; j < model->m_meshes[i]->m_indexBuffer.size(); ++j) {
+      jsonIndices.PushBack(model->m_meshes[i]->m_indexBuffer[j], allocator);
     }
     jsonMesh.AddMember("indices", jsonIndices, allocator);
 
@@ -377,8 +380,8 @@ ModelCodec::decode(const File& f) {
   d.AddMember("meshes", jsonMeshes, allocator);
 
   // create a blob from our resources
-  OfStream ofs(Utils::format("%s/%s.cym", 
-                             f.parentDirectory().path().c_str(), 
+  OfStream ofs(Utils::format("%s/%s.cym",
+                             f.parentDirectory().path().c_str(),
                              f.fileName().c_str()).c_str());
   JSONOStream os(ofs);
   JSONWriter<JSONOStream> writer(os);
@@ -387,7 +390,75 @@ ModelCodec::decode(const File& f) {
   return reinterpret_cast<void*>(new String(d.stringify()));
 }
 
+SHADER_TYPE::E detectShaderTypeFromFirstLine(const String& firstLine, 
+                                             const SHADER_LANGUAGE::E& language) {
+  // Convert first line to lowercase for case-insensitive comparison
+  String lineLower = firstLine;
+  lineLower = Utils::toLowerCase(lineLower);
+//   std::transform(lineLower.begin(), lineLower.end(), lineLower.begin(),
+//     [](unsigned char c) { return std::tolower(c); });
 
+  // Remove leading/trailing whitespace
+  lineLower = lineLower.substr(lineLower.find_first_not_of(" \t"));
+  lineLower = lineLower.substr(0, lineLower.find_last_not_of(" \t") + 1);
+
+  // Check for explicit type declarations
+  if (lineLower.find("//type:") == 0 || lineLower.find("#type") == 0) {
+    String typeStr = lineLower.substr(lineLower.find(':') + 1);
+    typeStr = typeStr.substr(0, typeStr.find_first_of(" \t\n\r"));
+
+    if (typeStr == "vertex") return SHADER_TYPE::E::VERTEX;
+    if (typeStr == "pixel" || typeStr == "fragment") return SHADER_TYPE::E::PIXEL;
+    if (typeStr == "geometry") return SHADER_TYPE::E::GEOMETRY;
+    if (typeStr == "compute") return SHADER_TYPE::E::COMPUTE;
+    if (typeStr == "domain") return SHADER_TYPE::E::TDOMAIN;
+    if (typeStr == "hull") return SHADER_TYPE::E::THULL;
+    if (typeStr == "tesscontrol") return SHADER_TYPE::E::TCONTROL;
+    if (typeStr == "tesseval") return SHADER_TYPE::E::TEVAL;
+  }
+
+  // Fallback to extension-based detection if no explicit type
+  return SHADER_TYPE::E::UNKNOWN;
+}
+
+SHADER_TYPE::E determineShaderType(const Path& filename, const String& firstLine) {
+  // First try explicit type declaration
+  SHADER_LANGUAGE::E language = SHADER_LANGUAGE::E::UNKNOWN;
+
+  if (filename.extension()      == String(".hlsl")) language = SHADER_LANGUAGE::E::HLSL;
+  else if (filename.extension() == String(".glsl")) language = SHADER_LANGUAGE::E::GLSL;
+  else if (filename.extension() == String(".vert") || 
+           filename.extension() == String(".vs_hlsl") ||
+           filename.extension() == String(".vs_glsl")) return SHADER_TYPE::E::VERTEX;
+  else if (filename.extension() == String(".frag") || 
+           filename.extension() == String(".ps_hlsl")  ||
+           filename.extension() == String(".ps_glsl")  ||
+           filename.extension() == String(".pix")) return SHADER_TYPE::E::PIXEL;
+  else if (filename.extension() == String(".geom")) return SHADER_TYPE::E::GEOMETRY;
+  else if (filename.extension() == String(".comp")) return SHADER_TYPE::E::COMPUTE;
+  else if (filename.extension() == String(".tese")) return SHADER_TYPE::E::TEVAL;
+  else if (filename.extension() == String(".tesc")) return SHADER_TYPE::E::TCONTROL;
+  else if (filename.extension() == String(".hs")) return SHADER_TYPE::E::THULL;
+  else if (filename.extension() == String(".ds")) return SHADER_TYPE::E::TDOMAIN;
+
+  // If we have language info but no extension hint, use first line content
+  if (language != SHADER_LANGUAGE::E::UNKNOWN) {
+    SHADER_TYPE::E stage = detectShaderTypeFromFirstLine(firstLine, language);
+    if (stage != SHADER_TYPE::E::UNKNOWN) return stage;
+  }
+
+  // Final fallback - check for common patterns in first line
+  String lineLower = firstLine;
+  lineLower = Utils::toLowerCase(lineLower);
+
+  if (lineLower.find("vertex") != String::npos) return SHADER_TYPE::E::VERTEX;
+  if (lineLower.find("pixel") != String::npos || lineLower.find("fragment") != String::npos)
+    return SHADER_TYPE::E::PIXEL;
+  if (lineLower.find("geometry") != String::npos) return SHADER_TYPE::E::GEOMETRY;
+  if (lineLower.find("compute") != String::npos) return SHADER_TYPE::E::COMPUTE;
+
+  return SHADER_TYPE::E::UNKNOWN;
+}
   
 void*
 ShaderCodec::decode(const File& f) {
@@ -395,26 +466,37 @@ ShaderCodec::decode(const File& f) {
   // Create a copy so there is no dangling pointers
   Path p(f.path());
   String tmp = f.readFile();
+
     
   // This is a temporal hack which SHOULD work
   void* data = reinterpret_cast<void*>(tmp.c_str()[0]);
     
-  // auto tmpPointer = new ShaderResource(pathToResource, data);
-  // return SPtr<Resource>(tmpPointer);
-  // 
-  // delete(data);
-
-  // SPtr<ShaderResource> newResource =
-  //   ResourceManager::instance().create<ShaderResource>(p.baseName());
+  
 
   bool isBlob = p.extension().compare(".blob") == 0;
 
   JSONDocument d;
   d.SetObject();
 
-  JSONDocument::AllocatorType& allocator = d.GetAllocator();
+  SHADER_TYPE::E shaderType = SHADER_TYPE::E::UNKNOWN;
+  SHADER_LANGUAGE::E shaderLanguage = SHADER_LANGUAGE::E::UNKNOWN;
 
+  if (p.extension() == String(".cysl")) { 
+    // Shader is Cyllene Shader Language and inside tells wtf is extract from there
+  }
+  else {
+
+    IStringStream iss(tmp);
+
+    String line;
+    std::getline(iss, line);
+
+    shaderType = determineShaderType(p, line);
+  }
+
+  JSONDocument::AllocatorType& allocator = d.GetAllocator();
   d.AddMember("type", "shader", allocator);
+  d.AddMember("shaderType", shaderType._to_integral(), allocator);
   d.AddMember("isBlob", isBlob, allocator);
   d.AddMember("data", tmp, allocator);
 

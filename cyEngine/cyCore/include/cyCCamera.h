@@ -48,6 +48,12 @@ public:
                  const float& newFOV);
 
   void
+  setOrthogonal(const float& newWidth, 
+                const float& newHeight, 
+                const float& newZNear, 
+                const float& newZFar);
+
+  void
   setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f upDir);
 
   void

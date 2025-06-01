@@ -16,13 +16,13 @@ namespace CYLLENE_SDK {
                 eAUDIOLISTENER,
                 eAUDIOSOURCE,
                 eCAMERA,
-                eEMITTER,
                 eCOLLIDER2D,
                 eCOLLIDER3D,
                 eLIGHTAMBIENT,
                 eLIGHT2D,
                 eLIGHT3D,
                 eMESHRENDERER,
+                ePARTICLEEMITTER,
                 eSHADER,
                 eSPRITE,
                 eTEXT,
@@ -56,6 +56,18 @@ public:
 
   virtual const String
   toString() = 0;
+
+  virtual void 
+  onCreate() {}
+
+  virtual void 
+  onInit() {}
+
+  virtual void 
+  onDestroy() {}
+
+  virtual void 
+  init() {}
 
 public:
 

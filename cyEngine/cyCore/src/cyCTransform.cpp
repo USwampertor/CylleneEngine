@@ -19,9 +19,6 @@ CTransform::attachChildren(const SPtr<CTransform>& newChild) {
 
   if (!exists) {
     m_children.emplace_back(newChild);  // Add as weak_ptr
-    // if (newChild->getParent().lock().get() != this) {
-    //   newChild->setParent(std::make_shared<CTransform>(this));
-    // } 
   }
 }
 

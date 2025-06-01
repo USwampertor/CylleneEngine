@@ -62,11 +62,11 @@ public:
   }
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
-  T* 
+  SPtr<T>
   getComponent() {
     COMPONENT_TYPE::E type = T::staticType();
     if (m_components.find(type) != m_components.end()) {
-      return REINTERPRETPOINTER(T, m_components.at(type)).get();
+      return REINTERPRETPOINTER(T, m_components.at(type));
     }
     return nullptr;
   }
@@ -85,7 +85,7 @@ public:
   template <typename T, 
             typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>, 
             typename ... Args>
-  T* 
+  SPtr<T>
   createComponent(Args ... args) {
 
     COMPONENT_TYPE::E type = T::staticType();
@@ -99,7 +99,7 @@ public:
 
     // In any case, either existing or non existing, we can just return what is at
     // that location
-    return REINTERPRETPOINTER(T, m_components.at(type)).get();
+    return REINTERPRETPOINTER(T, m_components.at(type));
   }
 
   // TODO: Serialization - Check if it can be automatized to avoid writing it every
@@ -125,7 +125,7 @@ public:
   const bool& 
   isActive() { return m_isActive; }
 
-  CTransform*
+  SPtr<CTransform>
   getTransform() {
     return getComponent<CTransform>();
   }
