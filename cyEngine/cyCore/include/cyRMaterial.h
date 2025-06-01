@@ -18,11 +18,61 @@
 #include "cyMatrix4.h"
 #include "cyRResource.h"
 #include "cyRShader.h"
+#include "cyRTexture.h"
 #include "cyVector2f.h"
 #include "cyVector3f.h"
 #include "cyVector4f.h"
+#include <cyColor.h> 
 
 namespace CYLLENE_SDK {
+
+
+  namespace TEXTURE_CHANNEL
+  {
+    BETTER_ENUM(E, uint32, 
+      eCOLOR, 
+      eNORMAL, 
+      eROUGHNESS, 
+      eMETALLIC,
+      eEMISSIVE, 
+      eOCCLUSION,
+      eOPACITY);
+  }
+
+struct _declspec(align(16)) MaterialData
+{
+  Color baseColor = Color::WHITE;
+  Color emissiveColor = Color::BLACK;
+  float normalScale = 1.0f;
+  float roughness = 1.0f;
+  float metallic = 0.0f;
+  float opacity = 1.0f;
+  float opacityThreshold = 0.5f;
+  float occlusion = 1.0f;
+  float padding[2];
+};
+
+struct MaterialSignature
+{
+  uint32 bIsUsingBaseColor : 1;
+  uint32 bIsUsingBaseColorTexture : 1;
+  
+  uint32 bIsUsingNormalScale : 1;
+  uint32 bIsUsingNormalTexture : 1;
+  
+  uint32 bIsUsingEmissiveColor : 1;
+  uint32 bIsUsingEmissiveColorTexture : 1;
+  
+  
+  uint32 bIsUsingRoughnessTexture : 1;
+  uint32 bIsUsingMetallicTexture : 1;
+  uint32 bIsUsingEmissiveTexture : 1;
+  uint32 bIsUsingOpacityTexture : 1;
+  uint32 bIsUsingOpacity : 1;
+  uint32 bIsUsingOpacityThreshold : 1;
+  uint32 shaderHash = 0;
+  uint32 textureHashes[TEXTURE_CHANNEL::E::_size()] = { 0 };
+};
 
 class CY_CORE_EXPORT RMaterial : public RResource
 {
@@ -46,30 +96,6 @@ public:
   template <typename T>
   void
   setValue(const String& flag, const T& newValue);
-
-  void
-  setFloat(const String& flag, const float& newValue);
-
-  void
-  setInt32(const String& flag, const int32& newValue);
-
-  void
-  setUint32(const String& flag, const uint32& newValue);
-
-  void
-  setVector2(const String& flag, const Vector2f& newValue);
-
-  void
-  setVector3(const String& flag, const Vector3f& newValue);
-
-  void
-  setVector4(const String& flag, const Vector4f& newValue);
-
-  void 
-  setMatrix3(const String& flag, const Matrix3& newValue);
-
-  void 
-  setMatrix4(const String& flag, const Matrix4& newValue);
 
   /*
    *	@brief	Retrieves a value from the material
@@ -149,8 +175,10 @@ public:
    *	@param	const SPtr<ShaderResource>& newShader the new shader to set
    */
   void
-  loadShader(const SPtr<RShader>& newShader);
+  setShader(const SPtr<RShader>& newShader);
 
+  void
+  setTexture(TEXTURE_CHANNEL::E name, const SPtr<RTexture>& texture);
   
 private:
 
@@ -164,7 +192,14 @@ private:
 
   Map<String, SPtr<void*>> m_components;
 
-  WPtr<RShader> m_shader;
+  SPtr<RShader> m_shader;
+
+  String m_matName;
+
+  // TODO: Change this eventually to a more complex structure that uses the reflection
+  Map<TEXTURE_CHANNEL::E, SPtr<RTexture>> m_textures;
+  MaterialData m_data;
+  MaterialSignature m_signature;
 };
 
 }
