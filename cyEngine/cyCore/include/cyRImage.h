@@ -64,7 +64,8 @@ namespace CYLLENE_SDK {
               uint32,
               eNONE,
               eALPHABLEND,
-              eADDITIVE);
+              eADDITIVE,
+              eSUBSTRACTIVE);
   }
 
 using Pixel = Color;

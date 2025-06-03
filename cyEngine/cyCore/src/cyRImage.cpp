@@ -64,7 +64,7 @@ RImage::bitBlt(const SPtr<RImage>& srcImg,
         srcx = srcRect.x + destx;
         srcy = srcRect.y + desty;
       }
-      else if (TEXTUREMODE::E::eWRAP == format) {
+      else if (TEXTUREMODE::E::eWRAP == format  || TEXTUREMODE::E::eREPEAT == format) {
         srcx = (srcRect.x + destx % srcImg->m_metadata.m_width + srcRect.width) % 
                (srcRect.width);
         srcy = (srcRect.y + desty % srcImg->m_metadata.m_height + srcRect.height) % 
