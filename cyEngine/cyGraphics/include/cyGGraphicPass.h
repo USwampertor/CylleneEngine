@@ -1,8 +1,9 @@
 #pragma once
 #include "cyCorePrerequisites.h"
+#include "cyGraphicsBuffer.h"
+#include "cyGDepthStencilView.h"
 #include "cyGGraphic.h"
 #include "cyGShader.h"
-#include "cyGraphicsBuffer.h"
 #include "cyGTexture.h"
 
 
@@ -18,6 +19,7 @@ public:
   virtual ~GGraphicPass() {}
 
   virtual void initialize() = 0;
+  virtual void clear() = 0;
   virtual void execute() = 0;
   virtual void cleanup() = 0;
   virtual void shutdown() = 0;
@@ -41,6 +43,7 @@ public:
   virtual ~GShadowPass() override;
 
   virtual void initialize() override;
+  virtual void clear() override;
   virtual void execute() override;
   virtual void cleanup() override;
   virtual void shutdown() override;
@@ -49,6 +52,7 @@ public:
   SPtr<GraphicsBuffer> m_shadowCB;
   SPtr<GVertexShader> m_pVShadowShader;
   SPtr<GTexture> m_shadowDST;
+  SPtr<GDepthStencilView> m_shadowDSV;
 };
 
 class GGeometryPass : public GGraphicPass
