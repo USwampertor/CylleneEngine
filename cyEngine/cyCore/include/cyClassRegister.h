@@ -35,6 +35,8 @@ public:
     if (it != getBeingRegistry().end()) {
       return it->second(std::forward<Args>(args)...);
     }
+    CY_ASSERT(false, "Being class not registered: " + beingClassName);
+    return nullptr;
   }
 
   template<typename T,
