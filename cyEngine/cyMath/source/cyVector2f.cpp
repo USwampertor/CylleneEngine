@@ -117,7 +117,7 @@ namespace CYLLENE_SDK {
 
   bool
   Vector2f::operator<(const Vector2f& v) const {
-    return x < v.x&& y < v.y;
+    return x < v.x && y < v.y;
   }
 
   bool
