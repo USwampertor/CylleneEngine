@@ -63,6 +63,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyBBeing.cpp" />
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
     <ClCompile Include="src\cyCLight.cpp" />
     <ClCompile Include="src\cyCParticleEmitter.cpp" />

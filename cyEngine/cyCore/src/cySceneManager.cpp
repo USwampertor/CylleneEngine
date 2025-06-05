@@ -59,6 +59,38 @@ SPtr<Scene> SceneManager::findScene(const String& sceneToFind)
 
 void SceneManager::update(const float& delta)
 {
+  if (!m_activeScene) return;
+
+  // Process deletions
+  auto& toRemove = m_activeScene->m_toRemove;
+  auto& nodes = m_activeScene->m_nodes;
+
+  for (auto it = nodes.begin(); it != nodes.end(); ) {
+    if (auto being = std::static_pointer_cast<BBeing>(*it)) {
+      if (being->m_markedToDestroy) {
+      // Notify components
+        being->onDestroy();
+        being->removeAllComponents();
+      }
+
+      // Remove from scene
+      it = nodes.erase(it);
+    }
+    else {
+      ++it;
+    }
+  }
+  toRemove.clear();
+
+
+  // Update all active nodes
+  for (auto& node : nodes) {
+    if (node->isActive()) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        being->update(delta);
+      }
+    }
+  }
   // rmt_ScopedCPUSample(Update, 0);
   // Delete Entities that are marked for delete
   // for (SPtr<BBeing> toDelete : m_activeScene->m_toRemove)

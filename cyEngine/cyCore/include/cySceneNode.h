@@ -1,45 +1,54 @@
 #pragma once
 #include "cyCorePrerequisites.h"
 
+#include "cyCTransform.h"
+
 #include <cyMatrix4.h>
+
 
 namespace CYLLENE_SDK {
 
-class SNode
+class CY_CORE_EXPORT SNode
 {
 public:
   SNode() = default;
-  
-  ~SNode() {}
-// 
-//   void
-//   addChild(SPtr<SNode> newChild);
-// 
-//   void
-//   removeChildAt(uint32 index);
-// 
-//   void
-//   removeChild(SPtr<SNode> oldChild);
-// 
-//   void
-//   setParent(SPtr<SNode> newParent);
-// 
-//   const Matrix4& 
-//   getWorldTransform() const;
-// 
-//   void 
-//   setLocalTransform(const Matrix4& transform);
-//   
-//   void 
-//   updateWorldTransform(); // Recursively updates world transform
-// 
-// protected:
-//   Vector<SPtr<SNode>> m_children;
-//   SPtr<SNode> m_parent = nullptr;
-//   Matrix4 m_localTransform;
-//   Matrix4 m_worldTransform;
-//   bool m_dirty = true; // For lazy world transform updates
+  virtual ~SNode() = default;
 
+  // Hierarchy management
+  virtual void addChild(SPtr<SNode> child);
+  virtual void removeChild(SPtr<SNode> child);
+
+  // Transform access
+  virtual SPtr<CTransform> getTransform() { return nullptr; }
+
+  // Parent/child relationships
+  WPtr<SNode> getParent() const { return m_parent; }
+  const Vector<SPtr<SNode>>& getChildren() const { return m_children; }
+
+  // Find functionality
+  virtual SPtr<SNode> findChild(const String& name, bool recursive = false) const;
+
+  
+  void 
+  setActive(bool active) {
+    m_isActive = active;
+  }
+
+  const bool& 
+  isActive() { return m_isActive; }
+
+
+protected:
+  void setParent(SPtr<SNode> parent) { m_parent = parent; }
+
+  Vector<SPtr<SNode>> m_children;
+  WPtr<SNode> m_parent;
+
+  String m_nodeName;
+
+  uint32 m_nodeID = 0;
+
+  bool m_isActive = true;
 };
 
 }

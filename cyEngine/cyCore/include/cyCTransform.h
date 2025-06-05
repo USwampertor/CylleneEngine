@@ -33,7 +33,6 @@ public:
     m_children = other.m_children;
   }
 
-
   CTransform(const Vector3f& position = Vector3f::ZERO,
              const Vector3f& scale = Vector3f::ONE,
              const Quaternion& rotation = Quaternion::IDENTITY,

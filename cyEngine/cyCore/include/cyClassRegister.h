@@ -11,7 +11,7 @@
 #pragma once
 
 #include "cyCorePrerequisites.h"
-#include "cySmartPointers.h"
+#include <cySmartPointers.h>
 
 #include <iostream>
 

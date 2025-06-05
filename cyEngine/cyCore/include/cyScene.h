@@ -18,6 +18,7 @@
 
 #include <cyJSON.h>
 #include <cyVector2f.h>
+#include <cyEvent.h>
 
 namespace CYLLENE_SDK {
 
@@ -65,17 +66,69 @@ public:
     return m_name;
   }
 
+  template<typename T>
+  Vector<SPtr<BBeing>> getAllBeingsWithComponent() const {
+    Vector<SPtr<BBeing>> result;
+    for (const auto& node : m_nodes) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        if (being->getComponent<T>()) {
+          result.push_back(being);
+        }
+      }
+    }
+    return result;
+  }
+
+  template<typename T>
+  SPtr<BBeing> getFirstBeingWithComponent() const {
+    for (const auto& node : m_nodes) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        if (auto comp = being->getComponent<T>()) {
+          return being;
+        }
+      }
+    }
+    return nullptr;
+  }
+
+  Vector<SPtr<BBeing>> 
+  getAllBeings() const {
+    Vector<SPtr<BBeing>> result;
+    for (const auto& node : m_nodes) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        result.push_back(being);
+      }
+    }
+    return result;
+  }
+
+  template<typename T>
+  Vector<SPtr<T>> 
+  getBeingsOfType() const {
+    Vector<SPtr<T>> result;
+    for (const auto& node : m_nodes) {
+      if (auto being = std::static_pointer_cast<T>(node)) {
+        result.push_back(being);
+      }
+    }
+    return result;
+  }
+
   friend class SceneManager;
 
 protected:
 
   Vector<SPtr<BBeing>> m_toRemove;
 
+  Event<void, SPtr<BBeing>> onBeingAdded;
+  Event<void, SPtr<BBeing>> onBeingRemoved;
+  Event<void> onSceneLoadedEvent;
+
 private:
 
   String m_name;
   UPtr<SceneSettings> m_settings;
-  Vector<SPtr<SNode>> m_beings;
+  Vector<SPtr<SNode>> m_nodes;
 
 };
 

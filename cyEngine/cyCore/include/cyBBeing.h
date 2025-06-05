@@ -47,7 +47,7 @@ public:
    */
   BBeing() = default;
 
-  BBeing(const String& name) : m_name(name) {}
+  BBeing(const String& name) : m_beingName(name) {}
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
@@ -82,6 +82,9 @@ public:
       m_components.erase(type);
     }
   }
+
+  void
+  removeAllComponents();
 
   template <typename T, 
             typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>, 
@@ -118,26 +121,32 @@ public:
   virtual void 
   init() {}
 
-  void 
-  setActive(bool active) {
-    m_isActive = active;
+  virtual void
+  update(const float& delta) { 
+    for (auto& component : m_components) {
+      component.second->update(delta);
+    }
   }
 
-  const bool& 
-  isActive() { return m_isActive; }
-
-  SPtr<CTransform>
-  getTransform() {
+  virtual SPtr<CTransform>
+  getTransform() override {
     return getComponent<CTransform>();
   }
 
+  void addChild(SPtr<SNode> child) override;
+  void removeChild(SPtr<SNode> child) override;
+  SPtr<SNode> findChild(const String& name, bool recursive = false) const override;
+
+  SPtr<BBeing> createChild(const String& name);
+
   const String& 
-  getName() { return m_name; }
+  getName() { return m_beingName; }
 
   void
-  setName(const String& name) { m_name = name; }
+  setName(const String& name) { m_beingName = name; }
 
   friend class SceneManager;
+  friend class SNode;
 
 private:
 
@@ -148,18 +157,19 @@ private:
   /**
    * The name of the Being
    */
-  String m_name;
+  String m_beingName;
 
   /**
    * The components that has the Being
    */
   Map<COMPONENT_TYPE::E, SPtr<CComponent>> m_components;
 
-  bool m_isActive;
 
-  bool m_markedToDestroy;
+  bool m_markedToDestroy = false;
 
-  CSprite* m_gizmo;
+#if defined(CY_DEBUG) || defined(CY_DEVELOPMENT)
+  SPtr<CSprite> m_gizmo = nullptr;
+#endif
 };
 
 REGISTER_CLASS(BBeing);

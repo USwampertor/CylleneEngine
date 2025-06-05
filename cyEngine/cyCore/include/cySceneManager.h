@@ -8,7 +8,7 @@
 
 namespace CYLLENE_SDK {
 
-class SceneManager
+class CY_CORE_EXPORT SceneManager
 {
 public:
   template <typename T,
@@ -26,7 +26,7 @@ public:
   {
     SPtr<T> newBeing = makeSharedPtr<T>(std::forward<Args>(args)...);
     newBeing->Initialize();
-    m_activeScene->m_beings.push_back(newBeing);
+    m_activeScene->m_nodes.push_back(newBeing);
     return newBeing;
   }
 
@@ -34,13 +34,29 @@ public:
     typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
   SPtr<T> findObject(const String& toFind) {
     int i = 0;
-    for (const SPtr<BBeing>& e : m_activeScene->m_beings)
+    for (const SPtr<BBeing>& e : m_activeScene->m_nodes)
     {
       if (e->GetName() == toFind && !e->m_markedToDestroy)
       {
         return std::static_pointer_cast<T>(e);
       }
       ++i;
+    }
+    return nullptr;
+  }
+
+  template<typename T>
+  Vector<SPtr<BBeing>> findBBeingsWithComponent() const {
+    if (m_activeScene) {
+      return m_activeScene->getAllBeingsWithComponent<T>();
+    }
+    return {};
+  }
+
+  template<typename T>
+  SPtr<BBeing> findFirstBBeingWithComponent() const {
+    if (m_activeScene) {
+      return m_activeScene->getFirstBeingWithComponent<T>();
     }
     return nullptr;
   }
