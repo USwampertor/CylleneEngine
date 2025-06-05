@@ -4,7 +4,7 @@
 namespace CYLLENE_SDK {
 
 void
-CTransform::setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir) {
+CTransform::setLocalLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir) {
   m_tMatrix.view(eyePos, targetPos, upDir);
 }
 
@@ -50,11 +50,53 @@ CTransform::getChild(const String& name) {
 
 void
 CTransform::setParent(const SPtr<CTransform>& newParent) {
-  m_parent.reset();
-  m_parent = { newParent };
+  // m_parent.reset();
+  // m_parent = { newParent };
+
+
+  if (newParent.get() == this) {
+    CY_ASSERT(false, "Cannot parent a transform to itself");
+    return;
+  }
+
+  // Check if we're already parented to this transform
+  if (auto currentParent = m_parent.lock()) {
+    if (currentParent == newParent) {
+      return;
+    }
+  }
+
+  // Remove from current parent
+  if (auto oldParent = m_parent.lock()) {
+    oldParent->removeChildren(m_owner->getName());
+  }
+
+  // Set new parent
+  m_parent = newParent;
+
+  // Add to new parent's children if valid
+  if (newParent) {
+    newParent->attachChildren(makeSharedPtr<CTransform>(this));
+
+    // Update local transform to maintain world position
+    updateLocalFromWorld();
+  }
+
 }
 
+void 
+CTransform::updateLocalFromWorld()
+{
+  if (auto parent = m_parent.lock()) {
+    Matrix4 parentWorld = parent->getTr();
+    Matrix4 worldMatrix = getWorldMatrix();
+    Matrix4 localMatrix = parentWorld.inversed() * worldMatrix;
 
+    m_tMatrix.setPosition(localMatrix.getPosition());
+    m_tMatrix.setRotation(localMatrix.getQuatRotation());
+    m_tMatrix.setScale(localMatrix.getScale());
+  }
+}
 
 
 }

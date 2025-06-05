@@ -16,6 +16,7 @@
 #include "cyClassRegister.h"
 #include "cyCComponent.h"
 #include "cyCTransform.h"
+#include "cySceneNode.h"
 
 
 #include <cyUtilities.h>
@@ -35,7 +36,7 @@ class CSprite;
  *          are Being child classes
  *
  */
-class CY_CORE_EXPORT BBeing
+class CY_CORE_EXPORT BBeing : public SNode
 {
 
   BODY();

@@ -70,7 +70,6 @@
     <ClCompile Include="src\cyRAudio.cpp" />
     <ClCompile Include="src\cyAudioAPI.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
-    <ClCompile Include="src\cyBBeing.cpp" />
     <ClCompile Include="src\cyCCamera.cpp" />
     <ClCompile Include="src\cyClassRegister.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />

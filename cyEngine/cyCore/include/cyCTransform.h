@@ -40,64 +40,82 @@ public:
              const Quaternion& rotation = Quaternion::IDENTITY,
     const SPtr<CTransform>& parent = nullptr) : CComponent(CTransform::staticType()) {
     m_tMatrix.setTransformMatrix(position, rotation, scale);
-    m_parent.reset();
-    m_parent = { parent }; // TODO: Maybe this can be changed to setParent(parent);
+    setParent(parent);
+    // m_parent.reset();
+    // m_parent = { parent }; // TODO: Maybe this can be changed to setParent(parent);
   }
 
+  Matrix4
+  getWorldTransform() const;
+
+  Matrix4
+  getLocalTransform() const {
+    return m_tMatrix;
+  }
+
+
+
   const Vector3f&
-  getPosition() {
+  getLocalPosition() {
     return m_tMatrix.getPosition();
   }
 
   void
-  setPosition(const Vector3f& newPos) {
+  setLocalPosition(const Vector3f& newPos) {
     m_tMatrix.setPosition(newPos);
   }
 
   const Vector3f&
-  getScale() {
+  getLocalScale() {
     return m_tMatrix.getScale();
   }
 
   void
-  setScale(const Vector3f& newScale) {
+  setLocalScale(const Vector3f& newScale) {
     m_tMatrix.setScale(newScale);
   }
 
   Quaternion
-  getRotation() {
+  getLocalRotation() {
     return m_tMatrix.getQuatRotation();
   }
 
   void
-  setRotation(const Quaternion& newRotation) {
+  setLocalRotation(const Quaternion& newRotation) {
     m_tMatrix.setRotation(newRotation);
   }
 
   Vector3f
-  getEulerRotation() {
+  getLocalEulerRotation() {
     Euler e = m_tMatrix.getEulerRotation();
     return Vector3f(e.x, e.y, e.z);
   }
 
   void
-  setEulerAngle(const Vector3f& newEulerAngles) {
+  setLocalEulerAngle(const Vector3f& newEulerAngles) {
     m_tMatrix.setRotation(newEulerAngles);
   }
 
   void
-  setTransform(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot) {
+  setLocalTransform(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot) {
     m_tMatrix.setTransformMatrix(newPos, newRot, newSc);
   }
 
   void
-  setTransform(const CTransform& other) {
+  setLocalTransform(const CTransform& other) {
     m_tMatrix = other.m_tMatrix;
   }
 
   void
-  setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir);
+  setLocalLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir = Vector3f::UP);
 
+  void
+  updateLocalFromWorld();
+
+  uint32 
+  getChildCount() const {
+    return static_cast<uint32>(m_children.size());
+  }
 
   WPtr<CTransform>&
   getParent() {
@@ -111,27 +129,27 @@ public:
   }
 
   void
-  translate(const Vector3f& delta) {
+  translateLocal(const Vector3f& delta) {
     m_tMatrix.translate(delta);
   }
 
   void 
-  scale(const Vector3f& delta) {
+  scaleLocal(const Vector3f& delta) {
     m_tMatrix.scale(delta);
   }
 
   void
-  rotate(const Quaternion& delta) {
+  rotateLocal(const Quaternion& delta) {
     m_tMatrix.rotate(delta);
   }
 
   void
-  rotate(const Vector3f& deltaAngles) {
+  rotateLocal(const Vector3f& deltaAngles) {
     m_tMatrix.rotate(Quaternion(Euler(deltaAngles)));
   }
 
   void
-  reset() {
+  resetLocal() {
     m_tMatrix.identity();
   }
 
@@ -144,6 +162,22 @@ public:
   WPtr<CTransform> getChild(const String& name);
 
   void setParent(const SPtr<CTransform>& newParent);
+
+  bool isChildOf(const SPtr<CTransform>& potentialParent) const;
+  
+  bool isParentOf(const SPtr<CTransform>& potentialChild) const;
+
+  SPtr<CTransform> findChild(const String& name, bool recursive = false) const;
+
+  Vector3f transformPoint(const Vector3f& point) const;
+
+  Vector3f transformDirection(const Vector3f& direction) const;
+  
+  Vector3f inverseTransformPoint(const Vector3f& point) const;
+  
+  Vector3f inverseTransformDirection(const Vector3f& direction) const;
+
+  void forEachChild(Callback<void, SPtr<CTransform>> callback, bool recursive = false);
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eTRANSFORM; }
 
