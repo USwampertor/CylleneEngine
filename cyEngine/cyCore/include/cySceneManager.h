@@ -6,11 +6,21 @@
 #include "cySceneGraph.h"
 #include "cyBBeing.h"
 
+#include <cyModule.h>
+
 namespace CYLLENE_SDK {
 
-class CY_CORE_EXPORT SceneManager
+class CY_CORE_EXPORT SceneManager : public Module<SceneManager>
 {
 public:
+
+  SceneManager() = default;
+
+  ~SceneManager() = default;
+
+  virtual void
+  onStartUp() override;
+
   template <typename T,
   typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
     void destroyObject(SPtr<T> toDelete) {
@@ -25,7 +35,7 @@ public:
   SPtr<T> createObject(Args ... args)
   {
     SPtr<T> newBeing = makeSharedPtr<T>(std::forward<Args>(args)...);
-    newBeing->Initialize();
+    newBeing->init();
     m_activeScene->m_nodes.push_back(newBeing);
     return newBeing;
   }
@@ -34,9 +44,10 @@ public:
     typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
   SPtr<T> findObject(const String& toFind) {
     int i = 0;
-    for (const SPtr<BBeing>& e : m_activeScene->m_nodes)
+    for (const SPtr<SNode>& n : m_activeScene->m_nodes)
     {
-      if (e->GetName() == toFind && !e->m_markedToDestroy)
+      SPtr<BBeing> e = std::static_pointer_cast<BBeing>(n);
+      if (e->getName() == toFind && !e->m_markedToDestroy)
       {
         return std::static_pointer_cast<T>(e);
       }

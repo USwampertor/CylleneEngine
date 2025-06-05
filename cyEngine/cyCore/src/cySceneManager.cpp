@@ -1,6 +1,13 @@
 #include "cySceneManager.h"
 
 namespace CYLLENE_SDK {
+
+void
+SceneManager::onStartUp() {
+
+}
+
+
 SPtr<Scene> 
 SceneManager::getActiveScene()
 {
@@ -9,6 +16,10 @@ SceneManager::getActiveScene()
 
 SPtr<Scene> SceneManager::createScene(const String& newSceneName)
 {
+  if (findScene(newSceneName)) {
+    // Scene already exists, return it, and send a warning
+    return findScene(newSceneName);
+  }
   SPtr<Scene> newScene = makeSharedPtr<Scene>(newSceneName);
   newScene->init();
   m_scenes.push_back(newScene);

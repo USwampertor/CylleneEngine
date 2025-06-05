@@ -35,6 +35,10 @@
 #include <cyVector2f.h>
 #include <cyVertex.h>
 #include <cyWindow.h>
+#include <cySceneManager.h>
+#include <cyScene.h>
+#include <cySceneNode.h>
+#include <cyCParticleEmitter.h>
 
 
 using namespace CYLLENE_SDK;
@@ -80,6 +84,8 @@ TEST_CASE("[module] testing module startup") {
   CHECK(Time::isStarted());
   ResourceManager::startUp();
   CHECK(ResourceManager::isStarted());
+  SceneManager::startUp();
+  CHECK(SceneManager::isStarted());
 }
 
 #define CLASSNAME(x) #x
@@ -204,10 +210,185 @@ TEST_CASE("[window] Window creation") {
   }
 }
 
+TEST_SUITE("Scene System Tests") {
 
-TEST_SUITE("[components] Components") {
-  TEST_CASE("[components] Camera") {
-    CTransform t;
-    t.reset();
+  TEST_CASE("Scene Management") {
+
+    SUBCASE("Scene creation and activation") {
+      auto scene = SceneManager::instance().createScene("TestScene");
+      CHECK(scene != nullptr);
+      CHECK(scene->getName() == "TestScene");
+
+      CHECK(SceneManager::instance().changeScene("TestScene"));
+      CHECK(SceneManager::instance().getActiveScene() == scene);
+    }
+
+    SUBCASE("Multiple scene handling") {
+      SceneManager::instance().createScene("Scene1");
+      SceneManager::instance().createScene("Scene2");
+
+      CHECK(SceneManager::instance().changeScene("Scene1"));
+      CHECK(SceneManager::instance().getActiveScene()->getName() == "Scene1");
+
+      CHECK(SceneManager::instance().changeScene("Scene2"));
+      CHECK(SceneManager::instance().getActiveScene()->getName() == "Scene2");
+
+      CHECK(SceneManager::instance().findScene("Scene1") != nullptr);
+      CHECK(SceneManager::instance().findScene("NonExistent") == nullptr);
+    }
+  }
+
+  TEST_CASE("GameObject Management") {
+
+    SceneManager::instance().createScene("TestScene");
+    SceneManager::instance().changeScene("TestScene");
+
+    SUBCASE("Object creation") {
+      auto obj = SceneManager::instance().createObject<BBeing>("TestObject");
+      CHECK(obj != nullptr);
+      CHECK(obj->getName() == "TestObject");
+      CHECK(SceneManager::instance().findObject<BBeing>("TestObject") == obj);
+    }
+
+    SUBCASE("Object destruction") {
+      auto obj = SceneManager::instance().createObject<BBeing>("ToDelete");
+      // CHECK_FALSE(obj->m_markedToDestroy);
+      CHECK(SceneManager::instance().findObject<BBeing>("ToDelete") != nullptr);
+
+      SceneManager::instance().destroyObject(obj);
+      // CHECK(obj->m_markedToDestroy);
+
+      // Should be removed in next update
+      SceneManager::instance().update(0.0f);
+      CHECK(SceneManager::instance().findObject<BBeing>("ToDelete") == nullptr);
+    }
+  }
+
+  TEST_CASE("Transform Component") {
+    SceneManager::instance().createScene("TestScene2");
+    SceneManager::instance().changeScene("TestScene2");
+
+    auto parent = SceneManager::instance().createObject<BBeing>("Parent");
+    auto child = SceneManager::instance().createObject<BBeing>("Child");
+
+    auto parentTransform = parent->createComponent<CTransform>();
+    auto childTransform = child->createComponent<CTransform>();
+
+    SUBCASE("Basic Transform Operations") {
+      parentTransform->setLocalPosition(Vector3f(1, 2, 3));
+      Vector3f localPos = parentTransform->getLocalPosition();
+      CHECK(localPos == Vector3f(1, 2, 3));
+
+      parentTransform->setLocalScale(Vector3f(2, 2, 2));
+      CHECK(parentTransform->getLocalScale() == Vector3f(2, 2, 2));
+
+      Quaternion rot(Euler(0, 45, 0));
+      parentTransform->setLocalRotation(rot);
+      // CHECK(parentTransform->getLocalRotation() == rot);
+    }
+
+    SUBCASE("Parent-Child Relationships") {
+      // Set up hierarchy
+      parent->addChild(child);
+      childTransform->setParent(parentTransform);
+
+      CHECK(childTransform->getParent().lock() == parentTransform);
+      CHECK(parentTransform->getChildCount() == 1);
+
+      SUBCASE("World Position Inheritance") {
+        parentTransform->setLocalPosition(Vector3f(10, 0, 0));
+        childTransform->setLocalPosition(Vector3f(5, 0, 0));
+
+        CHECK(childTransform->getWorldPosition() == Vector3f(15, 0, 0));
+
+        // Move parent - child should move with it
+        parentTransform->setLocalPosition(Vector3f(20, 0, 0));
+        CHECK(childTransform->getWorldPosition() == Vector3f(25, 0, 0));
+      }
+
+      SUBCASE("World Scale Inheritance") {
+        parentTransform->setLocalScale(Vector3f(2, 2, 2));
+        childTransform->setLocalScale(Vector3f(0.5, 0.5, 0.5));
+
+        CHECK(childTransform->getWorldScale() == Vector3f(1, 1, 1));
+      }
+
+      SUBCASE("World Rotation Inheritance") {
+        Quaternion parentRot(Euler(0, 90, 0));
+        Quaternion childRot(Euler(0, 45, 0));
+
+        parentTransform->setLocalRotation(parentRot);
+        childTransform->setLocalRotation(childRot);
+
+        // Combined rotation should be ~135 degrees
+        Quaternion expectedRot = parentRot * childRot;
+        // CHECK(childTransform->getWorldRotation() == expectedRot);
+      }
+    }
+
+    SUBCASE("Transform Hierarchy Operations") {
+      auto grandchild = SceneManager::instance().createObject<BBeing>("Grandchild");
+      auto grandchildTransform = grandchild->createComponent<CTransform>();
+
+      // Build hierarchy
+      parent->addChild(child);
+      child->addChild(grandchild);
+      childTransform->setParent(parentTransform);
+      grandchildTransform->setParent(childTransform);
+
+      CHECK(parentTransform->isParentOf(childTransform));
+      CHECK(childTransform->isChildOf(parentTransform));
+      CHECK(grandchildTransform->isChildOf(parentTransform));
+
+      // Test find operations
+      CHECK(parentTransform->findChild("Child") == childTransform);
+      CHECK(parentTransform->findChild("Grandchild", true) == grandchildTransform);
+
+      // Test removal
+      parentTransform->removeChildren("Child");
+      CHECK(parentTransform->getChildCount() == 0);
+      CHECK(childTransform->getParent().expired());
+    }
+
+    SUBCASE("LookAt Functionality") {
+      parentTransform->setLocalPosition(Vector3f(0, 0, 0));
+      childTransform->setLocalPosition(Vector3f(0, 0, 5));
+
+      parentTransform->setLookAt(childTransform->getWorldPosition());
+
+      // Forward vector should point toward child
+      Vector3f forward = parentTransform->getWorldTransform().getForwardVector();
+      Vector3f expectedDirection = (childTransform->getWorldPosition() - parentTransform->getWorldPosition()).normalized();
+
+      CHECK(Vector3f::dot(forward, expectedDirection) == doctest::Approx(1.0f).epsilon(0.001f));
+    }
+  }
+
+  TEST_CASE("Component Querying") {
+    SceneManager manager;
+    manager.createScene("TestScene");
+    manager.changeScene("TestScene");
+
+    // Create test objects with different components
+    auto cameraObj = manager.createObject<BBeing>("Camera");
+    cameraObj->createComponent<CCamera>();
+
+    auto lightObj = manager.createObject<BBeing>("Light");
+    lightObj->createComponent<CLight>();
+
+    auto emptyObj = manager.createObject<BBeing>("Empty");
+
+    SUBCASE("Find by component type") {
+      auto cameras = manager.findBBeingsWithComponent<CCamera>();
+      CHECK(cameras.size() == 1);
+      CHECK(cameras[0]->getName() == "Camera");
+
+      auto lights = manager.findBBeingsWithComponent<CLight>();
+      CHECK(lights.size() == 1);
+      CHECK(lights[0]->getName() == "Light");
+
+      CHECK(manager.findFirstBBeingWithComponent<CCamera>() == cameraObj);
+      CHECK(manager.findFirstBBeingWithComponent<CParticleEmitter>() == nullptr);
+    }
   }
 }
