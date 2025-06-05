@@ -280,7 +280,8 @@ TEST_SUITE("Scene System Tests") {
       CHECK(localPos == Vector3f(1, 2, 3));
 
       parentTransform->setLocalScale(Vector3f(2, 2, 2));
-      CHECK(parentTransform->getLocalScale() == Vector3f(2, 2, 2));
+      Vector3f localScale = parentTransform->getLocalScale();
+      CHECK(localScale == Vector3f(2, 2, 2));
 
       Quaternion rot(Euler(0, 45, 0));
       parentTransform->setLocalRotation(rot);
@@ -335,8 +336,8 @@ TEST_SUITE("Scene System Tests") {
       child->addChild(grandchild);
       childTransform->setParent(parentTransform);
       grandchildTransform->setParent(childTransform);
-
-      CHECK(parentTransform->isParentOf(childTransform));
+      bool isParent = parentTransform->isParentOf(childTransform);
+      CHECK(isParent);
       CHECK(childTransform->isChildOf(parentTransform));
       CHECK(grandchildTransform->isChildOf(parentTransform));
 
