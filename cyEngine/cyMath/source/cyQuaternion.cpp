@@ -288,7 +288,10 @@ Quaternion::operator=(const Quaternion& other) {
 
 bool
 Quaternion::operator==(const Quaternion& other) {
-  return x == other.x && y == other.y && z == other.z && w == other.w;
+  return Math::isNearSame(x, other.x) && 
+         Math::isNearSame(y, other.y) && 
+         Math::isNearSame(z, other.z) && 
+         Math::isNearSame(w, other.w);
 }
 
 bool
