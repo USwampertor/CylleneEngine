@@ -51,7 +51,7 @@
     <ClInclude Include="include\cyScene.h" />
     <ClInclude Include="include\cySceneGraph.h" />
     <ClInclude Include="include\cySceneManager.h" />
-    <ClInclude Include="include\cySceneNode.h" />
+    <ClInclude Include="include\cySNode.h" />
     <ClInclude Include="include\cyRScript.h" />
     <ClInclude Include="include\cyRShader.h" />
     <ClInclude Include="include\cyRSkeleton.h" />
@@ -88,7 +88,7 @@
     <ClCompile Include="src\cyScene.cpp" />
     <ClCompile Include="src\cySceneGraph.cpp" />
     <ClCompile Include="src\cySceneManager.cpp" />
-    <ClCompile Include="src\cySceneNode.cpp" />
+    <ClCompile Include="src\cySNode.cpp" />
     <ClCompile Include="src\cyRScript.cpp" />
     <ClCompile Include="src\cyRShader.cpp" />
     <ClCompile Include="src\cyRSkeleton.cpp" />

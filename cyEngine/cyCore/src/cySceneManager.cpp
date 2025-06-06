@@ -74,7 +74,7 @@ void SceneManager::update(const float& delta)
 
   // Process deletions
   auto& toRemove = m_activeScene->m_toRemove;
-  auto& nodes = m_activeScene->m_nodes;
+  auto& nodes = m_activeScene->m_rootNode->getChildren();
 
   for (auto it = nodes.begin(); it != nodes.end(); ) {
     if (auto being = std::static_pointer_cast<BBeing>(*it)) {

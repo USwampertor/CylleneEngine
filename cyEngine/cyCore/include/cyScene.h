@@ -13,7 +13,7 @@
 #include "cyCorePrerequisites.h"
 
 #include "cyBBeing.h"
-#include "cySceneNode.h"
+#include "cySNode.h"
 #include "cyGameMode.h"
 
 #include <cyJSON.h>
@@ -39,7 +39,7 @@ public:
   Scene() = default;
 
   Scene(const String& name)
-    : m_name(name) {}
+    : m_sceneName(name) {}
   
   ~Scene() = default;
   
@@ -63,13 +63,13 @@ public:
   }
 
   const String& getName() const {
-    return m_name;
+    return m_sceneName;
   }
 
   template<typename T>
   Vector<SPtr<BBeing>> getAllBeingsWithComponent() const {
     Vector<SPtr<BBeing>> result;
-    for (const auto& node : m_nodes) {
+    for (const auto& node : m_rootNode->getChildren()) {
       if (auto being = std::static_pointer_cast<BBeing>(node)) {
         if (being->getComponent<T>()) {
           result.push_back(being);
@@ -81,7 +81,7 @@ public:
 
   template<typename T>
   SPtr<BBeing> getFirstBeingWithComponent() const {
-    for (const auto& node : m_nodes) {
+    for (const auto& node : m_rootNode->getChildren()) {
       if (auto being = std::static_pointer_cast<BBeing>(node)) {
         if (auto comp = being->getComponent<T>()) {
           return being;
@@ -94,7 +94,7 @@ public:
   Vector<SPtr<BBeing>> 
   getAllBeings() const {
     Vector<SPtr<BBeing>> result;
-    for (const auto& node : m_nodes) {
+    for (const auto& node : m_rootNode->getChildren()) {
       if (auto being = std::static_pointer_cast<BBeing>(node)) {
         result.push_back(being);
       }
@@ -106,7 +106,7 @@ public:
   Vector<SPtr<T>> 
   getBeingsOfType() const {
     Vector<SPtr<T>> result;
-    for (const auto& node : m_nodes) {
+    for (const auto& node : m_rootNode->getChildren()) {
       if (auto being = std::static_pointer_cast<T>(node)) {
         result.push_back(being);
       }
@@ -126,9 +126,9 @@ protected:
 
 private:
 
-  String m_name;
+  String m_sceneName;
   UPtr<SceneSettings> m_settings;
-  Vector<SPtr<SNode>> m_nodes;
+  UPtr<SNode> m_rootNode;
 
 };
 

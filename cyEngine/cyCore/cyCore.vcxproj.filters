@@ -108,7 +108,7 @@
     <ClInclude Include="include\cyCCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cySceneNode.h">
+    <ClInclude Include="include\cySNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyInput.h">
@@ -218,7 +218,7 @@
     <ClCompile Include="src\cyCTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cySceneNode.cpp">
+    <ClCompile Include="src\cySNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyInputMapping.cpp">

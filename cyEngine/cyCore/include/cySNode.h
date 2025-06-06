@@ -15,20 +15,23 @@ public:
   virtual ~SNode() = default;
 
   // Hierarchy management
-  virtual void addChild(SPtr<SNode> child);
-  virtual void removeChild(SPtr<SNode> child);
+  virtual void addChild(SPtr<SNode> child, bool keepWorldTransform = true);
+  virtual void removeChild(SPtr<SNode> child, bool recursive = false);
 
   // Transform access
   virtual SPtr<CTransform> getTransform() { return nullptr; }
 
   // Parent/child relationships
   WPtr<SNode> getParent() const { return m_parent; }
-  const Vector<SPtr<SNode>>& getChildren() const { return m_children; }
+  Vector<SPtr<SNode>>& getChildren() { return m_children; }
 
   // Find functionality
-  virtual SPtr<SNode> findChild(const String& name, bool recursive = false) const;
+  virtual SPtr<SNode> findChild(const String& name, bool recursive = true) const;
 
+  virtual Vector<SPtr<SNode>> findChildren(Callback<bool, SPtr<SNode>> condition, bool recursive = true) const;
   
+  virtual bool isDescendantOf(const SPtr<SNode>& ancestor) const;
+
   void 
   setActive(bool active) {
     m_isActive = active;
@@ -37,9 +40,11 @@ public:
   const bool& 
   isActive() { return m_isActive; }
 
+  friend class BBeing;
 
 protected:
-  void setParent(SPtr<SNode> parent) { m_parent = parent; }
+  void setParent(SPtr<SNode> parent, bool keepWorldTransform = true);
+  /*Matrix4 getWorldTransform() const;*/
 
   Vector<SPtr<SNode>> m_children;
   WPtr<SNode> m_parent;

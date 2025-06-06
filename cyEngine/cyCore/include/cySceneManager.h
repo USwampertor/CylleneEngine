@@ -23,7 +23,7 @@ public:
 
   template <typename T,
   typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
-    void destroyObject(SPtr<T> toDelete) {
+    void destroyBeing(SPtr<T> toDelete) {
     toDelete->m_markedToDestroy = true;
     m_activeScene->m_toRemove.push_back(toDelete);
 
@@ -32,32 +32,34 @@ public:
   template <typename T,
     typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>,
     typename... Args>
-  SPtr<T> createObject(Args ... args)
+  SPtr<T> createBeing(Args ... args)
   {
     SPtr<T> newBeing = makeSharedPtr<T>(std::forward<Args>(args)...);
     newBeing->init();
-    m_activeScene->m_nodes.push_back(newBeing);
+    m_activeScene->m_rootNode->getChildren().push_back(newBeing);
     return newBeing;
   }
 
   template <typename T,
-    typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
-  SPtr<T> findObject(const String& toFind) {
-    int i = 0;
-    for (const SPtr<SNode>& n : m_activeScene->m_nodes)
-    {
-      SPtr<BBeing> e = std::static_pointer_cast<BBeing>(n);
-      if (e->getName() == toFind && !e->m_markedToDestroy)
-      {
-        return std::static_pointer_cast<T>(e);
+  typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
+  SPtr<T> 
+  findBeing(const String& toFind, bool recursive = true) {
+    for (const SPtr<SNode>& node : m_activeScene->m_rootNode->getChildren()) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        if (being->getName() == toFind && !being->m_markedToDestroy) {
+          return std::static_pointer_cast<T>(being);
+        }
+        if (recursive) {
+          auto found = being->findBeing(toFind, true);
+          if (found) return std::static_pointer_cast<T>(found);
+        }
       }
-      ++i;
     }
     return nullptr;
   }
 
   template<typename T>
-  Vector<SPtr<BBeing>> findBBeingsWithComponent() const {
+  Vector<SPtr<BBeing>> findBeingsWithComponent() const {
     if (m_activeScene) {
       return m_activeScene->getAllBeingsWithComponent<T>();
     }
@@ -65,7 +67,7 @@ public:
   }
 
   template<typename T>
-  SPtr<BBeing> findFirstBBeingWithComponent() const {
+  SPtr<BBeing> findFirstBeingWithComponent() const {
     if (m_activeScene) {
       return m_activeScene->getFirstBeingWithComponent<T>();
     }

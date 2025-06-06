@@ -16,7 +16,7 @@
 #include "cyClassRegister.h"
 #include "cyCComponent.h"
 #include "cyCTransform.h"
-#include "cySceneNode.h"
+#include "cySNode.h"
 
 
 #include <cyUtilities.h>
@@ -97,7 +97,8 @@ public:
     // Is the component already created?
     if (m_components.find(type) == m_components.end()) {
       // m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
-      m_components.try_emplace(type, makeSharedPtr<T>(args ...));
+      SPtr<T> newComponent = makeSharedPtr<T>(std::forward<Args>(args)...);
+      m_components.try_emplace(type, newComponent);
       m_components.at(type)->setOwner(this);
     }
 
@@ -133,11 +134,23 @@ public:
     return getComponent<CTransform>();
   }
 
-  void addChild(SPtr<SNode> child) override;
-  void removeChild(SPtr<SNode> child) override;
-  SPtr<SNode> findChild(const String& name, bool recursive = false) const override;
+  void 
+  addChild(SPtr<SNode> child, bool keepWorldTransform = true) override;
+  
+  void 
+  removeChild(SPtr<SNode> child, bool recursive = false) override;
+  
+  SPtr<SNode> 
+  findChild(const String& name, bool recursive = true) const override;
 
-  SPtr<BBeing> createChild(const String& name);
+  SPtr<BBeing> 
+  findBeing(const String& name, bool recursive = true) const;
+
+  Vector<SPtr<BBeing>> 
+  getAllBeingsInHierarchy() const;
+
+  SPtr<BBeing> 
+  createChild(const String& name);
 
   const String& 
   getName() { return m_beingName; }
