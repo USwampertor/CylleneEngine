@@ -189,7 +189,7 @@ CTransform::addChild(const SPtr<CTransform>& newChild) {
 
   if (!exists) {
     m_children.emplace_back(newChild);  // Add as weak_ptr
-    newChild->m_parent = makeSharedPtr<CTransform>(*this);
+    newChild->m_parent = makeSharedPtr<CComponent>(*this);
   }
 }
 

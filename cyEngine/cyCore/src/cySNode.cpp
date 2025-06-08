@@ -26,7 +26,6 @@ SNode::addChild(SPtr<SNode> child, bool keepWorldTransform) {
     // Add to this node's children
     m_childrenNodes.push_back(child);
     child->m_parentNode = makeSharedPtr<SNode>(*this);
-
   }
 
   // Optionally preserve world transform
@@ -115,6 +114,22 @@ SNode::findChild(const String& name, bool recursive) const {
   return nullptr;
 }
 
+SPtr<SNode>
+SNode::findChildWhere(Callback<bool, SPtr<SNode>> condition, bool recursive) const {
+  for (const auto& child : m_childrenNodes) {
+    if (condition(child)) {
+      return child;
+    }
+
+    if (recursive) {
+      auto found = child->findChildWhere(condition, true);
+      if (found) return found;
+    }
+  }
+
+  return nullptr;
+}
+
 Vector<SPtr<SNode>> 
 SNode::findChildren(Callback<bool, SPtr<SNode>> condition, bool recursive) const {
   Vector<SPtr<SNode>> results;
@@ -128,6 +143,46 @@ SNode::findChildren(Callback<bool, SPtr<SNode>> condition, bool recursive) const
     }
   }
   return results;
+}
+
+void
+SNode::setParent(const SPtr<SNode>& newParent) {
+  if (newParent) {
+    newParent->addChild(makeSharedPtr<SNode>(*this));
+  }
+  else if (auto oldParent = m_parentNode.lock()) {
+    oldParent->removeChild(makeSharedPtr<SNode>(*this));
+  }
+}
+
+bool
+SNode::isChildOf(const SPtr<SNode>& potentialParent) const {
+  if (!potentialParent) {
+    return false;
+  }
+
+  SPtr<SNode> parent = m_parentNode.lock();
+
+  if (!parent) {
+    return false;
+  }
+
+  return parent == potentialParent;
+}
+
+bool
+SNode::isParentOf(const SPtr<SNode>& potentialChild) {
+  if (!potentialChild) {
+    return false;
+  }
+
+  WPtr<SNode> parent = potentialChild->getParent();
+
+  if (parent.expired()) {
+    return false;
+  }
+
+  return parent.lock().get() == this;
 }
 
 bool 
