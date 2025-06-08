@@ -189,11 +189,15 @@ public:
     m_tMatrix.identity();
   }
 
-  void attachChildren(const SPtr<CTransform>& newChild);
+  void addChild(const SPtr<CTransform>& newChild);
 
-  void removeChildren(const String& name);
+  void addChildren(const Vector<SPtr<CTransform>>& newChildren);
 
-  void removeChildrenAt(const uint32& index);
+  void removeChild(const String& name);
+
+  void removeChildAt(const uint32& index);
+
+  void removeAllChildren();
 
   WPtr<CTransform> getChild(const String& name);
 
@@ -228,6 +232,14 @@ public:
 
     return toReturn;
   }
+
+private:
+
+  bool
+  isRootSC(SPtr<CTransform> parent);
+
+  bool
+  isPartOfSceneSC(SPtr<CTransform> child);
 
 public:
 

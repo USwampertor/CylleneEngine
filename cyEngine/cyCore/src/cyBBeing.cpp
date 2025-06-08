@@ -28,8 +28,8 @@ BBeing::addChild(SPtr<SNode> child, bool keepWorldTransform) {
 
 void BBeing::removeChild(SPtr<SNode> child, bool recursive) {
   // 1. Check if child exists in this Being's children
-  auto it = std::find(m_children.begin(), m_children.end(), child);
-  if (it == m_children.end()) return;
+  auto it = std::find(m_childrenNodes.begin(), m_childrenNodes.end(), child);
+  if (it == m_childrenNodes.end()) return;
 
   // 2. Handle recursive removal (if requested)
   if (recursive) {
@@ -47,8 +47,8 @@ void BBeing::removeChild(SPtr<SNode> child, bool recursive) {
   }
 
   // 4. Detach from hierarchy
-  child->m_parent.reset();
-  m_children.erase(it);
+  child->m_parentNode.reset();
+  m_childrenNodes.erase(it);
 
   // 5. Mark for destruction if it's a BBeing
   if (auto beingChild = std::static_pointer_cast<BBeing>(child)) {
@@ -65,7 +65,7 @@ BBeing::findChild(const String& name, bool recursive) const {
 
   // Recursive search if enabled
   if (recursive) {
-    for (const auto& child : m_children) {
+    for (const auto& child : m_childrenNodes) {
       if (auto being = std::static_pointer_cast<BBeing>(child)) {
         result = being->findChild(name, true);
         if (result) return result;
@@ -77,9 +77,9 @@ BBeing::findChild(const String& name, bool recursive) const {
 
 SPtr<BBeing> 
 BBeing::findBeing(const String& name, bool recursive) const {
-  for (const auto& child : m_children) {
+  for (const auto& child : m_childrenNodes) {
     if (auto being = std::static_pointer_cast<BBeing>(child)) {
-      if (being->m_beingName == name) {
+      if (being->m_nodeName == name) {
         return being;
       }
       if (recursive) {
@@ -94,7 +94,7 @@ BBeing::findBeing(const String& name, bool recursive) const {
 Vector<SPtr<BBeing>> 
 BBeing::getAllBeingsInHierarchy() const {
   Vector<SPtr<BBeing>> beings;
-  for (const auto& child : m_children) {
+  for (const auto& child : m_childrenNodes) {
     if (auto being = std::static_pointer_cast<BBeing>(child)) {
       beings.push_back(being);
       auto nested = being->getAllBeingsInHierarchy();

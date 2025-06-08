@@ -47,7 +47,7 @@ public:
    */
   BBeing() = default;
 
-  BBeing(const String& name) : m_beingName(name) {}
+  BBeing(const String& name) : SNode(name) {}
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
@@ -152,11 +152,7 @@ public:
   SPtr<BBeing> 
   createChild(const String& name);
 
-  const String& 
-  getName() { return m_beingName; }
-
-  void
-  setName(const String& name) { m_beingName = name; }
+  
 
   friend class SceneManager;
   friend class SNode;
@@ -170,7 +166,7 @@ private:
   /**
    * The name of the Being
    */
-  String m_beingName;
+  // String m_nodeName;
 
   /**
    * The components that has the Being
@@ -178,11 +174,10 @@ private:
   Map<COMPONENT_TYPE::E, SPtr<CComponent>> m_components;
 
 
-  bool m_markedToDestroy = false;
-
 #if defined(CY_DEBUG) || defined(CY_DEVELOPMENT)
   SPtr<CSprite> m_gizmo = nullptr;
 #endif
+
 };
 
 REGISTER_CLASS(BBeing);

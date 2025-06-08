@@ -114,6 +114,10 @@ public:
     return result;
   }
 
+  UPtr<SNode>& getRootNode() {
+    return m_rootNode;
+  }
+
   friend class SceneManager;
 
 protected:

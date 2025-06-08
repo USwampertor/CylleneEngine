@@ -19,7 +19,7 @@ CMeshRenderer::setModel(const SPtr<RModel>& newModel) {
                                        Quaternion::IDENTITY, 
                                        m_owner->getTransform()); // TODO: REVISION ON HOW DO YOU GET TRANSFORM
     child->createComponent<CMeshRenderer>(newModel->m_meshes[i]);
-    m_owner->getTransform()->attachChildren(child->getTransform());
+    m_owner->getTransform()->addChild(child->getTransform());
   }
 }
 

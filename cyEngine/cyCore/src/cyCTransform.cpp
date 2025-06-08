@@ -1,5 +1,6 @@
 #include "cyCTransform.h"
 #include "cyBBeing.h"
+#include "cySceneManager.h"
 
 namespace CYLLENE_SDK {
 
@@ -167,14 +168,18 @@ void CTransform::updateLocalFromWorld()
     Matrix4 worldMatrix = getWorldTransform();
     Matrix4 localMatrix = parentWorld.inversed() * worldMatrix;
 
-    m_tMatrix.setPosition(localMatrix.getPosition());
-    m_tMatrix.setRotation(localMatrix.getQuatRotation());
-    m_tMatrix.setScale(localMatrix.getScale());
+    m_tMatrix = localMatrix;
   }
 }
 
 void
-CTransform::attachChildren(const SPtr<CTransform>& newChild) {
+CTransform::addChild(const SPtr<CTransform>& newChild) {
+
+  if (!newChild || newChild.get() == this) {
+    CY_ASSERT(false, "Should not add a null transform or itself as a child");
+    return;
+  }
+
   bool exists = std::any_of(m_children.begin(), 
                             m_children.end(), 
                             [&newChild](const WPtr<CTransform>& weak) {
@@ -184,24 +189,85 @@ CTransform::attachChildren(const SPtr<CTransform>& newChild) {
 
   if (!exists) {
     m_children.emplace_back(newChild);  // Add as weak_ptr
+    newChild->m_parent = makeSharedPtr<CTransform>(*this);
   }
 }
 
 void
-CTransform::removeChildren(const String& name) {
-  for (int i = 0; i < m_children.size(); ++i) {
-    if (m_children[i].lock()->m_owner->getName() == name) {
-      m_children.erase(m_children.begin() + i);
-      break;
+CTransform::addChildren(const Vector<SPtr<CTransform>>& newChildren) {
+  for (const auto& child : newChildren) {
+    if (child && child.get() != this) {  // Avoid self-attachment
+      addChild(child);
     }
   }
 }
 
 void
-CTransform::removeChildrenAt(const uint32& index) {
-  CY_ASSERT(index < m_children.size());
-  m_children.erase(m_children.begin() + index);
+CTransform::removeChild(const String& name) {
 
+  if (!isRootSC(makeSharedPtr<CTransform>(*this))) {
+    // This is not root, so we can detach the child
+    for (int i = 0; i < m_children.size(); ++i) {
+      if (m_children[i].lock()->m_owner->getName() == name) {
+        if (SPtr<CTransform> child = m_children[i].lock()) {
+          if (isPartOfSceneSC(child)) {
+            child->setParent(SceneManager::instance().getActiveScene()->getRootNode()->getTransform());
+          }
+          else {
+            m_children[i].lock()->m_parent.reset();
+          }
+        }
+        m_children.erase(m_children.begin() + i);
+        break;
+      }
+    }
+  }
+}
+
+void
+CTransform::removeChildAt(const uint32& index) {
+  CY_ASSERT(index < m_children.size());
+  if (!isRootSC(makeSharedPtr<CTransform>(*this))) {
+    // This is not root, so we can detach the child
+    
+    if (SPtr<CTransform> child = m_children[index].lock()) {
+      if (isPartOfSceneSC(child)) {
+        child->setParent(SceneManager::instance().getActiveScene()->getRootNode()->getTransform());
+      }
+      else {
+        m_children[index].lock()->m_parent.reset();
+      }
+    }
+    m_children.erase(m_children.begin() + index);
+  }
+}
+
+void
+CTransform::removeAllChildren() {
+  if (!isRootSC(makeSharedPtr<CTransform>(*this))) {
+    for (auto& childWeak : m_children) {
+      if (auto child = childWeak.lock()) {
+        // This is not root, so we can detach the child
+        if (isPartOfSceneSC(child)) {
+          child->setParent(SceneManager::instance().getActiveScene()->getRootNode()->getTransform());
+        }
+        else {
+         child->m_parent.reset();
+        }
+      }
+    }
+    m_children.clear();
+  }
+}
+
+bool
+CTransform::isRootSC(SPtr<CTransform> parent) {
+  return SceneManager::instance().getActiveScene()->getRootNode().get() == parent->m_owner;
+}
+
+bool
+CTransform::isPartOfSceneSC(SPtr<CTransform> child) {
+  return SceneManager::instance().findBeing<BBeing>(child->m_owner->getName()) != nullptr;
 }
 
 WPtr<CTransform>
@@ -215,9 +281,6 @@ CTransform::getChild(const String& name) {
 
 void
 CTransform::setParent(const SPtr<CTransform>& newParent) {
-  // m_parent.reset();
-  // m_parent = { newParent };
-
 
   if (newParent.get() == this) {
     CY_ASSERT(false, "Cannot parent a transform to itself");
@@ -233,7 +296,7 @@ CTransform::setParent(const SPtr<CTransform>& newParent) {
 
   // Remove from current parent
   if (auto oldParent = m_parent.lock()) {
-    oldParent->removeChildren(m_owner->getName());
+    oldParent->removeChild(m_owner->getName());
   }
 
   // Set new parent
@@ -241,12 +304,11 @@ CTransform::setParent(const SPtr<CTransform>& newParent) {
 
   // Add to new parent's children if valid
   if (newParent) {
-    newParent->attachChildren(makeSharedPtr<CTransform>(*this));
+    newParent->addChild(makeSharedPtr<CTransform>(*this));
 
     // Update local transform to maintain world position
     updateLocalFromWorld();
   }
-
 }
 
 
