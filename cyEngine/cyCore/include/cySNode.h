@@ -16,30 +16,38 @@ public:
   SNode(const String& name)
     : m_nodeName(name) {}
 
+  SNode(const SNode& other)
+    : m_nodeName(other.m_nodeName),
+      m_nodeID(other.m_nodeID),
+      m_isActive(other.m_isActive),
+      m_markedToDestroy(other.m_markedToDestroy),
+      m_parentNode(other.m_parentNode),
+      m_childrenNodes(other.m_childrenNodes) {}
+
   virtual ~SNode() = default;
 
   // Hierarchy management
-  virtual void addChild(SPtr<SNode> child, bool keepWorldTransform = true);
-  virtual void addChildren(const Vector<SPtr<SNode>>& newChildren, bool keepWorldTransform = true);
-  virtual void removeChild(SPtr<SNode> child, bool recursive = false);
+  virtual void addChild(WPtr<SNode> child, bool keepWorldTransform = true);
+  virtual void addChildren(const Vector<WPtr<SNode>>& newChildren, bool keepWorldTransform = true);
+  virtual void removeChild(WPtr<SNode> child, bool recursive = false);
   virtual void removeChild(const String& child);
   virtual void removeAllChildren();
 
   // Transform access
-  virtual SPtr<CTransform> getTransform() { return nullptr; }
+  virtual WPtr<CTransform> getTransform() { return {}; }
 
   // Parent/child relationships
   WPtr<SNode> getParent() const { return m_parentNode; }
-  Vector<SPtr<SNode>>& getChildren() { return m_childrenNodes; }
+  Vector<WPtr<SNode>>& getChildren() { return m_childrenNodes; }
 
   // Find functionality
-  virtual SPtr<SNode> findChild(const String& nodeName, bool recursive = true) const;
-  virtual SPtr<SNode> findChildWhere(Callback<bool, SPtr<SNode>> condition, bool recursive = true) const;
-  virtual Vector<SPtr<SNode>> findChildren(Callback<bool, SPtr<SNode>> condition, bool recursive = true) const;
-  void setParent(const SPtr<SNode>& newParent);
-  virtual bool isChildOf(const SPtr<SNode>& potentialParent) const;
-  bool isParentOf(const SPtr<SNode>& potentialChild);
-  virtual bool isDescendantOf(const SPtr<SNode>& ancestor) const;
+  virtual WPtr<SNode> findChild(const String& nodeName, bool recursive = true) const;
+  virtual WPtr<SNode> findChildWhere(Callback<bool, WPtr<SNode>> condition, bool recursive = true) const;
+  virtual Vector<WPtr<SNode>> findChildren(Callback<bool, WPtr<SNode>> condition, bool recursive = true) const;
+  // void setParent(const SPtr<SNode>& newParent);
+  virtual bool isChildOf(const WPtr<SNode>& potentialParent) const;
+  bool isParentOf(const WPtr<SNode>& potentialChild);
+  virtual bool isDescendantOf(const WPtr<SNode>& ancestor) const;
 
   void 
   setActive(bool active) {
@@ -56,12 +64,13 @@ public:
   setName(const String& name) { m_nodeName = name; }
 
   friend class BBeing;
+  friend class SceneManager;
 
+  void setParent(const WPtr<SNode>& parent, bool keepWorldTransform = true);
 protected:
-  void setParent(SPtr<SNode> parent, bool keepWorldTransform = true);
   /*Matrix4 getWorldTransform() const;*/
 
-  Vector<SPtr<SNode>> m_childrenNodes;
+  Vector<WPtr<SNode>> m_childrenNodes;
 
   WPtr<SNode> m_parentNode;
 

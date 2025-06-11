@@ -49,6 +49,10 @@ public:
 
   BBeing(const String& name) : SNode(name) {}
 
+  BBeing(const BBeing& other) 
+    : SNode(other),
+      m_components(other.m_components) {}
+
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
   addComponent(SPtr<T>& component) {
@@ -63,15 +67,19 @@ public:
   }
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
-  SPtr<T>
+  WPtr<T>
   getComponent() {
     COMPONENT_TYPE::E type = T::staticType();
     if (m_components.find(type) != m_components.end()) {
       return REINTERPRETPOINTER(T, m_components.at(type));
     }
-    return nullptr;
+    return {};
   }
 
+  bool
+  hasComponent(COMPONENT_TYPE::E type) const {
+    return m_components.find(type) != m_components.end();
+  }
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
@@ -89,7 +97,7 @@ public:
   template <typename T, 
             typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>, 
             typename ... Args>
-  SPtr<T>
+  WPtr<T>
   createComponent(Args ... args) {
 
     COMPONENT_TYPE::E type = T::staticType();
@@ -99,7 +107,7 @@ public:
       // m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
       SPtr<T> newComponent = makeSharedPtr<T>(std::forward<Args>(args)...);
       m_components.try_emplace(type, newComponent);
-      m_components.at(type)->setOwner(this);
+      m_components.at(type)->setOwner(makeSharedPtr<BBeing>(*this));
     }
 
     // In any case, either existing or non existing, we can just return what is at
@@ -129,19 +137,19 @@ public:
     }
   }
 
-  virtual SPtr<CTransform>
+  virtual WPtr<CTransform>
   getTransform() override {
     return getComponent<CTransform>();
   }
 
-  void 
-  addChild(SPtr<SNode> child, bool keepWorldTransform = true) override;
-  
-  void 
-  removeChild(SPtr<SNode> child, bool recursive = false) override;
-  
-  SPtr<SNode> 
-  findChild(const String& name, bool recursive = true) const override;
+  // void 
+  // addChild(SPtr<SNode> child, bool keepWorldTransform = true) override;
+  // 
+  // void 
+  // removeChild(SPtr<SNode> child, bool recursive = false) override;
+  // 
+  // SPtr<SNode> 
+  // findChild(const String& name, bool recursive = true) const override;
 
   SPtr<BBeing> 
   findBeing(const String& name, bool recursive = true) const;
@@ -149,10 +157,8 @@ public:
   Vector<SPtr<BBeing>> 
   getAllBeingsInHierarchy() const;
 
-  SPtr<BBeing> 
-  createChild(const String& name);
-
-  
+  // SPtr<BBeing> 
+  // createChild(const String& name);
 
   friend class SceneManager;
   friend class SNode;

@@ -4,51 +4,49 @@
 namespace CYLLENE_SDK {
 
 void 
-SNode::addChild(SPtr<SNode> child, bool keepWorldTransform) {
-  if (!child || child.get() == this) {
+SNode::addChild(WPtr<SNode> child, bool keepWorldTransform) {
+  if (!child.lock() || child.lock().get() == this) {
     CY_ASSERT(false, "Should not add a null transform or itself as a child");
     return;
   }
 
   // Detach from existing parent
-  if (auto oldParent = child->m_parentNode.lock()) {
+  if (auto oldParent = child.lock()->m_parentNode.lock()) {
     oldParent->removeChild(child);
   }
 
   bool exists = std::any_of(m_childrenNodes.begin(), 
                             m_childrenNodes.end(), 
-                            [&child](const SPtr<SNode>& reference) {
+                            [&child](const WPtr<SNode>& reference) {
    
-    return reference && reference == child;  // Compare ownership
+    return reference.lock() && reference.lock() == child.lock();  // Compare ownership
   });
 
   if (!exists) {
     // Add to this node's children
     m_childrenNodes.push_back(child);
-    child->m_parentNode = makeSharedPtr<SNode>(*this);
+    child.lock()->m_parentNode = makeSharedPtr<SNode>(*this);
   }
-
-  // Optionally preserve world transform
-  if (child->getTransform()) {
-    // auto childTransform = child->getTransform();
-    // auto worldMatrix = childTransform->getWorldTransform();
-    if (auto thisTransform = getTransform()) {
-      // worldMatrix = thisTransform->getWorldTransform().inversed() * worldMatrix;
-      thisTransform->addChild(child->getTransform());
-      if (keepWorldTransform) {
-        child->getTransform()->setWorldTransform(thisTransform->getWorldTransform().inversed() * 
-                                                 child->getTransform()->getWorldTransform());
-        child->getTransform()->updateLocalFromWorld();
-      }
-    }
-    // childTransform->m_tMatrix = worldMatrix;
-  }
+  // Next steps should be handled by Being override
+//   // Optionally preserve world transform
+//   if (child.lock()->getTransform()) {
+//     
+//     if (auto thisTransform = getTransform()) {
+//      
+//       if (keepWorldTransform) {
+//         child->getTransform()->setWorldTransform(thisTransform->getWorldTransform().inversed() * 
+//                                                  child->getTransform()->getWorldTransform());
+//         child->getTransform()->updateLocalFromWorld();
+//       }
+//     }
+//     // childTransform->m_tMatrix = worldMatrix;
+//   }
 }
 
 void
-SNode::addChildren(const Vector<SPtr<SNode>>& newChildren, bool keepWorldTransform /* = true */) {
+SNode::addChildren(const Vector<WPtr<SNode>>& newChildren, bool keepWorldTransform /* = true */) {
   for (const auto& child : newChildren) {
-    if (child && child.get() != this) {
+    if (child.lock() && child.lock().get() != this) {
       addChild(child, keepWorldTransform);
     }
   }
@@ -58,106 +56,103 @@ void
 SNode::removeChild(const String& name) {
 
   for (int i = 0; i < m_childrenNodes.size(); ++i) {
-    if (m_childrenNodes[i]->getName() == name) {
+    if (m_childrenNodes[i].lock()->getName() == name) {
       
       // Optionally preserve world transform
-      if (m_childrenNodes[i]->getTransform()) {
+      if (m_childrenNodes[i].lock()->getTransform().lock()) {
         // auto childTransform = child->getTransform();
         // auto worldMatrix = childTransform->getWorldTransform();
-        if (auto thisTransform = getTransform()) {
+        WPtr<CTransform> thisTransform = getTransform();
+        if (thisTransform.lock()) {
           // worldMatrix = thisTransform->getWorldTransform().inversed() * worldMatrix;
-          thisTransform->removeChild(name);
+          // thisTransform->removeChild(name);
         }
         // childTransform->m_tMatrix = worldMatrix;
       }
 
-      m_childrenNodes[i]->m_parentNode.reset();
+      m_childrenNodes[i].lock()->m_parentNode.reset();
       m_childrenNodes.erase(m_childrenNodes.begin() + i);
     }
   }
 }
 
 void 
-SNode::removeChild(SPtr<SNode> child, bool recursive) {
-  auto it = std::find(m_childrenNodes.begin(), m_childrenNodes.end(), child);
-  if (it != m_childrenNodes.end()) {
-    // Recursively remove all descendants if requested
-    if (recursive) {
-      for (auto& grandchild : child->m_childrenNodes) {
-        child->removeChild(grandchild, true);
+SNode::removeChild(WPtr<SNode> child, bool recursive) {
+  
+  for (int i = 0; i < m_childrenNodes.size(); ++i) {
+    // If found the child node
+    if (m_childrenNodes[i].lock().get() == child.lock().get()) {
+      if (recursive) {
+        for (auto& grandchild : child.lock()->m_childrenNodes) {
+          child.lock()->removeChild(grandchild, true);
+        }
       }
+      m_childrenNodes[i].lock()->m_parentNode.reset();
+      m_childrenNodes.erase(m_childrenNodes.begin() + i);
+      break;
     }
-    (*it)->m_parentNode.reset();
-    m_childrenNodes.erase(it);
   }
+  
 }
 
 void
 SNode::removeAllChildren() {
   for (auto& child : m_childrenNodes) {
-    child->m_parentNode.reset();
+    child.lock()->m_parentNode.reset();
   }
   m_childrenNodes.clear();
 }
 
-SPtr<SNode> 
+//////////////////////////////////////////////////////////////////////////
+
+WPtr<SNode> 
 SNode::findChild(const String& name, bool recursive) const {
   for (const auto& child : m_childrenNodes) {
-    if (child->m_nodeName == name) {
+    if (child.lock()->m_nodeName == name) {
       return child;
     }
     if (recursive) {
-      auto found = child->findChild(name, true);
-      if (found) return found;
+      auto found = child.lock()->findChild(name, true);
+      if (found.lock()) return found;
     }
   }
-  return nullptr;
+  return {};
 }
 
-SPtr<SNode>
-SNode::findChildWhere(Callback<bool, SPtr<SNode>> condition, bool recursive) const {
+WPtr<SNode>
+SNode::findChildWhere(Callback<bool, WPtr<SNode>> condition, bool recursive) const {
   for (const auto& child : m_childrenNodes) {
     if (condition(child)) {
       return child;
     }
 
     if (recursive) {
-      auto found = child->findChildWhere(condition, true);
-      if (found) return found;
+      auto found = child.lock()->findChildWhere(condition, true);
+      if (found.lock()) return found;
     }
   }
 
-  return nullptr;
+  return {};
 }
 
-Vector<SPtr<SNode>> 
-SNode::findChildren(Callback<bool, SPtr<SNode>> condition, bool recursive) const {
-  Vector<SPtr<SNode>> results;
+Vector<WPtr<SNode>>
+SNode::findChildren(Callback<bool, WPtr<SNode>> condition, bool recursive) const {
+  Vector<WPtr<SNode>> results;
   for (const auto& child : m_childrenNodes) {
     if (condition(child)) {
       results.push_back(child);
     }
     if (recursive) {
-      auto nested = child->findChildren(condition, true);
+      auto nested = child.lock()->findChildren(condition, true);
       results.insert(results.end(), nested.begin(), nested.end());
     }
   }
   return results;
 }
 
-void
-SNode::setParent(const SPtr<SNode>& newParent) {
-  if (newParent) {
-    newParent->addChild(makeSharedPtr<SNode>(*this));
-  }
-  else if (auto oldParent = m_parentNode.lock()) {
-    oldParent->removeChild(makeSharedPtr<SNode>(*this));
-  }
-}
-
 bool
-SNode::isChildOf(const SPtr<SNode>& potentialParent) const {
-  if (!potentialParent) {
+SNode::isChildOf(const WPtr<SNode>& potentialParent) const {
+  if (!potentialParent.lock()) {
     return false;
   }
 
@@ -167,16 +162,16 @@ SNode::isChildOf(const SPtr<SNode>& potentialParent) const {
     return false;
   }
 
-  return parent == potentialParent;
+  return parent == potentialParent.lock();
 }
 
 bool
-SNode::isParentOf(const SPtr<SNode>& potentialChild) {
-  if (!potentialChild) {
+SNode::isParentOf(const WPtr<SNode>& potentialChild) {
+  if (!potentialChild.lock()) {
     return false;
   }
 
-  WPtr<SNode> parent = potentialChild->getParent();
+  WPtr<SNode> parent = potentialChild.lock()->getParent();
 
   if (parent.expired()) {
     return false;
@@ -186,19 +181,19 @@ SNode::isParentOf(const SPtr<SNode>& potentialChild) {
 }
 
 bool 
-SNode::isDescendantOf(const SPtr<SNode>& ancestor) const {
+SNode::isDescendantOf(const WPtr<SNode>& ancestor) const {
   auto parent = m_parentNode.lock();
   while (parent) {
-    if (parent == ancestor) return true;
+    if (parent == ancestor.lock()) { return true; }
     parent = parent->m_parentNode.lock();
   }
   return false;
 }
 
 void 
-SNode::setParent(SPtr<SNode> parent, bool keepWorldTransform) {
-  if (parent) {
-    parent->addChild(makeSharedPtr<SNode>(*this), keepWorldTransform);
+SNode::setParent(const WPtr<SNode>& parent, bool keepWorldTransform) {
+  if (parent.lock()) {
+    parent.lock()->addChild(makeSharedPtr<SNode>(*this), keepWorldTransform);
   }
   else if (auto oldParent = m_parentNode.lock()) {
     oldParent->removeChild(makeSharedPtr<SNode>(*this));

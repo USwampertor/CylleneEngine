@@ -74,22 +74,20 @@ void SceneManager::update(const float& delta)
 
   // Process deletions
   auto& toRemove = m_activeScene->m_toRemove;
-  auto& nodes = m_activeScene->m_rootNode->getChildren();
+  auto& nodes = m_activeScene->m_beingVector;
 
   for (auto it = nodes.begin(); it != nodes.end(); ) {
-    if (auto being = std::static_pointer_cast<BBeing>(*it)) {
+    if (SPtr<BBeing> being = *it) {
       if (being->m_markedToDestroy) {
       // Notify components
         being->onDestroy();
         being->removeAllComponents();
+        being->getParent().lock()->removeChild(being);
+        // Remove from scene
+        it = nodes.erase(it);
       }
-
-      // Remove from scene
-      it = nodes.erase(it);
     }
-    else {
-      ++it;
-    }
+    ++it;
   }
   toRemove.clear();
 

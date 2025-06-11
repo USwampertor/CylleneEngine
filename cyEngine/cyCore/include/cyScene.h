@@ -15,6 +15,7 @@
 #include "cyBBeing.h"
 #include "cySNode.h"
 #include "cyGameMode.h"
+#include "cyCComponent.h"
 
 #include <cyJSON.h>
 #include <cyVector2f.h>
@@ -66,47 +67,59 @@ public:
     return m_sceneName;
   }
 
-  template<typename T>
-  Vector<SPtr<BBeing>> getAllBeingsWithComponent() const {
-    Vector<SPtr<BBeing>> result;
-    for (const auto& node : m_rootNode->getChildren()) {
-      if (auto being = std::static_pointer_cast<BBeing>(node)) {
-        if (being->getComponent<T>()) {
-          result.push_back(being);
-        }
-      }
-    }
-    return result;
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
+  Vector<SPtr<BBeing>> getAllBeingsWithComponent(T type) const {
+    // Vector<SPtr<BBeing>> result;
+    // for (const auto& node : m_rootNode->getChildren()) {
+    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
+    //     if (being->getComponent<T>()) {
+    //       result.push_back(being);
+    //     }
+    //   }
+    // }
+    // return result;
+    // return m_rootNode->findChildren([&](WPtr<BBeing> node) {
+    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
+    //     return being->hasComponent(T::staticType());
+    //   }
+    //   return false;
+    // }, true);)
+    return {};
   }
 
-  template<typename T>
-  SPtr<BBeing> getFirstBeingWithComponent() const {
-    for (const auto& node : m_rootNode->getChildren()) {
-      if (auto being = std::static_pointer_cast<BBeing>(node)) {
-        if (auto comp = being->getComponent<T>()) {
-          return being;
-        }
-      }
-    }
-    return nullptr;
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
+  WPtr<BBeing> getFirstBeingWithComponent(T type) const {
+    // return m_rootNode->findChildWhere([&](WPtr<BBeing> node) {
+    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
+    //     return being->hasComponent(T::staticType());
+    //   }
+    //   return false;
+    // }, true);)
+    // for (const auto& node : m_rootNode->getChildren()) {
+    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
+    //     if (auto comp = being->getComponent<T>()) {
+    //       return being;
+    //     }
+    //   }
+    // }
+    // return {};
+    return {};
   }
 
-  Vector<SPtr<BBeing>> 
+  Vector<WPtr<BBeing>> 
   getAllBeings() const {
-    Vector<SPtr<BBeing>> result;
-    for (const auto& node : m_rootNode->getChildren()) {
-      if (auto being = std::static_pointer_cast<BBeing>(node)) {
-        result.push_back(being);
-      }
+    Vector<WPtr<BBeing>> result;
+    for (const auto& node : m_beingVector) {
+      result.push_back(node);
     }
     return result;
   }
 
   template<typename T>
-  Vector<SPtr<T>> 
+  Vector<WPtr<T>> 
   getBeingsOfType() const {
-    Vector<SPtr<T>> result;
-    for (const auto& node : m_rootNode->getChildren()) {
+    Vector<WPtr<T>> result;
+    for (const auto& node : m_beingVector) {
       if (auto being = std::static_pointer_cast<T>(node)) {
         result.push_back(being);
       }
@@ -131,8 +144,11 @@ protected:
 private:
 
   String m_sceneName;
+  
   UPtr<SceneSettings> m_settings;
   UPtr<SNode> m_rootNode;
+
+  Vector<SPtr<BBeing>> m_beingVector;
 
 };
 

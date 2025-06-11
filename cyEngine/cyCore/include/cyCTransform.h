@@ -29,17 +29,20 @@ public:
   CTransform(const CTransform& other) : 
     CComponent(CTransform::staticType()) {
     m_tMatrix = other.m_tMatrix;
-    m_parent = other.m_parent;  
-    m_children = other.m_children;
+//     m_parent = other.m_parent;  
+//     m_children = other.m_children;
   }
 
   CTransform(const Vector3f& position = Vector3f::ZERO,
              const Vector3f& scale = Vector3f::ONE,
-             const Quaternion& rotation = Quaternion::IDENTITY,
-             const SPtr<CTransform>& parent = nullptr) : CComponent(CTransform::staticType()) {
-    m_tMatrix.setTransformMatrix(position, rotation, scale);
-    setParent(parent);
+             const Quaternion& rotation = Quaternion::IDENTITY) 
+    : CComponent(CTransform::staticType()) {
+      m_tMatrix.setTransformMatrix(position, rotation, scale);
   }
+
+  CTransform(const Matrix4& transformMatrix)
+    : CComponent(CTransform::staticType()), 
+      m_tMatrix(transformMatrix) {}
 
   Vector3f
   getWorldPosition();
@@ -148,21 +151,16 @@ public:
   void
   updateLocalFromWorld();
 
-  uint32 
-  getChildCount() {
-    return static_cast<uint32>(m_children.size());
-  }
+  // uint32 
+  // getChildCount() {
+  //   return static_cast<uint32>(m_children.size());
+  // }
 
-  WPtr<CTransform>&
-  getParent() {
-    // TODO: Check if parent is still valid
-    return m_parent;
-  }
+  WPtr<CTransform>
+  getParentTransform();
 
-  Vector<WPtr<CTransform>>&
-  getChildren() {
-    return m_children;
-  }
+  WPtr<CTransform>
+  getChildTransform(const uint32& index);
 
   void
   translateLocal(const Vector3f& delta) {
@@ -185,29 +183,29 @@ public:
   }
 
   void
-  reset() {
+  resetTransform() {
     m_tMatrix.identity();
   }
 
-  void addChild(const SPtr<CTransform>& newChild);
-
-  void addChildren(const Vector<SPtr<CTransform>>& newChildren);
-
-  void removeChild(const String& name);
-
-  void removeChildAt(const uint32& index);
-
-  void removeAllChildren();
-
-  WPtr<CTransform> getChild(const String& name);
-
-  void setParent(const SPtr<CTransform>& newParent);
-
-  bool isChildOf(const SPtr<CTransform>& potentialParent);
-  
-  bool isParentOf(const SPtr<CTransform>& potentialChild);
-
-  SPtr<CTransform> findChild(const String& name, bool recursive = false);
+  // void addChild(const SPtr<CTransform>& newChild);
+  // 
+  // void addChildren(const Vector<SPtr<CTransform>>& newChildren);
+  // 
+  // void removeChild(const String& name);
+  // 
+  // void removeChildAt(const uint32& index);
+  // 
+  // void removeAllChildren();
+  // 
+  // WPtr<CTransform> getChild(const String& name);
+  // 
+  // void setParent(const SPtr<CTransform>& newParent);
+  // 
+  // bool isChildOf(const SPtr<CTransform>& potentialParent);
+  // 
+  // bool isParentOf(const SPtr<CTransform>& potentialChild);
+  // 
+  // SPtr<CTransform> findChild(const String& name, bool recursive = false);
 
   Vector3f transformPoint(const Vector3f& point);
 
@@ -217,7 +215,7 @@ public:
   
   Vector3f inverseTransformDirection(const Vector3f& direction);
 
-  void forEachChild(Callback<void, SPtr<CTransform>> callback, bool recursive = false);
+  // void forEachChild(Callback<void, SPtr<CTransform>> callback, bool recursive = false);
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eTRANSFORM; }
 
@@ -245,9 +243,9 @@ public:
 
   Matrix4 m_tMatrix;
 
-  WPtr<CTransform> m_parent;
-  
-  Vector<WPtr<CTransform>> m_children;
+  // WPtr<CTransform> m_parent;
+  // 
+  // Vector<WPtr<CTransform>> m_children;
 };
 
 }

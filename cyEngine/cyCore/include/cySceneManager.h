@@ -32,20 +32,38 @@ public:
   template <typename T,
     typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>,
     typename... Args>
-  SPtr<T> createBeing(Args ... args)
+  WPtr<T> createBeing(Args ... args)
   {
     SPtr<T> newBeing = makeSharedPtr<T>(std::forward<Args>(args)...);
     newBeing->init();
+    m_activeScene->m_beingVector.push_back(newBeing);
     m_activeScene->m_rootNode->getChildren().push_back(newBeing);
     return newBeing;
   }
 
   template <typename T,
+    typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
+  WPtr<T> instantiateBeing(Vector3f position = Vector3f::ZERO, 
+                           Quaternion rotation = Quaternion::IDENTITY,
+                           WPtr<CTransform> parent = nullptr)
+  {
+    SPtr<T> newBeing = makeSharedPtr<T>();
+    newBeing->init();
+    m_activeScene->m_beingVector.push_back(newBeing);
+    m_activeScene->m_rootNode->getChildren().push_back(newBeing);
+    if (parent.lock() != nullptr) {
+      parent.lock()->m_owner.lock()->addChild(newBeing);
+    }
+    return newBeing;
+  }
+
+  
+  template <typename T,
   typename = std::enable_if_t<std::is_base_of<BBeing, T>::value>>
-  SPtr<T> 
+  WPtr<T> 
   findBeing(const String& toFind, bool recursive = true) {
-    for (const SPtr<SNode>& node : m_activeScene->m_rootNode->getChildren()) {
-      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+    for (const WPtr<SNode>& node : m_activeScene->m_rootNode->getChildren()) {
+      if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
         if (being->getName() == toFind && !being->m_markedToDestroy) {
           return std::static_pointer_cast<T>(being);
         }
@@ -55,23 +73,23 @@ public:
         }
       }
     }
-    return nullptr;
+    return {};
   }
 
-  template<typename T>
-  Vector<SPtr<BBeing>> findBeingsWithComponent() const {
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
+  Vector<WPtr<BBeing>> findBeingsWithComponent(T type) const {
     if (m_activeScene) {
-      return m_activeScene->getAllBeingsWithComponent<T>();
+      return m_activeScene->getAllBeingsWithComponent(type);
     }
     return {};
   }
 
-  template<typename T>
-  SPtr<BBeing> findFirstBeingWithComponent() const {
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
+  WPtr<BBeing> findFirstBeingWithComponent(T type) const {
     if (m_activeScene) {
-      return m_activeScene->getFirstBeingWithComponent<T>();
+      return m_activeScene->getFirstBeingWithComponent(type);
     }
-    return nullptr;
+    return {};
   }
 
   SPtr<Scene> createScene(const String& newSceneName);
