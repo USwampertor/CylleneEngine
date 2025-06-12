@@ -39,6 +39,11 @@ public:
   // Parent/child relationships
   WPtr<SNode> getParent() const { return m_parentNode; }
   Vector<WPtr<SNode>>& getChildren() { return m_childrenNodes; }
+  
+  uint32 
+  getChildCount() {
+    return static_cast<uint32>(m_childrenNodes.size());
+  }
 
   // Find functionality
   virtual WPtr<SNode> findChild(const String& nodeName, bool recursive = true) const;
@@ -73,6 +78,8 @@ protected:
   Vector<WPtr<SNode>> m_childrenNodes;
 
   WPtr<SNode> m_parentNode;
+
+  WPtr<BBeing> m_self;
 
   String m_nodeName;
 

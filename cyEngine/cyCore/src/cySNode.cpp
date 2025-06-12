@@ -5,42 +5,51 @@ namespace CYLLENE_SDK {
 
 void 
 SNode::addChild(WPtr<SNode> child, bool keepWorldTransform) {
-  if (!child.lock() || child.lock().get() == this) {
+  if (child.expired()) {
+    CY_ASSERT(false, "Child is invalid.");
+    return;
+  }
+
+  SPtr<SNode> childPtr = child.lock();
+
+  if (!childPtr || childPtr.get() == this) {
     CY_ASSERT(false, "Should not add a null transform or itself as a child");
     return;
   }
 
   // Detach from existing parent
-  if (auto oldParent = child.lock()->m_parentNode.lock()) {
+  if (SPtr<SNode> oldParent = childPtr->m_parentNode.lock()) {
     oldParent->removeChild(child);
   }
 
   bool exists = std::any_of(m_childrenNodes.begin(), 
                             m_childrenNodes.end(), 
-                            [&child](const WPtr<SNode>& reference) {
-   
-    return reference.lock() && reference.lock() == child.lock();  // Compare ownership
+                            [&childPtr](const WPtr<SNode>& reference) {
+    return reference.lock() && reference.lock() == childPtr;  // Compare ownership
   });
 
   if (!exists) {
     // Add to this node's children
     m_childrenNodes.push_back(child);
-    child.lock()->m_parentNode = makeSharedPtr<SNode>(*this);
+    childPtr->m_parentNode = m_self;
   }
+
   // Next steps should be handled by Being override
-//   // Optionally preserve world transform
-//   if (child.lock()->getTransform()) {
-//     
-//     if (auto thisTransform = getTransform()) {
-//      
-//       if (keepWorldTransform) {
-//         child->getTransform()->setWorldTransform(thisTransform->getWorldTransform().inversed() * 
-//                                                  child->getTransform()->getWorldTransform());
-//         child->getTransform()->updateLocalFromWorld();
-//       }
-//     }
-//     // childTransform->m_tMatrix = worldMatrix;
-//   }
+  // Optionally preserve world transform
+  WPtr<CTransform> thisTransform = getTransform();
+  WPtr<CTransform> childTransform = childPtr->getTransform();
+
+  if (!childTransform.expired() && !thisTransform.expired()) {
+    if (keepWorldTransform) {
+      SPtr<CTransform> childTransformPtr = childTransform.lock();
+      SPtr<CTransform> thisTransformPtr = thisTransform.lock();
+
+      childTransformPtr->setWorldTransform(thisTransformPtr->getWorldTransform().inversed() *
+                                           childTransformPtr->getWorldTransform());
+      childTransformPtr->updateLocalFromWorld();
+    }
+    // childTransform->m_tMatrix = worldMatrix;
+  }
 }
 
 void
@@ -193,10 +202,10 @@ SNode::isDescendantOf(const WPtr<SNode>& ancestor) const {
 void 
 SNode::setParent(const WPtr<SNode>& parent, bool keepWorldTransform) {
   if (parent.lock()) {
-    parent.lock()->addChild(makeSharedPtr<SNode>(*this), keepWorldTransform);
+    parent.lock()->addChild(m_self, keepWorldTransform);
   }
   else if (auto oldParent = m_parentNode.lock()) {
-    oldParent->removeChild(makeSharedPtr<SNode>(*this));
+    oldParent->removeChild(m_self);
   }
 }
 

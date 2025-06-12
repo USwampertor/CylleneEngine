@@ -1,4 +1,5 @@
 #include "cyBBeing.h"
+#include "cySceneManager.h"
 
 namespace CYLLENE_SDK {
 
@@ -104,15 +105,15 @@ BBeing::getAllBeingsInHierarchy() const {
   return beings;
 }
 
-// SPtr<BBeing> 
-// BBeing::createChild(const String& name) {
-//   auto child = makeSharedPtr<BBeing>(name);
-//   child->createComponent<CTransform>();
-//   addChild(child);
-// 
-//   // Ensure child has transform component
-// 
-//   return child;
-// }
+WPtr<BBeing> 
+BBeing::createChild(const String& name) {
+  WPtr<BBeing> child = SceneManager::instance().createBeing<BBeing>(name);
+  WPtr<CTransform> childTransfor = child.lock()->createComponent<CTransform>();
+  addChild(child);
+
+  // Ensure child has transform component
+
+  return child;
+}
 
 }

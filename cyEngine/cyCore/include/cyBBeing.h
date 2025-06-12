@@ -157,8 +157,8 @@ public:
   Vector<SPtr<BBeing>> 
   getAllBeingsInHierarchy() const;
 
-  // SPtr<BBeing> 
-  // createChild(const String& name);
+  WPtr<BBeing> 
+  createChild(const String& name);
 
   friend class SceneManager;
   friend class SNode;

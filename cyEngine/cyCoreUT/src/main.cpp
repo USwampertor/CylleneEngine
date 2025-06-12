@@ -265,25 +265,30 @@ TEST_SUITE("Scene System Tests") {
   }
 
   TEST_CASE("GameObject Parenting") {
-    // SPtr<BBeing> parent = SceneManager::instance().createBeing<BBeing>("Parent");
-    // parent->createComponent<CTransform>();
-    // SPtr<BBeing> child1 = parent->createChild("Child1");
-    // CHECK(parent->getTransform()->getChildCount() == 1);
-    // 
-    // SPtr<BBeing> child2 = makeSharedPtr<BBeing>("Child2");
-    // child2->createComponent<CTransform>(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY, parent->getTransform());
-    // CHECK(parent->getTransform()->getChildCount() == 2);
-    // 
-    // SPtr<BBeing> grandparent = SceneManager::instance().createBeing<BBeing>("Grandparent");
-    // grandparent->createComponent<CTransform>();
-    // 
-    // parent->getTransform()->setParent(grandparent->getTransform());
-    // CHECK(grandparent->getTransform()->getChildCount() == 1);
-    // CHECK(parent->getTransform()->isChildOf(grandparent->getTransform()));
-    // for (auto& being : SceneManager::instance().getActiveScene()->getAllBeings()) {
-    //   std::cout << "Being: " << being->getName() << std::endl;
-    // }
-    // CHECK(SceneManager::instance().getActiveScene()->getAllBeings().size() == 4);
+    WPtr<BBeing> parent = SceneManager::instance().createBeing<BBeing>("Parent");
+    parent.lock()->createComponent<CTransform>();
+
+    WPtr<BBeing> child1 = parent.lock()->createChild("Child1");
+    CHECK(parent.lock()->getChildCount() == 1);
+    
+    WPtr<BBeing> child2 = SceneManager::instance().createBeing<BBeing>("Child2");
+    child2.lock()->createComponent<CTransform>(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
+    parent.lock()->addChild(child2);
+
+    CHECK(parent.lock()->getChildCount() == 2);
+    
+    WPtr<BBeing> grandparent = SceneManager::instance().createBeing<BBeing>("Grandparent");
+    grandparent.lock()->createComponent<CTransform>();
+    
+    parent.lock()->setParent(grandparent);
+    CHECK(grandparent.lock()->getChildCount() == 1);
+    CHECK(parent.lock()->isChildOf(grandparent));
+
+    for (WPtr<BBeing>& being : SceneManager::instance().getActiveScene()->getAllBeings()) {
+      std::cout << "Being: " << being.lock()->getName() << std::endl;
+    }
+
+    CHECK(SceneManager::instance().getActiveScene()->getAllBeings().size() == 4);
 
   }
 

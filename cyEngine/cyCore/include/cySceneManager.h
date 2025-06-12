@@ -36,6 +36,7 @@ public:
   {
     SPtr<T> newBeing = makeSharedPtr<T>(std::forward<Args>(args)...);
     newBeing->init();
+    newBeing->m_self = newBeing;
     m_activeScene->m_beingVector.push_back(newBeing);
     m_activeScene->m_rootNode->getChildren().push_back(newBeing);
     return newBeing;

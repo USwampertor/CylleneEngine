@@ -93,9 +93,25 @@ CTransform::setWorldEulerAngle(const Vector3f& rotation) {
 
 Matrix4 
 CTransform::getWorldTransform() {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    return parent->getWorldTransform() * m_tMatrix;
+  if (m_owner.expired()) {
+    return m_tMatrix;
   }
+
+  SPtr<BBeing> owner = m_owner.lock();
+  if (owner->getParent().expired()) {
+    return m_tMatrix;
+  }
+
+  SPtr<BBeing> parent = std::static_pointer_cast<BBeing>(owner->getParent().lock());
+  if (parent->getTransform().expired()) {
+    return m_tMatrix;
+  }
+
+  SPtr<CTransform> parentTransform = parent->getTransform().lock();
+  if (parentTransform) {
+    return parentTransform->getWorldTransform() * m_tMatrix;
+  }
+
   return m_tMatrix;
 }
 
@@ -134,8 +150,26 @@ CTransform::setWorldTransform(const Vector3f& newPos,
 void
 CTransform::setWorldTransform(const Matrix4& other) {
   // If we have a parent, convert to local space
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    Matrix4 parentWorld = parent->getWorldTransform();
+  if (m_owner.expired()) {
+    m_tMatrix = other;
+    return;
+  }
+
+  SPtr<BBeing> owner = m_owner.lock();
+  if (owner->getParent().expired()) {
+    m_tMatrix = other;
+    return;
+  }
+
+  SPtr<BBeing> parent = std::static_pointer_cast<BBeing>(owner->getParent().lock());
+  if (parent->getTransform().expired()) {
+    m_tMatrix = other;
+    return;
+  }
+
+  SPtr<CTransform> parentTransform = parent->getTransform().lock();
+  if (parentTransform) {
+    Matrix4 parentWorld = parentTransform->getWorldTransform();
     m_tMatrix = parentWorld.inversed() * other;
   }
   else {
@@ -161,10 +195,25 @@ CTransform::setLocalLookAt(const Vector3f& eyePos, const Vector3f& targetPos, co
   m_tMatrix.view(eyePos, targetPos, upDir);
 }
 
-void CTransform::updateLocalFromWorld()
-{
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    Matrix4 parentWorld = parent->getWorldTransform();
+void
+CTransform::updateLocalFromWorld() {
+  if (m_owner.expired()) {
+    return;
+  }
+
+  SPtr<BBeing> owner = m_owner.lock();
+  if (owner->getParent().expired()) {
+    return;
+  }
+
+  SPtr<BBeing> parent = std::static_pointer_cast<BBeing>(owner->getParent().lock());
+  if (parent->getTransform().expired()) {
+    return;
+  }
+
+  SPtr<CTransform> parentTransform = parent->getTransform().lock();
+  if (parentTransform) {
+    Matrix4 parentWorld = parentTransform->getWorldTransform();
     Matrix4 worldMatrix = getWorldTransform();
     Matrix4 localMatrix = parentWorld.inversed() * worldMatrix;
 
