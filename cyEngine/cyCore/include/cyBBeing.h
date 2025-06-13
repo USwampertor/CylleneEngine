@@ -45,7 +45,7 @@ public:
   /**
    * Default Constructor
    */
-  BBeing() = default;
+  BBeing() = default; // TODO: Check this one
 
   BBeing(const String& name) : SNode(name) {}
 
@@ -107,7 +107,7 @@ public:
       // m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
       SPtr<T> newComponent = makeSharedPtr<T>(std::forward<Args>(args)...);
       m_components.try_emplace(type, newComponent);
-      m_components.at(type)->setOwner(makeSharedPtr<BBeing>(*this));
+      m_components.at(type)->setOwner(m_self);
     }
 
     // In any case, either existing or non existing, we can just return what is at
@@ -119,7 +119,9 @@ public:
   // time you create a new Being child
 
   virtual void 
-  onCreate() {}
+  onCreate() {
+    createComponent<CTransform>();
+  }
 
   virtual void 
   onInit() {}
@@ -151,10 +153,10 @@ public:
   // SPtr<SNode> 
   // findChild(const String& name, bool recursive = true) const override;
 
-  SPtr<BBeing> 
+  WPtr<BBeing> 
   findBeing(const String& name, bool recursive = true) const;
 
-  Vector<SPtr<BBeing>> 
+  Vector<WPtr<BBeing>> 
   getAllBeingsInHierarchy() const;
 
   WPtr<BBeing> 

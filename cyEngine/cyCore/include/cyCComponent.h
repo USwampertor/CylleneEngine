@@ -40,7 +40,7 @@ public:
   virtual ~CComponent() = default;
 
   void 
-  setOwner(SPtr<BBeing> owner);
+  setOwner(WPtr<BBeing> owner);
 
   const COMPONENT_TYPE::E& getType() { return m_type; }
 
@@ -62,10 +62,17 @@ public:
   onInit() {}
 
   virtual void 
-  onDestroy() {}
+  onDestroy() {
+    m_owner.reset();
+  }
 
   virtual void 
   init() {}
+
+  WPtr<BBeing>&
+  getOwner() {
+    return m_owner;
+  }
 
 public:
 

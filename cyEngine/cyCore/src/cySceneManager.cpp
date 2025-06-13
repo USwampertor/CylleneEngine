@@ -76,18 +76,20 @@ void SceneManager::update(const float& delta)
   auto& toRemove = m_activeScene->m_toRemove;
   auto& nodes = m_activeScene->m_beingVector;
 
-  for (auto it = nodes.begin(); it != nodes.end(); ) {
-    if (SPtr<BBeing> being = *it) {
+  for (int i = 0; i < nodes.size(); ++i) {
+    if (SPtr<BBeing> being = nodes[i]) {
       if (being->m_markedToDestroy) {
       // Notify components
         being->onDestroy();
         being->removeAllComponents();
-        being->getParent().lock()->removeChild(being);
+        if (being->getParent().lock()) {
+          being->getParent().lock()->removeChild(being);
+        }
+        being->m_self.reset(); // Clear self reference
         // Remove from scene
-        it = nodes.erase(it);
+        nodes.erase(nodes.begin() + i);
       }
     }
-    ++it;
   }
   toRemove.clear();
 

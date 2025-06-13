@@ -97,7 +97,7 @@ TEST_CASE("[being] Creation of beings") {
   SPtr<BBeing> b1 = ClassRegister::createBeing("BBeing");
   SPtr<BBeing> b2 = ClassRegister::createBeing<BBeing>();
   b1->setName("b1");
-  b1->createComponent<CTransform>();
+  // b1->createComponent<CTransform>();
   b1->createComponent<CCamera>();
   b1->createComponent<CMeshRenderer>();
   b1->createComponent<CLight>();
@@ -134,7 +134,7 @@ TEST_CASE("[resource] Creation of models") {
     SPtr<RModel> r = ResourceManager::instance().loadFromPath<RModel>(testModel2.path());
     SPtr<BBeing> b = ClassRegister::createBeing<BBeing>();
     b->setName("b1");
-    b->createComponent<CTransform>();
+    // b->createComponent<CTransform>();
     WPtr<CMeshRenderer> model = b->createComponent<CMeshRenderer>();
     model.lock()->setModel(r);
     std::cout << r->getName() << std::endl;
@@ -240,56 +240,71 @@ TEST_SUITE("Scene System Tests") {
 
   TEST_CASE("GameObject Management") {
 
-    // SceneManager::instance().createScene("TestScene");
-    // SceneManager::instance().changeScene("TestScene");
-    // 
-    // SUBCASE("Object creation") {
-    //   auto obj = SceneManager::instance().createBeing<BBeing>("TestObject");
-    //   CHECK(obj != nullptr);
-    //   CHECK(obj->getName() == "TestObject");
-    //   CHECK(SceneManager::instance().findBeing<BBeing>("TestObject") == obj);
-    // }
-    // 
-    // SUBCASE("Object destruction") {
-    //   auto obj = SceneManager::instance().createBeing<BBeing>("ToDelete");
-    //   // CHECK_FALSE(obj->m_markedToDestroy);
-    //   CHECK(SceneManager::instance().findBeing<BBeing>("ToDelete") != nullptr);
-    // 
-    //   SceneManager::instance().destroyBeing(obj);
-    //   // CHECK(obj->m_markedToDestroy);
-    // 
-    //   // Should be removed in next update
-    //   SceneManager::instance().update(0.0f);
-    //   CHECK(SceneManager::instance().findBeing<BBeing>("ToDelete") == nullptr);
-    // }
+    SceneManager::instance().changeScene("TestScene");
+    SUBCASE("Object creation") {
+      auto obj = SceneManager::instance().createBeing<BBeing>("TestObject");
+      CHECK(obj.lock() != nullptr);
+      CHECK(obj.lock()->getName() == "TestObject");
+      CHECK(SceneManager::instance().findBeing<BBeing>("TestObject").lock() == obj.lock());
+    }
+    
+    SUBCASE("Object destruction") {
+      auto obj = SceneManager::instance().createBeing<BBeing>("ToDelete");
+      // CHECK_FALSE(obj->m_markedToDestroy);
+      CHECK(SceneManager::instance().findBeing<BBeing>("ToDelete").lock() != nullptr);
+    
+      SceneManager::instance().destroyBeing(obj);
+      // CHECK(obj->m_markedToDestroy);
+    
+      // Should be removed in next update
+      SceneManager::instance().update(0.0f);
+      CHECK(SceneManager::instance().findBeing<BBeing>("ToDelete").lock() == nullptr);
+    }
   }
 
   TEST_CASE("GameObject Parenting") {
     WPtr<BBeing> parent = SceneManager::instance().createBeing<BBeing>("Parent");
-    parent.lock()->createComponent<CTransform>();
+    // parent.lock()->createComponent<CTransform>();
 
     WPtr<BBeing> child1 = parent.lock()->createChild("Child1");
     CHECK(parent.lock()->getChildCount() == 1);
     
     WPtr<BBeing> child2 = SceneManager::instance().createBeing<BBeing>("Child2");
-    child2.lock()->createComponent<CTransform>(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
+    // child2.lock()->createComponent<CTransform>(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
     parent.lock()->addChild(child2);
+
+    SceneManager::instance().instantiateBeing<BBeing>(Vector3f::ZERO, 
+                                                      Quaternion::IDENTITY, 
+                                                      child2.lock()->getTransform());
 
     CHECK(parent.lock()->getChildCount() == 2);
     
     WPtr<BBeing> grandparent = SceneManager::instance().createBeing<BBeing>("Grandparent");
-    grandparent.lock()->createComponent<CTransform>();
+    // grandparent.lock()->createComponent<CTransform>();
     
     parent.lock()->setParent(grandparent);
     CHECK(grandparent.lock()->getChildCount() == 1);
     CHECK(parent.lock()->isChildOf(grandparent));
 
     for (WPtr<BBeing>& being : SceneManager::instance().getActiveScene()->getAllBeings()) {
-      std::cout << "Being: " << being.lock()->getName() << std::endl;
+      std::cout << "Being: " << being.lock()->getName() << " \t --- " << std::endl;
     }
 
-    CHECK(SceneManager::instance().getActiveScene()->getAllBeings().size() == 4);
+    CHECK(SceneManager::instance().getActiveScene()->getAllBeings().size() == 6);
 
+  }
+
+  TEST_CASE("GameObject Parenting") {
+    auto obj1 = SceneManager::instance().instantiateBeing<BBeing>();
+    auto obj2 = SceneManager::instance().instantiateBeing<BBeing>();
+    auto obj3 = SceneManager::instance().instantiateBeing<BBeing>();
+    auto obj4 = SceneManager::instance().instantiateBeing<BBeing>();
+    obj1.lock()->createComponent<CCamera>();
+    
+    Vector<WPtr<BBeing>> beings = SceneManager::instance().findBeingsWithComponent<CTransform>();
+    CHECK(beings.size() == 10);
+    CHECK(SceneManager::instance().findBeingsWithComponent<CLight>().size() == 0);
+    CHECK(SceneManager::instance().findBeingsWithComponent<CCamera>().size() == 1);
   }
 
 }

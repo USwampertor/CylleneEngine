@@ -3,7 +3,7 @@
 namespace CYLLENE_SDK
 {
 void
-CComponent::setOwner(SPtr<BBeing> owner) {
+CComponent::setOwner(WPtr<BBeing> owner) {
     m_owner = owner;
   }
 }

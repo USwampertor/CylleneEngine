@@ -59,23 +59,23 @@ public:
 
 
 #define REGISTER_CLASS(beingClassName) \
-    namespace { \
-        const bool registered_##beingClassName = \
-          (ClassRegister::registerBeing(#beingClassName, []() -> SPtr<BBeing> { return  makeSharedPtr<BBeing>(); }), true); \
-    }
+  namespace { \
+    const bool registered_##beingClassName = \
+      (ClassRegister::registerBeing(#beingClassName, []() -> SPtr<BBeing> { return  makeSharedPtr<BBeing>(); }), true); \
+  }
 
 // Define as much variables that should exist in all BBeing classes
-#define BODY()                                                                \
-public:                                                                       \
-    static const String getClassName() {                                      \
-        String fullFunction = __PRETTY_FUNCTION__;                            \
-        String prefix = "CYLLENE_SDK::";                                      \
-        auto start = fullFunction.find(prefix);                               \
-        auto end = fullFunction.find("::getClassName");                       \
-        String toReturn = fullFunction.substr(start + prefix.size(),          \
-                                              end - (start + prefix.size())); \
-        return toReturn;                                                      \
-    }
+#define BODY()                                                            \
+public:                                                                   \
+  static const String getClassName() {                                    \
+    String fullFunction = __PRETTY_FUNCTION__;                            \
+    String prefix = "CYLLENE_SDK::";                                      \
+    auto start = fullFunction.find(prefix);                               \
+    auto end = fullFunction.find("::getClassName");                       \
+    String toReturn = fullFunction.substr(start + prefix.size(),          \
+                                          end - (start + prefix.size())); \
+    return toReturn;                                                      \
+  }
 
 }
 

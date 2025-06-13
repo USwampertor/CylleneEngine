@@ -6,8 +6,8 @@ namespace CYLLENE_SDK {
 void
 BBeing::removeAllComponents() {
   // Remove all components and clear the map
-  for (auto it = m_components.begin(); it != m_components.end();) {
-    it->second->setOwner(nullptr); // Clear owner reference
+  for (auto it = m_components.begin(); it != m_components.end(); ++it) {
+    it->second->onDestroy(); // Clear owner reference
   }
   m_components.clear();
 }
@@ -76,7 +76,7 @@ BBeing::removeAllComponents() {
 //   return nullptr;
 // }
 
-SPtr<BBeing> 
+WPtr<BBeing> 
 BBeing::findBeing(const String& name, bool recursive) const {
   for (const auto& child : m_childrenNodes) {
     if (auto being = std::static_pointer_cast<BBeing>(child.lock())) {
@@ -85,16 +85,16 @@ BBeing::findBeing(const String& name, bool recursive) const {
       }
       if (recursive) {
         auto nested = being->findBeing(name, true);
-        if (nested) return nested;
+        if (nested.lock()) return nested;
       }
     }
   }
-  return nullptr;
+  return {};
 }
 
-Vector<SPtr<BBeing>> 
+Vector<WPtr<BBeing>> 
 BBeing::getAllBeingsInHierarchy() const {
-  Vector<SPtr<BBeing>> beings;
+  Vector<WPtr<BBeing>> beings;
   for (const auto& child : m_childrenNodes) {
     if (auto being = std::static_pointer_cast<BBeing>(child.lock())) {
       beings.push_back(being);
@@ -108,7 +108,7 @@ BBeing::getAllBeingsInHierarchy() const {
 WPtr<BBeing> 
 BBeing::createChild(const String& name) {
   WPtr<BBeing> child = SceneManager::instance().createBeing<BBeing>(name);
-  WPtr<CTransform> childTransfor = child.lock()->createComponent<CTransform>();
+  // WPtr<CTransform> childTransform = child.lock()->createComponent<CTransform>();
   addChild(child);
 
   // Ensure child has transform component

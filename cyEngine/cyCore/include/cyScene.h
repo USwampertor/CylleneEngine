@@ -68,42 +68,29 @@ public:
   }
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
-  Vector<SPtr<BBeing>> getAllBeingsWithComponent(T type) const {
-    // Vector<SPtr<BBeing>> result;
-    // for (const auto& node : m_rootNode->getChildren()) {
-    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
-    //     if (being->getComponent<T>()) {
-    //       result.push_back(being);
-    //     }
-    //   }
-    // }
-    // return result;
-    // return m_rootNode->findChildren([&](WPtr<BBeing> node) {
-    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
-    //     return being->hasComponent(T::staticType());
-    //   }
-    //   return false;
-    // }, true);)
-    return {};
+  Vector<WPtr<BBeing>> 
+  getAllBeingsWithComponent() const {
+    Vector<WPtr<BBeing>> result;
+    for (const auto& node : m_beingVector) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        if (being->hasComponent(T::staticType())) {
+          result.push_back(being);
+        }
+      }
+    }
+    return result;
   }
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
-  WPtr<BBeing> getFirstBeingWithComponent(T type) const {
-    // return m_rootNode->findChildWhere([&](WPtr<BBeing> node) {
-    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
-    //     return being->hasComponent(T::staticType());
-    //   }
-    //   return false;
-    // }, true);)
-    // for (const auto& node : m_rootNode->getChildren()) {
-    //   if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
-    //     if (auto comp = being->getComponent<T>()) {
-    //       return being;
-    //     }
-    //   }
-    // }
-    // return {};
-    return {};
+  WPtr<BBeing> 
+  getFirstBeingWithComponent() const {
+    return m_rootNode->findChildWhere([&](WPtr<BBeing> node) {
+      if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
+        return being->hasComponent(T::staticType());
+      }
+      return false;
+    });
+
   }
 
   Vector<WPtr<BBeing>> 
@@ -135,10 +122,10 @@ public:
 
 protected:
 
-  Vector<SPtr<BBeing>> m_toRemove;
+  Vector<WPtr<BBeing>> m_toRemove;
 
-  Event<void, SPtr<BBeing>> onBeingAdded;
-  Event<void, SPtr<BBeing>> onBeingRemoved;
+  Event<void, WPtr<BBeing>> onBeingAdded;
+  Event<void, WPtr<BBeing>> onBeingRemoved;
   Event<void> onSceneLoadedEvent;
 
 private:
