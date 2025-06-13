@@ -1,6 +1,13 @@
 #include "cySceneManager.h"
 
 namespace CYLLENE_SDK {
+
+void
+SceneManager::onStartUp() {
+
+}
+
+
 SPtr<Scene> 
 SceneManager::getActiveScene()
 {
@@ -9,6 +16,10 @@ SceneManager::getActiveScene()
 
 SPtr<Scene> SceneManager::createScene(const String& newSceneName)
 {
+  if (findScene(newSceneName)) {
+    // Scene already exists, return it, and send a warning
+    return findScene(newSceneName);
+  }
   SPtr<Scene> newScene = makeSharedPtr<Scene>(newSceneName);
   newScene->init();
   m_scenes.push_back(newScene);
@@ -59,6 +70,38 @@ SPtr<Scene> SceneManager::findScene(const String& sceneToFind)
 
 void SceneManager::update(const float& delta)
 {
+  if (!m_activeScene) return;
+
+  // Process deletions
+  auto& toRemove = m_activeScene->m_toRemove;
+  auto& nodes = m_activeScene->m_beingVector;
+
+  for (int i = 0; i < nodes.size(); ++i) {
+    if (SPtr<BBeing> being = nodes[i]) {
+      if (being->m_markedToDestroy) {
+      // Notify components
+        being->onDestroy();
+        being->removeAllComponents();
+        if (being->getParent().lock()) {
+          being->getParent().lock()->removeChild(being);
+        }
+        being->m_self.reset(); // Clear self reference
+        // Remove from scene
+        nodes.erase(nodes.begin() + i);
+      }
+    }
+  }
+  toRemove.clear();
+
+
+  // Update all active nodes
+  for (auto& node : nodes) {
+    if (node->isActive()) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        being->update(delta);
+      }
+    }
+  }
   // rmt_ScopedCPUSample(Update, 0);
   // Delete Entities that are marked for delete
   // for (SPtr<BBeing> toDelete : m_activeScene->m_toRemove)

@@ -1,11 +1,17 @@
 #pragma once
 #include "cyCorePrerequisites.h"
+#include "cyGraphicsBuffer.h"
+#include "cyGDepthStencilView.h"
 #include "cyGGraphic.h"
+#include "cyGShader.h"
+#include "cyGTexture.h"
 
+
+#include <cyMatrix4.h>
 
 namespace CYLLENE_SDK {
 
-class GGraphicPass : public GGraphic
+class CY_GRAPHICS_EXPORT GGraphicPass : public GGraphic
 {
 public:
 
@@ -13,6 +19,7 @@ public:
   virtual ~GGraphicPass() {}
 
   virtual void initialize() = 0;
+  virtual void clear() = 0;
   virtual void execute() = 0;
   virtual void cleanup() = 0;
   virtual void shutdown() = 0;
@@ -23,12 +30,29 @@ public:
   int32 m_passID = -1;
 };
 
-class GShadowPass : public GGraphicPass
+struct ShadowConstantBuffer
+{
+  Matrix4 shadowView;
+  Matrix4 shadowProjection;
+};
+
+class CY_GRAPHICS_EXPORT GShadowPass : public GGraphicPass
 {
 public: 
   GShadowPass() = default;
-  virtual ~GShadowPass() {}
+  virtual ~GShadowPass() override;
 
+  virtual void initialize() override;
+  virtual void clear() override;
+  virtual void execute() override;
+  virtual void cleanup() override;
+  virtual void shutdown() override;
+
+  ShadowConstantBuffer m_shadowConstants;
+  SPtr<GraphicsBuffer> m_shadowCB;
+  SPtr<GVertexShader> m_pVShadowShader;
+  SPtr<GTexture> m_shadowDST;
+  SPtr<GDepthStencilView> m_shadowDSV;
 };
 
 class GGeometryPass : public GGraphicPass
@@ -38,21 +62,21 @@ public:
   virtual ~GGeometryPass() {}
 };
 
-class GLightingPass : public GGraphicPass
+class CY_GRAPHICS_EXPORT GLightingPass : public GGraphicPass
 {
 public:
   GLightingPass() = default;
   virtual ~GLightingPass() {}
 };
 
-class GTransparencyPass : public GGraphicPass
+class CY_GRAPHICS_EXPORT GTransparencyPass : public GGraphicPass
 {
 public:
   GTransparencyPass() = default;
   virtual ~GTransparencyPass() {}
 };
 
-class GPostProcessPass : public GGraphicPass
+class CY_GRAPHICS_EXPORT GPostProcessPass : public GGraphicPass
 {
 public:
   GPostProcessPass() = default;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cyGraphicsPrerequisites.h"
+
 #include "cyGGraphic.h"
 #include "cyGShaderResourceView.h"
 

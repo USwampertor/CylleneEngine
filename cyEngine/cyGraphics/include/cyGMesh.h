@@ -36,7 +36,7 @@ public:
 //   virtual void
 //   setPrimitiveTopology(PRIMITIVE_TOPOLOGY::E topology) = 0;
 
-  PRIMITIVE_TOPOLOGY::E m_topology = PRIMITIVE_TOPOLOGY::E::eUNKNOWN;
+  GPRIMITIVE_TOPOLOGY::E m_topology = GPRIMITIVE_TOPOLOGY::E::eUNKNOWN;
   int m_baseVertex;
   int m_numVertices;
   int m_baseIndex;

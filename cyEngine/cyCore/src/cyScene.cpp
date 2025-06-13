@@ -3,7 +3,7 @@
 namespace CYLLENE_SDK {
   void
   Scene::init() {
-
+    m_rootNode = makeUniquePtr<SNode>();
   }
 
   void

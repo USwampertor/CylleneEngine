@@ -20,6 +20,8 @@
 #include <cyCCamera.h>
 #include <cyCTransform.h>
 #include <cyCMeshRenderer.h>
+#include <cyScene.h>
+#include <cySceneManager.h>
 #include <cyMath.h> 
 
 // Using namespace for ease of use
@@ -47,11 +49,13 @@ struct PerPassConstantBuffer
   Matrix4 projection;
 } perPassConstants;
 
-struct ShadowConstantBuffer
-{
-  Matrix4 shadowView;
-  Matrix4 shadowProjection;
-} shadowConstants;
+// struct ShadowConstantBuffer
+// {
+//   Matrix4 shadowView;
+//   Matrix4 shadowProjection;
+// } shadowConstants;
+
+ShadowConstantBuffer shadowConstants;
 
 /*
  *	@brief  Unit Testing main for Utilities
@@ -65,7 +69,7 @@ main(int argc, char* argv[])
   Logger::startUp();
   ResourceManager::startUp();
   Time::startUp();
-
+  SceneManager::startUp();
 
   WindowManager::startUp();
   WindowManager::instance().init();
@@ -137,20 +141,21 @@ main(int argc, char* argv[])
     return -1;
   }
 
+  SceneManager::instance().createScene("TestScene");
+  SceneManager::instance().changeScene("TestScene");
+
   // shadow camera shit
-  BBeing shadowCameraEntity("ShadowCamera");
-  shadowCameraEntity.createComponent<CTransform>();
-  SPtr<CCamera> shadowCamera = shadowCameraEntity.createComponent<CCamera>();
-  shadowCamera->setLookAt(Vector3f(25, 30, 5), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
-  shadowCamera->setPerspective(1024, 1024, 0.1f, 100.0f, 60.0f);
+  WPtr<BBeing> shadowCameraEntity = SceneManager::instance().createBeing<BBeing>("ShadowCamera");
+  WPtr<CCamera> shadowCamera = shadowCameraEntity.lock()->createComponent<CCamera>();
+  shadowCamera.lock()->setLookAt(Vector3f(25, 30, 5), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+  shadowCamera.lock()->setPerspective(1024, 1024, 0.1f, 100.0f, 60.0f);
   //shadowCamera->setOrthogonal(30, 30, 0.1f, 100.0f);
 
   // camera shit
-  BBeing cameraEntity("Camera");
-  cameraEntity.createComponent<CTransform>();
-  SPtr<CCamera> camera = cameraEntity.createComponent<CCamera>();
-  camera->setLookAt(Vector3f(-6, 15, -20), Vector3f(0, 5, 0), Vector3f(0, 1, 0));
-  camera->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
+  WPtr<BBeing> cameraEntity = SceneManager::instance().createBeing<BBeing>("Camera");
+  WPtr<CCamera> camera = cameraEntity.lock()->createComponent<CCamera>();
+  camera.lock()->setLookAt(Vector3f(-6, 15, -20), Vector3f(0, 5, 0), Vector3f(0, 1, 0));
+  camera.lock()->setPerspective(1280, 720, 0.1f, 200.0f, 70.0f);
   //camera->setOrthogonal(128.f * 0.5f, 72.f * 0.5f, 0.1f, 200.0f);
 
   Vector<char> shaderConstantsData;
@@ -224,7 +229,7 @@ main(int argc, char* argv[])
     particleGTexture = GraphicsDX11API::instance().createTexture2D(particleRTexture);
   }
 
-  BBeing cubeObject("cube");
+  WPtr<BBeing> cubeObject = SceneManager::instance().createBeing<BBeing>("Cube");
   File cubeModelF;
   SPtr<RModel> cubeModelR;
   SPtr<GMesh> cubeMesh;
@@ -234,14 +239,13 @@ main(int argc, char* argv[])
 
     cubeMesh = GraphicsDX11API::instance().createMesh(cubeModelR->m_meshes[0]);
 
-    cubeObject.createComponent<CTransform>();
-    cubeObject.createComponent<CMeshRenderer>(cubeModelR->m_meshes[0]);
+    cubeObject.lock()->createComponent<CMeshRenderer>(cubeModelR->m_meshes[0]);
 
-    cubeObject.getTransform()->setPosition(Vector3f(0.0f, 50.0f, 0.0f));
-    cubeObject.getTransform()->setScale(Vector3f(3.0f, 3.0f, 3.0f));
+    cubeObject.lock()->getTransform().lock()->setWorldPosition(Vector3f(0.0f, 50.0f, 0.0f));
+    cubeObject.lock()->getTransform().lock()->setWorldScale(Vector3f(3.0f, 3.0f, 3.0f));
   }
 
-  BBeing floorObject("floor");
+  WPtr<BBeing> floorObject = SceneManager::instance().createBeing<BBeing>("floor");
   File floorModelF;
   SPtr<RModel> floorModelR;
   SPtr<GMesh> floorMesh;
@@ -251,21 +255,19 @@ main(int argc, char* argv[])
 
     floorMesh = GraphicsDX11API::instance().createMesh(floorModelR->m_meshes[0]);
 
-    floorObject.createComponent<CTransform>();
-    floorObject.createComponent<CMeshRenderer>(floorModelR->m_meshes[0]);
+    floorObject.lock()->createComponent<CMeshRenderer>(floorModelR->m_meshes[0]);
 
-    floorObject.getTransform()->setPosition(Vector3f(0, 0, 0));
-    floorObject.getTransform()->setScale(Vector3f(20, 20, 1));
-    floorObject.getTransform()->setRotation(Euler(270.0f * Math::DEG2RAD, 0.0f, 0.0f));
+    floorObject.lock()->getTransform().lock()->setWorldPosition(Vector3f(0, 0, 0));
+    floorObject.lock()->getTransform().lock()->setWorldScale(Vector3f(20, 20, 1));
+    floorObject.lock()->getTransform().lock()->setWorldRotation(Euler(270.0f * Math::DEG2RAD, 0.0f, 0.0f));
   }
 
-  BBeing saqObject("SAQ");
+  WPtr<BBeing> saqObject = SceneManager::instance().createBeing<BBeing>("SAQ");
   SPtr<GMesh> saqMesh;
   {
     saqMesh = GraphicsDX11API::instance().createMesh(floorModelR->m_meshes[0]);
 
-    saqObject.createComponent<CTransform>();
-    saqObject.createComponent<CMeshRenderer>(floorModelR->m_meshes[0]);
+    saqObject.lock()->createComponent<CMeshRenderer>(floorModelR->m_meshes[0]);
   }
 
 
@@ -396,7 +398,7 @@ main(int argc, char* argv[])
         GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
       }
 
-      perObjectConstants.world = refObject.getTransform()->m_tMatrix;
+      perObjectConstants.world = refObject.getTransform().lock()->m_tMatrix;
       perObjectConstants.world.transpose();
 
       constantBufferData.clear();
@@ -448,11 +450,11 @@ main(int argc, char* argv[])
                                                                        nullRTs,
                                                                        shadowDepthStencil);
       
-      perPassConstants.cameraForward  = shadowCamera->m_view.getForwardVector();
-      perPassConstants.cameraRight    = shadowCamera->m_view.getRightVector();
-      perPassConstants.cameraUp       = shadowCamera->m_view.getUpVector();
-      perPassConstants.view           = shadowCamera->m_view;
-      perPassConstants.projection     = shadowCamera->m_projection;
+      perPassConstants.cameraForward  = shadowCamera.lock()->m_view.getForwardVector();
+      perPassConstants.cameraRight    = shadowCamera.lock()->m_view.getRightVector();
+      perPassConstants.cameraUp       = shadowCamera.lock()->m_view.getUpVector();
+      perPassConstants.view           = shadowCamera.lock()->m_view;
+      perPassConstants.projection     = shadowCamera.lock()->m_projection;
 
       constantBufferData.clear();
       constantBufferData.resize(sizeof(perPassConstants));
@@ -464,8 +466,8 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
       GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
 
-      draw(floorObject, floorMesh, nullptr);
-      draw(cubeObject, cubeMesh, nullptr);
+      draw(*floorObject.lock().get(), floorMesh, nullptr);
+      draw(*cubeObject.lock().get(), cubeMesh, nullptr);
     }
 
     // Color pass
@@ -490,11 +492,11 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
       GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
 
-      perPassConstants.cameraForward  = camera->m_view.getForwardVector();
-      perPassConstants.cameraRight    = camera->m_view.getRightVector();
-      perPassConstants.cameraUp       = camera->m_view.getUpVector();
-      perPassConstants.view           = camera->m_view;
-      perPassConstants.projection     = camera->m_projection;
+      perPassConstants.cameraForward  = camera.lock()->m_view.getForwardVector();
+      perPassConstants.cameraRight    = camera.lock()->m_view.getRightVector();
+      perPassConstants.cameraUp       = camera.lock()->m_view.getUpVector();
+      perPassConstants.view           = camera.lock()->m_view;
+      perPassConstants.projection     = camera.lock()->m_projection;
 
       constantBufferData.clear();
       constantBufferData.resize(sizeof(perPassConstants));
@@ -513,13 +515,13 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
       GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
 
-      draw(floorObject, floorMesh, &checkerGTexture);
+      draw(*floorObject.lock().get(), floorMesh, &checkerGTexture);
 
-      cubeObject.getTransform()->setPosition(Vector3f(0.0f, 3.0f + Math::cos(time), 0.0f));
-      cubeObject.getTransform()->setRotation(Euler(0.2f * time * 3.0f,
+      cubeObject.lock()->getTransform().lock()->setWorldPosition(Vector3f(0.0f, 3.0f + Math::cos(time), 0.0f));
+      cubeObject.lock()->getTransform().lock()->setWorldRotation(Euler(0.2f * time * 3.0f,
                                              0.2f * time * 1.0f,
                                              0.2f * time * 9.0f));
-      draw(cubeObject, cubeMesh, &sampleGTexture);
+      draw(*cubeObject.lock().get(), cubeMesh, &sampleGTexture);
     }
 
     // Particles pass
@@ -545,11 +547,11 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
       GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
 
-      perPassConstants.cameraForward  = camera->m_view.getForwardVector();
-      perPassConstants.cameraRight    = camera->m_view.getRightVector();
-      perPassConstants.cameraUp       = camera->m_view.getUpVector();
-      perPassConstants.view           = camera->m_view;
-      perPassConstants.projection     = camera->m_projection;
+      perPassConstants.cameraForward  = camera.lock()->m_view.getForwardVector();
+      perPassConstants.cameraRight    = camera.lock()->m_view.getRightVector();
+      perPassConstants.cameraUp       = camera.lock()->m_view.getUpVector();
+      perPassConstants.view           = camera.lock()->m_view;
+      perPassConstants.projection     = camera.lock()->m_projection;
 
       constantBufferData.clear();
       constantBufferData.resize(sizeof(perPassConstants));
@@ -588,7 +590,7 @@ main(int argc, char* argv[])
 
       GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
 
-      perObjectConstants.world = saqObject.getTransform()->m_tMatrix;
+      perObjectConstants.world = saqObject.lock()->getTransform().lock()->m_tMatrix;
       perObjectConstants.world.transpose();
 
       constantBufferData.clear();
@@ -623,8 +625,8 @@ main(int argc, char* argv[])
                                                                        targets, 
                                                                        backBufferDS);
 
-      shadowConstants.shadowView        = shadowCamera->m_view;
-      shadowConstants.shadowProjection  = shadowCamera->m_projection;
+      shadowConstants.shadowView        = shadowCamera.lock()->m_view;
+      shadowConstants.shadowProjection  = shadowCamera.lock()->m_projection;
 
       constantBufferData.clear();
       constantBufferData.resize(sizeof(shadowConstants));
@@ -650,7 +652,7 @@ main(int argc, char* argv[])
 
       GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 3);
 
-      draw(saqObject, saqMesh, nullptr);
+      draw(*saqObject.lock().get(), saqMesh, nullptr);
 
       GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(0);
       GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(1);

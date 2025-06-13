@@ -114,7 +114,9 @@ namespace CYLLENE_SDK {
 
   bool
   Vector3f::operator==(const Vector3f& v) const {
-    return x == v.x && y == v.y && z == v.z;
+    return Math::isNearSame(x, v.x) && 
+           Math::isNearSame(y, v.y) && 
+           Math::isNearSame(z, v.z);
   }
 
   bool

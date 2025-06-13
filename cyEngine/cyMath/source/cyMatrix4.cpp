@@ -416,7 +416,7 @@ Matrix4::orthogonal(const float& width,
   m[2][2] = 1.0f / (zNear - zFar);
 #endif
 
-  m[3][2] = zNear / (zNear - zFar);
+  m[3][2] = -zNear / (zNear - zFar);
 #endif
 
   m[3][3] = 1.0f;
@@ -458,7 +458,7 @@ Matrix4::orthogonal(const float& top,
   m[2][2] = 1.0f / (zNear - zFar);
 #endif
 
-  m[3][2] = zNear / (zNear - zFar);
+  m[3][2] = -zNear / (zNear - zFar);
 #endif
 
   m[3][3] = 1.0f;

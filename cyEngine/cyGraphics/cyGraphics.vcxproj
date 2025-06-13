@@ -41,6 +41,7 @@
     <ClInclude Include="include\cyGViewport.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\cyGGraphicPass.cpp" />
     <ClCompile Include="source\cyGraphicsAPI.cpp" />
     <ClCompile Include="source\cyGViewport.cpp" />
   </ItemGroup>

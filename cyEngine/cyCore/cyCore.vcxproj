@@ -51,7 +51,7 @@
     <ClInclude Include="include\cyScene.h" />
     <ClInclude Include="include\cySceneGraph.h" />
     <ClInclude Include="include\cySceneManager.h" />
-    <ClInclude Include="include\cySceneNode.h" />
+    <ClInclude Include="include\cySNode.h" />
     <ClInclude Include="include\cyRScript.h" />
     <ClInclude Include="include\cyRShader.h" />
     <ClInclude Include="include\cyRSkeleton.h" />
@@ -63,6 +63,8 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyBBeing.cpp" />
+    <ClCompile Include="src\cyCComponent.cpp" />
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
     <ClCompile Include="src\cyCLight.cpp" />
     <ClCompile Include="src\cyCParticleEmitter.cpp" />
@@ -70,7 +72,6 @@
     <ClCompile Include="src\cyRAudio.cpp" />
     <ClCompile Include="src\cyAudioAPI.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
-    <ClCompile Include="src\cyBBeing.cpp" />
     <ClCompile Include="src\cyCCamera.cpp" />
     <ClCompile Include="src\cyClassRegister.cpp" />
     <ClCompile Include="src\cyCodec.cpp" />
@@ -88,7 +89,7 @@
     <ClCompile Include="src\cyScene.cpp" />
     <ClCompile Include="src\cySceneGraph.cpp" />
     <ClCompile Include="src\cySceneManager.cpp" />
-    <ClCompile Include="src\cySceneNode.cpp" />
+    <ClCompile Include="src\cySNode.cpp" />
     <ClCompile Include="src\cyRScript.cpp" />
     <ClCompile Include="src\cyRShader.cpp" />
     <ClCompile Include="src\cyRSkeleton.cpp" />

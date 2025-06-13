@@ -120,7 +120,10 @@ namespace CYLLENE_SDK {
 
   bool
   Vector4f::operator==(const Vector4f& v) const {
-    return x == v.x && y == v.y && z == v.z && w == v.w;
+    return Math::isNearSame(x, v.x) && 
+           Math::isNearSame(y, v.y) && 
+           Math::isNearSame(z, v.z) && 
+           Math::isNearSame(w, v.w);
   }
 
   bool

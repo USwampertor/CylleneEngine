@@ -40,9 +40,7 @@ public:
   virtual ~CComponent() = default;
 
   void 
-  setOwner(BBeing* owner) {
-    m_owner = owner;
-  }
+  setOwner(WPtr<BBeing> owner);
 
   const COMPONENT_TYPE::E& getType() { return m_type; }
 
@@ -64,10 +62,17 @@ public:
   onInit() {}
 
   virtual void 
-  onDestroy() {}
+  onDestroy() {
+    m_owner.reset();
+  }
 
   virtual void 
   init() {}
+
+  WPtr<BBeing>&
+  getOwner() {
+    return m_owner;
+  }
 
 public:
 
@@ -77,7 +82,7 @@ protected:
 
   COMPONENT_TYPE::E m_type = COMPONENT_TYPE::E::eNONE;
 
-  BBeing* m_owner = nullptr;
+  WPtr<BBeing> m_owner;
 };
 
 

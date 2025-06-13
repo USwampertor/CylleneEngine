@@ -16,6 +16,7 @@
 #include "cyClassRegister.h"
 #include "cyCComponent.h"
 #include "cyCTransform.h"
+#include "cySNode.h"
 
 
 #include <cyUtilities.h>
@@ -35,7 +36,7 @@ class CSprite;
  *          are Being child classes
  *
  */
-class CY_CORE_EXPORT BBeing
+class CY_CORE_EXPORT BBeing : public SNode
 {
 
   BODY();
@@ -44,9 +45,13 @@ public:
   /**
    * Default Constructor
    */
-  BBeing() = default;
+  BBeing() = default; // TODO: Check this one
 
-  BBeing(const String& name) : m_name(name) {}
+  BBeing(const String& name) : SNode(name) {}
+
+  BBeing(const BBeing& other) 
+    : SNode(other),
+      m_components(other.m_components) {}
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
@@ -62,15 +67,19 @@ public:
   }
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
-  SPtr<T>
+  WPtr<T>
   getComponent() {
     COMPONENT_TYPE::E type = T::staticType();
     if (m_components.find(type) != m_components.end()) {
       return REINTERPRETPOINTER(T, m_components.at(type));
     }
-    return nullptr;
+    return {};
   }
 
+  bool
+  hasComponent(COMPONENT_TYPE::E type) const {
+    return m_components.find(type) != m_components.end();
+  }
 
   template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
   void 
@@ -82,10 +91,13 @@ public:
     }
   }
 
+  void
+  removeAllComponents();
+
   template <typename T, 
             typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>, 
             typename ... Args>
-  SPtr<T>
+  WPtr<T>
   createComponent(Args ... args) {
 
     COMPONENT_TYPE::E type = T::staticType();
@@ -93,8 +105,9 @@ public:
     // Is the component already created?
     if (m_components.find(type) == m_components.end()) {
       // m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
-      m_components.try_emplace(type, makeSharedPtr<T>(args ...));
-      m_components.at(type)->setOwner(this);
+      SPtr<T> newComponent = makeSharedPtr<T>(std::forward<Args>(args)...);
+      m_components.try_emplace(type, newComponent);
+      m_components.at(type)->setOwner(m_self);
     }
 
     // In any case, either existing or non existing, we can just return what is at
@@ -106,7 +119,9 @@ public:
   // time you create a new Being child
 
   virtual void 
-  onCreate() {}
+  onCreate() {
+    createComponent<CTransform>();
+  }
 
   virtual void 
   onInit() {}
@@ -117,26 +132,38 @@ public:
   virtual void 
   init() {}
 
-  void 
-  setActive(bool active) {
-    m_isActive = active;
+  virtual void
+  update(const float& delta) { 
+    for (auto& component : m_components) {
+      component.second->update(delta);
+    }
   }
 
-  const bool& 
-  isActive() { return m_isActive; }
-
-  SPtr<CTransform>
-  getTransform() {
+  virtual WPtr<CTransform>
+  getTransform() override {
     return getComponent<CTransform>();
   }
 
-  const String& 
-  getName() { return m_name; }
+  // void 
+  // addChild(SPtr<SNode> child, bool keepWorldTransform = true) override;
+  // 
+  // void 
+  // removeChild(SPtr<SNode> child, bool recursive = false) override;
+  // 
+  // SPtr<SNode> 
+  // findChild(const String& name, bool recursive = true) const override;
 
-  void
-  setName(const String& name) { m_name = name; }
+  WPtr<BBeing> 
+  findBeing(const String& name, bool recursive = true) const;
+
+  Vector<WPtr<BBeing>> 
+  getAllBeingsInHierarchy() const;
+
+  WPtr<BBeing> 
+  createChild(const String& name);
 
   friend class SceneManager;
+  friend class SNode;
 
 private:
 
@@ -147,18 +174,18 @@ private:
   /**
    * The name of the Being
    */
-  String m_name;
+  // String m_nodeName;
 
   /**
    * The components that has the Being
    */
   Map<COMPONENT_TYPE::E, SPtr<CComponent>> m_components;
 
-  bool m_isActive;
 
-  bool m_markedToDestroy;
+#if defined(CY_DEBUG) || defined(CY_DEVELOPMENT)
+  SPtr<CSprite> m_gizmo = nullptr;
+#endif
 
-  CSprite* m_gizmo;
 };
 
 REGISTER_CLASS(BBeing);

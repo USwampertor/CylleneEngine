@@ -34,10 +34,10 @@ void
 CCamera::setLookAt(const Vector3f& eyePos,
                   const Vector3f& targetPos,
                   const Vector3f upDir) {
-  if (m_owner != nullptr) {
-    m_owner->getComponent<CTransform>()->setLookAt(eyePos, targetPos, upDir);
+  if (m_owner.lock() != nullptr) {
+    m_owner.lock()->getComponent<CTransform>().lock()->setLocalLookAt(eyePos, targetPos, upDir);
     // TODO: Use the dirty flag system
-    m_view = m_owner->getComponent<CTransform>()->m_tMatrix;
+    m_view = m_owner.lock()->getComponent<CTransform>().lock()->m_tMatrix;
   }
 }
 

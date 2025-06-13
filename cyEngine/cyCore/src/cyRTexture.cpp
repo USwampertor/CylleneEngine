@@ -23,9 +23,9 @@ RTexture::setData(void* data) {
 
 void
 RTexture::adjustTextureAddress(float& u, 
-                                      float& v, 
-                                      const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */) {
-  if (TEXTUREMODE::E::eWRAP == mode) {
+                               float& v, 
+                               const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */) {
+  if (TEXTUREMODE::E::eWRAP == mode || TEXTUREMODE::E::eREPEAT == mode) {
     u = Math::mod(u, 1.0f);
     v = Math::mod(v, 1.0f);
   }
@@ -36,7 +36,7 @@ RTexture::adjustTextureAddress(float& u,
     u = u < 0.0f ? 2.0f + u : u > 1.0f ? 2.0f - u : u;
     v = v < 0.0f ? 2.0f + v : v > 1.0f ? 2.0f - v : v;
   }
-  else if (TEXTUREMODE::E::eMIRROR == mode) {
+  else if (TEXTUREMODE::E::eSTRETCH == mode) {
 
   }
   else if (TEXTUREMODE::E::eCLAMP == mode) {
@@ -52,9 +52,9 @@ RTexture::setImage(const SPtr<RImage>& img) {
 
 Color
 RTexture::sample(float u, 
-                        float v, 
-                        const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
-                        const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
+                 float v, 
+                 const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
+                 const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
   adjustTextureAddress(u, v, mode);
   float x = u * (m_img->m_metadata.m_width - 1);
   float y = v * (m_img->m_metadata.m_height - 1);
@@ -64,8 +64,6 @@ RTexture::sample(float u,
     return m_img->getPixel(x, y);
   }
   else if (SAMPLERFILTER::E::eLINEAR == sampler) {
-
-    
 
     int32 x0 = static_cast<int32>(x); // std::clamp(static_cast<uint32_t>(x), uint32_t(0), m_img.m_width - 1);
     int32 y0 = static_cast<int32>(y); // std::clamp(static_cast<uint32_t>(y), uint32_t(0), m_img.m_height - 1);
@@ -94,8 +92,8 @@ RTexture::sample(float u,
 
 Color
 RTexture::sample(Vector2f uv, 
-                        const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
-                        const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
+                 const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
+                 const SAMPLERFILTER::E& sampler /* = SAMPLERFILTER::E::ePOINT */) {
   return sample(uv.x, uv.y, mode, sampler);
 }
 

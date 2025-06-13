@@ -53,6 +53,46 @@ namespace CYLLENE_SDK {
               eTRILINEAL);
   }
 
+  namespace COLORFORMAT {
+    BETTER_ENUM(E, uint32, 
+                RGBA_32_FLOAT, // This is right now the default as we convert anything to float[4]
+                RGB_32_FLOAT,
+                R_32_FLOAT,
+                D_32_FLOAT,
+                RGBA_32_UINT,
+                RGB_32_UINT,
+                R_32_UINT,
+                D_32_UINT,
+                RGBA_32_SINT,
+                RGB_32_SINT,
+                R_32_SINT,
+                D_32_SINT,
+                RGBA_32_TYPELESS,
+                RGB_32_TYPELESS,
+                R_32_TYPELESS,
+                D_32_TYPELESS,
+                RGBA_8_FLOAT,
+                RGB_8_FLOAT,
+                R_8_FLOAT,
+                D_8_FLOAT,
+                RGBA_8_UINT,
+                RGB_8_UINT,
+                R_8_UINT,
+                D_8_UINT,
+                RGBA_8_SINT,
+                RGB_8_SINT,
+                R_8_SINT,
+                D_8_SINT,
+                RGBA_8_TYPELESS,
+                RGB_8_TYPELESS,
+                R_8_TYPELESS,
+                D_8_TYPELESS,
+                RGBA_8_UNORM,
+                RGB_8_UNORM,
+                R_8_UNORM,
+                D_8_UNORM);
+  }
+
 
 class CY_CORE_EXPORT RTexture : public RResource {
 

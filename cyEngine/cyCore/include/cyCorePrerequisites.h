@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cyUtilitiesPrerequisites.h>
+#include <cySmartPointers.h>
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # if CY_COMPILER == CY_COMPILER_MSVC
