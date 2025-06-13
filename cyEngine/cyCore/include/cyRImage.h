@@ -9,7 +9,7 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
 
-#include "cyCorePrerequisites.h"}
+#include "cyCorePrerequisites.h"
 #include "cyRResource.h"
 
 #include <cyColor.h>

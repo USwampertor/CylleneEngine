@@ -13,11 +13,13 @@
 #include "cyCorePrerequisites.h"
 
 #include "cyBBeing.h"
-#include "cySceneNode.h"
+#include "cySNode.h"
 #include "cyGameMode.h"
+#include "cyCComponent.h"
 
 #include <cyJSON.h>
 #include <cyVector2f.h>
+#include <cyEvent.h>
 
 namespace CYLLENE_SDK {
 
@@ -38,7 +40,7 @@ public:
   Scene() = default;
 
   Scene(const String& name)
-    : m_name(name) {}
+    : m_sceneName(name) {}
   
   ~Scene() = default;
   
@@ -62,20 +64,78 @@ public:
   }
 
   const String& getName() const {
-    return m_name;
+    return m_sceneName;
+  }
+
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
+  Vector<WPtr<BBeing>> 
+  getAllBeingsWithComponent() const {
+    Vector<WPtr<BBeing>> result;
+    for (const auto& node : m_beingVector) {
+      if (auto being = std::static_pointer_cast<BBeing>(node)) {
+        if (being->hasComponent(T::staticType())) {
+          result.push_back(being);
+        }
+      }
+    }
+    return result;
+  }
+
+  template<typename T, typename = std::enable_if_t<std::is_base_of<CComponent, T>::value>>
+  WPtr<BBeing> 
+  getFirstBeingWithComponent() const {
+    return m_rootNode->findChildWhere([&](WPtr<BBeing> node) {
+      if (auto being = std::static_pointer_cast<BBeing>(node.lock())) {
+        return being->hasComponent(T::staticType());
+      }
+      return false;
+    });
+
+  }
+
+  Vector<WPtr<BBeing>> 
+  getAllBeings() const {
+    Vector<WPtr<BBeing>> result;
+    for (const auto& node : m_beingVector) {
+      result.push_back(node);
+    }
+    return result;
+  }
+
+  template<typename T>
+  Vector<WPtr<T>> 
+  getBeingsOfType() const {
+    Vector<WPtr<T>> result;
+    for (const auto& node : m_beingVector) {
+      if (auto being = std::static_pointer_cast<T>(node)) {
+        result.push_back(being);
+      }
+    }
+    return result;
+  }
+
+  UPtr<SNode>& getRootNode() {
+    return m_rootNode;
   }
 
   friend class SceneManager;
 
 protected:
 
-  Vector<SPtr<BBeing>> m_toRemove;
+  Vector<WPtr<BBeing>> m_toRemove;
+
+  Event<void, WPtr<BBeing>> onBeingAdded;
+  Event<void, WPtr<BBeing>> onBeingRemoved;
+  Event<void> onSceneLoadedEvent;
 
 private:
 
-  String m_name;
+  String m_sceneName;
+  
   UPtr<SceneSettings> m_settings;
-  Vector<SPtr<SNode>> m_beings;
+  UPtr<SNode> m_rootNode;
+
+  Vector<SPtr<BBeing>> m_beingVector;
 
 };
 

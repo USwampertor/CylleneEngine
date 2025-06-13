@@ -108,7 +108,7 @@
     <ClInclude Include="include\cyCCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cySceneNode.h">
+    <ClInclude Include="include\cySNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cyInput.h">
@@ -162,9 +162,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyRMaterial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cyBBeing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyClassRegister.cpp">
@@ -221,7 +218,7 @@
     <ClCompile Include="src\cyCTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cySceneNode.cpp">
+    <ClCompile Include="src\cySNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyInputMapping.cpp">
@@ -243,6 +240,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cySceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyBBeing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

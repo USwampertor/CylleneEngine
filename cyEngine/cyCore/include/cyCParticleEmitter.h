@@ -9,6 +9,7 @@ namespace CYLLENE_SDK {
 
 class CParticleEmitter : public CComponent
 {
+public:
   CParticleEmitter() : CComponent(CParticleEmitter::staticType()) {}
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::ePARTICLEEMITTER; }
