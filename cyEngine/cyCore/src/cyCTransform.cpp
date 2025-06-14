@@ -6,16 +6,19 @@ namespace CYLLENE_SDK {
 
 Vector3f
 CTransform::getWorldPosition() {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    return parent->getWorldTransform().transformPosition(m_tMatrix.getPosition());
+  // If we can lock, either we have a parent or we are not root
+  if (auto parent = m_owner.lock()->getParent().lock()) {
+    if (parent->getTransform().lock()) {
+      return parent->getTransform().lock()->getWorldTransform().transformPosition(m_tMatrix.getPosition());
+    }
   }
   return m_tMatrix.getPosition();
 }
 
 void
 CTransform::setWorldPosition(const Vector3f& newPos) {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    Vector3f localPos = parent->getWorldTransform().inversed().transformPosition(newPos);
+  if (auto parent = m_owner.lock()->getParent().lock()) {
+    Vector3f localPos = parent->getTransform().lock()->getWorldTransform().inversed().transformPosition(newPos);
     m_tMatrix.setPosition(localPos);
   }
   else {
@@ -26,8 +29,8 @@ CTransform::setWorldPosition(const Vector3f& newPos) {
 Vector3f
 CTransform::getWorldScale() {
   Vector3f worldScale = m_tMatrix.getScale();
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    Vector3f parentScale = parent->getWorldScale();
+  if (auto parent = m_owner.lock()->getParent().lock()) {
+    Vector3f parentScale = parent->getTransform().lock()->getWorldScale();
     worldScale.x *= parentScale.x;
     worldScale.y *= parentScale.y;
     worldScale.z *= parentScale.z;
@@ -37,8 +40,8 @@ CTransform::getWorldScale() {
 
 void
 CTransform::setWorldScale(const Vector3f& newScale) {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    Vector3f parentScale = parent->getWorldScale();
+  if (auto parent = m_owner.lock()->getParent().lock()) {
+    Vector3f parentScale = parent->getTransform().lock()->getWorldScale();
     Vector3f localScale(newScale.x / parentScale.x,
                         newScale.y / parentScale.y,
                         newScale.z / parentScale.z);
@@ -51,16 +54,16 @@ CTransform::setWorldScale(const Vector3f& newScale) {
 
 Quaternion 
 CTransform::getWorldRotation() {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    return parent->getWorldRotation() * m_tMatrix.getQuatRotation();
+  if (auto parent = m_owner.lock()->getParent().lock()) {
+    return parent->getTransform().lock()->getWorldRotation() * m_tMatrix.getQuatRotation();
   }
   return m_tMatrix.getQuatRotation();
 }
 
 void 
 CTransform::setWorldRotation(const Quaternion& rotation) {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    Quaternion localRot = parent->getWorldRotation().inversed() * rotation;
+  if (auto parent = m_owner.lock()->getParent().lock()) {
+    Quaternion localRot = parent->getTransform().lock()->getWorldRotation().inversed() * rotation;
     m_tMatrix.setRotation(localRot);
   }
   else {
@@ -70,8 +73,8 @@ CTransform::setWorldRotation(const Quaternion& rotation) {
 
 Vector3f
 CTransform::getWorldEulerRotation() {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
-    Quaternion q = parent->getWorldRotation() * m_tMatrix.getQuatRotation();
+  if (auto parent = m_owner.lock()->getParent().lock()) {
+    Quaternion q = parent->getTransform().lock()->getWorldRotation() * m_tMatrix.getQuatRotation();
     Euler e = q.getEulerRotation();
     return Vector3f(e.x, e.y, e.z);
   }
@@ -81,9 +84,9 @@ CTransform::getWorldEulerRotation() {
 
 void
 CTransform::setWorldEulerAngle(const Vector3f& rotation) {
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
+  if (auto parent = m_owner.lock()->getParent().lock()) {
     Quaternion r = Quaternion(Euler(rotation));
-    Quaternion localRot = parent->getWorldRotation().inversed() * r;
+    Quaternion localRot = parent->getTransform().lock()->getWorldRotation().inversed() * r;
     m_tMatrix.setRotation(localRot);
   }
   else {
@@ -120,20 +123,20 @@ CTransform::setWorldTransform(const Vector3f& newPos,
                               const Vector3f& newScale, 
                               const Quaternion& newRot /*= Quaternion::IDENTITY*/) {
   // If we have no parent, just set the local transform directly
-  if (auto parent = m_owner.lock()->getParent().lock()->getTransform().lock()) {
+  if (auto parent = m_owner.lock()->getParent().lock()) {
     // Get parent's world matrix and its inverse
-    Matrix4 parentWorld = parent->getWorldTransform();
+    Matrix4 parentWorld = parent->getTransform().lock()->getWorldTransform();
     Matrix4 invParentWorld = parentWorld.inversed();
 
     // Calculate local position
     const Vector3f localPos = invParentWorld.transformPosition(newPos);
 
     // Calculate local rotation
-    const Quaternion parentRot = parent->getWorldRotation();
+    const Quaternion parentRot = parent->getTransform().lock()->getWorldRotation();
     const Quaternion localRot = parentRot.inversed() * newRot;
 
     // Calculate local scale
-    const Vector3f parentScale = parent->getWorldScale();
+    const Vector3f parentScale = parent->getTransform().lock()->getWorldScale();
     Vector3f localScale(newScale.x / parentScale.x,
                         newScale.y / parentScale.y,
                         newScale.z / parentScale.z);

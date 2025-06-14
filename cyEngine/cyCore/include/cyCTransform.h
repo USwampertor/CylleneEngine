@@ -47,7 +47,7 @@ public:
   Vector3f
   getWorldPosition();
 
-  const Vector3f&
+  Vector3f
   getLocalPosition() {
     return m_tMatrix.getPosition();
   }
@@ -63,7 +63,7 @@ public:
   Vector3f
   getWorldScale();
 
-  const Vector3f&
+  Vector3f
   getLocalScale() {
     return m_tMatrix.getScale();
   }

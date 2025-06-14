@@ -1,6 +1,8 @@
 #include "cySNode.h"
 #include "cyBBeing.h"
 
+#include <iostream>
+
 namespace CYLLENE_SDK {
 
 void 
@@ -38,6 +40,8 @@ SNode::addChild(WPtr<SNode> child, bool keepWorldTransform) {
   // Optionally preserve world transform
   WPtr<CTransform> thisTransform = getTransform();
   WPtr<CTransform> childTransform = childPtr->getTransform();
+  std::cout << thisTransform.lock()->getLocalPosition().toString() << std::endl;
+  std::cout << childTransform.lock()->getLocalPosition().toString() << std::endl;
 
   if (!childTransform.expired() && !thisTransform.expired()) {
     if (keepWorldTransform) {
@@ -46,7 +50,7 @@ SNode::addChild(WPtr<SNode> child, bool keepWorldTransform) {
 
       childTransformPtr->setWorldTransform(thisTransformPtr->getWorldTransform().inversed() *
                                            childTransformPtr->getWorldTransform());
-      childTransformPtr->updateLocalFromWorld();
+      // childTransformPtr->updateLocalFromWorld();
     }
     // childTransform->m_tMatrix = worldMatrix;
   }

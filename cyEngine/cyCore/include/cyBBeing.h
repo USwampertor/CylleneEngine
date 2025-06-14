@@ -164,6 +164,8 @@ public:
 
   friend class SceneManager;
   friend class SNode;
+  friend class ClassRegister;
+  friend class Scene;
 
 private:
 

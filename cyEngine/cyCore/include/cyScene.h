@@ -114,7 +114,7 @@ public:
     return result;
   }
 
-  UPtr<SNode>& getRootNode() {
+  SPtr<BBeing>& getRootNode() {
     return m_rootNode;
   }
 
@@ -133,7 +133,7 @@ private:
   String m_sceneName;
   
   UPtr<SceneSettings> m_settings;
-  UPtr<SNode> m_rootNode;
+  SPtr<BBeing> m_rootNode;
 
   Vector<SPtr<BBeing>> m_beingVector;
 
