@@ -145,11 +145,21 @@ class CY_CORE_EXPORT CTransform : public CComponent
 
   void
   setLocalLookAt(const Vector3f& target,
-                 const Vector3f& upDir = Vector3f::UP);
+                 const Vector3f& upDir);
 
   void
-  setWorldLookAt(const Vector3f& targetPos,
-                 const Vector3f& upDir = Vector3f::UP);
+  setWorldLookAt(const Vector3f& target,
+                 const Vector3f& upDir);
+
+  void
+  setLocalLookAt(const Vector3f& eyePos,
+                 const Vector3f& target,
+                 const Vector3f& upDir);
+
+  void
+  setWorldLookAt(const Vector3f& eyePos,
+                 const Vector3f& target,
+                 const Vector3f& upDir);
 
   bool
   getParentTransform(SPtr<CTransform>& out);
