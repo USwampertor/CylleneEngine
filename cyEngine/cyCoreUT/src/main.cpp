@@ -315,14 +315,14 @@ TEST_SUITE("Scene System Tests") {
 
     CHECK(transform != nullptr);
 
-    CHECK(Vector3f::areNearlySame(transform->getLocalPosition(), Vector3f::ZERO, Math::SMALLNUMBER));
+    CHECK(Vector3f::areNearlySame(transform->getLocalPosition(), Vector3f::ZERO));
     // CHECK(transform->getLocalRotation() == Quaternion::IDENTITY);
-    CHECK(Vector3f::areNearlySame(transform->getLocalScale(), Vector3f::ONE, Math::SMALLNUMBER));
+    CHECK(Vector3f::areNearlySame(transform->getLocalScale(), Vector3f::ONE));
 
     // World transform should match local when no parent
-    CHECK(Vector3f::areNearlySame(transform->getWorldPosition(),Vector3f::ZERO, Math::SMALLNUMBER));
+    CHECK(Vector3f::areNearlySame(transform->getWorldPosition(),Vector3f::ZERO));
     // CHECK(transform->getWorldRotation() == Quaternion::IDENTITY);
-    CHECK(Vector3f::areNearlySame(transform->getWorldScale(), Vector3f::ONE, Math::SMALLNUMBER));
+    CHECK(Vector3f::areNearlySame(transform->getWorldScale(), Vector3f::ONE));
   }
 
   TEST_CASE("CreateBeing with parent transform") {
@@ -332,7 +332,7 @@ TEST_SUITE("Scene System Tests") {
     auto parent = SceneManager::instance().instantiateBeing<BBeing>(parentPos);
     auto parentTransform = parent.lock()->getTransform().lock();
 
-    CHECK(Vector3f::areNearlySame(parentTransform->getLocalPosition(), parentPos, Math::SMALLNUMBER));
+    CHECK(Vector3f::areNearlySame(parentTransform->getLocalPosition(), parentPos));
 
 
     // Create child being with parent
@@ -341,8 +341,8 @@ TEST_SUITE("Scene System Tests") {
     auto childTransform = child.lock()->getTransform().lock();
 
     // Verify local transform is correct
-    Vector3f localPos = childTransform->getWorldPosition();
-    CHECK(Vector3f::areNearlySame(localPos, childLocalPos, Math::SMALLNUMBER));
+    Vector3f childWorldPos = childTransform->getWorldPosition();
+    CHECK(Vector3f::areNearlySame(childWorldPos, childLocalPos + parentPos));
 
   }
 

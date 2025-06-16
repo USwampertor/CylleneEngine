@@ -54,7 +54,6 @@ public:
                                                       m_activeScene->m_beingVector.size()));
     newBeing->m_self = newBeing;
     newBeing->onCreate();
-    newBeing->getTransform().lock()->setLocalTransform(position, Vector3f::ONE, rotation);
     m_activeScene->m_beingVector.push_back(newBeing);
     
     if (parent.lock() != nullptr) {
@@ -63,6 +62,7 @@ public:
     else {
       m_activeScene->m_rootNode->addChild(newBeing);
     }
+    newBeing->getTransform().lock()->setLocalTransform(position, Vector3f::ONE, rotation);
     return newBeing;
   }
 
