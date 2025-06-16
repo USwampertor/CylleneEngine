@@ -32,12 +32,12 @@ CCamera::setOrthogonal(const float& newWidth,
 
 void
 CCamera::setLookAt(const Vector3f& eyePos,
-                  const Vector3f& targetPos,
-                  const Vector3f upDir) {
+                   const Vector3f& targetPos,
+                   const Vector3f upDir) {
   if (m_owner.lock() != nullptr) {
-    m_owner.lock()->getComponent<CTransform>().lock()->setLocalLookAt(eyePos, targetPos, upDir);
+    m_owner.lock()->getComponent<CTransform>().lock()->setLocalLookAt(targetPos, upDir);
     // TODO: Use the dirty flag system
-    m_view = m_owner.lock()->getComponent<CTransform>().lock()->m_tMatrix;
+    m_view = m_owner.lock()->getComponent<CTransform>().lock()->m_localMatrix;
   }
 }
 

@@ -172,7 +172,7 @@ class CY_MATH_EXPORT Matrix4
             const Vector3f& upDir);
 
   Matrix4
-  inversed();
+  inversed() const;
 
   void
   inverse();
@@ -303,7 +303,7 @@ class CY_MATH_EXPORT Matrix4
   subMatrix() const;
 
   String
-  toString();
+  toString() const;
 
   /**
     * ZERO filled Matrix

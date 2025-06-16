@@ -319,7 +319,7 @@ Matrix4::setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vect
 }
 
 Matrix4
-Matrix4::inversed() {
+Matrix4::inversed() const {
   CY_ASSERT(this->determinant() != 0.0f &&
             Utils::format("The determinant for matrix \n%s is 0!", this->toString()).c_str());
     
@@ -823,7 +823,7 @@ Matrix4::subMatrix() const {
 }
 
 String
-Matrix4::toString() {
+Matrix4::toString() const {
   return Utils::format("[(%2.2f), \t (%2.2f), \t (%2.2f), \t (%2.2f)]\n[(%2.2f), \t (%2.2f), \t (%2.2f), \t (%2.2f)]\n[(%2.2f), \t (%2.2f), \t (%2.2f), \t (%2.2f)]\n[(%2.2f), \t (%2.2f), \t (%2.2f), \t (%2.2f)]\n", 
                         m[0][0], m[1][0], m[2][0], m[3][0],
                         m[0][1], m[1][1], m[2][1], m[3][1],

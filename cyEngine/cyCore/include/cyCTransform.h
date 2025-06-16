@@ -24,98 +24,115 @@ namespace CYLLENE_SDK {
 
 class CY_CORE_EXPORT CTransform : public CComponent
 {
-public:
-  
-  CTransform(const CTransform& other) : 
-    CComponent(CTransform::staticType()) {
-    m_tMatrix = other.m_tMatrix;
-//     m_parent = other.m_parent;  
-//     m_children = other.m_children;
+ public:
+#pragma region Constructors
+  CTransform(const CTransform& other, const bool setAsLocalTransform = true)
+    : CComponent(CTransform::staticType()),
+      m_localMatrix(Matrix4::IDENTITY),
+      m_worldMatrix(Matrix4::IDENTITY)
+  {
+    if (setAsLocalTransform) {
+      setLocalTransform(other.m_localMatrix);
+    }
+    else {
+      setWorldTransform(other.m_worldMatrix);
+    }
   }
 
-  CTransform(const Vector3f& position = Vector3f::ZERO,
-             const Vector3f& scale = Vector3f::ONE,
-             const Quaternion& rotation = Quaternion::IDENTITY) 
-    : CComponent(CTransform::staticType()) {
-      m_tMatrix.setTransformMatrix(position, rotation, scale);
+  CTransform(const Vector3f&    position  = Vector3f::ZERO,
+             const Vector3f&    scale     = Vector3f::ONE,
+             const Quaternion&  rotation  = Quaternion::IDENTITY,
+             const bool         setAsLocalTransform = true)
+    : CComponent(CTransform::staticType()),
+      m_localMatrix(Matrix4::IDENTITY),
+      m_worldMatrix(Matrix4::IDENTITY) {
+    if (setAsLocalTransform) {
+      setLocalTransform(position, scale, rotation);
+    }
+    else {
+      setWorldTransform(position, scale, rotation);
+    }
   }
 
-  CTransform(const Matrix4& transformMatrix)
-    : CComponent(CTransform::staticType()), 
-      m_tMatrix(transformMatrix) {}
+  CTransform(const Matrix4& transformMatrix, const bool setAsLocalTransform = true)
+    : CComponent(CTransform::staticType()),
+      m_localMatrix(Matrix4::IDENTITY),
+      m_worldMatrix(Matrix4::IDENTITY) {
+    if (setAsLocalTransform) {
+      setLocalTransform(transformMatrix);
+    }
+    else {
+      setWorldTransform(transformMatrix);
+    }
+  }
+#pragma endregion
+
+#pragma region get/set Position
+  Vector3f
+  getLocalPosition() const;
 
   Vector3f
-  getWorldPosition();
+  getWorldPosition() const;
 
-  const Vector3f&
-  getLocalPosition() {
-    return m_tMatrix.getPosition();
-  }
+  void
+  setLocalPosition(const Vector3f& newPos);
 
   void
   setWorldPosition(const Vector3f& newPos);
+#pragma endregion
 
-  void
-  setLocalPosition(const Vector3f& newPos) {
-    m_tMatrix.setPosition(newPos);
-  }
+#pragma region get/set Rotation
+  Quaternion
+  getLocalRotation() const;
 
   Vector3f
-  getWorldScale();
-
-  const Vector3f&
-  getLocalScale() {
-    return m_tMatrix.getScale();
-  }
-
-  void
-  setWorldScale(const Vector3f& newScale);
-
-  void
-  setLocalScale(const Vector3f& newScale) {
-    m_tMatrix.setScale(newScale);
-  }
+  getLocalEulerRotation() const;
 
   Quaternion
-  getWorldRotation();
+  getWorldRotation() const;
 
-  Quaternion
-  getLocalRotation() {
-    return m_tMatrix.getQuatRotation();
-  }
+  Vector3f
+  getWorldEulerRotation() const;
+
+  void
+  setLocalRotation(const Quaternion& newRotation);
+
+  void
+  setLocalEulerAngle(const Vector3f& newEulerAngles);
 
   void
   setWorldRotation(const Quaternion& newRotation);
 
   void
-  setLocalRotation(const Quaternion& newRotation) {
-    m_tMatrix.setRotation(newRotation);
-  }
-
-  Vector3f
-  getWorldEulerRotation();
-
-  Vector3f
-  getLocalEulerRotation() {
-    Euler e = m_tMatrix.getEulerRotation();
-    return Vector3f(e.x, e.y, e.z);
-  }
-
-  void
   setWorldEulerAngle(const Vector3f& newEulerAngles);
+#pragma endregion
+
+#pragma region get/set Scale
+  Vector3f
+  getLocalScale() const;
+
+  Vector3f
+  getWorldScale() const;
 
   void
-  setLocalEulerAngle(const Vector3f& newEulerAngles) {
-    m_tMatrix.setRotation(newEulerAngles);
-  }
+  setLocalScale(const Vector3f& newScale);
+
+  void
+  setWorldScale(const Vector3f& newScale);
+#pragma endregion
+
+#pragma region get/set Transform
+  Matrix4
+  getLocalTransform() const;
 
   Matrix4
-  getWorldTransform();
+  getWorldTransform() const;
 
-  Matrix4
-  getLocalTransform() {
-    return m_tMatrix;
-  }
+  void
+  setLocalTransform(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot);
+
+  void
+  setLocalTransform(const Matrix4& other);
 
   void
   setWorldTransform(const Vector3f& newPos, 
@@ -124,98 +141,82 @@ public:
 
   void
   setWorldTransform(const Matrix4& other);
+#pragma endregion
 
   void
-  setLocalTransform(const Vector3f& newPos, const Vector3f& newSc, const Quaternion& newRot) {
-    m_tMatrix.setTransformMatrix(newPos, newRot, newSc);
-  }
-
-  void
-  setLocalTransform(const Matrix4& other) {
-    m_tMatrix = other;
-  }
-
-  void
-  setLookAt(const Vector3f& targetPos, const Vector3f& upDir = Vector3f::UP);
-
-  void
-  setWorldLookAt(const Vector3f& eyePos, 
-                 const Vector3f& targetPos, 
+  setLocalLookAt(const Vector3f& target,
                  const Vector3f& upDir = Vector3f::UP);
 
   void
-  setLocalLookAt(const Vector3f& eyePos, 
-                 const Vector3f& targetPos, 
+  setWorldLookAt(const Vector3f& targetPos,
                  const Vector3f& upDir = Vector3f::UP);
 
-  void
-  updateLocalFromWorld();
-
-  // uint32 
-  // getChildCount() {
-  //   return static_cast<uint32>(m_children.size());
-  // }
-
-  WPtr<CTransform>
-  getParentTransform();
+  bool
+  getParentTransform(SPtr<CTransform>& out);
 
   WPtr<CTransform>
   getChildTransform(const uint32& index);
 
   void
   translateLocal(const Vector3f& delta) {
-    m_tMatrix.translate(delta);
+    m_localMatrix.translate(delta);
+    
+    updateWorld();
   }
 
   void 
   scaleLocal(const Vector3f& delta) {
-    m_tMatrix.scale(delta);
+    m_localMatrix.scale(delta);
+
+    updateWorld();
   }
 
   void
   rotateLocal(const Quaternion& delta) {
-    m_tMatrix.rotate(delta);
+    m_localMatrix.rotate(delta);
+
+    updateWorld();
   }
 
   void
   rotateLocal(const Vector3f& deltaAngles) {
-    m_tMatrix.rotate(Quaternion(Euler(deltaAngles)));
+    m_localMatrix.rotate(Quaternion(Euler(deltaAngles)));
+
+    updateWorld();
   }
 
   void
   resetTransform() {
-    m_tMatrix.identity();
+    m_localMatrix.identity();
+
+    updateWorld();
   }
 
-  // void addChild(const SPtr<CTransform>& newChild);
-  // 
-  // void addChildren(const Vector<SPtr<CTransform>>& newChildren);
-  // 
-  // void removeChild(const String& name);
-  // 
-  // void removeChildAt(const uint32& index);
-  // 
-  // void removeAllChildren();
-  // 
-  // WPtr<CTransform> getChild(const String& name);
-  // 
-  // void setParent(const SPtr<CTransform>& newParent);
-  // 
-  // bool isChildOf(const SPtr<CTransform>& potentialParent);
-  // 
-  // bool isParentOf(const SPtr<CTransform>& potentialChild);
-  // 
-  // SPtr<CTransform> findChild(const String& name, bool recursive = false);
+#pragma region Transformations
+  Vector3f
+  transformPoint(const Vector3f& point) const;
 
-  Vector3f transformPoint(const Vector3f& point);
+  Vector3f
+  transformDirection(const Vector3f& direction) const;
 
-  Vector3f transformDirection(const Vector3f& direction);
+  Quaternion
+  transformRotation(const Quaternion& rotation) const;
+
+  Vector3f
+  transformScale(const Vector3f& scale) const;
   
-  Vector3f inverseTransformPoint(const Vector3f& point);
+  Vector3f
+  inverseTransformPoint(const Vector3f& point) const;
   
-  Vector3f inverseTransformDirection(const Vector3f& direction);
+  Vector3f
+  inverseTransformDirection(const Vector3f& direction) const;
+  
+  Quaternion
+  inverseTransformRotation(const Quaternion& rotation) const;
 
-  // void forEachChild(Callback<void, SPtr<CTransform>> callback, bool recursive = false);
+  Vector3f
+  inverseTransformScale(const Vector3f& scale) const;
+#pragma endregion
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eTRANSFORM; }
 
@@ -223,10 +224,13 @@ public:
   toString() override {
     String toReturn;
 
-    toReturn = Utils::format("%s \n %s \n %s", 
-                             m_tMatrix.getPosition().toString().c_str(), 
-                             m_tMatrix.getEulerRotation().toString().c_str(),
-                             m_tMatrix.getScale().toString().c_str());
+    toReturn = Utils::format("Local matrix:\n%s \n %s \n %s\nWorld matrix:\n%s \n %s \n %s\n",
+                             m_localMatrix.getPosition().toString().c_str(), 
+                             m_localMatrix.getEulerRotation().toString().c_str(),
+                             m_localMatrix.getScale().toString().c_str(),
+                             m_worldMatrix.getPosition().toString().c_str(), 
+                             m_worldMatrix.getEulerRotation().toString().c_str(),
+                             m_worldMatrix.getScale().toString().c_str());
 
     return toReturn;
   }
@@ -239,14 +243,16 @@ private:
   bool
   isPartOfSceneSC(SPtr<CTransform> child);
 
+  void
+  updateWorld();
+
+  void
+  UpdateChildren();
+
 public:
 
-  Matrix4 m_tMatrix;
-
-  // WPtr<CTransform> m_parent;
-  // 
-  // Vector<WPtr<CTransform>> m_children;
+  Matrix4 m_localMatrix;
+  Matrix4 m_worldMatrix;
 };
 
 }
-

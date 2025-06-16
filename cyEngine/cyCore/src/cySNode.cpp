@@ -44,9 +44,9 @@ SNode::addChild(WPtr<SNode> child, bool keepWorldTransform) {
       SPtr<CTransform> childTransformPtr = childTransform.lock();
       SPtr<CTransform> thisTransformPtr = thisTransform.lock();
 
-      childTransformPtr->setWorldTransform(thisTransformPtr->getWorldTransform().inversed() *
+      childTransformPtr->setLocalTransform(thisTransformPtr->getWorldTransform().inversed() *
                                            childTransformPtr->getWorldTransform());
-      childTransformPtr->updateLocalFromWorld();
+      // childTransformPtr->updateLocalFromWorld();
     }
     // childTransform->m_tMatrix = worldMatrix;
   }

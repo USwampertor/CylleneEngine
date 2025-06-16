@@ -631,6 +631,11 @@ Quaternion::isReal() const {
   return x == 0 && y == 0 && z == 0;
 }
 
+Vector3f
+Quaternion::toVector3() const {
+  return Vector3f(x, y, z);
+}
+
 Vector4f 
 Quaternion::toVector4() const {
   return Vector4f(x, y, z, w);
