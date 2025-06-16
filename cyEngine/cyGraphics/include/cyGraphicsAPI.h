@@ -64,6 +64,9 @@ public:
   shutdown() = 0;
 
 	void
+	createDefaultObjects();
+
+	void
 	addToRenderPool(uint32 index);
 
 	void
@@ -289,7 +292,15 @@ public:
     }
   }
 
-
+	WPtr<GInputLayout>
+  getModelInputLayout() const {
+    if (m_modelInputLayout) {
+      return m_modelInputLayout;
+    }
+    else {
+			return {};
+    }
+  }
 
 public:
 
@@ -329,6 +340,10 @@ public:
 
   List<SPtr<GGraphicPass>>
 	m_graphicPasses;
+
+
+	SPtr<GInputLayout>
+	m_modelInputLayout;
 };
 
 

@@ -59,38 +59,36 @@ GShadowPass::clear() {
 
 void
 GShadowPass::execute() {
-  // GraphicsAPI::instance().setViewport(0, 0, 1024, 1024);
-  // 
-  // GraphicsAPI::instance().getDeviceContext()->setVertexShader(vShadowShader);
-  // GraphicsAPI::instance().getDeviceContext()->setPixelShader(nullptr);
-  // 
-  // GraphicsAPI::instance().getDeviceContext()->setInputLayout(pInputLayout);
-  // GraphicsAPI::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-  // 
-  // Vector<SPtr<GRenderTargetView>> nullRTs;
-  // nullRTs.push_back(nullptr);
-  // GraphicsAPI::instance().getDeviceContext()->setRenderTargets(1,
-  //   nullRTs,
-  //   m_shadowDSV);
-  // 
-  // perPassConstants.cameraForward = shadowCamera->m_view.getForwardVector();
-  // perPassConstants.cameraRight = shadowCamera->m_view.getRightVector();
-  // perPassConstants.cameraUp = shadowCamera->m_view.getUpVector();
-  // perPassConstants.view = shadowCamera->m_view;
-  // perPassConstants.projection = shadowCamera->m_projection;
-  // 
-  // constantBufferData.clear();
-  // constantBufferData.resize(sizeof(perPassConstants));
-  // memcpy(constantBufferData.data(), &perPassConstants, sizeof(perPassConstants));
-  // 
-  // GraphicsDX11API::instance().writeToBuffer(perPassCB, constantBufferData);
-  // Vector<SPtr<GraphicsBuffer>> gbVector;
-  // gbVector.push_back(perPassCB);
-  // GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
-  // GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
-  // 
-  // draw(floorObject, floorMesh, nullptr);
-  // draw(cubeObject, cubeMesh, nullptr);
+//   GraphicsAPI::instance().setViewport(0, 0, 1024, 1024);
+//   
+//   GraphicsAPI::instance().getDeviceContext()->setVertexShader(m_pVShadowShader);
+//   GraphicsAPI::instance().getDeviceContext()->setPixelShader(nullptr);
+//   
+//   GraphicsAPI::instance().getDeviceContext()->setInputLayout();
+//   GraphicsAPI::instance().getDeviceContext()->setPrimitiveTopology(GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST);
+//   
+//   Vector<SPtr<GRenderTargetView>> nullRTs;
+//   nullRTs.push_back(nullptr);
+//   GraphicsAPI::instance().getDeviceContext()->setRenderTargets(1, nullRTs, m_shadowDSV);
+//   
+//   perPassConstants.cameraForward = shadowCamera->m_view.getForwardVector();
+//   perPassConstants.cameraRight = shadowCamera->m_view.getRightVector();
+//   perPassConstants.cameraUp = shadowCamera->m_view.getUpVector();
+//   perPassConstants.view = shadowCamera->m_view;
+//   perPassConstants.projection = shadowCamera->m_projection;
+//   
+//   constantBufferData.clear();
+//   constantBufferData.resize(sizeof(perPassConstants));
+//   memcpy(constantBufferData.data(), &perPassConstants, sizeof(perPassConstants));
+//   
+//   GraphicsDX11API::instance().writeToBuffer(perPassCB, constantBufferData);
+//   Vector<SPtr<GraphicsBuffer>> gbVector;
+//   gbVector.push_back(perPassCB);
+//   GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
+//   GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
+//   
+//   draw(floorObject, floorMesh, nullptr);
+//   draw(cubeObject, cubeMesh, nullptr);
 }
 
 void
