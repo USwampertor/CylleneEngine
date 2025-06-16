@@ -315,7 +315,8 @@ Matrix4::setTransformMatrix(const Vector3f& position,
 
 void
 Matrix4::setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir) {
-  CY_ASSERT(false, "Not implemented yet!");
+  /*CY_ASSERT(false, "Not implemented yet!");*/
+  *this = this->view(eyePos, targetPos, upDir);
 }
 
 Matrix4
