@@ -182,7 +182,7 @@ CTransform::setWorldTransform(const Matrix4& other) {
   SPtr<CTransform> parentTransform;
 
   if (getParentTransform(parentTransform)) {
-    Matrix4 relativeMatrix = parentTransform->getWorldTransform().inversed() * other;
+    Matrix4 relativeMatrix = parentTransform->m_worldMatrix.inversed() * other;
     setLocalTransform(relativeMatrix);
   }
   else {
@@ -249,42 +249,42 @@ CTransform::getChildTransform(const uint32& index) {
 #pragma region Transformations
 Vector3f
 CTransform::transformPoint(const Vector3f& point) const {
-  return getWorldTransform().transformPosition(point);
+  return m_worldMatrix.transformPosition(point);
 }
 
 Vector3f
 CTransform::transformDirection(const Vector3f& direction) const {
-  return getWorldTransform().transformDirection(direction);
+  return m_worldMatrix.transformDirection(direction);
 }
 
 Quaternion
 CTransform::transformRotation(const Quaternion& rotation) const {
-  return getWorldTransform().getQuatRotation() * rotation;
+  return m_worldMatrix.getQuatRotation() * rotation;
 }
 
 Vector3f
 CTransform::transformScale(const Vector3f& scale) const {
-  return getWorldTransform().getScale() * scale;
+  return m_worldMatrix.getScale() * scale;
 }
 
 Vector3f
 CTransform::inverseTransformPoint(const Vector3f& point) const {
-  return getWorldTransform().inversed().transformPosition(point);
+  return m_worldMatrix.inversed().transformPosition(point);
 }
 
 Vector3f
 CTransform::inverseTransformDirection(const Vector3f& direction) const {
-  return getWorldTransform().inversed().transformDirection(direction);
+  return m_worldMatrix.inversed().transformDirection(direction);
 }
 
 Quaternion
 CTransform::inverseTransformRotation(const Quaternion& rotation) const {
-  return getWorldTransform().getQuatRotation().inversed() * rotation;
+  return m_worldMatrix.getQuatRotation().inversed() * rotation;
 }
 
 Vector3f
 CTransform::inverseTransformScale(const Vector3f& scale) const {
-  Vector3f parentScale = getWorldTransform().getScale();
+  Vector3f parentScale = m_worldMatrix.getScale();
   CY_ASSERT(!Math::isNearSame(parentScale.x, 0.0f) &&
             !Math::isNearSame(parentScale.y, 0.0f) &&
             !Math::isNearSame(parentScale.z, 0.0f),
@@ -308,7 +308,7 @@ CTransform::updateWorld() {
   SPtr<CTransform> parentTransform;
 
   if (getParentTransform(parentTransform)) {
-    m_worldMatrix = parentTransform->getWorldTransform() * m_localMatrix;
+    m_worldMatrix = parentTransform->m_worldMatrix * m_localMatrix;
   }
   else {
     m_worldMatrix = m_localMatrix;
