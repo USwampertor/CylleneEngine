@@ -192,10 +192,17 @@ CTransform::setWorldTransform(const Matrix4& other) {
 #pragma endregion
 
 void
-CTransform::setLocalLookAt(const Vector3f& targetPos, const Vector3f& upDir) {
+CTransform::setLocalLookAt(const Vector3f& target, const Vector3f& upDir) {
   Vector3f eyePos = m_localMatrix.getPosition();
 
-  m_localMatrix.setLookAt(eyePos, targetPos, upDir);
+  m_localMatrix.setLookAt(eyePos, target, upDir);
+
+  updateWorld();
+}
+
+void
+CTransform::setLocalLookAt(const Vector3f& eyePos, const Vector3f& target, const Vector3f& upDir) {
+  m_localMatrix.setLookAt(eyePos, target, upDir);
 
   updateWorld();
 }
@@ -212,6 +219,21 @@ CTransform::setWorldLookAt(const Vector3f& targetPos, const Vector3f& upDir) {
   }
   else {
     setLocalLookAt(targetPos, upDir);
+  }
+}
+
+void
+CTransform::setWorldLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f& upDir) {
+  SPtr<CTransform> parentTransform;
+
+  if (getParentTransform(parentTransform)) {
+    Vector3f relativeTarget = parentTransform->inverseTransformPoint(targetPos);
+    Vector3f relativeUpDir = parentTransform->inverseTransformDirection(upDir);
+
+    setLocalLookAt(eyePos, relativeTarget, relativeUpDir);
+  }
+  else {
+    setLocalLookAt(eyePos, targetPos, upDir);
   }
 }
 

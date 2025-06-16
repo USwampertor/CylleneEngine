@@ -57,6 +57,9 @@ public:
   setLookAt(const Vector3f& eyePos, const Vector3f& targetPos, const Vector3f upDir);
 
   void
+  setLookAt(const Vector3f& targetPos, const Vector3f upDir);
+
+  void
   changeCameraType(const CAMERA_TYPE::E& type);
 
 public:
