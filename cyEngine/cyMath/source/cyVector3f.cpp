@@ -397,7 +397,7 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector3f::areNearlySame(const Vector3f& a, const Vector3f& b, const float& error = Math::SMALLNUMBER) {
+  Vector3f::areNearlySame(const Vector3f& a, const Vector3f& b, const float& error) {
     return Math::abs(a.x - b.x) <= error &&
            Math::abs(a.y - b.y) <= error &&
            Math::abs(a.z - b.z) <= error;

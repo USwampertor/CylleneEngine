@@ -11,6 +11,7 @@
 #pragma once
 
 #include "cyMathPrerequisites.h"
+#include "cyMath.h"
 
 namespace CYLLENE_SDK {
 
@@ -484,7 +485,7 @@ public:
     *
     */
   static bool
-  areNearlySame(const Vector4f& a, const Vector4f& b, const float& error);
+  areNearlySame(const Vector4f& a, const Vector4f& b, const float& error = Math::SMALLNUMBER);
 
   /**
     * @brief Returns the vector as a printable string

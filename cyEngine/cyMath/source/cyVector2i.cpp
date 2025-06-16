@@ -342,7 +342,7 @@ namespace CYLLENE_SDK {
   }
 
   bool
-  Vector2i::areNearlySame(const Vector2i& a, const Vector2i& b, const int32& error = 1) {
+  Vector2i::areNearlySame(const Vector2i& a, const Vector2i& b, const int32& error ) {
     return Math::abs(a.x - b.x) <= error &&
            Math::abs(a.y - b.y) <= error ;
   }
