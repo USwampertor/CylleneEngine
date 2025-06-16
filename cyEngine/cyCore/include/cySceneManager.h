@@ -62,6 +62,7 @@ public:
     else {
       m_activeScene->m_rootNode->addChild(newBeing);
     }
+    newBeing->getTransform().lock()->setLocalTransform(position, Vector3f::ONE, rotation);
     return newBeing;
   }
 

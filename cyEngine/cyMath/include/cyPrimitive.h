@@ -53,7 +53,6 @@ public:
   }
 
   PRIMITIVE_TYPE::E m_type = PRIMITIVE_TYPE::E::NONE;
-
   
   virtual String
   toString() = 0;

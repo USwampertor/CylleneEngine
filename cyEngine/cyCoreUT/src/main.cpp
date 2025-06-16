@@ -294,7 +294,7 @@ TEST_SUITE("Scene System Tests") {
 
   }
 
-  TEST_CASE("GameObject Parenting") {
+  TEST_CASE("Component Retrieval") {
     auto obj1 = SceneManager::instance().instantiateBeing<BBeing>();
     auto obj2 = SceneManager::instance().instantiateBeing<BBeing>();
     auto obj3 = SceneManager::instance().instantiateBeing<BBeing>();
@@ -306,5 +306,45 @@ TEST_SUITE("Scene System Tests") {
     CHECK(SceneManager::instance().findBeingsWithComponent<CLight>().size() == 0);
     CHECK(SceneManager::instance().findBeingsWithComponent<CCamera>().size() == 1);
   }
+
+  TEST_CASE("InstantiateBeing with default transform") {
+    
+    // Create a being with default transform
+    auto being = SceneManager::instance().instantiateBeing<BBeing>();
+    auto transform = being.lock()->getTransform().lock();
+
+    CHECK(transform != nullptr);
+
+    CHECK(Vector3f::areNearlySame(transform->getLocalPosition(), Vector3f::ZERO));
+    // CHECK(transform->getLocalRotation() == Quaternion::IDENTITY);
+    CHECK(Vector3f::areNearlySame(transform->getLocalScale(), Vector3f::ONE));
+
+    // World transform should match local when no parent
+    CHECK(Vector3f::areNearlySame(transform->getWorldPosition(),Vector3f::ZERO));
+    // CHECK(transform->getWorldRotation() == Quaternion::IDENTITY);
+    CHECK(Vector3f::areNearlySame(transform->getWorldScale(), Vector3f::ONE));
+  }
+
+  TEST_CASE("CreateBeing with parent transform") {
+   
+    // Create parent being
+    Vector3f parentPos(5, 0, 0);
+    auto parent = SceneManager::instance().instantiateBeing<BBeing>(parentPos);
+    auto parentTransform = parent.lock()->getTransform().lock();
+
+    CHECK(Vector3f::areNearlySame(parentTransform->getLocalPosition(), parentPos));
+
+
+    // Create child being with parent
+    Vector3f childLocalPos(2, 0, 0);
+    auto child = SceneManager::instance().instantiateBeing<BBeing>(childLocalPos, Quaternion::IDENTITY, parentTransform);
+    auto childTransform = child.lock()->getTransform().lock();
+
+    // Verify local transform is correct
+    Vector3f childWorldPos = childTransform->getWorldPosition();
+    CHECK(Vector3f::areNearlySame(childWorldPos, childLocalPos + parentPos));
+
+  }
+
 
 }
