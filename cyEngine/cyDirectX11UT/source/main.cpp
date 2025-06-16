@@ -398,7 +398,7 @@ main(int argc, char* argv[])
         GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
       }
 
-      perObjectConstants.world = refObject.getTransform().lock()->m_tMatrix;
+      perObjectConstants.world = refObject.getTransform().lock()->m_worldMatrix;
       perObjectConstants.world.transpose();
 
       constantBufferData.clear();
@@ -590,7 +590,7 @@ main(int argc, char* argv[])
 
       GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
 
-      perObjectConstants.world = saqObject.lock()->getTransform().lock()->m_tMatrix;
+      perObjectConstants.world = saqObject.lock()->getTransform().lock()->m_worldMatrix;
       perObjectConstants.world.transpose();
 
       constantBufferData.clear();
