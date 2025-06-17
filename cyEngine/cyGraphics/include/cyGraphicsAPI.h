@@ -6,6 +6,7 @@
 // TODO: Check what things can be fast forwarded
 #include <cyColor.h>
 #include <cyCCamera.h>
+#include <cyDLLLoader.h>
 #include <cyBBeing.h>
 #include <cyModule.h>
 #include <cyRShader.h>
@@ -343,6 +344,46 @@ public:
 	m_modelInputLayout;
 };
 
+static bool
+loadGFXModule(const GFXTYPE::E& type) {
+
+  String moduleName = "";
+  if (type == +GFXTYPE::E::eDX11) {
+    moduleName = "cyDirectX11";
+  }
+
+  if (moduleName.empty()) {
+    Utils::throwException("Graphics API was not able to load based on type given");
+    return false;
+  }
+
+#if defined(CY_DEBUG_MODE)
+  moduleName += "d";
+#endif
+  moduleName += ".dll";
+
+  void* createFunc = DLLLoader::load(moduleName, "createPluginAPI", false);
+  if (!createFunc) {
+    // Handle error: DLL not found or function not exported
+    Utils::throwException("Graphics API did not find DLL function");
+    return false;
+  }
+
+  // Cast the function pointer to the correct type
+  auto factory = reinterpret_cast<GraphicsAPI * (*)()>(createFunc);
+
+  // 2. Create the DX11 API instance
+  GraphicsAPI* dx11API = factory();
+  if (!dx11API) {
+    // Handle error: API creation failed
+    Utils::throwException("Graphics API was not able to create GraphicsAPI object");
+    return false;
+  }
+
+  GraphicsAPI::setModule(dx11API);
+
+  return true;
+}
 
 }
 

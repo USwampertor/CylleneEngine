@@ -32,24 +32,7 @@ main(int argc, char* argv[])
   WindowManager::instance().createWindow("Test", Vector2i(1280, 720));
 
   void* hwnd = WindowManager::instance().getWindowHandle(0);
-  void* createFunc = DLLLoader::load("cyDirectX11d.dll", "createPluginAPI", false);
-  if (!createFunc) {
-    // Handle error: DLL not found or function not exported
-    return -1;
-  }
-
-  // Cast the function pointer to the correct type
-  auto factory = reinterpret_cast<GraphicsAPI * (*)()>(createFunc);
-
-  // 2. Create the DX11 API instance
-  GraphicsAPI* dx11API = factory();
-  if (!dx11API) {
-    // Handle error: API creation failed
-    return -1;
-  }
-
-  GraphicsAPI::setModule(dx11API);
-
+  loadGFXModule(GFXTYPE::E::eDX11);
   GraphicsAPI::instance().initialize(hwnd);
 
   //  SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
@@ -69,6 +52,9 @@ main(int argc, char* argv[])
 
     GraphicsAPI::instance().clear(Color::GREEN);
     GraphicsAPI::instance().present();
+    if (time >= 5.0f) {
+      running = false; // Stop after 5 seconds
+    }
   }
   // ... rest of your rendering loop ...
 
