@@ -60,27 +60,27 @@ RImage::bitBlt(const SPtr<RImage>& srcImg,
         continue;
       }
 
-      if (TEXTUREMODE::E::eNONE == format) {
+      if (+TEXTUREMODE::E::eNONE == format) {
         srcx = srcRect.x + destx;
         srcy = srcRect.y + desty;
       }
-      else if (TEXTUREMODE::E::eWRAP == format  || TEXTUREMODE::E::eREPEAT == format) {
+      else if (+TEXTUREMODE::E::eWRAP == format  || +TEXTUREMODE::E::eREPEAT == format) {
         srcx = (srcRect.x + destx % srcImg->m_metadata.m_width + srcRect.width) % 
                (srcRect.width);
         srcy = (srcRect.y + desty % srcImg->m_metadata.m_height + srcRect.height) % 
                (srcRect.height);
       }
-      else if (TEXTUREMODE::E::eCLAMP == format) {
+      else if (+TEXTUREMODE::E::eCLAMP == format) {
         srcx = Math::clamp(srcRect.x + destx, uint32(0), 
                            static_cast<uint32>(srcImg->m_metadata.m_width - 1));
         srcy = Math::clamp(srcRect.y + desty, uint32(0), 
                            static_cast<uint32>(srcImg->m_metadata.m_height - 1));
       }
-      else if (TEXTUREMODE::E::eMIRROR == format) {
+      else if (+TEXTUREMODE::E::eMIRROR == format) {
         srcx = mirrorCoord(srcRect.x + destx, srcImg->m_metadata.m_width);
         srcy = mirrorCoord(srcRect.y + desty, srcImg->m_metadata.m_height);
       }
-      else if (TEXTUREMODE::E::eSTRETCH == format) {
+      else if (+TEXTUREMODE::E::eSTRETCH == format) {
         float u = static_cast<float>(destx) / dstRect.width;
         float v = static_cast<float>(desty) / dstRect.height;
 

@@ -442,9 +442,9 @@ SHADER_TYPE::E determineShaderType(const Path& filename, const String& firstLine
   else if (filename.extension() == String(".ds")) return SHADER_TYPE::E::TDOMAIN;
 
   // If we have language info but no extension hint, use first line content
-  if (language != SHADER_LANGUAGE::E::UNKNOWN) {
+  if (language != +SHADER_LANGUAGE::E::UNKNOWN) {
     SHADER_TYPE::E stage = detectShaderTypeFromFirstLine(firstLine, language);
-    if (stage != SHADER_TYPE::E::UNKNOWN) return stage;
+    if (stage != +SHADER_TYPE::E::UNKNOWN) return stage;
   }
 
   // Final fallback - check for common patterns in first line
