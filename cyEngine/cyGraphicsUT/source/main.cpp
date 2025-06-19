@@ -3,6 +3,12 @@
 
 #include <cyGraphicsAPI.h>
 #include <cyDLLLoader.h>
+#include <cyLogger.h>
+#include <cyResourceManager.h>
+#include <cySceneManager.h>
+#include <cyWindow.h>
+#include <cyTime.h>
+
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
 
@@ -16,33 +22,40 @@ using namespace CYLLENE_SDK;
 int32
 main(int argc, char* argv[])
 {
-  void* createFunc = CYLLENE_SDK::DLLLoader::load("cyDirectX11d.dll", "createPluginAPI", false);
-  if (!createFunc) {
-    // Handle error: DLL not found or function not exported
-    return -1;
+  Logger::startUp();
+  ResourceManager::startUp();
+  Time::startUp();
+  SceneManager::startUp();
+
+  WindowManager::startUp();
+  WindowManager::instance().init();
+  WindowManager::instance().createWindow("Test", Vector2i(1280, 720));
+
+  void* hwnd = WindowManager::instance().getWindowHandle(0);
+  loadGFXModule(GFXTYPE::E::eDX11);
+  GraphicsAPI::instance().initialize(hwnd);
+
+  //  SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
+  Time::instance().init();
+  Time::instance().update();
+  bool running = true;
+  float time = 0.0f;
+  float deltaTime;
+  while (running) {
+    // Now use the API
+    // eventQueue->update();
+    Time::instance().update();
+    WindowManager::instance().update();
+    DELTA_TYPE::E deltaType = DELTA_TYPE::E::eMILLISECOND;
+    deltaTime = Time::instance().deltaTime(deltaType);
+    time += deltaTime * 0.001f;
+
+    GraphicsAPI::instance().clear(Color::GREEN);
+    GraphicsAPI::instance().present();
+    if (time >= 5.0f) {
+      running = false; // Stop after 5 seconds
+    }
   }
-
-  // Cast the function pointer to the correct type
-  auto factory = reinterpret_cast<CYLLENE_SDK::GraphicsAPI * (*)()>(createFunc);
-
-  // 2. Create the DX11 API instance
-  CYLLENE_SDK::GraphicsAPI* dx11API = factory();
-  if (!dx11API) {
-    // Handle error: API creation failed
-    return -1;
-  }
-
-  // 3. Set the module instance
-  CYLLENE_SDK::GraphicsAPI::setModule(dx11API);
-
-  // 4. Initialize with a window handle (HWND on Windows)
-  // void* windowHandle = /* Get your platform-specific window handle */;
-  // GraphicsAPI::instance().initialize(windowHandle);
-
-  // Now use the API
-  GraphicsAPI::instance().clear(CYLLENE_SDK::Color::GREEN);
-  GraphicsAPI::instance().present();
-
   // ... rest of your rendering loop ...
 
   // Cleanup

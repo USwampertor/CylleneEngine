@@ -6,12 +6,42 @@ namespace CYLLENE_SDK {
 bool 
 WindowManager::init() {
 
-  // if (!SDL_Init(WINDOW_INIT::E::eVIDEO)) {
-  //   String errorStr = Utils::format("Error initializing SDL: %s", SDL_GetError());
-  //   Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
-  //   return false;
-  // }
   return true;
+}
+
+void
+WindowManager::update() {
+  uint32 i = 0;
+
+  // TODO: Maybe this should be managed by thread, and not in a single thread.
+  for (auto& pair : m_windows) {
+    auto& eventqueue = std::get<1>(pair);
+    eventqueue->update();
+    if (!eventqueue->empty()) {
+      xwin::Event wEvent = eventqueue->front();
+
+      eventqueue->pop();
+      
+      WindowEvent e(wEvent,i);
+      m_windowEvent.invoke(makeSharedPtr<WindowEvent>(e));
+      m_lastEvents[i] = e.type;
+
+      if (+EVENTTYPE::E::eCLOSE == e.type) {
+        destroyWindow(i);
+        break;
+      }
+    }
+    ++i;
+  }
+}
+
+EVENTTYPE::E
+WindowManager::getLastEventType(const uint32& window) {
+  CY_ASSERT(window < m_windows.size() && "Invalid window index");
+  if (std::get<1>(m_windows[window])->empty()) {
+    return EVENTTYPE::E::eNONE;
+  }
+  return m_lastEvents[window];
 }
 
 SPtr<WEventQueue>
@@ -28,24 +58,25 @@ WindowManager::createWindow(const String& title,
   settings.title = title;
   settings.width = static_cast<uint32>(width);
   settings.height = static_cast<uint32>(height);
-  settings.centered = flags & WINDOW_FLAGS::E::CENTERED;
-  settings.resizable = flags & WINDOW_FLAGS::E::RESIZABLE;
-  settings.movable = flags & WINDOW_FLAGS::E::MOVABLE;
-  settings.closable = flags & WINDOW_FLAGS::E::CLOSABLE;
-  settings.minimizable = flags & WINDOW_FLAGS::E::MINIMIZABLE;
-  settings.maximizable = flags & WINDOW_FLAGS::E::MAXIMIZABLE;
-  settings.canFullscreen = flags & WINDOW_FLAGS::E::CAN_FULLSCREEN;
-  settings.transparent = flags & WINDOW_FLAGS::E::TRANSPARENT;
-  settings.frame = flags & WINDOW_FLAGS::E::FRAME;
-  settings.hasShadow = flags & WINDOW_FLAGS::E::SHADOW;
-  settings.fullscreen = flags & WINDOW_FLAGS::E::FULLSCREEN;
-  settings.modal = flags & WINDOW_FLAGS::E::MODAL;
+  settings.centered = flags & WINDOW_FLAGS::E::eCENTERED;
+  settings.resizable = flags & WINDOW_FLAGS::E::eRESIZABLE;
+  settings.movable = flags & WINDOW_FLAGS::E::eMOVABLE;
+  settings.closable = flags & WINDOW_FLAGS::E::eCLOSABLE;
+  settings.minimizable = flags & WINDOW_FLAGS::E::eMINIMIZABLE;
+  settings.maximizable = flags & WINDOW_FLAGS::E::eMAXIMIZABLE;
+  settings.canFullscreen = flags & WINDOW_FLAGS::E::eCAN_FULLSCREEN;
+  settings.transparent = flags & WINDOW_FLAGS::E::eTRANSPARENT;
+  settings.frame = flags & WINDOW_FLAGS::E::eFRAME;
+  settings.hasShadow = flags & WINDOW_FLAGS::E::eSHADOW;
+  settings.fullscreen = flags & WINDOW_FLAGS::E::eFULLSCREEN;
+  settings.modal = flags & WINDOW_FLAGS::E::eMODAL;
 
   if (!newWindow->create(settings, *newWindowEvent)) {
     CY_EXCEPT(InvalidStateException, "Window Manager was not able to create a window");
   }
   else {
     m_windows.push_back(std::make_pair(newWindow,newWindowEvent));
+    m_lastEvents.push_back(EVENTTYPE::E::eNONE);
   }
 
   return newWindowEvent;
@@ -66,23 +97,27 @@ WindowManager::createWindow(const WindowSettings& settings) {
 }
   
 SPtr<Window>
-WindowManager::getWindow(const int32& window) {
+WindowManager::getWindow(const uint32& window) {
   return std::get<0>(m_windows[window]);
 }
 
 SPtr<WEventQueue>
-WindowManager::getWEventQueue(const int32& window) {
+WindowManager::getWEventQueue(const uint32& window) {
   return std::get<1>(m_windows[window]);
 }
 
 void
-WindowManager::destroyWindow(const int32& window) {
+WindowManager::destroyWindow(const uint32& window) {
   auto wndow = std::get<0>(m_windows[window]);
   wndow->close();
+
+  m_windows.erase(m_windows.begin() + window);
+  m_lastEvents.erase(m_lastEvents.begin() + window);
+
 }
 
 void*
-WindowManager::getWindowHandle(const int32& window) {
+WindowManager::getWindowHandle(const uint32& window) {
   auto wndow = std::get<0>(m_windows[window]);
   
   return wndow->getHwnd();
@@ -96,11 +131,6 @@ WindowManager::getWindowID(SPtr<Window> wndw) {
   return -1;
 }
 
-WindowEvent
-WindowManager::pollEvent() {
-  return WindowEvent();
-}
-
 void
 WindowManager::finish() {
   for (int32 i = 0; i < m_windows.size(); ++i) {
@@ -108,4 +138,5 @@ WindowManager::finish() {
   }
   // SDL_Quit();
 }
-}
+
+} // namespace CYLLENE_SDK

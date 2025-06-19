@@ -35,7 +35,7 @@ public:
     if (it != getBeingRegistry().end()) {
       return it->second(std::forward<Args>(args)...);
     }
-    CY_ASSERT(false, "Being class not registered: " + beingClassName);
+    // CY_ASSERT(false && (Utils::format("Being class not registered: %s" + beingClassName.c_str())));
     return nullptr;
   }
 

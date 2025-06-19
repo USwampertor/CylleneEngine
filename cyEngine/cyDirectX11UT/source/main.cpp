@@ -343,33 +343,21 @@ main(int argc, char* argv[])
   bool running = true;
   float time = 0.0f;
   float deltaTime;
+
+  WindowManager::instance().m_windowEvent.addListener([&](SPtr<WindowEvent> event) {
+    if (+EVENTTYPE::E::eCLOSE == event->type) {
+      std::cout << "Window closed" << std::endl;
+      running = false;
+    }
+  });
   while (running) {
     eventQueue->update();
     Time::instance().update();
 
-    DELTA_TYPE::E deltaType = DELTA_TYPE::E::MILLISECOND;
+    DELTA_TYPE::E deltaType = DELTA_TYPE::E::eMILLISECOND;
     deltaTime = Time::instance().deltaTime(deltaType);
     time += deltaTime * 0.001f;
-
-    if (!eventQueue->empty()) {
-      WindowEvent event = eventQueue->front();
-      eventQueue->pop();
-
-      switch (event.type)
-      {
-      case xwin::EventType::MouseMove:
-        //mouse.x, mouse.y
-        break;
-      case xwin::EventType::Close:
-        WindowManager::instance().destroyWindow(0);
-        running = false;
-        break;
-      default:
-        // Do nothing
-        break;
-      }
-    }
-
+    WindowManager::instance().update();
     const uint32 vertexStride = sizeof(Vertex);
     const uint32 indexStride = sizeof(unsigned short);
     const uint32 vertexOffset = 0;

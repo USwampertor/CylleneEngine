@@ -169,7 +169,7 @@ TEST_CASE("[window] Window creation") {
 
   WindowManager::instance().init();
 
-  WindowManager::instance().createWindow("CrossWindow Window", Vector2i(1280, 720), 0);
+  WindowManager::instance().createWindow("CrossWindow Window", Vector2i(1280, 720));
 
   CHECK(WindowManager::instance().m_windows.size() > 0);
 
@@ -179,34 +179,21 @@ TEST_CASE("[window] Window creation") {
   bool running = true;
   float timer = 0.0f;
 
-  SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
-  Time::instance().init();
-  Time::instance().update();
-  while (running) {
-    eventQueue->update();
-    Time::instance().update();
-    if (!eventQueue->empty()) {
-      WindowEvent event = eventQueue->front();
-      eventQueue->pop();
-
-      switch (event.type)
-      {
-      case xwin::EventType::MouseMove:
-        //mouse.x, mouse.y
-        break;
-      case xwin::EventType::Close:
-        WindowManager::instance().destroyWindow(0);
-        break;
-      default:
-        // Do nothing
-        break;
-      }
-    }
-    timer += Time::instance().deltaTime();
-    if (timer > 30.0f) {
+  WindowManager::instance().m_windowEvent.addListener([&](SPtr<WindowEvent> event) {
+    if (+EVENTTYPE::E::eCLOSE == event->type) {
+      std::cout << "Window closed" << std::endl;
       running = false;
     }
-
+  });
+  // SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
+  Time::instance().init();
+  Time::instance().update();
+  Time::instance().deltaTime();
+  while (running) {
+    // eventQueue->update();
+    Time::instance().update();
+    WindowManager::instance().update();
+    timer += Time::instance().deltaTime();
   }
 }
 

@@ -6,6 +6,7 @@
 // TODO: Check what things can be fast forwarded
 #include <cyColor.h>
 #include <cyCCamera.h>
+#include <cyDLLLoader.h>
 #include <cyBBeing.h>
 #include <cyModule.h>
 #include <cyRShader.h>
@@ -246,7 +247,7 @@ public:
     String realName = Utils::format("%s_%s", type._to_string(), resource->getPath().baseName().c_str());
     
     // Check if resource is mesh or texture
-    if (resource->getType() == RESOURCE_TYPE::E::eMODEL) {
+    if (resource->getType() == +RESOURCE_TYPE::E::eMODEL) {
       SPtr<RModel> model = std::reinterpret_pointer_cast<RModel>(resource);
 
 			for (auto& mesh : model->m_meshes) {
@@ -260,14 +261,14 @@ public:
 
       
     }
-    else if (resource->getType() == RESOURCE_TYPE::E::eTEXTURE) {
+    else if (resource->getType() == +RESOURCE_TYPE::E::eTEXTURE) {
       SPtr<RTexture> texture = std::reinterpret_pointer_cast<RTexture>(resource);
 			SPtr<GTexture> newGTexture = createTexture2D(texture);
 			if (newGTexture != nullptr) {
 				m_textureRenderPool.try_emplace(Hash<String>()(realName), newGTexture);
 			}
     }
-    else if (resource->getType() == RESOURCE_TYPE::E::eSHADER) {
+    else if (resource->getType() == +RESOURCE_TYPE::E::eSHADER) {
       SPtr<RShader> shader = std::reinterpret_pointer_cast<RShader>(resource);
 			SPtr<GShader> newGShader;
 			SHADER_TYPE::E shaderType = shader->getShaderType();
@@ -346,6 +347,46 @@ public:
 	m_modelInputLayout;
 };
 
+static bool
+loadGFXModule(const GFXTYPE::E& type) {
+
+  String moduleName = "";
+  if (type == +GFXTYPE::E::eDX11) {
+    moduleName = "cyDirectX11";
+  }
+
+  if (moduleName.empty()) {
+    Utils::throwException("Graphics API was not able to load based on type given");
+    return false;
+  }
+
+#if defined(CY_DEBUG_MODE)
+  moduleName += "d";
+#endif
+  moduleName += ".dll";
+
+  void* createFunc = DLLLoader::load(moduleName, "createPluginAPI", false);
+  if (!createFunc) {
+    // Handle error: DLL not found or function not exported
+    Utils::throwException("Graphics API did not find DLL function");
+    return false;
+  }
+
+  // Cast the function pointer to the correct type
+  auto factory = reinterpret_cast<GraphicsAPI * (*)()>(createFunc);
+
+  // 2. Create the DX11 API instance
+  GraphicsAPI* dx11API = factory();
+  if (!dx11API) {
+    // Handle error: API creation failed
+    Utils::throwException("Graphics API was not able to create GraphicsAPI object");
+    return false;
+  }
+
+  GraphicsAPI::setModule(dx11API);
+
+  return true;
+}
 
 }
 

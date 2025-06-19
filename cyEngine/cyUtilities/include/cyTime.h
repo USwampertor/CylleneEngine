@@ -18,9 +18,9 @@ namespace CYLLENE_SDK {
   namespace DELTA_TYPE
   {
     BETTER_ENUM(E, uint32, 
-      MICROSECOND = 0,
-      MILLISECOND,
-      SECOND)
+                eMICROSECOND = 0,
+                eMILLISECOND,
+                eSECOND);
   }
 
   struct CY_UTILITY_EXPORT Date : public TM
@@ -80,11 +80,11 @@ namespace CYLLENE_SDK {
     void 
     update();
 
-    float
-    deltaTime();
+//     float
+//     deltaTime();
 
     float
-    deltaTime(DELTA_TYPE::E& delta);
+    deltaTime(DELTA_TYPE::E delta = DELTA_TYPE::E::eMILLISECOND);
 
   private:
 
