@@ -13,6 +13,8 @@
 // External includes
 #define BETTER_ENUMS_STRICT_CONVERSION
 #include <better-enums/enum.h>
+#define BETTER_ENUMS_MACRO_FILE <better-enums/enum_macros.h>
+// #define BETTER_ENUMS_STRICT_CONVERSION
 
 // Essential includes
 #include "cyPlatformDefines.h"
