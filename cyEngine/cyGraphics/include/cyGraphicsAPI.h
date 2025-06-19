@@ -247,7 +247,7 @@ public:
     String realName = Utils::format("%s_%s", type._to_string(), resource->getName().c_str());
     
     // Check if resource is mesh or texture
-    if (resource->getType() == RESOURCE_TYPE::E::eMODEL) {
+    if (resource->getType() == +RESOURCE_TYPE::E::eMODEL) {
       SPtr<RModel> model = std::reinterpret_pointer_cast<RModel>(resource);
 
 			for (auto& mesh : model->m_meshes) {
@@ -261,14 +261,14 @@ public:
 
       
     }
-    else if (resource->getType() == RESOURCE_TYPE::E::eTEXTURE) {
+    else if (resource->getType() == +RESOURCE_TYPE::E::eTEXTURE) {
       SPtr<RTexture> texture = std::reinterpret_pointer_cast<RTexture>(resource);
 			SPtr<GTexture> newGTexture = createTexture2D(texture);
 			if (newGTexture != nullptr) {
 				m_textureRenderPool.try_emplace(Hash<String>()(realName), newGTexture);
 			}
     }
-    else if (resource->getType() == RESOURCE_TYPE::E::eSHADER) {
+    else if (resource->getType() == +RESOURCE_TYPE::E::eSHADER) {
       SPtr<RShader> shader = std::reinterpret_pointer_cast<RShader>(resource);
 			SPtr<GShader> newGShader;
 			SHADER_TYPE::E shaderType = shader->getShaderType();

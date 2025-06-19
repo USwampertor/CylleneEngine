@@ -45,8 +45,8 @@ main(int argc, char* argv[])
     // Now use the API
     // eventQueue->update();
     Time::instance().update();
-
-    DELTA_TYPE::E deltaType = DELTA_TYPE::E::MILLISECOND;
+    WindowManager::instance().update();
+    DELTA_TYPE::E deltaType = DELTA_TYPE::E::eMILLISECOND;
     deltaTime = Time::instance().deltaTime(deltaType);
     time += deltaTime * 0.001f;
 
