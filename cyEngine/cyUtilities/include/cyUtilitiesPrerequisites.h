@@ -11,8 +11,8 @@
 #pragma once
 
 // External includes
-#include <better-enums/enum.h>
 #define BETTER_ENUMS_MACRO_FILE <better-enums/enum_macros.h>
+#include <better-enums/enum.h>
 // #define BETTER_ENUMS_STRICT_CONVERSION
 
 // Essential includes
