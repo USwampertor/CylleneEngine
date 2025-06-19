@@ -84,7 +84,7 @@ namespace CYLLENE_SDK {
     deltaTime();
 
     float
-    deltaTime(DELTA_TYPE::E& delta);
+    deltaTime(DELTA_TYPE::E delta);
 
   private:
 
