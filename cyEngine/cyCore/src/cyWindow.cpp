@@ -26,7 +26,7 @@ WindowManager::update() {
       m_windowEvent.invoke(makeSharedPtr<WindowEvent>(e));
       m_lastEvents[i] = e.type;
 
-      if (e.type == EVENTTYPE::E::eCLOSE) {
+      if (+EVENTTYPE::E::eCLOSE == e.type) {
         destroyWindow(i);
         break;
       }
@@ -37,7 +37,7 @@ WindowManager::update() {
 
 EVENTTYPE::E
 WindowManager::getLastEventType(const uint32& window) {
-  CY_ASSERT(window < m_windows.size(), "Invalid window index");
+  CY_ASSERT(window < m_windows.size() && "Invalid window index");
   if (std::get<1>(m_windows[window])->empty()) {
     return EVENTTYPE::E::eNONE;
   }

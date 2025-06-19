@@ -6,14 +6,14 @@ namespace CYLLENE_SDK {
 void 
 SNode::addChild(WPtr<SNode> child, bool keepWorldTransform) {
   if (child.expired()) {
-    CY_ASSERT(false, "Child is invalid.");
+    CY_ASSERT(false && "Child is invalid.");
     return;
   }
 
   SPtr<SNode> childPtr = child.lock();
 
   if (!childPtr || childPtr.get() == this) {
-    CY_ASSERT(false, "Should not add a null transform or itself as a child");
+    CY_ASSERT(false && "Should not add a null transform or itself as a child");
     return;
   }
 

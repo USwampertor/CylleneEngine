@@ -432,9 +432,8 @@ Matrix3::getRotationMatrix() const {
 
   CY_ASSERT(!Math::isNearSame(scale.x, 0.0f) &&
             !Math::isNearSame(scale.y, 0.0f) &&
-            !Math::isNearSame(scale.z, 0.0f),
-            Utils::format("Trying to get rotation matrix with a scale component of 0",
-                          this->toString()).c_str());
+            !Math::isNearSame(scale.z, 0.0f) &&
+            Utils::format("Trying to get rotation matrix with a scale component of 0").c_str());
 
   rotationMatrix.m[0][0] /= scale.x;
   rotationMatrix.m[0][1] /= scale.x;
@@ -458,9 +457,8 @@ Matrix3::getScaleMatrix() const {
 
   CY_ASSERT(!Math::isNearSame(scale.x, 0.0f) &&
             !Math::isNearSame(scale.y, 0.0f) &&
-            !Math::isNearSame(scale.z, 0.0f),
-            Utils::format("Trying to get scale matrix with a scale component of 0",
-                          this->toString()).c_str());
+            !Math::isNearSame(scale.z, 0.0f) &&
+            Utils::format("Trying to get scale matrix with a scale component of 0").c_str());
 
   rotationMatrix.m[0][0] = scale.x;
   rotationMatrix.m[1][1] = scale.y;

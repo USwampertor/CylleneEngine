@@ -264,7 +264,7 @@ CTransform::getParentTransform(SPtr<CTransform>& out) {
 
 WPtr<CTransform>
 CTransform::getChildTransform(const uint32& index) {
-  CY_ASSERT(index < m_owner.lock()->getChildren().size(), "Index is out of bounds");
+  CY_ASSERT(index < m_owner.lock()->getChildren().size() && "Index is out of bounds");
   return m_owner.lock()->getChildren()[index].lock()->getTransform();
 }
 
@@ -309,7 +309,7 @@ CTransform::inverseTransformScale(const Vector3f& scale) const {
   Vector3f parentScale = m_worldMatrix.getScale();
   CY_ASSERT(!Math::isNearSame(parentScale.x, 0.0f) &&
             !Math::isNearSame(parentScale.y, 0.0f) &&
-            !Math::isNearSame(parentScale.z, 0.0f),
+            !Math::isNearSame(parentScale.z, 0.0f) &&
             "Scale cannot be zero for inverse transform scale");
   return scale / parentScale;
 }

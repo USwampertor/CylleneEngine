@@ -25,21 +25,21 @@ void
 RTexture::adjustTextureAddress(float& u, 
                                float& v, 
                                const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */) {
-  if (TEXTUREMODE::E::eWRAP == mode || TEXTUREMODE::E::eREPEAT == mode) {
+  if (+TEXTUREMODE::E::eWRAP == mode || +TEXTUREMODE::E::eREPEAT == mode) {
     u = Math::mod(u, 1.0f);
     v = Math::mod(v, 1.0f);
   }
-  else if (TEXTUREMODE::E::eMIRROR == mode) {
+  else if (+TEXTUREMODE::E::eMIRROR == mode) {
     u = Math::mod(u, 2.0f);
     v = Math::mod(v, 2.0f);
 
     u = u < 0.0f ? 2.0f + u : u > 1.0f ? 2.0f - u : u;
     v = v < 0.0f ? 2.0f + v : v > 1.0f ? 2.0f - v : v;
   }
-  else if (TEXTUREMODE::E::eSTRETCH == mode) {
+  else if (+TEXTUREMODE::E::eSTRETCH == mode) {
 
   }
-  else if (TEXTUREMODE::E::eCLAMP == mode) {
+  else if (+TEXTUREMODE::E::eCLAMP == mode) {
     u = Math::clamp(u, 0.0f, 1.0f);
     v = Math::clamp(v, 0.0f, 1.0f);
   }
@@ -58,12 +58,12 @@ RTexture::sample(float u,
   adjustTextureAddress(u, v, mode);
   float x = u * (m_img->m_metadata.m_width - 1);
   float y = v * (m_img->m_metadata.m_height - 1);
-  if (SAMPLERFILTER::E::ePOINT == sampler) {
+  if (+SAMPLERFILTER::E::ePOINT == sampler) {
     // TODO: REMOVE REDUNDANCY
 
     return m_img->getPixel(x, y);
   }
-  else if (SAMPLERFILTER::E::eLINEAR == sampler) {
+  else if (+SAMPLERFILTER::E::eLINEAR == sampler) {
 
     int32 x0 = static_cast<int32>(x); // std::clamp(static_cast<uint32_t>(x), uint32_t(0), m_img.m_width - 1);
     int32 y0 = static_cast<int32>(y); // std::clamp(static_cast<uint32_t>(y), uint32_t(0), m_img.m_height - 1);
@@ -84,7 +84,7 @@ RTexture::sample(float u,
 
     return c0 * (1.0f - dy) + c1 * dy;
   }
-  else if (SAMPLERFILTER::E::eBILINEAL == sampler) {
+  else if (+SAMPLERFILTER::E::eBILINEAL == sampler) {
 
   }
 
@@ -129,14 +129,14 @@ RTexture::draw(SPtr<RImage>& img,
       Color dstColor(img->getPixel(x + dstx, y + dsty));
       Color blendedColor = Color::CLEAR;
 
-      if (BLENDMODE::E::eALPHABLEND == blend) {
+      if (+BLENDMODE::E::eALPHABLEND == blend) {
         blendedColor = srcColor * srcColor.a + dstColor * (1.0f - srcColor.a);
       }
-      else if (BLENDMODE::E::eADDITIVE == blend) {
+      else if (+BLENDMODE::E::eADDITIVE == blend) {
         blendedColor = (srcColor * srcColor.a) + dstColor;
         blendedColor.saturate();
       }
-      else if (BLENDMODE::E::eNONE == blend) {
+      else if (+BLENDMODE::E::eNONE == blend) {
         blendedColor = srcColor;
       }
       img->setPixel(x + dstx, y + dsty, blendedColor);

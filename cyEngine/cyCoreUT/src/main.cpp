@@ -180,7 +180,7 @@ TEST_CASE("[window] Window creation") {
   float timer = 0.0f;
 
   WindowManager::instance().m_windowEvent.addListener([&](SPtr<WindowEvent> event) {
-    if (event->type == EVENTTYPE::E::eCLOSE) {
+    if (+EVENTTYPE::E::eCLOSE == event->type) {
       std::cout << "Window closed" << std::endl;
       running = false;
     }
