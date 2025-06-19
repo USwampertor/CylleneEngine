@@ -51,15 +51,15 @@ namespace CYLLENE_SDK
     m_delta = static_cast<float>(ms.count());
   }
 
-  float
-  Time::deltaTime() {
-    return m_delta * 0.001f;
-  }
+//   float
+//   Time::deltaTime() {
+//     return m_delta * 0.001f;
+//   }
 
   float
-  Time::deltaTime(DELTA_TYPE::E& delta) {
-    if      (+DELTA_TYPE::E::MILLISECOND == delta)  { return m_delta * 0.001f; }
-    else if (+DELTA_TYPE::E::SECOND == delta)       { return m_delta * 0.000001f; }
+  Time::deltaTime(DELTA_TYPE::E delta) {
+    if      (+DELTA_TYPE::E::eMILLISECOND == delta) { return m_delta * 0.001f; }
+    else if (+DELTA_TYPE::E::eSECOND      == delta) { return m_delta * 0.000001f; }
     return m_delta;
   }
 }
