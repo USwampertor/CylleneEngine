@@ -89,13 +89,19 @@ main(int argc, char* argv[])
     File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + fileName);
     shaderResource = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
     vertexShader = GraphicsDX11API::instance().createVertexShader(shaderResource, "vertex_main");
-    };
+  };
 
   auto compilePixelShader = [&](const String fileName, SPtr<RShader>& shaderResource, SPtr<GPixelShader>& pixelShader) {
     File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + fileName);
     shaderResource = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
     pixelShader = GraphicsDX11API::instance().createPixelShader(shaderResource, "pixel_main");
-    };
+  };
+
+  auto compileComputeShader = [&](const String fileName, SPtr<RShader>& shaderResource, SPtr<GComputeShader>& computeShader) {
+    File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + fileName);
+    shaderResource = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+    computeShader = GraphicsDX11API::instance().createComputeShader(shaderResource, "compute_main");
+  };
 
   SPtr<RShader> vsShadowR;
   SPtr<GVertexShader> vShadowShader;
@@ -121,6 +127,10 @@ main(int argc, char* argv[])
   SPtr<RShader> psParticleR;
   SPtr<GPixelShader> pParticleShader;
   compilePixelShader("particlePixelShader.hlsl", psParticleR, pParticleShader);
+
+  SPtr<RShader> csComputeR;
+  SPtr<GComputeShader> vComputeShader;
+  compileComputeShader("compute.hlsl", csComputeR, vComputeShader);
 
   Vector<GInputLayoutElement> inputDescs = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -470,60 +480,6 @@ main(int argc, char* argv[])
       draw(*cubeObject.lock().get(), cubeMesh, nullptr);
     }
 
-    // Color pass
-    {
-      GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
-
-      GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vShader);
-      GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pShader);
-
-      GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
-      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-      Vector<SPtr<GRenderTargetView>> targets;
-      targets.push_back(colorRenderTarget);
-      targets.push_back(positionRenderTarget);
-      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(2,
-                                                                       targets, 
-                                                                       colorRenderTarget.get()->getDepthStencil());
-
-      Vector<SPtr<GraphicsBuffer>> scVector;
-      scVector.push_back(shaderConstantsBuffer);
-      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
-      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
-
-      perPassConstants.cameraForward  = camera.lock()->m_view.getForwardVector();
-      perPassConstants.cameraRight    = camera.lock()->m_view.getRightVector();
-      perPassConstants.cameraUp       = camera.lock()->m_view.getUpVector();
-      perPassConstants.view           = camera.lock()->m_view;
-      perPassConstants.projection     = camera.lock()->m_projection;
-
-      constantBufferData.clear();
-      constantBufferData.resize(sizeof(perPassConstants));
-      memcpy(constantBufferData.data(), &perPassConstants, sizeof(perPassConstants));
-
-      GraphicsDX11API::instance().writeToBuffer(perPassCB, constantBufferData);
-      Vector<SPtr<GraphicsBuffer>> gbVector;
-      gbVector.push_back(perPassCB);
-      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
-      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
-
-      Vector<SPtr<GSamplerState>> ssVec1;
-      Vector<SPtr<GSamplerState>> ssVec2;
-      ssVec1.push_back(pointSampler);
-      ssVec2.push_back(linearSampler);
-      GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
-      GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
-
-      draw(*floorObject.lock().get(), floorMesh, &checkerGTexture);
-
-      cubeObject.lock()->getTransform().lock()->setWorldPosition(Vector3f(0.0f, 3.0f + Math::cos(time), 0.0f));
-      cubeObject.lock()->getTransform().lock()->setWorldRotation(Euler(0.2f * time * 3.0f,
-                                             0.2f * time * 1.0f,
-                                             0.2f * time * 9.0f));
-      draw(*cubeObject.lock().get(), cubeMesh, &sampleGTexture);
-    }
-
     // Particles pass
     {
       GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
@@ -607,6 +563,88 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->drawIndexedInstanced(saqMesh, 100);
 
       GraphicsDX11API::instance().getDeviceContext()->setBlendState(defaultBlend);
+
+      GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(0);
+      GraphicsDX11API::instance().getDeviceContext()->unbindShaderResource(1);
+
+      Vector<SPtr<GRenderTargetView>> nullRTs;
+      nullRTs.push_back(nullptr);
+      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(1,
+                                                                       nullRTs,
+                                                                       nullptr);
+    }
+
+    // Color pass
+    {
+      GraphicsDX11API::instance().setViewport(0, 0, 1280, 720);
+
+      GraphicsDX11API::instance().getDeviceContext()->setVertexShader(vShader);
+      GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pShader);
+
+      GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+      Vector<SPtr<GRenderTargetView>> targets;
+      targets.push_back(colorRenderTarget);
+      targets.push_back(positionRenderTarget);
+      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(2,
+                                                                       targets, 
+                                                                       colorRenderTarget.get()->getDepthStencil());
+
+      Vector<SPtr<GraphicsBuffer>> scVector;
+      scVector.push_back(shaderConstantsBuffer);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
+
+      perPassConstants.cameraForward  = camera.lock()->m_view.getForwardVector();
+      perPassConstants.cameraRight    = camera.lock()->m_view.getRightVector();
+      perPassConstants.cameraUp       = camera.lock()->m_view.getUpVector();
+      perPassConstants.view           = camera.lock()->m_view;
+      perPassConstants.projection     = camera.lock()->m_projection;
+
+      constantBufferData.clear();
+      constantBufferData.resize(sizeof(perPassConstants));
+      memcpy(constantBufferData.data(), &perPassConstants, sizeof(perPassConstants));
+
+      GraphicsDX11API::instance().writeToBuffer(perPassCB, constantBufferData);
+      Vector<SPtr<GraphicsBuffer>> gbVector;
+      gbVector.push_back(perPassCB);
+      GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(2, 1, gbVector);
+      GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(2, 1, gbVector);
+
+      Vector<SPtr<GSamplerState>> ssVec1;
+      Vector<SPtr<GSamplerState>> ssVec2;
+      ssVec1.push_back(pointSampler);
+      ssVec2.push_back(linearSampler);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(0, 1, ssVec1);
+      GraphicsDX11API::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
+
+      draw(*floorObject.lock().get(), floorMesh, &checkerGTexture);
+
+      cubeObject.lock()->getTransform().lock()->setWorldPosition(Vector3f(0.0f, 3.0f + Math::cos(time), 0.0f));
+      cubeObject.lock()->getTransform().lock()->setWorldRotation(Euler(0.2f * time * 3.0f,
+                                             0.2f * time * 1.0f,
+                                             0.2f * time * 9.0f));
+      draw(*cubeObject.lock().get(), cubeMesh, &sampleGTexture);
+
+      Vector<SPtr<GRenderTargetView>> nullRTs;
+      nullRTs.push_back(nullptr);
+      GraphicsDX11API::instance().getDeviceContext()->setRenderTargets(1,
+                                                                       nullRTs,
+                                                                       nullptr);
+    }
+
+    // Compute
+    {
+      GraphicsDX11API::instance().getDeviceContext()->setComputeShader(vComputeShader);
+
+      Vector<SPtr<GShaderResourceView>> srvVector;
+      srvVector.push_back(colorRenderTarget->getTexture()->getResource());
+      GraphicsDX11API::instance().getDeviceContext()->setCSUAVs(srvVector, 0, 1);
+
+      GraphicsDX11API::instance().getDeviceContext()->dispatch(Vector3f(20, 22, 1));
+
+      GraphicsDX11API::instance().getDeviceContext()->unbindUAV(0);
     }
 
     // Composition

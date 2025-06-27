@@ -45,6 +45,10 @@ public:
   createShaderResourceView(SPtr<GTexture> shaderResourceView,
                            SPtr<GShaderResourceViewElement> srvParams) override;
 
+  virtual void// SPtr<GShaderResourceView>
+  createUnorderedAccessView(SPtr<GTexture> shaderResourceView,
+                            SPtr<GShaderResourceViewElement> srvParams) override;
+
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,
                     SPtr<GVertexShader> desc) override;

@@ -201,6 +201,15 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
     createShaderResourceView(pTexture, pSRVParams);
   }
 
+  if (textureParams->bindFlags & D3D11_BIND_UNORDERED_ACCESS) {
+    SPtr<GShaderResourceViewElement> pSRVParams = std::make_shared<GShaderResourceViewElement>();
+
+    pSRVParams->format = textureParams->format;
+    pSRVParams->mipLevels = textureParams->mipLevels == 1 ? 1 : -1;
+
+    createUnorderedAccessView(pTexture, pSRVParams);
+  }
+
   return std::static_pointer_cast<GTexture>(pTexture);
 }
 
@@ -339,8 +348,34 @@ GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
   
   if (FAILED(hr)) {
     // TODO: Show an error here
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Shader resource view");
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Unordered access view");
     pTexture->m_pSRV = nullptr; // pShaderResourceView->m_pSRV;
+  }
+}
+
+void// SPtr<GShaderResourceView>
+GDX11Device::createUnorderedAccessView(SPtr<GTexture> shaderResourceView,
+                                       SPtr<GShaderResourceViewElement> srvParams) {
+
+  D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = CD3D11_UNORDERED_ACCESS_VIEW_DESC();
+
+  if (srvParams->format == DXGI_FORMAT_R32_TYPELESS) {
+    uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
+  }
+  else {
+    uavDesc.Format = static_cast<DXGI_FORMAT>(srvParams->format);
+  }
+
+  uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+  uavDesc.Texture2D.MipSlice = 0;
+
+  SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(shaderResourceView);
+
+  HRESULT hr = m_pd3d11Device->CreateUnorderedAccessView(pTexture->m_texture, &uavDesc, &pTexture->m_pSRV->m_pd3d11UAV);
+
+  if (FAILED(hr)) {
+    // TODO: Show an error here
+    WindowManager::instance().ShowErrorMessage("Error", "Error creating Shader resource view");
   }
 }
 

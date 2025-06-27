@@ -109,7 +109,20 @@ public:
                      uint32 numViews) override;
 
   virtual void
+  setCSShaderResources(Vector<SPtr<GShaderResourceView>> resource,
+                       uint32 slot,
+                       uint32 numViews) override;
+
+  virtual void
+  setCSUAVs(Vector<SPtr<GShaderResourceView>> resource,
+            uint32 slot,
+            uint32 numViews) override;
+
+  virtual void
   unbindShaderResource(uint32 slot) override;
+
+  virtual void
+  unbindUAV(uint32 slot) override;
 
   virtual void
   setBlendState(SPtr<GBlendState> blendState) override;

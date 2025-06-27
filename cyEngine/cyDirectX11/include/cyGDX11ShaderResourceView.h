@@ -22,6 +22,7 @@ public:
 public:
 
   ID3D11ShaderResourceView* m_pd3d11SRV = nullptr;
+  ID3D11UnorderedAccessView* m_pd3d11UAV = nullptr;
 
 };
 

@@ -123,7 +123,20 @@ public:
                     uint32 numViews) = 0;
 
   virtual void
+  setCSShaderResources(Vector<SPtr<GShaderResourceView>> resource,
+                       uint32 slot,
+                       uint32 numViews) = 0;
+
+  virtual void
+  setCSUAVs(Vector<SPtr<GShaderResourceView>> resource,
+            uint32 slot,
+            uint32 numViews) = 0;
+
+  virtual void
   unbindShaderResource(uint32 slot) = 0;
+
+  virtual void
+  unbindUAV(uint32 slot) = 0;
 
   virtual void
   setBlendState(SPtr<GBlendState> blendState) = 0;

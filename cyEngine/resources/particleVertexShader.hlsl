@@ -68,8 +68,8 @@ PixelInput vertex_main(VertexInput Input, uint instanceID : SV_InstanceID)
   float layer = 1.0f + floor(instanceID / 10.0f) * 0.1f;
   float invDir = fmod(floor(instanceID / 10.0f), 2.0f) == 0.0f ? 1.0f : -1.0f;
   float separation = 3.0f + layer * 3.0f;
-  float ox = sin(invDir * 0.6f * layer * time + (TAU / 10.0f) * instanceID);
-  float oz = cos(invDir * 0.6f * layer * time + (TAU / 10.0f) * instanceID);
+  float ox = sin(invDir * 0.8f * layer * time + (TAU / 10.0f) * instanceID);
+  float oz = cos(invDir * 0.8f * layer * time + (TAU / 10.0f) * instanceID);
   float oy = floor(instanceID / 10.0f) * 1.5f;
     
   Output.position.x += ox * separation;

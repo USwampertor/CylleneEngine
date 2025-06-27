@@ -210,7 +210,7 @@ GraphicsDX11API::createSwapChain(SPtr<GDevice> device,
   scDesc.Stereo = false;
   scDesc.SampleDesc.Count = 1; // MSAA
   scDesc.SampleDesc.Quality = 0;
-  scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+  scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS;
   scDesc.BufferCount = 2;
   scDesc.Scaling = DXGI_SCALING_NONE;
   scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;

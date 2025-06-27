@@ -276,11 +276,39 @@ GDX11DeviceContext::setShaderResources(Vector<SPtr<GShaderResourceView>> resourc
 //   m_pDeviceContext->PSSetShaderResources(slot, numViews, &pShaderResourceView->m_pSRV);
 }
 
+void
+GDX11DeviceContext::setCSShaderResources(Vector<SPtr<GShaderResourceView>> resource, uint32 slot, uint32 numViews) {
+  Vector<ID3D11ShaderResourceView*> pBuffers;
+  for (uint32 i = 0; i < numViews; ++i) {
+    SPtr<GDX11ShaderResourceView> pBuffer = std::static_pointer_cast<GDX11ShaderResourceView>(resource[i]);
+    pBuffers.push_back(pBuffer->m_pd3d11SRV);
+  }
+  m_pDeviceContext->CSSetShaderResources(slot, numViews, pBuffers.data());
+}
+
+void
+GDX11DeviceContext::setCSUAVs(Vector<SPtr<GShaderResourceView>> resource, uint32 slot, uint32 numViews) {
+  Vector<ID3D11UnorderedAccessView*> pBuffers;
+  for (uint32 i = 0; i < numViews; ++i) {
+    SPtr<GDX11ShaderResourceView> pBuffer = std::static_pointer_cast<GDX11ShaderResourceView>(resource[i]);
+    pBuffers.push_back(pBuffer->m_pd3d11UAV);
+  }
+
+  m_pDeviceContext->CSSetUnorderedAccessViews(slot, numViews, pBuffers.data(), nullptr);
+}
+
 void 
 GDX11DeviceContext::unbindShaderResource(uint32 slot) {
   Vector<ID3D11ShaderResourceView*> nullBuffer;
   nullBuffer.push_back(nullptr);
   m_pDeviceContext->PSSetShaderResources(slot, 1, nullBuffer.data());
+}
+
+void
+GDX11DeviceContext::unbindUAV(uint32 slot) {
+  Vector<ID3D11UnorderedAccessView*> nullBuffer;
+  nullBuffer.push_back(nullptr);
+  m_pDeviceContext->CSSetUnorderedAccessViews(slot, 1, nullBuffer.data(), nullptr);
 }
 
 void
