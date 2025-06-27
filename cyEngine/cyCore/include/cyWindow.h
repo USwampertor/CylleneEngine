@@ -43,11 +43,11 @@
 
 namespace CYLLENE_SDK {
 
-using Window            = SDL_Window; 
-using SDLWindowEvent    = SDL_WindowEvent;
-using WindowRenderer    = SDL_Renderer;
-using SDLEvent          = SDL_Event; 
-using WinMsgDesc        = SDL_MessageBoxData; 
+using Window         = SDL_Window; 
+using SDLWindowEvent = SDL_WindowEvent;
+using WindowRenderer = SDL_Renderer;
+using SDLEvent       = SDL_Event; 
+using WinMsgDesc     = SDL_MessageBoxData; 
 
 namespace SDLINITFLAGS
 {
@@ -99,7 +99,8 @@ namespace EVENTTYPE
 {
   BETTER_ENUM(E, uint32, 
               eNONE = 0,
-              eCLOSE,
+              eQUIT,
+              eTERMINATING,
               eCREATE,
               eFOCUS,
               ePAINT,
@@ -131,6 +132,8 @@ struct WindowDesc
 };
 
 struct WindowEvent {
+public:
+  WindowEvent(const SDLEvent& newEvent) : type(EVENTTYPE::E::_from_integral(newEvent.type)) {}
 
   WindowEvent(const EVENTTYPE::E& newType, uint32 index)
     : type(newType) {
@@ -139,7 +142,7 @@ struct WindowEvent {
   WindowEvent(const WindowEvent& other, uint32 index)
     : type(other.type) {}
 
-  EVENTTYPE::E type;
+  EVENTTYPE::E type = EVENTTYPE::E::eNONE;
 };
 
 struct MessageBoxButtonData
@@ -195,9 +198,7 @@ namespace WINDOW_FLAGS
               eTRANSPARENT         = 0x0000000040000000,
               eNOT_FOCUSABLE       = 0x0000000080000000,
               eCENTERED            = 0x0000000100000000,
-              eDEFAULT_WIN     = eCENTERED    |
-                                 eRESIZABLE   |
-                                 eINPUT_FOCUS );
+              eDEFAULT_WIN         = eRESIZABLE);
                                  // eMOVABLE |
                                  // eCLOSABLE |
                                  // eMINIMIZABLE |
@@ -284,9 +285,10 @@ public:
     // desc.defaultButton = WinMsgDefaultButton::Button1;
     // 
     // return xwin::showMessageBox(desc);
+    int buttonId = 0;
 
     Vector<SDL_MessageBoxButtonData> buttons;
-
+    
     for (const auto& button : data.buttons) {
       SDL_MessageBoxButtonData btn = {
         button.flags,
@@ -295,7 +297,7 @@ public:
       };
       buttons.push_back(btn);
     }
-
+    
     SDL_MessageBoxColorScheme* colorScheme = nullptr;
     if (data.colorScheme != nullptr) {
       colorScheme = new SDL_MessageBoxColorScheme();
@@ -305,8 +307,7 @@ public:
         colorScheme->colors[i].b = data.colorScheme->colors[i].b * 255;
       }
     }
-
-    int buttonId = 0;
+    
     SDL_MessageBoxData msgBoxData = { 
       data.flags, 
       (id > 0 ) ? WindowManager::instance().m_windows[data.parentIndex].get(): nullptr, 

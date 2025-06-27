@@ -5,10 +5,7 @@ namespace CYLLENE_SDK {
   
 bool 
 WindowManager::init() {
-  if (!SDL_Init(SDLINITFLAGS::E::eVIDEO ||
-                SDLINITFLAGS::E::eEVENTS ||
-                SDLINITFLAGS::E::eGAMEPAD ||
-                SDLINITFLAGS::E::eJOYSTICK)) {
+  if (!SDL_Init(SDLINITFLAGS::E::eVIDEO)) {
     String errorStr = Utils::format("Error initializing SDL: %s", SDL_GetError());
     Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
     Utils::throwException(errorStr);
@@ -24,7 +21,7 @@ WindowManager::update() {
 
   // TODO: Maybe this should be managed by thread, and not in a single thread.
   for (i = 0; i < m_windows.size(); ++i) {
-    SDL_Event e;
+    SDLEvent e;
 
 
     // xwin::Event wEvent = eventqueue->front();
@@ -41,6 +38,9 @@ WindowManager::update() {
     // }
 
     while (SDL_PollEvent(&e)) {
+
+      WindowEvent wEvent(e);
+      m_windowEvent.invoke(makeSharedPtr<WindowEvent>(e));
       switch (e.type) {
       case SDL_EVENT_QUIT:
         destroyWindow(i);
@@ -122,16 +122,16 @@ WindowManager::createWindow(const String& title,
 
 WPtr<Window>
 WindowManager::createWindow(const WindowSettings& settings) {
-
-  SPtr<Window> newWindow = makeSharedPtr<Window>(SDL_CreateWindow(settings.title.c_str(), 
-                                                                  settings.size.x, 
-                                                                  settings.size.y, 
-                                                                  settings.flags),
-                                                 [](Window* w) { if (w) SDL_DestroyWindow(w); });
-  if (!newWindow) {
-    Utils::throwException("Was not able to create window");
+  
+  Window* ptr = SDL_CreateWindow(settings.title.c_str(), settings.size.x, settings.size.y, settings.flags);
+  if (!ptr) {
+    String errorStr = Utils::format("Error creating window: %s", SDL_GetError());
+    Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+    Utils::throwException(errorStr);
+    SDL_Quit();
+    return {};
   }
-
+  SPtr<Window> newWindow(ptr);
   return newWindow;
 }
   
