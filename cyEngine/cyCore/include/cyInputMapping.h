@@ -12,6 +12,7 @@ class InputMapping
 public:
 
   InputMapping() = default;
+
   ~InputMapping() = default;
 
   void 
