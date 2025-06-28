@@ -169,7 +169,7 @@ TEST_CASE("[window] Window creation") {
 
   WindowManager::instance().init();
 
-  WindowManager::instance().createWindow("CrossWindow Window", Vector2i(1280, 720));
+  WindowManager::instance().createWindow("SDL3 Window", Vector2i(1280, 720));
 
   CHECK(WindowManager::instance().m_windows.size() > 0);
 
@@ -180,7 +180,7 @@ TEST_CASE("[window] Window creation") {
   float timer = 0.0f;
 
   WindowManager::instance().m_windowEvent.addListener([&](SPtr<WindowEvent> event) {
-    if (+EVENTTYPE::E::eCLOSE == event->type) {
+    if (+EVENTTYPE::E::eQUIT == event->type) {
       std::cout << "Window closed" << std::endl;
       running = false;
     }

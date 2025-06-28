@@ -93,7 +93,7 @@ GraphicsDX11API::initialize(void* pHandle) {
                                  &pDeviceContext);
 
   if (FAILED(hr)) {
-    WindowManager::ShowErrorMessage("Error", Utils::format("Failed to create Device %l", hr));
+    WindowManager::showErrorMessage("Error", Utils::format("Failed to create Device %l", hr), 0);
     return;
   }
 
@@ -144,7 +144,7 @@ GraphicsDX11API::initialize(void* pHandle) {
   pDXGIDevice->SetMaximumFrameLatency(3);
 
   if (FAILED(hr)) {
-    WindowManager::ShowErrorMessage("Error", Utils::format("Failed to create swap Chain %l", hr));
+    WindowManager::showErrorMessage("Error", Utils::format("Failed to create swap Chain %l", hr), 0);
     
     return;
   }

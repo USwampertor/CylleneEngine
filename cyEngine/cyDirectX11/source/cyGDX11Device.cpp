@@ -100,7 +100,7 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
 
   if (FAILED(m_pd3d11Device->CreateDepthStencilView(pDepthStencilView->m_pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Depth Stencil view");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Depth Stencil view", 0);
     return nullptr;
   }
   return std::static_pointer_cast<GDepthStencilView>(pDepthStencilView);
@@ -159,7 +159,7 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
 
   // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
   if (FAILED(m_pd3d11Device->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Render target view");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Render target view", 0);
     return nullptr;
   }
 
@@ -218,7 +218,7 @@ GDX11Device::createVertexShader(SPtr<GShaderBlob> blob) {
 
 
   if (FAILED(hr)) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Vertex Shader");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Vertex Shader", 0);
     return nullptr;
   }
 
@@ -239,7 +239,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
 
 
   if (FAILED(hr)) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Pixel Shader");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Pixel Shader", 0);
     return nullptr;
   }
 
@@ -260,7 +260,7 @@ GDX11Device::createGeometryShader(SPtr<GShaderBlob> blob) {
 
 
   if (FAILED(hr)) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Geometry Shader");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Geometry Shader", 0);
     return nullptr;
   }
 
@@ -281,7 +281,7 @@ GDX11Device::createComputeShader(SPtr<GShaderBlob> blob) {
 
 
   if (FAILED(hr)) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Compute Shader");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Compute Shader", 0);
     return nullptr;
   }
 
@@ -339,7 +339,7 @@ GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
   
   if (FAILED(hr)) {
     // TODO: Show an error here
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Shader resource view");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Shader resource view", 0);
     pTexture->m_pSRV = nullptr; // pShaderResourceView->m_pSRV;
   }
 }
@@ -375,7 +375,7 @@ GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
   
   
   if (FAILED(hr)) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Input layout");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Input layout", 0);
     return nullptr;
   }
   return std::static_pointer_cast<GInputLayout>(sPtrInputLayout);
@@ -405,7 +405,7 @@ GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
 
 
   if (FAILED(hr)) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating graphics buffer");
+    WindowManager::instance().showErrorMessage("Error", "Error creating graphics buffer", 0);
     return nullptr;
   }
 
@@ -441,7 +441,7 @@ GDX11Device::createBlendState(SPtr<GBlendElement> blendParams) {
   SPtr<GDX11BlendState> pBlendState = std::make_shared<GDX11BlendState>();
 
   if (FAILED(m_pd3d11Device->CreateBlendState1(&blendState, &pBlendState->m_pBlendState))) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Blend State");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Blend State", 0);
     return nullptr;
   }
 
@@ -487,7 +487,7 @@ GDX11Device::createSamplerState(SPtr<GSamplerStateElement> samplerParams) {
 
   
   if (FAILED(m_pd3d11Device->CreateSamplerState(&descSS, &pSamplerState->m_pSamplerState))) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Sampler State");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Sampler State", 0);
     return nullptr;
   }
   return std::static_pointer_cast<GSamplerState>(pSamplerState);
@@ -517,7 +517,7 @@ GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
 
   // m_pDevice->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState);
   if (FAILED(m_pd3d11Device->CreateRasterizerState1(&descRD, &pRasterizerState->m_pRasterizerState))) {
-    WindowManager::instance().ShowErrorMessage("Error", "Error creating Rasterizer State");
+    WindowManager::instance().showErrorMessage("Error", "Error creating Rasterizer State", 0);
     return nullptr;
   }
   return std::static_pointer_cast<GRasterizerState>(pRasterizerState);

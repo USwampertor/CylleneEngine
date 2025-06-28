@@ -137,7 +137,7 @@ main(int argc, char* argv[])
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
 
   if (!pInputLayout) {
-    WindowManager::ShowErrorMessage("Error", "Error creating Input Layout");
+    WindowManager::showErrorMessage("Error", "Error creating Input Layout", 0);
     return -1;
   }
 
@@ -163,7 +163,7 @@ main(int argc, char* argv[])
   memset(shaderConstantsData.data(), 0, sizeof(ShaderConstants));
   SPtr<GraphicsBuffer> shaderConstantsBuffer = GraphicsDX11API::instance().createConstantBuffer(shaderConstantsData);
   if (!shaderConstantsBuffer) {
-    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    WindowManager::showErrorMessage("Error", "Error creating Constant Buffer", 0);
     return -1;
   }
 
@@ -173,7 +173,7 @@ main(int argc, char* argv[])
   memset(constantBufferData.data(), 0, sizeof(PerObjectConstantBuffer));
   SPtr<GraphicsBuffer> perObjectCB = GraphicsDX11API::instance().createConstantBuffer(constantBufferData);
   if (!perObjectCB) {
-    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    WindowManager::showErrorMessage("Error", "Error creating Constant Buffer", 0);
     return -1;
   }
 
@@ -181,7 +181,7 @@ main(int argc, char* argv[])
   memset(constantBufferData.data(), 0, sizeof(PerPassConstantBuffer));
   SPtr<GraphicsBuffer> perPassCB = GraphicsDX11API::instance().createConstantBuffer(constantBufferData);
   if (!perPassCB) {
-    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    WindowManager::showErrorMessage("Error", "Error creating Constant Buffer", 0);
     return -1;
   }
 
@@ -189,7 +189,7 @@ main(int argc, char* argv[])
   memset(constantBufferData.data(), 0, sizeof(ShadowConstantBuffer));
   SPtr<GraphicsBuffer> shadowCB = GraphicsDX11API::instance().createConstantBuffer(constantBufferData);
   if (!shadowCB) {
-    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    WindowManager::showErrorMessage("Error", "Error creating Constant Buffer", 0);
     return -1;
   }
 
@@ -337,7 +337,7 @@ main(int argc, char* argv[])
   samplerDesc->filter = SAMPLERFILTER::E::eTRILINEAL;
   SPtr<GSamplerState> anisoSampler = GraphicsDX11API::instance().getDevice()->createSamplerState(samplerDesc);
 
-  SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
+  // SPtr<WEventQueue> eventQueue = WindowManager::instance().getWEventQueue(0);
   Time::instance().init();
   Time::instance().update();
   bool running = true;
@@ -345,13 +345,13 @@ main(int argc, char* argv[])
   float deltaTime;
 
   WindowManager::instance().m_windowEvent.addListener([&](SPtr<WindowEvent> event) {
-    if (+EVENTTYPE::E::eCLOSE == event->type) {
+    if (+EVENTTYPE::E::eQUIT == event->type) {
       std::cout << "Window closed" << std::endl;
       running = false;
     }
   });
   while (running) {
-    eventQueue->update();
+    /*eventQueue->update();*/
     Time::instance().update();
 
     DELTA_TYPE::E deltaType = DELTA_TYPE::E::eMILLISECOND;
