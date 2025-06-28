@@ -99,22 +99,152 @@ namespace EVENTTYPE
 {
   BETTER_ENUM(E, uint32, 
               eNONE = 0,
-              eQUIT,
+              // Application events
+              eQUIT = 0x100,
               eTERMINATING,
-              eCREATE,
-              eFOCUS,
-              ePAINT,
-              eRESIZE,
-              eDPI,
-              eKEYBOARD,
-              eMOUSEMOVE,
-              eMOUSERAW,
-              eMOUSEWHEEL,
-              eMOUSEINPUT,
-              eTOUCH,
-              eGAMEPAD,
-              eDROPFILE,
-              eHOVERFILE);
+              eLOW_MEMORY,
+              eWILL_ENTER_BACKGROUND,
+              eDID_ENTER_BACKGROUND,
+              eWILL_ENTER_FOREGROUND,
+              eDID_ENTER_FOREGROUND,
+              eLOCALE_CHANGED,
+              eSYSTEM_THEME_CHANGED,
+
+              // Display events
+              eDISPLAY_ORIENTATION = 0x151,
+              eDISPLAY_ADDED,
+              eDISPLAY_REMOVED,
+              eDISPLAY_MOVED,
+              eDISPLAY_DESKTOP_MODE_CHANGED,
+              eDISPLAY_CURRENT_MODE_CHANGED,
+              eDISPLAY_CONTENT_SCALE_CHANGED,
+
+              // Window events
+              eWINDOW_SHOWN = 0x202,
+              eWINDOW_HIDDEN,
+              eWINDOW_EXPOSED,
+              eWINDOW_MOVED,
+              eWINDOW_RESIZED,
+              eWINDOW_PIXEL_SIZE_CHANGED,
+              eWINDOW_METAL_VIEW_RESIZED,
+              eWINDOW_MINIMIZED,
+              eWINDOW_MAXIMIZED,
+              eWINDOW_RESTORED,
+              eWINDOW_MOUSE_ENTER,
+              eWINDOW_MOUSE_LEAVE,
+              eWINDOW_FOCUS_GAINED,
+              eWINDOW_FOCUS_LOST,
+              eWINDOW_CLOSE_REQUESTED,
+              eWINDOW_HIT_TEST,
+              eWINDOW_ICCPROF_CHANGED,
+              eWINDOW_DISPLAY_CHANGED,
+              eWINDOW_DISPLAY_SCALE_CHANGED,
+              eWINDOW_SAFE_AREA_CHANGED,
+              eWINDOW_OCCLUDED,
+              eWINDOW_ENTER_FULLSCREEN,
+              eWINDOW_LEAVE_FULLSCREEN,
+              eWINDOW_DESTROYED,
+              eWINDOW_HDR_STATE_CHANGED,
+
+              // Keyboard events
+              eKEY_DOWN = 0x300,
+              eKEY_UP,
+              eTEXT_EDITING,
+              eTEXT_INPUT,
+              eKEYMAP_CHANGED,
+              eKEYBOARD_ADDED,
+              eKEYBOARD_REMOVED,
+              eTEXT_EDITING_CANDIDATES,
+
+              // Mouse events
+              eMOUSE_MOTION = 0x400,
+              eMOUSE_BUTTON_DOWN,
+              eMOUSE_BUTTON_UP,
+              eMOUSE_WHEEL,
+              eMOUSE_ADDED,
+              eMOUSE_REMOVED,
+
+              // Joystick events
+              eJOYSTICK_AXIS_MOTION = 0x600,
+              eJOYSTICK_BALL_MOTION,
+              eJOYSTICK_HAT_MOTION,
+              eJOYSTICK_BUTTON_DOWN,
+              eJOYSTICK_BUTTON_UP,
+              eJOYSTICK_ADDED,
+              eJOYSTICK_REMOVED,
+              eJOYSTICK_BATTERY_UPDATED,
+              eJOYSTICK_UPDATE_COMPLETE,
+
+              // Gamepad events
+              eGAMEPAD_AXIS_MOTION = 0x650,
+              eGAMEPAD_BUTTON_DOWN,
+              eGAMEPAD_BUTTON_UP,
+              eGAMEPAD_ADDED,
+              eGAMEPAD_REMOVED,
+              eGAMEPAD_REMAPPED,
+              eGAMEPAD_TOUCHPAD_DOWN,
+              eGAMEPAD_TOUCHPAD_MOTION,
+              eGAMEPAD_TOUCHPAD_UP,
+              eGAMEPAD_SENSOR_UPDATE,
+              eGAMEPAD_UPDATE_COMPLETE,
+              eGAMEPAD_STEAM_HANDLE_UPDATED,
+
+              // Touch events
+              eFINGER_DOWN = 0x700,
+              eFINGER_UP,
+              eFINGER_MOTION,
+              eFINGER_CANCELED,
+
+              // Clipboard events
+              CLIPBOARD_UPDATE = 0x900,
+
+              // Drag and drop events
+              eDROP_FILE = 0x1000,
+              eDROP_TEXT,
+              eDROP_BEGIN,
+              eDROP_COMPLETE,
+              eDROP_POSITION,
+
+              // Audio events
+              eAUDIO_DEVICE_ADDED = 0x1100,
+              eAUDIO_DEVICE_REMOVED,
+              eAUDIO_DEVICE_FORMAT_CHANGED,
+
+              // Sensor events
+              eSENSOR_UPDATE = 0x1200,
+
+              // Pen events
+              ePEN_PROXIMITY_IN = 0x1300,
+              ePEN_PROXIMITY_OUT,
+              ePEN_DOWN,
+              ePEN_UP,
+              ePEN_BUTTON_DOWN,
+              ePEN_BUTTON_UP,
+              ePEN_MOTION,
+              ePEN_AXIS,
+
+              // Camera events
+              eCAMERA_DEVICE_ADDED = 0x1400,
+              eCAMERA_DEVICE_REMOVED,
+              eCAMERA_DEVICE_APPROVED,
+              eCAMERA_DEVICE_DENIED,
+
+              // Render events
+              eRENDER_TARGETS_RESET = 0x2000,
+              eRENDER_DEVICE_RESET,
+              eRENDER_DEVICE_LOST,
+
+              // Private/platform-specific events
+              ePRIVATE0 = 0x4000,
+              ePRIVATE1,
+              ePRIVATE2,
+              ePRIVATE3,
+
+              // Internal events
+              ePOLL_SENTINEL = 0x7F00,
+
+              // User-defined events
+              eUSER = 0x8000);
 }
 
 struct WindowDesc

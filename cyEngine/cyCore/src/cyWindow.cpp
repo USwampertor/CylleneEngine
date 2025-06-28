@@ -41,6 +41,7 @@ WindowManager::update() {
 
       WindowEvent wEvent(e);
       m_windowEvent.invoke(makeSharedPtr<WindowEvent>(e));
+      m_lastEvents[i] = wEvent.type;
       switch (e.type) {
       case SDL_EVENT_QUIT:
         destroyWindow(i);
@@ -131,7 +132,9 @@ WindowManager::createWindow(const WindowSettings& settings) {
     SDL_Quit();
     return {};
   }
-  SPtr<Window> newWindow(ptr);
+  SPtr<Window> newWindow(ptr, [](Window* w) { if (w) SDL_DestroyWindow(w); });
+  m_windows.push_back(newWindow);
+  m_lastEvents.push_back(EVENTTYPE::E::eNONE);
   return newWindow;
 }
   
