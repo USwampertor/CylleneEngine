@@ -16,14 +16,14 @@ void
 GShadowPass::initialize() {
   SPtr<RShader> vsShadowR = ResourceManager::instance().get<RShader>("shadowVertex");
   if (!vsShadowR) {
-    WindowManager::ShowErrorMessage("Error", "There is no default shadow vertex shader loaded");
+    WindowManager::showErrorMessage("Error", "There is no default shadow vertex shader loaded", 0);
     return;
   }
   Vector<char> constantBufferData;
   GraphicsAPI::instance().createVertexShader(vsShadowR, "vertex_main");
   m_shadowCB = GraphicsAPI::instance().createConstantBuffer(constantBufferData);
   if (!m_shadowCB) {
-    WindowManager::ShowErrorMessage("Error", "Error creating Constant Buffer");
+    WindowManager::showErrorMessage("Error", "Error creating Constant Buffer", 0);
     return;
   }
 
