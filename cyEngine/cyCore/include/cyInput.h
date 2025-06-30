@@ -11,17 +11,31 @@ namespace CYLLENE_SDK {
                 ePRESSED,
                 eHELD,
                 eRELEASED,
+                eREPEATED,
                 eINACTIVE);
   }
 
   namespace MODIFIERSTATE
   {
-    BETTER_ENUM(E, uint32,
-                eNONE   = 0,
-                eCTRL   = 0x0001,
-                eALT    = 0x0010,
-                eSHIFT  = 0x0100,
-                eMETA   = 0x1000);
+    BETTER_ENUM(E, uint32,         
+                eNONE   = 0x0000u, 
+                eLSHIFT = 0x0001u, 
+                eRSHIFT = 0x0002u, 
+                eLEVEL5 = 0x0004u, 
+                eLCTRL  = 0x0040u, 
+                eRCTRL  = 0x0080u, 
+                eLALT   = 0x0100u, 
+                eRALT   = 0x0200u, 
+                eLGUI   = 0x0400u, 
+                eRGUI   = 0x0800u, 
+                eNUM    = 0x1000u, 
+                eCAPS   = 0x2000u, 
+                eMODE   = 0x4000u, 
+                eSCROLL = 0x8000u, 
+                eCTRL   = (eLCTRL   | eRCTRL),
+                eSHIFT  = (eLSHIFT  | eRSHIFT),
+                eALT    = (eLALT    | eRALT),
+                eGUI    = (eLGUI    | eRGUI));
   }
 
   namespace DEVICEID

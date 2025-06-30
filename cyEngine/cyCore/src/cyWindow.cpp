@@ -5,14 +5,30 @@ namespace CYLLENE_SDK {
   
 bool 
 WindowManager::init() {
-  if (!SDL_Init(SDLINITFLAGS::E::eVIDEO)) {
+
+  if (SDL_WasInit(SDLINITFLAGS::E::eVIDEO)) {
+    String errorStr = Utils::format("SDL Video was already initialized: %s", SDL_GetError());
+    Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+    return true;
+  }
+
+  if (!SDL_InitSubSystem(SDLINITFLAGS::E::eVIDEO)) {
     String errorStr = Utils::format("Error initializing SDL: %s", SDL_GetError());
     Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
     Utils::throwException(errorStr);
     return false;
   }
+
+  if (!SDL_WasInit(SDLINITFLAGS::E::eEVENTS)) {
+    if (!SDL_InitSubSystem(SDLINITFLAGS::E::eEVENTS)) {
+      String errorStr = Utils::format("Error initializing SDL Events: %s", SDL_GetError());
+      Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+      Utils::throwException(errorStr);
+      return false;
+    }
+  }
+
   return true;
-  // return true;
 }
 
 void

@@ -12,11 +12,17 @@ namespace CYLLENE_SDK {
 class InputManager : Module<InputManager>
 {
   virtual void onStartUp() override {
+
+
+
     for (INPUTCODE::E input : INPUTCODE::E::_values()) {
       
       
     }
   }
+
+  bool 
+  init();
 
   void
   pollEvents();
