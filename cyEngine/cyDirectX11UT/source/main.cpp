@@ -66,6 +66,132 @@ ShadowConstantBuffer shadowConstants;
 int32
 main(int argc, char* argv[])
 {
+  {struct Portal
+    {
+      String name;
+      Vector3f position;
+
+      void
+      print() const {
+        std::cout << name << " \t[" << position.x << ", " << position.y << ", " << position.z << "]" << std::endl;
+      }
+    };
+
+    auto FindNetherPortal = [](Portal* overworldPortal, Vector<Portal*>& existingNetherPortals) -> Portal* {
+      Vector3f netherPosition = Vector3f(overworldPortal->position.x / 8.0f,
+                                         overworldPortal->position.y,
+                                         overworldPortal->position.z / 8.0f);
+
+      Portal* nearestPortal = existingNetherPortals[0];
+      float nearestDistance = Vector3f::distance(netherPosition, nearestPortal->position);
+
+      for (Portal* portal : existingNetherPortals) {
+        float distance = Vector3f::distance(netherPosition, portal->position);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestPortal = portal;
+        }
+      }
+
+      return nearestPortal;
+    };
+
+    auto FindOverworldPortal = [](Portal* netherPortal, Vector<Portal*>& existingOverworldPortals) -> Portal* {
+      Vector3f overworldPosition = Vector3f(netherPortal->position.x * 8.0f,
+                                            netherPortal->position.y,
+                                            netherPortal->position.z * 8.0f);
+
+      Portal* nearestPortal = existingOverworldPortals[0];
+      float nearestDistance = Vector3f::distance(overworldPosition, nearestPortal->position);
+
+      for (Portal* portal : existingOverworldPortals) {
+        float distance = Vector3f::distance(overworldPosition, portal->position);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestPortal = portal;
+        }
+      }
+
+      return nearestPortal;
+    };
+
+    // Overworld portals can't be moved
+    Portal O_C    = { "[Overworld] Ancient City",    Vector3f(-2256, -35, -2159) };
+
+    Portal O_L_A0 = { "[Overworld] Chunk Loader A0", Vector3f(-2320, -58, -2198) };
+    Portal O_L_A1 = { "[Overworld] Chunk Loader A1", Vector3f(-2272, -58, -2198) };
+    Portal O_L_A2 = { "[Overworld] Chunk Loader A2", Vector3f(-2224, -58, -2198) };
+
+    Portal O_L_B0 = { "[Overworld] Chunk Loader B0", Vector3f(-2320, -58, -2246) };
+    Portal O_L_B1 = { "[Overworld] Chunk Loader B1", Vector3f(-2272, -58, -2246) };
+    Portal O_L_B2 = { "[Overworld] Chunk Loader B2", Vector3f(-2224, -58, -2246) };
+
+    // Nether portals can be move, but we only care for the chunk loader portals
+    float ChunkLoaderHeight = 50.0f;
+
+    Portal N_C    = { "[Nether] Ancient City",       Vector3f(-282, 127, -269) };
+
+    Portal N_L_A0 = { "[Nether] Chunk Loader A0",    Vector3f(-290, ChunkLoaderHeight, -274) };
+    Portal N_L_A1 = { "[Nether] Chunk Loader A1",    Vector3f(-284, ChunkLoaderHeight, -274) };
+    Portal N_L_A2 = { "[Nether] Chunk Loader A2",    Vector3f(-278, ChunkLoaderHeight, -274) };
+
+    Portal N_L_B0 = { "[Nether] Chunk Loader B0",    Vector3f(-290, ChunkLoaderHeight, -280) };
+    Portal N_L_B1 = { "[Nether] Chunk Loader B1",    Vector3f(-284, ChunkLoaderHeight, -280) };
+    Portal N_L_B2 = { "[Nether] Chunk Loader B2",    Vector3f(-278, ChunkLoaderHeight, -280) };
+
+    Vector<Portal*> OverworldPortals = {
+      &O_C,
+      &O_L_A0, &O_L_A1, &O_L_A2,
+      &O_L_B0, &O_L_B1, &O_L_B2
+    };
+
+    Vector<Portal*> NetherPortals = {
+      &N_C,
+      &N_L_A0, &N_L_A1, &N_L_A2,
+      &N_L_B0, &N_L_B1, &N_L_B2
+    };
+
+    std::cout << "Overworld Portals:" << std::endl;
+    for (Portal* portal : OverworldPortals) {
+      portal->print();
+    }
+
+    std::cout << std::endl;
+
+    std::cout << "Nether Portals:" << std::endl;
+    for (Portal* portal : NetherPortals) {
+      portal->print();
+    }
+
+    std::cout << std::endl;
+
+    std::cout << "Overworld portals links:" << std::endl;
+    for (Portal* overworldPortal : OverworldPortals) {
+      Portal* netherPortal = FindNetherPortal(overworldPortal, NetherPortals);
+      if (netherPortal == nullptr) {
+        std::cout << "No Nether portal found for Overworld portal: " << overworldPortal->name << std::endl;
+      }
+      else {
+        std::cout << overworldPortal->name << "\t -> " << netherPortal->name << std::endl;
+      }
+    }
+
+    std::cout << std::endl;
+
+    std::cout << "Nether portals links:" << std::endl;
+    for (Portal* netherPortal : NetherPortals) {
+      Portal* overworldPortal = FindOverworldPortal(netherPortal, OverworldPortals);
+      if (overworldPortal == nullptr) {
+        std::cout << "No Overworld portal found for Nether portal: " << netherPortal->name << std::endl;
+      }
+      else {
+        std::cout << netherPortal->name << "\t -> " << overworldPortal->name << std::endl;
+      }
+    }
+  }
+
+  return 0;
+
   Logger::startUp();
   ResourceManager::startUp();
   Time::startUp();
@@ -281,7 +407,7 @@ main(int argc, char* argv[])
   }
 
 
-  // TODO: Create Render Target and Depth stencil for mirror effect
+  // TODO= { "", Vector3f(Create Render Target and Depth stencil for mirror effect
   SPtr<GTextureElement> shadowDepthStencilTextureDesc = std::make_shared<GTextureElement>();
   shadowDepthStencilTextureDesc->width          = 1024;
   shadowDepthStencilTextureDesc->height         = 1024;
@@ -331,9 +457,9 @@ main(int argc, char* argv[])
   alphaBlendDesc->writeMask = BLEND_MASK::E::ALL;
   SPtr<GBlendState> alphaBlend = GraphicsDX11API::instance().getDevice()->createBlendState(alphaBlendDesc);
   
-  // TODO: Create other rasterizers
+  // TODO= { "", Vector3f(Create other rasterizers
   
-  // TODO: Do sampler states
+  // TODO= { "", Vector3f(Do sampler states
   SPtr<GSamplerStateElement> samplerDesc = std::make_shared<GSamplerStateElement>();
   samplerDesc->addressU = TEXTUREMODE::E::eCLAMP;
   samplerDesc->addressV = TEXTUREMODE::E::eCLAMP;
