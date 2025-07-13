@@ -1,5 +1,6 @@
 #include "cyWindow.h"
 #include "cyLogger.h"
+#include "cyWindowEvent.h"
 
 namespace CYLLENE_SDK {
   

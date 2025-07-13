@@ -60,6 +60,7 @@
     <ClInclude Include="include\cyTriangle.h" />
     <ClInclude Include="include\cyVertex.h" />
     <ClInclude Include="include\cyWindow.h" />
+    <ClInclude Include="include\cyWindowEvent.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +69,7 @@
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
     <ClCompile Include="src\cyCLight.cpp" />
     <ClCompile Include="src\cyCParticleEmitter.cpp" />
+    <ClCompile Include="src\cyInput.cpp" />
     <ClCompile Include="src\cyRAsset.cpp" />
     <ClCompile Include="src\cyRAudio.cpp" />
     <ClCompile Include="src\cyAudioAPI.cpp" />
@@ -98,6 +100,7 @@
     <ClCompile Include="src\cyTriangle.cpp" />
     <ClCompile Include="src\cyVertex.cpp" />
     <ClCompile Include="src\cyWindow.cpp" />
+    <ClCompile Include="src\cyWindowEvent.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

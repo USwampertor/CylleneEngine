@@ -37,7 +37,7 @@ class InputManager : Module<InputManager>
   getScreenMousePosition();
 
   void
-  setWindowMousePosition(SPtr<Window> window, const Vector2i& pos);
+  setWindowMousePosition(const Vector2i& pos, uint32 windowIndex = 0);
 
   void
   setScreenMousePosition(const Vector2i& pos);

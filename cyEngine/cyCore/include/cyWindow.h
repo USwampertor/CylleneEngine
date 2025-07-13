@@ -20,6 +20,7 @@
 #include <cyVector4f.h>
 #include <cyEvent.h>
 #include <cyColor.h>
+#include "cyInput.h"
 
 
 // #ifdef CY_PLATFORM == CY_PLATFORM_WIN32
@@ -44,10 +45,12 @@
 namespace CYLLENE_SDK {
 
 using Window         = SDL_Window; 
-using SDLWindowEvent = SDL_WindowEvent;
+// using SDLWindowEvent = SDL_WindowEvent;
 using WindowRenderer = SDL_Renderer;
 using SDLEvent       = SDL_Event; 
 using WinMsgDesc     = SDL_MessageBoxData; 
+
+struct WindowEvent;
 
 namespace SDLINITFLAGS
 {
@@ -261,19 +264,6 @@ struct WindowDesc
   uint32 flags;
 };
 
-struct WindowEvent {
-public:
-  WindowEvent(const SDLEvent& newEvent) : type(EVENTTYPE::E::_from_integral(newEvent.type)) {}
-
-  WindowEvent(const EVENTTYPE::E& newType, uint32 index)
-    : type(newType) {
-  }
-
-  WindowEvent(const WindowEvent& other, uint32 index)
-    : type(other.type) {}
-
-  EVENTTYPE::E type = EVENTTYPE::E::eNONE;
-};
 
 struct MessageBoxButtonData
 {
