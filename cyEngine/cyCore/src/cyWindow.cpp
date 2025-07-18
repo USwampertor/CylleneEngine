@@ -78,6 +78,27 @@ WindowManager::update() {
   }
 }
 
+void
+WindowManager::clear() {
+  for (uint32 i = 0; i < m_windows.size(); ++i) {
+    SDL_RenderClear(SDL_GetRenderer(m_windows[i].get()));
+  }
+}
+
+void
+WindowManager::setRenderColor(const uint32 index, const Color& color /* = Color::BLACK */) {
+  SDL_SetRenderDrawColor(SDL_GetRenderer(m_windows[index].get()), 
+                         color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+}
+
+void
+WindowManager::present() {
+  for (uint32 i = 0; i < m_windows.size(); ++i) {
+    SDL_RenderPresent(SDL_GetRenderer(m_windows[i].get()));
+  }
+}
+
+
 EVENTTYPE::E
 WindowManager::getLastEventType(const uint32& window) {
   CY_ASSERT(window < m_windows.size() && "Invalid window index");
@@ -173,6 +194,18 @@ WindowManager::destroyWindow(const uint32& window) {
 void*
 WindowManager::getWindowHandle(const uint32& window) {
   return getWindowProperty(window, WINDOW_PROPERTY::E::eHWND);
+}
+
+SPtr<WindowRenderer>
+WindowManager::getWindowRenderer(const uint32 window) {
+  // auto wndow = m_windows[window];
+  // SPtr<WindowRenderer> renderer = makeSharedPtr<WindowRenderer>(SDL_GetRenderer(wndow.get()));
+  // if (!renderer) {
+  //   String errorStr = Utils::format("Error getting renderer for window %d: %s", window, SDL_GetError());
+  //   Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+  //   Utils::throwException(errorStr);
+  // }
+  return nullptr;
 }
 
 void*
