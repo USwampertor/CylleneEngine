@@ -293,7 +293,7 @@ namespace WINDOW_FLAGS
 {
   BETTER_ENUM(E, uint64,
               eFULLSCREEN          = 0x0000000000000001,
-              // eOPENGL              = 0x0000000000000002,
+              eOPENGL              = 0x0000000000000002, // DO NOT USE IN A NORMAL CONTEXT
               eOCCLUDED            = 0x0000000000000004,
               eHIDDEN              = 0x0000000000000008,
               eBORDERLESS          = 0x0000000000000010,
@@ -313,8 +313,8 @@ namespace WINDOW_FLAGS
               eTOOLTIP             = 0x0000000000040000,
               ePOPUP_MENU          = 0x0000000000080000,
               eKEYBOARD_GRABBED    = 0x0000000000100000,
-              // eVULKAN              = 0x0000000010000000,
-              // eMETAL               = 0x0000000020000000,
+              eVULKAN              = 0x0000000010000000, // DO NOT USE IN A NORMAL CONTEXT
+              eMETAL               = 0x0000000020000000, // DO NOT USE IN A NORMAL CONTEXT
               eTRANSPARENT         = 0x0000000040000000,
               eNOT_FOCUSABLE       = 0x0000000080000000,
               eCENTERED            = 0x0000000100000000,
@@ -374,6 +374,9 @@ public:
   void*
   getWindowHandle(const uint32& window);
 
+  SPtr<WindowRenderer>
+  getWindowRenderer(const uint32 window);
+
   void*
   getWindowProperty(const uint32& window, 
                     const WINDOW_PROPERTY::E& property);
@@ -390,6 +393,14 @@ public:
   bool
   pollEvent(SPtr<WindowEvent> event);
 
+  void
+  clear();
+
+  void
+  setRenderColor(const uint32 index, const Color& color = Color::BLACK);
+
+  void
+  present();
 
   EVENTTYPE::E
   getLastEventType(const uint32& window);
