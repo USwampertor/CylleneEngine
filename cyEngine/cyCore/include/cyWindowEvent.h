@@ -16,21 +16,23 @@ public:
     keyboardID = newEvent.kdevice.which;
 
     // Check which type of event was
-    if (+EVENTTYPE::E::eKEY_DOWN || +EVENTTYPE::E::eKEY_UP) {
+    if (+EVENTTYPE::E::eKEY_DOWN == type || 
+        +EVENTTYPE::E::eKEY_UP == type) {
       
       m_inputState = (+EVENTTYPE::E::eKEY_DOWN) ? INPUTSTATE::E::ePRESSED :
                    (+EVENTTYPE::E::eKEY_UP) ? INPUTSTATE::E::eRELEASED : INPUTSTATE::E::eNONE;
       m_mainInputCode = SDLKeyCodetoINPUTCODE.at(static_cast<uint32>(newEvent.key.key));
       m_modifierState = MODIFIERSTATE::E::_from_integral(newEvent.key.mod);
     }
-    else if (+EVENTTYPE::E::eMOUSE_BUTTON_DOWN || +EVENTTYPE::E::eMOUSE_BUTTON_UP) {
+    else if (+EVENTTYPE::E::eMOUSE_BUTTON_DOWN == type || 
+             +EVENTTYPE::E::eMOUSE_BUTTON_UP == type) {
       m_inputState = (+EVENTTYPE::E::eKEY_DOWN) ? INPUTSTATE::E::ePRESSED :
                    (+EVENTTYPE::E::eKEY_UP) ? INPUTSTATE::E::eRELEASED : INPUTSTATE::E::eNONE;
-      m_mainInputCode = INPUTCODE::E::_from_integral((newEvent.button.button) << 16 | (newEvent.button.button << 4) | (7));
+      m_mainInputCode = INPUTCODE::E::_from_integral((newEvent.button.button << 1) | (7));
       mousePosition.x = newEvent.button.x; 
       mousePosition.y = newEvent.button.y;
     }
-    else if (+EVENTTYPE::E::eMOUSE_MOTION) {
+    else if (+EVENTTYPE::E::eMOUSE_MOTION == type) {
       // inputState = INPUTSTATE::E::eHELD;
       m_mainInputCode = INPUTCODE::E::eMMWINDOW;
       m_secondaryInputCode = INPUTCODE::E::eMMDELTA;
@@ -39,14 +41,12 @@ public:
       mousePosition.y = newEvent.button.y;
       mouseDelta.x = newEvent.motion.xrel;
       mouseDelta.y = newEvent.motion.yrel;
-
-
     }
-    else if (+EVENTTYPE::E::eMOUSE_WHEEL) {
+    else if (+EVENTTYPE::E::eMOUSE_WHEEL == type) {
       m_inputState = INPUTSTATE::E::eHELD;
       m_mainInputCode = INPUTCODE::E::eMWHORIZONTAL;
     }
-    else if (+EVENTTYPE::E::eWINDOW_RESIZED) {
+    else if (+EVENTTYPE::E::eWINDOW_RESIZED == type) {
 
     }
 

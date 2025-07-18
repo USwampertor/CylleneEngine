@@ -35,6 +35,7 @@
 #include <cyVector2f.h>
 #include <cyVertex.h>
 #include <cyWindow.h>
+#include <cyWindowEvent.h>
 #include <cySceneManager.h>
 #include <cyScene.h>
 #include <cySNode.h>

@@ -13,12 +13,14 @@ class InputManager : Module<InputManager>
 {
   virtual void onStartUp() override {
 
-
-
-    for (INPUTCODE::E input : INPUTCODE::E::_values()) {
-      
-      
+    // Initialize the amount of gamepads we can have
+    // Initialize the amount of keyboards we can have
+    // Initialize the amount of mouses we can have
+    // Initialize the amount of extra elements we can have
+    for (INPUTCODE::E i : INPUTCODE::E::_values()) {
     }
+
+    init();
   }
 
   bool 
