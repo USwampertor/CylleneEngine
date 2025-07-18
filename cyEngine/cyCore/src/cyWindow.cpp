@@ -55,10 +55,10 @@ WindowManager::update() {
     // }
 
     while (SDL_PollEvent(&e)) {
-
-      WindowEvent wEvent(e);
-      m_windowEvent.invoke(makeSharedPtr<WindowEvent>(e));
-      m_lastEvents[i] = wEvent.type;
+      // WindowEvent wEvent(e);
+      auto wEventPtr = makeSharedPtr<WindowEvent>(e);
+      m_windowEvent.invoke(wEventPtr);
+      m_lastEvents[i] = wEventPtr->type;
       switch (e.type) {
       case SDL_EVENT_QUIT:
         destroyWindow(i);

@@ -67,6 +67,10 @@ InputManager::setScreenMousePosition(const Vector2i& pos) {
 
 }
 
+void
+InputManager::pollEvents(WPtr<WindowEvent> event) {
+
+}
 
 
 

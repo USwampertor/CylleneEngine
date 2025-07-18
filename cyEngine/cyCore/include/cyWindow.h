@@ -481,6 +481,6 @@ public:
 
   Vector<SPtr<Window>> m_windows;
   Vector<EVENTTYPE::E> m_lastEvents;
-  Event<void, SPtr<WindowEvent>> m_windowEvent;
+  Event<void, WPtr<WindowEvent>> m_windowEvent;
 };
 }

@@ -18,6 +18,33 @@ class InputManager : Module<InputManager>
     // Initialize the amount of mouses we can have
     // Initialize the amount of extra elements we can have
     for (INPUTCODE::E i : INPUTCODE::E::_values()) {
+      int32 hexValue = i._to_integral();
+      String hexStr = Utils::intToHex(hexValue);
+      String deviceStr = hexStr.substr(hexStr.size() - 1);
+      String inputStr = hexStr.substr(0, hexStr.size() - 1);
+
+      String prefixD(static_cast<SizeT>(8 - deviceStr.size()), '0');
+      String prefixI(static_cast<SizeT>(8 - inputStr.size()), inputStr.size() > 6 ? 'F' : '0');
+      
+      int32 device = std::stoi(prefixD + deviceStr, nullptr, 16);
+      
+      uint32 keycode = std::stoul(prefixI + inputStr, nullptr, 16);
+
+      INPUTDEVICEID::E deviceType = INPUTDEVICEID::E::_from_integral(device);
+      m_values.try_emplace(i, Vector<SPtr<InputValue>>());
+
+      if (+INPUTDEVICEID::E::eGAMEPAD == deviceType) {
+        for (int j = 0; j < InputDefinitions::MAX_GAMEPADS; ++j) {
+          m_values[i].push_back(makeSharedPtr<InputValue>());
+          m_values[i][j]->reset();
+        }
+      }
+      else {
+        m_values[i].push_back(makeSharedPtr<InputValue>());
+        m_values[i][0]->reset();
+      }
+
+
     }
 
     init();
@@ -27,7 +54,7 @@ class InputManager : Module<InputManager>
   init();
 
   void
-  pollEvents();
+  pollEvents(WPtr<WindowEvent> event);
 
   void
   update(const float& delta);
