@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\cyCharacter.cpp" />
+    <ClCompile Include="source\cyCharacterCreator.cpp" />
+    <ClCompile Include="source\cyCharGenUI.cpp" />
+    <ClCompile Include="source\cyRace.cpp" />
     <ClCompile Include="source\imgui.cpp" />
     <ClCompile Include="source\imgui_demo.cpp" />
     <ClCompile Include="source\imgui_draw.cpp" />
@@ -32,6 +36,11 @@
     <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyCharacter.h" />
+    <ClInclude Include="include\cyCharacterCreator.h" />
+    <ClInclude Include="include\cyCharGenPrerequisites.h" />
+    <ClInclude Include="include\cyCharGenUI.h" />
+    <ClInclude Include="include\cyRace.h" />
     <ClInclude Include="include\imconfig.h" />
     <ClInclude Include="include\imgui.h" />
     <ClInclude Include="include\imgui_impl_dx11.h" />
@@ -138,7 +147,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;cyUtilitiesd.lib;SDL3d.lib;assimpd.lib;cppfsd.lib;CrossWindowd.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;cyUtilitiesd.lib;SDL3d.lib;assimpd.lib;cppfsd.lib;CrossWindowd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -164,7 +173,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCore.lib;cyMath.lib;cyRandom.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;assimp.lib;cppfs.lib;CrossWindow.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCore.lib;cyMath.lib;cyRandom.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;assimp.lib;cppfs.lib;CrossWindow.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -186,7 +195,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;cyUtilitiesd.lib;SDL3d.lib;assimpd.lib;cppfsd.lib;CrossWindowd.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;cyUtilitiesd.lib;SDL3d.lib;assimpd.lib;cppfsd.lib;CrossWindowd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -212,7 +221,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCore.lib;cyMath.lib;cyRandom.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;assimp.lib;cppfs.lib;CrossWindow.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;gdi32.lib;user32.lib;shell32.lib;ole32.lib;comdlg32.lib;cyCore.lib;cyMath.lib;cyRandom.lib;cyUtilities.lib;SDL2.lib;SDL2main.lib;SDL3.lib;assimp.lib;cppfs.lib;CrossWindow.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
