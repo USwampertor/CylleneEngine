@@ -58,17 +58,17 @@ WindowManager::update() {
       // WindowEvent wEvent(e);
       auto wEventPtr = makeSharedPtr<WindowEvent>(e);
       m_windowEvent.invoke(wEventPtr);
-      m_lastEvents[i] = wEventPtr->type;
-      switch (e.type) {
-      case SDL_EVENT_QUIT:
-        destroyWindow(i);
-        break;
-      case SDL_EVENT_KEY_DOWN:
-        if (e.key.key == SDLK_ESCAPE) {
-          destroyWindow(i);
-        }
-        break;
-      }
+//       m_lastEvents[i] = wEventPtr->type;
+//       switch (e.type) {
+//       case SDL_EVENT_QUIT:
+//         destroyWindow(i);
+//         break;
+//       case SDL_EVENT_KEY_DOWN:
+//         if (e.key.key == SDLK_ESCAPE) {
+//           destroyWindow(i);
+//         }
+//         break;
+//       }
     }
 
     // Clear screen (black)
