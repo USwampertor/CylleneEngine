@@ -9,7 +9,7 @@ namespace CYLLENE_SDK {
 
 struct WindowEvent {
 public:
-  WindowEvent(const SDLEvent& newEvent) : type(EVENTTYPE::E::_from_integral(newEvent.type)) {
+  WindowEvent(const SDLEvent& newEvent) : type(EVENTTYPE::E::_from_integral(newEvent.type)), m_sdlEvent(newEvent) {
     timestamp = newEvent.common.timestamp;
     displayID = newEvent.display.displayID;
     windowID = newEvent.window.windowID;
@@ -95,6 +95,10 @@ public:
   Vector<String> clipboardMIME;
 
   uint64 sensorTimestamp = 0;
+
+  // This is terribly Stupid, but there are some objects that are only compatible
+  // with this structure, so we need to keep it here.
+  SDLEvent m_sdlEvent;
 
   // TODO: ADD SCANCODE
   // TODO: ADD TEXTEDITING DATA
