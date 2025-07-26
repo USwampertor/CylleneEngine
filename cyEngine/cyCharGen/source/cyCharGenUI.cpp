@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
+#include "imgui_stdlib.h"
 #include <SDL3/SDL_opengl.h>
 #include <cyVector2i.h>
 
@@ -50,30 +51,24 @@ CharGenUI::render()
     ImGui::Separator();
 
     // Birthday
-    static char birthday[32] = "";
-    ImGui::InputText("Birthday", birthday, IM_ARRAYSIZE(birthday));
+    ImGui::Text("Birthday");
+    ImGui::SameLine();
+    ImGui::Text(m_characterCreator.m_currentCharacter.m_birthDate.toString("YYYY-MM-DD").c_str());
 
     // Name and sex
-    static char name[64] = "";
-    static char sex[16] = "";
-    ImGui::InputText("Name", name, IM_ARRAYSIZE(name));
-    ImGui::InputText("Sex", sex, IM_ARRAYSIZE(sex));
+    ImGui::InputText("Name", &m_characterCreator.m_currentCharacter.m_name);
+    ImGui::InputText("Sex", &m_characterCreator.m_currentCharacter.m_sex);
 
     // Level and XP
-    static int level = 1;
-    static int xp = 0;
-    ImGui::InputInt("Level", &level);
-    ImGui::InputInt("XP", &xp);
+    ImGui::InputInt("Level", &m_characterCreator.m_currentCharacter.m_level);
+    ImGui::InputInt("XP", &m_characterCreator.m_currentCharacter.m_xp);
 
     // Age
-    static int age = 20;
-    ImGui::InputInt("Age", &age);
+    ImGui::InputInt("Age", &m_characterCreator.m_currentCharacter.m_age);
 
     // Height and Weight
-    static int height = 72;
-    static int weight = 180;
-    ImGui::InputInt("Height (in)", &height);
-    ImGui::InputInt("Weight (lbs)", &weight);
+    ImGui::SliderFloat("Height (in)", &m_characterCreator.m_currentCharacter.m_height, 0, 500);
+    ImGui::SliderFloat("Weight (lbs)", &m_characterCreator.m_currentCharacter.m_weight, 0, 500);
 
     // Alignment
     static int alignment = 0;

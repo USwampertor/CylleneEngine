@@ -3,6 +3,7 @@
 #include "cyCharGenPrerequisites.h"
 
 #include <cyTime.h>
+#include <cyJSON.h>
 
 using namespace CYLLENE_SDK;
 
@@ -15,6 +16,8 @@ class Character
 {
 public:
   Date m_birthDate;
+  String m_name;
+  String m_sex;
   int m_xp;
   int m_level;
 
@@ -33,8 +36,13 @@ public:
   int m_hitPoints;
   int m_maxHitPoints;
 
+  float m_height;
+  float m_weight;
+
   Map<SAVING_THROW::E, int> m_savingThrows = {};
 
+  JSONDocument
+  serialize();
 };
 
 }

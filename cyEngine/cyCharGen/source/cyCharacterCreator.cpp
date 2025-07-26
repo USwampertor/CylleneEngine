@@ -1,4 +1,5 @@
 #include "cyCharacterCreator.h"
+#include <cyTime.h>
 
 namespace ADND {
 Character
@@ -24,7 +25,8 @@ CharacterCreator::loadCharacter() {
 
 void
 CharacterCreator::reset() {
-
+  m_currentCharacter = {};
+  m_currentCharacter.m_birthDate = Time::instance().now();
 }
 
 void

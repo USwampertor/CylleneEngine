@@ -63,6 +63,7 @@ main(int argc, char* argv[]) {
   ImGui_ImplOpenGL3_Init("#version 150");
 
   WindowManager::instance().m_windowEvent.addListener([&](WPtr<WindowEvent> event) {
+    ImGui_ImplSDL3_ProcessEvent(&event.lock()->m_sdlEvent);
     if (+EVENTTYPE::E::eQUIT == event.lock()->type) {
       std::cout << "Window closed" << std::endl;
       running = false;
@@ -77,7 +78,6 @@ main(int argc, char* argv[]) {
     SDL_GetWindowSize(window.lock().get(), &windowSize.x, &windowSize.y);
     Time::instance().update();
     WindowManager::instance().update();
-    // ImGui_ImplSDL3_ProcessEvent();
     timer += Time::instance().deltaTime();
 
     // Start ImGui frame
