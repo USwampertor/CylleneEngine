@@ -13,6 +13,10 @@ class InputManager : Module<InputManager>
 {
   virtual void onStartUp() override {
 
+    for (int i = 0; i < InputDefinitions::MAX_GAMEPADS; ++i) {
+      m_gamepad.push_back(Map<INPUTCODE::E, SPtr<InputValue>>());
+    }
+
     // Initialize the amount of gamepads we can have
     // Initialize the amount of keyboards we can have
     // Initialize the amount of mouses we can have
@@ -31,19 +35,22 @@ class InputManager : Module<InputManager>
       uint32 keycode = std::stoul(prefixI + inputStr, nullptr, 16);
 
       INPUTDEVICEID::E deviceType = INPUTDEVICEID::E::_from_integral(device);
-      m_values.try_emplace(i, Vector<SPtr<InputValue>>());
+      // m_values.try_emplace(i, Vector<SPtr<InputValue>>());
 
       if (+INPUTDEVICEID::E::eGAMEPAD == deviceType) {
         for (int j = 0; j < InputDefinitions::MAX_GAMEPADS; ++j) {
-          m_values[i].push_back(makeSharedPtr<InputValue>());
-          m_values[i][j]->reset();
+          m_gamepad[j].try_emplace(i, makeSharedPtr<InputValue>());
+          m_gamepad[j][i]->reset();
         }
       }
-      else {
-        m_values[i].push_back(makeSharedPtr<InputValue>());
-        m_values[i][0]->reset();
+      else if (+INPUTDEVICEID::E::eKEYBOARD == deviceType) {
+        m_keyboard[i] = makeSharedPtr<InputValue>();
+        m_keyboard[i]->reset();
       }
-
+      else if (+INPUTDEVICEID::E::eMOUSE == deviceType) {
+        m_mouse[i] = makeSharedPtr<InputValue>();
+        m_mouse[i]->reset();
+      }
 
     }
 
@@ -71,6 +78,15 @@ class InputManager : Module<InputManager>
   void
   setScreenMousePosition(const Vector2i& pos);
 
+  WPtr<InputValue>
+  getMouseData(const INPUTCODE::E& code);
+
+  WPtr<InputValue>
+  getKeyboardData(const INPUTCODE::E& code);
+
+  WPtr<InputValue>
+  getGamepadData(const uint32& device, const INPUTCODE::E& code);
+
   void
   registerGamepad(const uint32 value);
 
@@ -86,9 +102,17 @@ class InputManager : Module<InputManager>
 
   Vector<SPtr<InputMapping>> m_maps;
 
-  Map<INPUTCODE::E, Vector<SPtr<InputValue>>> m_values;
+  // TODO: remove this
+  // Map<INPUTCODE::E, Vector<SPtr<InputValue>>> m_values;
+  // TODO: remove this
+  // uint32 m_gamepads;
 
-  uint32 m_gamepads;
+
+  Map<INPUTCODE::E, SPtr<InputValue>> m_mouse;
+  
+  Map<INPUTCODE::E, SPtr<InputValue>> m_keyboard;
+
+  Vector<Map<INPUTCODE::E, SPtr<InputValue>>> m_gamepad;
 
 };
 

@@ -618,7 +618,7 @@ struct InputValue
 {
   INPUTSTATE::E m_state = INPUTSTATE::E::eINACTIVE;
   
-  INPUTMODIFIERSTATE::E m_modifier = INPUTMODIFIERSTATE::E::eNONE;
+  uint32 m_modifierButtons = 0;
 
   float m_timePressed;
 
@@ -640,7 +640,7 @@ struct InputValue
   void
   reset() {
     m_state = INPUTSTATE::E::eINACTIVE;
-    m_modifier = INPUTMODIFIERSTATE::E::eNONE;
+    m_modifierButtons = INPUTMODIFIERSTATE::E::eNONE;
     m_timePressed = 0.0f;
     m_timeInactive = 0.0f;
     m_value = nullptr;

@@ -1,6 +1,7 @@
 #include "cyInputManager.h"
 #include "cyLogger.h"
 #include "cyWindow.h"
+#include "cyWindowEvent.h"
 
 namespace CYLLENE_SDK {
 
@@ -69,9 +70,34 @@ InputManager::setScreenMousePosition(const Vector2i& pos) {
 
 void
 InputManager::pollEvents(WPtr<WindowEvent> event) {
+  
+  if (event.expired()) {
+    return;
+  }
 
+  auto eventPtr = event.lock();
+
+  if (+INPUTDEVICEID::E::eMOUSE == eventPtr->m_eventDevice) {
+	  m_mouse[eventPtr->m_mainInputCode]->setValue(reinterpret_cast<void*>(eventPtr->m_inputState._to_index()));
+  }
+  else if (+INPUTDEVICEID::E::eKEYBOARD == eventPtr->m_eventDevice) {
+    m_keyboard[eventPtr->m_mainInputCode]->setValue(reinterpret_cast<void*>(eventPtr->m_inputState._to_index()));
+  }
+  else if (+INPUTDEVICEID::E::eGAMEPAD == eventPtr->m_eventDevice) {
+    m_gamepad[0][eventPtr->m_mainInputCode]->setValue(reinterpret_cast<void*>(eventPtr->m_inputState._to_index()));
+  }
+  
+  for (auto& mapping : m_maps) {
+    if (mapping->m_enabled) {
+      mapping->onInputUpdated(eventPtr->m_mainInputCode, m_mouse[eventPtr->m_mainInputCode]);
+    }
+  }
+}
+
+void
+InputManager::notifyInputChange(const INPUTCODE::E& code, const uint32& device) {
+  
 }
 
 
-
-}
+}// namespace CYLLENE_SDK

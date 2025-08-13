@@ -18,14 +18,15 @@ public:
     // Check which type of event was
     if (+EVENTTYPE::E::eKEY_DOWN == type || 
         +EVENTTYPE::E::eKEY_UP == type) {
-      
+      m_eventDevice = INPUTDEVICEID::E::eKEYBOARD;
       m_inputState = (+EVENTTYPE::E::eKEY_DOWN) ? INPUTSTATE::E::ePRESSED :
                    (+EVENTTYPE::E::eKEY_UP) ? INPUTSTATE::E::eRELEASED : INPUTSTATE::E::eNONE;
       m_mainInputCode = SDLKeyCodetoINPUTCODE.at(static_cast<uint32>(newEvent.key.key));
-      m_modifierState = INPUTMODIFIERSTATE::E::_from_integral(newEvent.key.mod);
+      m_modifierButtons = newEvent.key.mod;
     }
     else if (+EVENTTYPE::E::eMOUSE_BUTTON_DOWN == type || 
              +EVENTTYPE::E::eMOUSE_BUTTON_UP == type) {
+      m_eventDevice = INPUTDEVICEID::E::eMOUSE;
       m_inputState = (+EVENTTYPE::E::eKEY_DOWN) ? INPUTSTATE::E::ePRESSED :
                    (+EVENTTYPE::E::eKEY_UP) ? INPUTSTATE::E::eRELEASED : INPUTSTATE::E::eNONE;
       m_mainInputCode = INPUTCODE::E::_from_integral((newEvent.button.button << 1) | (2));
@@ -34,6 +35,7 @@ public:
     }
     else if (+EVENTTYPE::E::eMOUSE_MOTION == type) {
       // inputState = INPUTSTATE::E::eHELD;
+      m_eventDevice = INPUTDEVICEID::E::eMOUSE;
       m_mainInputCode = INPUTCODE::E::eMPWINDOW;
       m_secondaryInputCode = INPUTCODE::E::eMPPOINTERDELTA;
 
@@ -43,6 +45,7 @@ public:
       mouseDelta.y = newEvent.motion.yrel;
     }
     else if (+EVENTTYPE::E::eMOUSE_WHEEL == type) {
+      m_eventDevice = INPUTDEVICEID::E::eMOUSE;
       m_inputState = INPUTSTATE::E::eHELD;
       m_mainInputCode = INPUTCODE::E::eMSSCROLLDELTA;
       mouseScroll.x = newEvent.wheel.x;
@@ -85,7 +88,9 @@ public:
   INPUTCODE::E m_quaternaryInputCode  = INPUTCODE::E::eNONE;
   INPUTCODE::E m_fifthInputCode       = INPUTCODE::E::eNONE;
 
-  INPUTMODIFIERSTATE::E m_modifierState = INPUTMODIFIERSTATE::E::eNONE;
+  INPUTDEVICEID::E m_eventDevice      = INPUTDEVICEID::E::eNONE;
+  
+  uint32 m_modifierButtons = INPUTMODIFIERSTATE::E::eNONE;
   INPUTSTATE::E m_inputState = INPUTSTATE::E::eINACTIVE;
   
   Vector2f filePosition = Vector2f::ZERO;
