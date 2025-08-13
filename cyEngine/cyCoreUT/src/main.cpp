@@ -35,6 +35,7 @@
 #include <cyVector2f.h>
 #include <cyVertex.h>
 #include <cyWindow.h>
+#include <cyWindowEvent.h>
 #include <cySceneManager.h>
 #include <cyScene.h>
 #include <cySNode.h>
@@ -179,8 +180,8 @@ TEST_CASE("[window] Window creation") {
   bool running = true;
   float timer = 0.0f;
 
-  WindowManager::instance().m_windowEvent.addListener([&](SPtr<WindowEvent> event) {
-    if (+EVENTTYPE::E::eQUIT == event->type) {
+  WindowManager::instance().m_windowEvent.addListener([&](WPtr<WindowEvent> event) {
+    if (+EVENTTYPE::E::eQUIT == event.lock()->type) {
       std::cout << "Window closed" << std::endl;
       running = false;
     }

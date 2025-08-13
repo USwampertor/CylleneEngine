@@ -1,18 +1,35 @@
 #include "cyWindow.h"
 #include "cyLogger.h"
+#include "cyWindowEvent.h"
 
 namespace CYLLENE_SDK {
   
 bool 
 WindowManager::init() {
-  if (!SDL_Init(SDLINITFLAGS::E::eVIDEO)) {
+
+  if (SDL_WasInit(SDLINITFLAGS::E::eVIDEO)) {
+    String errorStr = Utils::format("SDL Video was already initialized: %s", SDL_GetError());
+    Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+    return true;
+  }
+
+  if (!SDL_InitSubSystem(SDLINITFLAGS::E::eVIDEO)) {
     String errorStr = Utils::format("Error initializing SDL: %s", SDL_GetError());
     Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
     Utils::throwException(errorStr);
     return false;
   }
+
+  if (!SDL_WasInit(SDLINITFLAGS::E::eEVENTS)) {
+    if (!SDL_InitSubSystem(SDLINITFLAGS::E::eEVENTS)) {
+      String errorStr = Utils::format("Error initializing SDL Events: %s", SDL_GetError());
+      Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+      Utils::throwException(errorStr);
+      return false;
+    }
+  }
+
   return true;
-  // return true;
 }
 
 void
@@ -38,20 +55,20 @@ WindowManager::update() {
     // }
 
     while (SDL_PollEvent(&e)) {
-
-      WindowEvent wEvent(e);
-      m_windowEvent.invoke(makeSharedPtr<WindowEvent>(e));
-      m_lastEvents[i] = wEvent.type;
-      switch (e.type) {
-      case SDL_EVENT_QUIT:
-        destroyWindow(i);
-        break;
-      case SDL_EVENT_KEY_DOWN:
-        if (e.key.key == SDLK_ESCAPE) {
-          destroyWindow(i);
-        }
-        break;
-      }
+      // WindowEvent wEvent(e);
+      auto wEventPtr = makeSharedPtr<WindowEvent>(e);
+      m_windowEvent.invoke(wEventPtr);
+//       m_lastEvents[i] = wEventPtr->type;
+//       switch (e.type) {
+//       case SDL_EVENT_QUIT:
+//         destroyWindow(i);
+//         break;
+//       case SDL_EVENT_KEY_DOWN:
+//         if (e.key.key == SDLK_ESCAPE) {
+//           destroyWindow(i);
+//         }
+//         break;
+//       }
     }
 
     // Clear screen (black)
@@ -60,6 +77,27 @@ WindowManager::update() {
     // SDL_RenderPresent(m_windows);
   }
 }
+
+void
+WindowManager::clear() {
+  for (uint32 i = 0; i < m_windows.size(); ++i) {
+    SDL_RenderClear(SDL_GetRenderer(m_windows[i].get()));
+  }
+}
+
+void
+WindowManager::setRenderColor(const uint32 index, const Color& color /* = Color::BLACK */) {
+  SDL_SetRenderDrawColor(SDL_GetRenderer(m_windows[index].get()), 
+                         color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+}
+
+void
+WindowManager::present() {
+  for (uint32 i = 0; i < m_windows.size(); ++i) {
+    SDL_RenderPresent(SDL_GetRenderer(m_windows[i].get()));
+  }
+}
+
 
 EVENTTYPE::E
 WindowManager::getLastEventType(const uint32& window) {
@@ -156,6 +194,18 @@ WindowManager::destroyWindow(const uint32& window) {
 void*
 WindowManager::getWindowHandle(const uint32& window) {
   return getWindowProperty(window, WINDOW_PROPERTY::E::eHWND);
+}
+
+SPtr<WindowRenderer>
+WindowManager::getWindowRenderer(const uint32 window) {
+  // auto wndow = m_windows[window];
+  // SPtr<WindowRenderer> renderer = makeSharedPtr<WindowRenderer>(SDL_GetRenderer(wndow.get()));
+  // if (!renderer) {
+  //   String errorStr = Utils::format("Error getting renderer for window %d: %s", window, SDL_GetError());
+  //   Logger::instance().logError(errorStr, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+  //   Utils::throwException(errorStr);
+  // }
+  return nullptr;
 }
 
 void*
