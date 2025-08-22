@@ -1,5 +1,9 @@
 #include "cyGraphicsAPI.h"
 #include "cyWindow.h"
+
+#include <cySceneManager.h>
+#include <cyCCamera.h>
+
 namespace CYLLENE_SDK
 {
   
@@ -45,6 +49,22 @@ GraphicsAPI::registerGraphicPass(SPtr<GGraphicPass> newPass) {
   return true;
 }
 
+void
+GraphicsAPI::draw() {
+  auto cameras = SceneManager::instance().findBeingsWithComponent<CCamera>();
+  if (cameras.empty()) {
+    return;
+  }
+
+  for (auto& camera : cameras) {
+    WPtr<CCamera> cameraPtr = camera.lock()->getComponent<CCamera>();
+    
+    // cameraPtr->executePasses(); // CCamera has no access to GraphicsAPI as this is a higher level dependency library
+  }
+
+
+
+}
 
 
 }

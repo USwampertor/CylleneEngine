@@ -185,8 +185,16 @@ public:
 	virtual void
 	clear(const Color& color) = 0;
 
+	/*
+	 *	@brief	[DEPRECATED]
+	 *	@param		
+	 *  @return	
+	 */
 	virtual void
 	draw(SPtr<CCamera> refCamera, SPtr<BBeing> redObject) = 0;
+
+	void
+	draw();
 
 	virtual void
 	present() = 0;
