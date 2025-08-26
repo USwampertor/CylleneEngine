@@ -17,10 +17,10 @@ class GraphicsPipeline
 {
 public:
 
-private:
-
-  Vector<SPtr<GraphicPass>>& 
+  Vector<SPtr<GraphicPass>> 
   getPasses() { return m_passes; }
+
+private:
 
   Vector<SPtr<GraphicPass>> m_passes;
 };
