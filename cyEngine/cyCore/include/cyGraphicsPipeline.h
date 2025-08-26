@@ -19,10 +19,10 @@ public:
 
 private:
 
-  Vector<GraphicPass>& 
+  Vector<SPtr<GraphicPass>>& 
   getPasses() { return m_passes; }
 
-  Vector<GraphicPass> m_passes;
+  Vector<SPtr<GraphicPass>> m_passes;
 };
 
 }

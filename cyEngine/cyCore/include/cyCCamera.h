@@ -82,7 +82,7 @@ public:
   // Projection is created after values are set
   Matrix4 m_projection;
 
-  GraphicsPipeline m_pipeline;
+  SPtr<GraphicsPipeline> m_pipeline;
 
 };
 
