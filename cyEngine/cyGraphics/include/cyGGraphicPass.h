@@ -6,12 +6,13 @@
 #include "cyGShader.h"
 #include "cyGTexture.h"
 
+#include <cyGraphicsPipeline.h>
 
 #include <cyMatrix4.h>
 
 namespace CYLLENE_SDK {
 
-class CY_GRAPHICS_EXPORT GGraphicPass : public GGraphic
+class CY_GRAPHICS_EXPORT GGraphicPass : public GGraphic, public GraphicPass
 {
 public:
 
