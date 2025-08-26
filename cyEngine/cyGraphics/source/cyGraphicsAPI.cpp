@@ -59,10 +59,10 @@ GraphicsAPI::draw() {
   for (auto& camera : cameras) {
     WPtr<CCamera> cameraPtr = camera.lock()->getComponent<CCamera>();
     if (cameraPtr.lock()) {
-      GraphicsPipeline pipeline = cameraPtr.lock()->m_pipeline;
+      WPtr<GraphicsPipeline> pipeline = cameraPtr.lock()->m_pipeline;
 
-      for (GGraphicPass* pass : pipeline.getPasses()) {
-        pass->execute();
+      for (WPtr<GGraphicPass> pass : pipeline.lock()->getPasses()) {
+        pass.lock()->execute();
       }
 
     }
