@@ -6,15 +6,18 @@
 #include <cyLogger.h>
 #include <cyWindow.h>
 #include <cyCCamera.h>
+#include <cyTime.h>
 
 namespace CYLLENE_SDK {
 
-GShadowPass::~GShadowPass() {
+GDefaultShadowPass::~GDefaultShadowPass() {
   shutdown();
 }
 
 void
-GShadowPass::initialize() {
+GDefaultShadowPass::initialize(WPtr<CCamera> newParentCamera, 
+                        WPtr<GraphicsPipeline> newParentPipeline) {
+  GGraphicPass::initialize(newParentCamera, newParentPipeline);
   // First check if the shader is already loaded
   if (!m_pVShadowShader) {
     SPtr<RShader> vsShadowR = ResourceManager::instance().get<RShader>("shadowVertex");
@@ -75,13 +78,13 @@ GShadowPass::initialize() {
 }
 
 void
-GShadowPass::clear() {
+GDefaultShadowPass::clear() {
   GraphicsAPI::instance().getDeviceContext()->clearDepthStencilView(m_shadowDSV,
     GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL /*D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL*/, 1.0f, 0);
 }
 
 void
-GShadowPass::execute() {
+GDefaultShadowPass::execute() {
   GraphicsAPI::instance().setViewport(0, 0, 1024, 1024);
   GraphicsAPI::instance().getDeviceContext()->setVertexShader(m_pVShadowShader);
   GraphicsAPI::instance().getDeviceContext()->setPixelShader(nullptr);
@@ -91,6 +94,7 @@ GShadowPass::execute() {
   nullRTs.push_back(nullptr);
   GraphicsAPI::instance().getDeviceContext()->setRenderTargets(1, nullRTs, m_shadowDSV);
 
+  // TODO: Check if we should be doing this for each camera that is attached to a light 
   if (m_camera.expired()) {
     WindowManager::showErrorMessage("Error", "No camera assigned to shadow pass", 0);
     return;
@@ -119,21 +123,23 @@ GShadowPass::execute() {
 }
 
 void
-GShadowPass::cleanup() {
+GDefaultShadowPass::cleanup() {
 
 }
 
 void
-GShadowPass::shutdown() {
+GDefaultShadowPass::shutdown() {
 
 }
 
-GGeometryPass::~GGeometryPass() {
+GDefaultGeometryPass::~GDefaultGeometryPass() {
   shutdown();
 }
 
 void
-GGeometryPass::initialize() {
+GDefaultGeometryPass::initialize(WPtr<CCamera> newParentCamera, 
+                          WPtr<GraphicsPipeline> newParentPipeline) {
+  GGraphicPass::initialize(newParentCamera, newParentPipeline);
 
   if (m_camera.expired()) {
     WindowManager::showErrorMessage("Error", "No camera assigned to shadow pass", 0);
@@ -228,12 +234,23 @@ GGeometryPass::initialize() {
 }
 
 void
-GGeometryPass::clear() {
+GDefaultGeometryPass::clear() {
 
 }
 
 void
-GGeometryPass::execute() {
+GDefaultGeometryPass::execute() {
+
+  // TODO: MOVE THIS OUT;
+  DELTA_TYPE::E deltaType = DELTA_TYPE::E::eMILLISECOND;
+  float deltaTime;
+  deltaTime = Time::instance().deltaTime(deltaType);
+  m_time += deltaTime * 0.001f;
+  Vector<char> shaderConstantsData;
+  m_shaderConstants.time = m_time;
+  memcpy(shaderConstantsData.data(), &m_shaderConstants, sizeof(m_shaderConstants));
+  GraphicsAPI::instance().writeToBuffer(m_shaderConstantsBuffer, shaderConstantsData);
+
 
   if (m_camera.expired()) {
     WindowManager::showErrorMessage("Error", "No camera assigned to shadow pass", 0);
@@ -292,18 +309,21 @@ GGeometryPass::execute() {
 }
 
 void
-GGeometryPass::cleanup() {
+GDefaultGeometryPass::cleanup() {
 
 }
 
 
 void
-GGeometryPass::shutdown() {
+GDefaultGeometryPass::shutdown() {
 
 }
 
 void
-GParticlesPass::initialize() {
+GDefaultParticlesPass::initialize(WPtr<CCamera> newParentCamera, 
+                           WPtr<GraphicsPipeline> newParentPipeline) {
+  GGraphicPass::initialize(newParentCamera, newParentPipeline);
+
   if (!m_pVParticleShader) {
     SPtr<RShader> vsParticleR = ResourceManager::instance().get<RShader>("particleVertexShader");
     if (vsParticleR) {
@@ -360,16 +380,29 @@ GParticlesPass::initialize() {
   samplerDesc->filter = SAMPLERFILTER::E::eLINEAR;
   m_linearSampler = GraphicsAPI::instance().getDevice()->createSamplerState(samplerDesc);
 
+  // Color/Geometry pass dependency
+  m_dependencies.try_emplace(1, m_parentPipeline.lock()->getAt(1));
+
 }
 
 
 void
-GParticlesPass::clear() {
+GDefaultParticlesPass::clear() {
 
 }
 
 void
-GParticlesPass::execute() {
+GDefaultParticlesPass::execute() {
+
+  // TODO: MOVE THIS OUT;
+  DELTA_TYPE::E deltaType = DELTA_TYPE::E::eMILLISECOND;
+  float deltaTime;
+  deltaTime = Time::instance().deltaTime(deltaType);
+  m_time += deltaTime * 0.001f;
+  Vector<char> shaderConstantsData;
+  m_shaderConstants.time = m_time;
+  memcpy(shaderConstantsData.data(), &m_shaderConstants, sizeof(m_shaderConstants));
+  GraphicsAPI::instance().writeToBuffer(m_shaderConstantsBuffer, shaderConstantsData);
 
   if (m_camera.expired()) {
     WindowManager::showErrorMessage("Error", "No camera assigned to shadow pass", 0);
@@ -387,15 +420,18 @@ GParticlesPass::execute() {
   GraphicsAPI::instance().getDeviceContext()->setPrimitiveTopology(GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST);
 
   Vector<SPtr<GRenderTargetView>> targets;
-  targets.push_back(colorRenderTarget);
+
+  SPtr<GDefaultGeometryPass> geometryPass = REINTERPRETPOINTER(GDefaultGeometryPass, m_dependencies[1].lock());
+
+  targets.push_back( geometryPass->getOutputRenderTarget());
   GraphicsAPI::instance().getDeviceContext()->setRenderTargets(1,
                                                                targets,
-                                                               colorRenderTarget.get()->getDepthStencil());
+                                                               geometryPass->getOutputRenderTarget().get()->getDepthStencil());
 
   GraphicsAPI::instance().getDeviceContext()->setBlendState(m_alphaBlend);
 
   Vector<SPtr<GraphicsBuffer>> scVector;
-  scVector.push_back(shaderConstantsBuffer);
+  scVector.push_back(m_shaderConstantsBuffer);
   GraphicsAPI::instance().getDeviceContext()->setVSConstantBuffer(0, 1, scVector);
   GraphicsAPI::instance().getDeviceContext()->setPSConstantBuffer(0, 1, scVector);
 
@@ -428,18 +464,21 @@ GParticlesPass::execute() {
 }
 
 void
-GParticlesPass::cleanup() {
+GDefaultParticlesPass::cleanup() {
 
 }
 
 void
-GParticlesPass::shutdown() {
+GDefaultParticlesPass::shutdown() {
   
 }
 
 
 void
-GPostProcessPass::initialize() {
+GDefaultPPPass::initialize(WPtr<CCamera> newParentCamera, 
+                             WPtr<GraphicsPipeline> newParentPipeline) {
+  GGraphicPass::initialize(newParentCamera, newParentPipeline);
+
   if (!m_pVSAQShader) {
     SPtr<RShader> vsSAQR = ResourceManager::instance().get<RShader>("saqVertexShader");
     if (vsSAQR) {
@@ -488,12 +527,14 @@ GPostProcessPass::initialize() {
 
 
 void
-GPostProcessPass::clear() {
+GDefaultPPPass::clear() {
 
 }
 
 void
-GPostProcessPass::execute() {
+GDefaultPPPass::execute() {
+  
+  // TODO: Check if this should be done for each camera that is attached to a light
   if (m_camera.expired()) {
     WindowManager::showErrorMessage("Error", "No camera assigned to post process pass", 0);
     return;
@@ -519,16 +560,21 @@ GPostProcessPass::execute() {
                                                                targets,
                                                                backBufferDS);
 
-  shadowConstants.shadowView = shadowCamera.lock()->m_view;
-  shadowConstants.shadowProjection = shadowCamera.lock()->m_projection;
+  SPtr<GDefaultShadowPass> shadowPass = REINTERPRETPOINTER(GDefaultShadowPass, m_dependencies[0].lock());
+  SPtr<GDefaultGeometryPass> geometryPass = REINTERPRETPOINTER(GDefaultGeometryPass, m_dependencies[1].lock());
+
+  shadowPass->getShadowConstants().shadowView = m_camera.lock()->m_view;
+  shadowPass->getShadowConstants().shadowProjection = m_camera.lock()->m_projection;
 
   m_bufferData.clear();
-  m_bufferData.resize(sizeof(shadowConstants));
-  memcpy(constantBufferData.data(), &shadowConstants, sizeof(shadowConstants));
+  m_bufferData.resize(sizeof(shadowPass->getShadowConstants()));
+  memcpy(m_bufferData.data(), 
+         &shadowPass->getShadowConstants(), 
+         sizeof(shadowPass->getShadowConstants()));
 
-  GraphicsAPI::instance().writeToBuffer(shadowCB, constantBufferData);
+  GraphicsAPI::instance().writeToBuffer(shadowPass->getOutputBuffer(), m_bufferData);
   Vector<SPtr<GraphicsBuffer>> gbVector;
-  gbVector.push_back(shadowCB);
+  gbVector.push_back(shadowPass->getOutputBuffer());
   GraphicsAPI::instance().getDeviceContext()->setVSConstantBuffer(3, 1, gbVector);
   GraphicsAPI::instance().getDeviceContext()->setPSConstantBuffer(3, 1, gbVector);
 
@@ -540,9 +586,9 @@ GPostProcessPass::execute() {
   GraphicsAPI::instance().getDeviceContext()->setSamplers(1, 1, ssVec2);
 
   Vector<SPtr<GShaderResourceView>> srvVector;
-  srvVector.push_back(colorRenderTarget->getTexture()->getResource());
-  srvVector.push_back(positionRenderTarget->getTexture()->getResource());
-  srvVector.push_back(shadowDepthStencil->getTexture()->getResource());
+  srvVector.push_back(geometryPass->getOutputRenderTarget()->getTexture()->getResource());
+  srvVector.push_back(geometryPass->getPositionRenderTarget()->getTexture()->getResource());
+  srvVector.push_back(shadowPass->getOutputDepthStencil()->getTexture()->getResource());
 
   GraphicsAPI::instance().getDeviceContext()->setShaderResources(srvVector, 0, 3);
 
@@ -554,12 +600,12 @@ GPostProcessPass::execute() {
 }
 
 void
-GPostProcessPass::cleanup() {
+GDefaultPPPass::cleanup() {
 
 }
 
 void
-GPostProcessPass::shutdown() {
+GDefaultPPPass::shutdown() {
 
 }
 

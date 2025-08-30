@@ -33,6 +33,8 @@ GraphicsAPI::createDefaultObjects() {
   // SPtr<GVertexShader> vParticleShader = createVertexShader("particleVertexShader.hlsl");
   // SPtr<GPixelShader> pParticleShader = createPixelShader("particlePixelShader.hlsl");
 
+  WPtr<BBeing> mainCamera = SceneManager::instance().findBeing<BBeing>("DefaultCamera");
+  WPtr<BBeing> directionalLight = SceneManager::instance().findBeing<BBeing>("DirectionalLight");
 
   m_defaultLayout = createInputLayout(inputDescs, vColorShader);
 
@@ -42,18 +44,16 @@ GraphicsAPI::createDefaultObjects() {
   }
 
   m_defaultPipeline = makeSharedPtr<GraphicsPipeline>();
+  
 
-  SPtr<GShadowPass> shadowPass = makeSharedPtr<GShadowPass>();
-  shadowPass->initialize();
-  SPtr<GGeometryPass> colorPass = makeSharedPtr<GGeometryPass>();
-  colorPass->initialize();
-  SPtr<GParticlesPass> particlesPass = makeSharedPtr<GParticlesPass>();
-  particlesPass->initialize();
-  SPtr<GPostProcessPass> postProcessPass = makeSharedPtr<GPostProcessPass>();
-  postProcessPass->initialize();
-  m_defaultPipeline->addPass(shadowPass);
-  m_defaultPipeline->addPass(colorPass);
-  m_defaultPipeline->addPass(particlesPass);
+  SPtr<GDefaultShadowPass> shadowPass = makeSharedPtr<GDefaultShadowPass>();
+  shadowPass->initialize(directionalLight.lock()->getComponent<CCamera>(), m_defaultPipeline);
+  SPtr<GDefaultGeometryPass> colorPass = makeSharedPtr<GDefaultGeometryPass>();
+  colorPass->initialize(mainCamera.lock()->getComponent<CCamera>(), m_defaultPipeline);
+  SPtr<GDefaultParticlesPass> particlesPass = makeSharedPtr<GDefaultParticlesPass>();
+  particlesPass->initialize(mainCamera.lock()->getComponent<CCamera>(), m_defaultPipeline);
+  SPtr<GDefaultPPPass> postProcessPass = makeSharedPtr<GDefaultPPPass>();
+  postProcessPass->initialize(mainCamera.lock()->getComponent<CCamera>(), m_defaultPipeline);
 
 }
 
@@ -239,14 +239,14 @@ GraphicsAPI::drawInstanced(SPtr<BBeing> refObject, uint32 instanceCount) {
   Vector<uint32> vertexOffsets;
   vertexOffsets.push_back(vertexOffset);
 
-  GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
+  GraphicsAPI::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
-  GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(saqMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
+  GraphicsAPI::instance().getDeviceContext()->setIndexBuffer(saqMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
 
   Vector<SPtr<GShaderResourceView>> srvVector;
   srvVector.push_back(particleGTexture->getResource());
 
-  GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
+  GraphicsAPI::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
 
   perObjectConstants.world = saqObject.lock()->getTransform().lock()->m_worldMatrix;
   perObjectConstants.world.transpose();
@@ -255,16 +255,16 @@ GraphicsAPI::drawInstanced(SPtr<BBeing> refObject, uint32 instanceCount) {
   constantBufferData.resize(sizeof(perObjectConstants));
   memcpy(constantBufferData.data(), &perObjectConstants, sizeof(perObjectConstants));
 
-  GraphicsDX11API::instance().writeToBuffer(perObjectCB, constantBufferData);
+  GraphicsAPI::instance().writeToBuffer(perObjectCB, constantBufferData);
   gbVector.clear();
   gbVector.push_back(perObjectCB);
-  GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
-  GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
+  GraphicsAPI::instance().getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
+  GraphicsAPI::instance().getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
 
   //GraphicsDX11API::instance().getDeviceContext()->drawIndexed(saqMesh);
-  GraphicsDX11API::instance().getDeviceContext()->drawIndexedInstanced(saqMesh, instanceCount);
+  GraphicsAPI::instance().getDeviceContext()->drawIndexedInstanced(saqMesh, instanceCount);
 
-  GraphicsDX11API::instance().getDeviceContext()->setBlendState(defaultBlend);
+  GraphicsAPI::instance().getDeviceContext()->setBlendState(defaultBlend);
 }
 
 }
