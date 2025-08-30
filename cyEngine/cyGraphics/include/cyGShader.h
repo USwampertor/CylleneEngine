@@ -18,6 +18,43 @@ namespace CYLLENE_SDK
   );
   }
 
+  namespace GSHADERMODEL
+  {
+  BETTER_ENUM(E, uint32,
+              eUNKNOWN = -1,
+              eNONE = 0,
+              eSM_4_0 = 1,
+              eSM_4_1 = 2,
+              eSM_5_0 = 3,
+              eSM_5_1 = 4,
+              eSM_6_0 = 5,
+              eSM_6_1 = 6,
+              eSM_6_2 = 7,
+              eSM_6_3 = 8,
+              eSM_6_4 = 9,
+              eSM_6_5 = 10
+  );
+  }
+
+  namespace GSHADERPARAM
+  {
+  BETTER_ENUM(E, uint32,
+              eUNKNOWN = -1,
+              eNONE = 0,
+              eFLOAT = 1,
+              eINT = 2,
+              eUINT = 3,
+              eVECTOR2 = 4,
+              eVECTOR3 = 5,
+              eVECTOR4 = 6,
+              eMATRIX3 = 7,
+              eMATRIX4 = 8,
+              eTEXTURE2D = 9,
+              eTEXTURECUBE = 10,
+              eSAMPLERSTATE = 11
+  );
+  }
+
 struct GShaderBlob
 {
 public:
@@ -37,6 +74,14 @@ public:
   bool isCompiled = false;
 };
 
+struct GShaderValue
+{
+  String name;
+  GSHADERPARAM::E type = GSHADERPARAM::E::eUNKNOWN;
+  uint32 count = 1;
+  uint32 offset = 0;
+};
+
 class CY_GRAPHICS_EXPORT GShader : public GGraphic
 {
 public:
@@ -50,6 +95,22 @@ public:
   virtual void*
   getShader() = 0;
 
+  virtual void 
+  reflect() = 0;
+
+  bool 
+  hasValue(const String& name, const GSHADERPARAM::E& type) {
+    for (auto& val : m_values) {
+      if (name  == val.name && type == val.type) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Vector<GShaderValue>& getValues() { return m_values; }
+
+  Vector<GShaderValue> m_values;
 };
 
 
