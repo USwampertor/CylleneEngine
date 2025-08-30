@@ -3,6 +3,10 @@
 
 #include <cySceneManager.h>
 #include <cyCCamera.h>
+#include <cyResourceManager.h>
+#include <cyCMeshRenderer.h>
+#include <cyLogger.h>
+
 
 namespace CYLLENE_SDK
 {
@@ -21,12 +25,101 @@ GraphicsAPI::createDefaultObjects() {
     { "METADATA", 0, COLORFORMAT::E::RGBA_32_SINT,  0, 104, INPUTCLASSIFICATION::E::PERVERTEX, 0 }
   };
 
-  // SPtr<GInputLayout> pInputLayout = createInputLayout(inputDescs, vShader);
-  // 
-  // if (!pInputLayout) {
-  //   WindowManager::ShowErrorMessage("Error", "Error creating Input Layout");
-  //   return;
-  // }
+  SPtr<GVertexShader> vColorShader = createVertexShader("vertexShader.hlsl");
+  // SPtr<GVertexShader> vShadowShader = createVertexShader("shadowVertex.hlsl");
+  // SPtr<GPixelShader> pColorShader = createPixelShader("pixelShader.hlsl");
+  // SPtr<GVertexShader> vSAQShader = createVertexShader("saqVertexShader.hlsl");
+  // SPtr<GPixelShader> pSAQShader = createPixelShader("saqPixelShader.hlsl");
+  // SPtr<GVertexShader> vParticleShader = createVertexShader("particleVertexShader.hlsl");
+  // SPtr<GPixelShader> pParticleShader = createPixelShader("particlePixelShader.hlsl");
+
+
+  m_defaultLayout = createInputLayout(inputDescs, vColorShader);
+
+  if (!m_defaultLayout) {
+    WindowManager::showErrorMessage("Error", "Error creating Input Layout", 0);
+    return;
+  }
+
+  m_defaultPipeline = makeSharedPtr<GraphicsPipeline>();
+
+  SPtr<GShadowPass> shadowPass = makeSharedPtr<GShadowPass>();
+  shadowPass->initialize();
+  SPtr<GGeometryPass> colorPass = makeSharedPtr<GGeometryPass>();
+  colorPass->initialize();
+  SPtr<GParticlesPass> particlesPass = makeSharedPtr<GParticlesPass>();
+  particlesPass->initialize();
+  SPtr<GPostProcessPass> postProcessPass = makeSharedPtr<GPostProcessPass>();
+  postProcessPass->initialize();
+  m_defaultPipeline->addPass(shadowPass);
+  m_defaultPipeline->addPass(colorPass);
+  m_defaultPipeline->addPass(particlesPass);
+
+}
+
+SPtr<GVertexShader>
+GraphicsAPI::createVertexShader(const String& resourceName) {
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  SPtr<RShader> vsShaderR;
+  SPtr<GVertexShader> vShader;
+  File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + resourceName);
+  vsShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+  vShader = createVertexShader(vsShaderR, "vertex_main");
+  return vShader;
+}
+
+SPtr<GPixelShader>
+GraphicsAPI::createPixelShader(const String& resourceName) {
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  SPtr<RShader> psShaderR;
+  SPtr<GPixelShader> pShader;
+  File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + resourceName);
+  psShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+  pShader = createPixelShader(psShaderR, "pixel_main");
+  return pShader;
+}
+
+SPtr<GGeometryShader>
+GraphicsAPI::createGeometryShader(const String& resourceName) {
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  SPtr<RShader> gsShaderR;
+  SPtr<GGeometryShader> gShader;
+  File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + resourceName);
+  gsShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+  gShader = createGeometryShader(gsShaderR, "geometry_main");
+  return gShader;
+}
+
+SPtr<GComputeShader>
+GraphicsAPI::createComputeShader(const String& resourceName) {
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  SPtr<RShader> csShaderR;
+  SPtr<GComputeShader> cShader;
+  File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + resourceName);
+  csShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+  cShader = createComputeShader(csShaderR, "compute_main");
+  return cShader;
+}
+
+SPtr<GShader>
+GraphicsAPI::createShader(const String& resourceName, const GSHADERTYPE::E& type) {
+  Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+  SPtr<RShader> sShaderR;
+  SPtr<GShader> sShader;
+  File shaderFile = FileSystem::open(resourceDir.fullPath() + "/" + resourceName);
+  sShaderR = ResourceManager::instance().loadFromPath<RShader>(shaderFile.path());
+  sShader = +GSHADERTYPE::E::eVERTEX == type ? REINTERPRETPOINTER(GShader, createVertexShader(sShaderR, "vertex_main")) :
+            +GSHADERTYPE::E::ePIXEL == type ? REINTERPRETPOINTER(GShader, createPixelShader(sShaderR, "pixel_main")) :
+            +GSHADERTYPE::E::eGEOMETRY == type ? REINTERPRETPOINTER(GShader, createGeometryShader(sShaderR, "geometry_main")) :
+            +GSHADERTYPE::E::eCOMPUTE == type ? REINTERPRETPOINTER(GShader, createComputeShader(sShaderR, "compute_main")) : nullptr;
+  return sShader;
+}
+
+void
+GraphicsAPI::update() {
+  clear(m_clearColor);
+  executePipelines();
+  present();
 }
 
 void
@@ -50,7 +143,7 @@ GraphicsAPI::registerGraphicPass(SPtr<GGraphicPass> newPass) {
 }
 
 void
-GraphicsAPI::draw() {
+GraphicsAPI::executePipelines() {
   auto cameras = SceneManager::instance().findBeingsWithComponent<CCamera>();
   if (cameras.empty()) {
     return;
@@ -61,20 +154,117 @@ GraphicsAPI::draw() {
     if (cameraPtr.lock()) {
       WPtr<GraphicsPipeline> pipeline = cameraPtr.lock()->m_pipeline;
 
-      for (WPtr<GGraphicPass> pass : pipeline.lock()->getPasses()) {
-        pass.lock()->execute();
+      for (auto& pass : pipeline.lock()->getPasses()) {
+        WPtr<GGraphicPass> passPtr = REINTERPRETPOINTER(GGraphicPass, pass);
+        passPtr.lock()->execute();
       }
-
     }
 
-
-
-    // cameraPtr->executePasses(); // CCamera has no access to GraphicsAPI as this is a higher level dependency library
   }
 
-
+  // TODO: Check if this should go here;
+  present();
 
 }
 
+
+void
+GraphicsAPI::draw(SPtr<BBeing> refObject) {
+  if (!refObject) {
+    return;
+  }
+  
+  SPtr<CMeshRenderer> meshRenderer = refObject->getComponent<CMeshRenderer>().lock();
+  SPtr<GMesh> refMesh = REINTERPRETPOINTER(GMesh, getGGraphic<RMesh>(meshRenderer->m_mesh->getName()));
+  if (!refMesh) {
+    Logger::instance().logWarning("This mesh was never registered when created into the graphics API");
+    return;
+  }
+
+  Vector<SPtr<GraphicsBuffer>> vertexBuffer;
+  vertexBuffer.push_back(refMesh->m_pVertexBuffer);
+
+  Vector<uint32> vertexStrides;
+  vertexStrides.push_back(vertexStride);
+
+  Vector<uint32> vertexOffsets;
+  vertexOffsets.push_back(vertexOffset);
+
+  getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
+
+  getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
+
+  if (refTexture != nullptr) {
+    Vector<SPtr<GShaderResourceView>> srvVector;
+    srvVector.push_back(refTexture->get()->getResource());
+
+    getDeviceContext()->setShaderResources(srvVector, 0, 1);
+  }
+
+  perObjectConstants.world = refObject->getTransform().lock()->m_worldMatrix;
+  perObjectConstants.world.transpose();
+
+  constantBufferData.clear();
+  constantBufferData.resize(sizeof(perObjectConstants));
+  memcpy(constantBufferData.data(), &perObjectConstants, sizeof(perObjectConstants));
+
+  GraphicsAPI::instance().writeToBuffer(perObjectCB, constantBufferData);
+  Vector<SPtr<GraphicsBuffer>> gbVector;
+  gbVector.push_back(perObjectCB);
+  getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
+  getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
+
+  getDeviceContext()->drawIndexed(refMesh);
+}
+
+void
+GraphicsAPI::drawInstanced(SPtr<BBeing> refObject, uint32 instanceCount) {
+  if (!refObject) {
+    return;
+  }
+
+  SPtr<CMeshRenderer> meshRenderer = refObject->getComponent<CMeshRenderer>().lock();
+  SPtr<GMesh> refMesh = REINTERPRETPOINTER(GMesh, getGGraphic<RMesh>(meshRenderer->m_mesh->getName()));
+  if (!refMesh) {
+    Logger::instance().logWarning("This mesh was never registered when created into the graphics API");
+    return;
+  }
+
+  Vector<SPtr<GraphicsBuffer>> vertexBuffer;
+  vertexBuffer.push_back(saqMesh->m_pVertexBuffer);
+
+  Vector<uint32> vertexStrides;
+  vertexStrides.push_back(vertexStride);
+
+  Vector<uint32> vertexOffsets;
+  vertexOffsets.push_back(vertexOffset);
+
+  GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
+
+  GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(saqMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
+
+  Vector<SPtr<GShaderResourceView>> srvVector;
+  srvVector.push_back(particleGTexture->getResource());
+
+  GraphicsDX11API::instance().getDeviceContext()->setShaderResources(srvVector, 0, 1);
+
+  perObjectConstants.world = saqObject.lock()->getTransform().lock()->m_worldMatrix;
+  perObjectConstants.world.transpose();
+
+  constantBufferData.clear();
+  constantBufferData.resize(sizeof(perObjectConstants));
+  memcpy(constantBufferData.data(), &perObjectConstants, sizeof(perObjectConstants));
+
+  GraphicsDX11API::instance().writeToBuffer(perObjectCB, constantBufferData);
+  gbVector.clear();
+  gbVector.push_back(perObjectCB);
+  GraphicsDX11API::instance().getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
+  GraphicsDX11API::instance().getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
+
+  //GraphicsDX11API::instance().getDeviceContext()->drawIndexed(saqMesh);
+  GraphicsDX11API::instance().getDeviceContext()->drawIndexedInstanced(saqMesh, instanceCount);
+
+  GraphicsDX11API::instance().getDeviceContext()->setBlendState(defaultBlend);
+}
 
 }

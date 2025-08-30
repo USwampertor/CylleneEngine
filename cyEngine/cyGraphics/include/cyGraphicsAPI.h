@@ -15,6 +15,7 @@
 #include <cyRModel.h>
 #include <cyRResource.h>
 #include <cyVector2i.h>
+#include <cyGraphicsPipeline.h>
 
 #include "cyGraphicsBuffer.h"
 #include "cyGDepthStencilView.h"
@@ -78,6 +79,9 @@ public:
 
 	bool
 	registerGraphicPass(SPtr<GGraphicPass> newPass);
+
+	void
+	update();
 
 // 	virtual SPtr<GDevice>
 // 	createDevice(const GDeviceElement& deviceParams) = 0;
@@ -159,6 +163,21 @@ public:
 	virtual SPtr<GShader>
 	createShader(SPtr<RShader> shader, const String& entry) = 0;
 
+	virtual SPtr<GVertexShader>
+	createVertexShader(const String& resourceName);
+
+  virtual SPtr<GPixelShader>
+	createPixelShader(const String& resourceName);
+	
+  virtual SPtr<GGeometryShader>
+	createGeometryShader(const String& resourceName);
+
+	virtual SPtr<GComputeShader>
+	createComputeShader(const String& resourceName);
+
+	virtual SPtr<GShader>
+	createShader(const String& resourceName, const GSHADERTYPE::E& type);
+
   virtual SPtr<GInputLayout>
   createInputLayout(const Vector<GInputLayoutElement>& descriptor,
 										SPtr<GVertexShader> desc) = 0;
@@ -185,16 +204,32 @@ public:
 	virtual void
 	clear(const Color& color) = 0;
 
+	void
+  setDefaultClearColor(const Color& color) { m_clearColor = color; }
+
 	/*
 	 *	@brief	[DEPRECATED]
 	 *	@param		
 	 *  @return	
 	 */
 	virtual void
-	draw(SPtr<CCamera> refCamera, SPtr<BBeing> redObject) = 0;
+	draw(SPtr<CCamera> refCamera, SPtr<BBeing> refObject) = 0;
 
 	void
-	draw();
+	executePipelines();
+
+	// TODO: Remove virtual overrides of this function children
+	void
+	draw(SPtr<BBeing> refObject);
+
+	void
+	draw(SPtr<RMesh> refMesh);
+
+	void
+	draw(SPtr<GMesh> refMesh);
+
+	void
+  drawInstanced(SPtr<BBeing> refObject, uint32 instanceCount);
 
 	virtual void
 	present() = 0;
@@ -241,13 +276,38 @@ public:
   }
 
 	template<typename T,
-	typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
+					 typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
 	String
 	generateResourceID(const String& assetName) {
 	  RESOURCE_TYPE::E type = T::staticType();
 	  String realName = Utils::format("%s_%s", type._to_string(), assetName.c_str());
 	  return realName;
 	}
+
+  template<typename T,
+					 typename = std::enable_if_t<std::is_base_of<RResource, T>::value>>
+	SPtr<GGraphic>
+  getGGraphic(const String& resourceName) {
+    RESOURCE_TYPE::E type = T::staticType();
+    String realName = Utils::format("%s_%s", type._to_string(), resourceName.c_str());
+    uint32 hash = Hash<String>()(realName);
+    if (RMesh::staticType() == type) {
+      if (m_meshRenderPool.find(hash) != m_meshRenderPool.end()) {
+        return std::reinterpret_pointer_cast<T>(m_meshRenderPool.at(hash));
+      }
+    }
+    else if (RTexture::staticType() == type) {
+      if (m_textureRenderPool.find(hash) != m_textureRenderPool.end()) {
+        return std::reinterpret_pointer_cast<T>(m_textureRenderPool.at(hash));
+      }
+    }
+    else if (RShader::staticType() == type) {
+      if (m_shaderRenderPool.find(hash) != m_shaderRenderPool.end()) {
+        return std::reinterpret_pointer_cast<T>(m_shaderRenderPool.at(hash));
+      }
+    }
+    return nullptr;
+  }
 
 	void
   registerResource(SPtr<RResource> resource) {
@@ -347,9 +407,16 @@ public:
   List<SPtr<GGraphicPass>>
 	m_graphicPasses;
 
+	SPtr<GInputLayout>
+	m_defaultLayout = nullptr;
 
 	SPtr<GInputLayout>
 	m_modelInputLayout;
+
+	SPtr<GraphicsPipeline>
+	m_defaultPipeline = nullptr;
+
+  Color m_clearColor = Color::MISSING;
 };
 
 static bool

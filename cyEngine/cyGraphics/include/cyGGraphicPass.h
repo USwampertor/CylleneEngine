@@ -5,12 +5,39 @@
 #include "cyGGraphic.h"
 #include "cyGShader.h"
 #include "cyGTexture.h"
+#include "cyGRasterizerState.h"
 
 #include <cyGraphicsPipeline.h>
 
 #include <cyMatrix4.h>
 
 namespace CYLLENE_SDK {
+
+class CCamera;
+
+struct DefaultShaderConstants
+{
+  float time;
+  float align1;
+  float align2;
+  float align3;
+};
+
+struct DefaultPerObjectConstantBuffer
+{
+  Matrix4 world = Matrix4::IDENTITY;
+};
+
+struct DefaultPerPassConstantBuffer
+{
+  Vector4f cameraForward = Vector4f::ZERO;
+  Vector4f cameraRight = Vector4f::ZERO;
+  Vector4f cameraUp = Vector4f::ZERO;
+  Matrix4 view = Matrix4::IDENTITY;
+  Matrix4 projection = Matrix4::IDENTITY;
+};
+
+
 
 class CY_GRAPHICS_EXPORT GGraphicPass : public GGraphic, public GraphicPass
 {
@@ -28,13 +55,24 @@ public:
   WPtr<GGraphicPass> m_nextPass;
   WPtr<GGraphicPass> m_previousPass;
 
+  WPtr<GraphicsPipeline> m_parentPipeline;
+  WPtr<CCamera> m_camera;
+
+  Vector<char> m_bufferData;
+  SPtr<GraphicsBuffer> m_perPassCB;
+  SPtr<GRasterizerState> m_rasterState;
+
+  DefaultPerPassConstantBuffer m_perPassConstants;
+  DefaultShaderConstants m_shaderConstants;
+  DefaultPerObjectConstantBuffer m_perObjectConstants;
+
   int32 m_passID = -1;
 };
 
-struct ShadowConstantBuffer
+struct DefaultShadowConstantBuffer
 {
-  Matrix4 shadowView;
-  Matrix4 shadowProjection;
+  Matrix4 shadowView = Matrix4::IDENTITY;
+  Matrix4 shadowProjection = Matrix4::IDENTITY;
 };
 
 class CY_GRAPHICS_EXPORT GShadowPass : public GGraphicPass
@@ -49,7 +87,10 @@ public:
   virtual void cleanup() override;
   virtual void shutdown() override;
 
-  ShadowConstantBuffer m_shadowConstants;
+  virtual void* get() override { return m_shadowDST->get(); }
+  virtual void set(void*) override {}
+
+  DefaultShadowConstantBuffer m_shadowConstants;
   SPtr<GraphicsBuffer> m_shadowCB;
   SPtr<GVertexShader> m_pVShadowShader;
   SPtr<GTexture> m_shadowDST;
@@ -60,7 +101,28 @@ class GGeometryPass : public GGraphicPass
 {
 public:
   GGeometryPass() = default;
-  virtual ~GGeometryPass() {}
+
+  virtual ~GGeometryPass() override;
+
+  virtual void initialize() override;
+  virtual void clear() override;
+  virtual void execute() override;
+  virtual void cleanup() override;
+  virtual void shutdown() override;
+
+  virtual void* get() override { return m_colorRenderTarget->get(); }
+  virtual void set(void*) override {}
+
+  SPtr<GSamplerState> m_pointSampler;
+  SPtr<GSamplerState> m_linearSampler;
+
+  SPtr<GVertexShader> m_pVGeometryShader;
+  SPtr<GPixelShader> m_pPGeometryShader;
+
+  SPtr<GRenderTargetView> m_colorRenderTarget;
+  SPtr<GRenderTargetView> m_positionRenderTarget;
+  SPtr<GraphicsBuffer> m_shaderConstantsBuffer;
+
 };
 
 class CY_GRAPHICS_EXPORT GLightingPass : public GGraphicPass
@@ -77,11 +139,53 @@ public:
   virtual ~GTransparencyPass() {}
 };
 
+class CY_GRAPHICS_EXPORT GParticlesPass : public GGraphicPass
+{
+public:
+  GParticlesPass() = default;
+  virtual ~GParticlesPass() {}
+
+  virtual void initialize() override;
+  virtual void clear() override;
+  virtual void execute() override;
+  virtual void cleanup() override;
+  virtual void shutdown() override;
+
+  virtual void* get() override {  }
+  virtual void set(void*) override {}
+
+  SPtr<GVertexShader> m_pVParticleShader;
+  SPtr<GPixelShader> m_pPParticleShader;
+
+  SPtr<GBlendState> m_defaultBlend;
+  SPtr<GBlendState> m_alphaBlend;
+
+  SPtr<GSamplerState> m_pointSampler;
+  SPtr<GSamplerState> m_linearSampler;
+
+};
+
 class CY_GRAPHICS_EXPORT GPostProcessPass : public GGraphicPass
 {
 public:
   GPostProcessPass() = default;
   virtual ~GPostProcessPass() {}
+
+  virtual void initialize() override;
+  virtual void clear() override;
+  virtual void execute() override;
+  virtual void cleanup() override;
+  virtual void shutdown() override;
+
+  virtual void* get() override {}
+  virtual void set(void*) override {}
+
+  SPtr<GVertexShader> m_pVSAQShader;
+  SPtr<GPixelShader> m_pPSAQShader;
+
+  SPtr<GSamplerState> m_pointSampler;
+  SPtr<GSamplerState> m_linearSampler;
+
 };
 
 }
