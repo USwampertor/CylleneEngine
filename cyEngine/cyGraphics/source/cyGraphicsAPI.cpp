@@ -184,6 +184,10 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
   Vector<SPtr<GraphicsBuffer>> vertexBuffer;
   vertexBuffer.push_back(refMesh->m_pVertexBuffer);
 
+  const uint32 vertexStride = sizeof(Vertex);
+  const uint32 indexStride = sizeof(unsigned short);
+  const uint32 vertexOffset = 0;
+
   Vector<uint32> vertexStrides;
   vertexStrides.push_back(vertexStride);
 
@@ -193,6 +197,12 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
   getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
   getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
+
+
+  SPtr<RMaterial> materialInstance = meshRenderer->m_mesh->m_material;
+  materialInstance->getDefaultValues();
+
+  // for each value set Shader Resource
 
   if (refTexture != nullptr) {
     Vector<SPtr<GShaderResourceView>> srvVector;
