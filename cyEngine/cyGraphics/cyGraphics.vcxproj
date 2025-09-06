@@ -25,6 +25,7 @@
     <ClInclude Include="include\cyGDeviceContext.h" />
     <ClInclude Include="include\cyGGraphicPass.h" />
     <ClInclude Include="include\cyGInputLayout.h" />
+    <ClInclude Include="include\cyGMaterial.h" />
     <ClInclude Include="include\cyGMesh.h" />
     <ClInclude Include="include\cyGModel.h" />
     <ClInclude Include="include\cyGGraphic.h" />
@@ -42,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyGGraphicPass.cpp" />
+    <ClCompile Include="source\cyGMaterial.cpp" />
     <ClCompile Include="source\cyGraphicsAPI.cpp" />
     <ClCompile Include="source\cyGViewport.cpp" />
   </ItemGroup>
