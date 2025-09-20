@@ -524,24 +524,26 @@ MaterialCodec::decode(const File& f) {
 String
 MaterialCodec::encodeToJSON(const RMaterial& material) {
   JSONDocument d; d.SetObject();
-  auto& a = d.GetAllocator();
-  d.AddMember("type", "material", a);
+  auto& allocator = d.GetAllocator();
+  d.AddMember("type", "material", allocator);
 
   String shaderName = "";
   if (!material.getBaseShader().expired()) {
     shaderName = material.getBaseShader().lock()->getName();
   }
-  d.AddMember("baseShader", shaderName, a);
+  d.AddMember("baseShader", shaderName, allocator);
 
   JSONValue jvals; jvals.SetObject();
   for (const auto& kv : material.getDefaultValues()) {
-    const String& key = kv.first;
+    String key = kv.first;
     RTexture* tex = reinterpret_cast<RTexture*>(kv.second);
     if (tex) {
-      jvals.AddMember(key, tex->getName(), a);
+      JSONValue keyValue(key.c_str(), allocator);
+      JSONValue valueValue(tex->getName().c_str(), allocator);
+      jvals.AddMember(keyValue, valueValue, allocator);
     }
   }
-  d.AddMember("values", jvals, a);
+  d.AddMember("values", jvals, allocator);
 
   return d.stringify();
 }

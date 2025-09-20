@@ -35,6 +35,7 @@ namespace CYLLENE_SDK {
 
 class ModelResource;
 class RMesh;
+class RMaterial;
 
 // class Resource;
 
@@ -290,6 +291,13 @@ public:
 
   virtual void*
   decode(const File& f) override;
+
+  String
+  encodeToJSON(const RMaterial& material);
+
+  bool
+  saveToFile(const RMaterial& material, const String& filePath);
+
 };
   
 class CY_CORE_EXPORT AudioCodec : public CDCodec
