@@ -161,6 +161,14 @@ public:
 
   virtual void*
   decode(const File& f) override;
+
+  // Serialize a material into JSON string
+  String
+  encodeToJSON(const RMaterial& material);
+
+  // Save a material JSON into a .mat file
+  bool
+  saveToFile(const RMaterial& material, const String& filePath);
 };
 
 class CY_CORE_EXPORT ModelCodec : public CDCodec
@@ -259,6 +267,29 @@ public:
   virtual void*
   decode(const File& f) override;
 
+};
+
+class CY_CORE_EXPORT MaterialCodec : public CDCodec
+{
+public:
+
+  MaterialCodec() : CDCodec(MaterialCodec::staticType()) {
+    m_fileExtensions = {
+      "mat",
+      "material",
+      "json"
+    };
+  }
+
+  virtual ~MaterialCodec() = default;
+
+  static RESOURCE_TYPE::E
+  staticType() {
+    return RESOURCE_TYPE::E::eMATERIAL;
+  }
+
+  virtual void*
+  decode(const File& f) override;
 };
   
 class CY_CORE_EXPORT AudioCodec : public CDCodec

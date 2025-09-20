@@ -19,6 +19,8 @@ ResourceManager::onStartUp() {
                                   makeSharedPtr<ImageCodec>()));
   m_codecs.insert(Utils::makePair(ShaderCodec::staticType()._to_string(),   
                                   makeSharedPtr<ShaderCodec>()));
+  m_codecs.insert(Utils::makePair(MaterialCodec::staticType()._to_string(),   
+                                  makeSharedPtr<MaterialCodec>()));
 }
 
 }
