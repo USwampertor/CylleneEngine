@@ -1,7 +1,13 @@
 //type:pixel
+// GBuffer inputs
 Texture2D colorTexture          : register(t0);
 Texture2D positionTexture       : register(t1);
-Texture2D<float> depthTexture   : register(t2);
+
+// Shadow maps array (bind starting at t2)
+#ifndef MAX_SHADOW_MAPS
+#define MAX_SHADOW_MAPS 8
+#endif
+Texture2D<float> depthTextures[MAX_SHADOW_MAPS] : register(t2);
 
 SamplerState samPoint   : register(s0);
 SamplerState samLinear  : register(s1);
@@ -25,6 +31,7 @@ cbuffer ShadowConstantBuffer : register(b3)
 {
     float4x4 ShadowView;
     float4x4 ShadowProjection;
+    uint ShadowCount; float3 _pad_shadow;
 }
 
 float4
@@ -46,9 +53,17 @@ pixel_main(PixelInput Input) : SV_TARGET {
     shadowCoord.y = 1.0f - shadowCoord.y;
     float currentDepth = shadowCoord.z;
   
-    float shadowDepth = depthTexture.Sample(samPoint, shadowCoord.xy).r;
-    
-    float isDepth = step((currentDepth - 0.00001f), shadowDepth);
+    // Accumulate visibility across all shadow maps
+    float isDepth = 1.0f;
+    // Unroll so resource array indices are literals at compile-time
+    [unroll]
+    for (uint i = 0; i < MAX_SHADOW_MAPS; ++i) {
+        if (i < ShadowCount) {
+            float shadowDepth = depthTextures[i].Sample(samPoint, shadowCoord.xy).r;
+            float vis = step((currentDepth - 0.00001f), shadowDepth);
+            isDepth = min(isDepth, vis);
+        }
+    }
     //float isDepth = step((currentDepth - 0.005f), shadowDepth);
     
     [branch]
