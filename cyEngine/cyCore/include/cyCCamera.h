@@ -1,6 +1,7 @@
 #pragma once
 #include "cyCorePrerequisites.h"
 #include "cyCComponent.h"
+#include "cyGraphicsPipeline.h"
 
 #include <cyVector3f.h>
 #include <cyMatrix4.h>
@@ -81,6 +82,7 @@ public:
   // Projection is created after values are set
   Matrix4 m_projection;
 
+  SPtr<GraphicsPipeline> m_pipeline;
 
 };
 

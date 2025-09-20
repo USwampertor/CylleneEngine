@@ -136,3 +136,36 @@ TEST_CASE("[random] testing random module") {
   );
 
 }
+
+TEST_CASE("[random] Testing random dice rolls") {
+  Random::init();
+  uint32 sides = 6;
+  uint32 count = 1;
+
+  std::cout << Random::rollDice(2, count) << std::endl;
+  std::cout << Random::rollDice(3, count) << std::endl;
+  std::cout << Random::rollDice(4, count) << std::endl;
+  std::cout << Random::rollDice(5, count) << std::endl;
+  std::cout << Random::rollDice(6, count) << std::endl;
+  std::cout << Random::rollDice(12, count) << std::endl;
+  std::cout << Random::rollDice(14, count) << std::endl;
+  std::cout << Random::rollDice(20, count) << std::endl;
+  std::cout << Random::rollDice(30, count) << std::endl;
+  std::cout << Random::rollDice(100, count) << std::endl;
+
+  Benchmark().epochs(1000).run("1000 random dice rolls",
+    [&] {
+    uint32 result = Random::rollDice(sides, count);
+    CHECK((result >= count && result <= (sides * count)) == true);
+  }
+  );
+  sides = 20;
+  count = 2;
+  Benchmark().epochs(1000).run("1000 random dice rolls with different sides and count",
+    [&] {
+    sides = Random::getRanged<uint32>(2, 100);
+    uint32 result = Random::rollDice(sides, count);
+    CHECK((result >= count && result <= (sides * count)) == true);
+  }
+  );
+}

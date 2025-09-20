@@ -222,6 +222,8 @@ GDX11Device::createVertexShader(SPtr<GShaderBlob> blob) {
     return nullptr;
   }
 
+  // Reflect to populate parameter metadata
+  sPtrShader->reflect();
   return std::static_pointer_cast<GVertexShader>(sPtrShader);
 }
 
@@ -243,6 +245,7 @@ GDX11Device::createPixelShader(SPtr<GShaderBlob> blob) {
     return nullptr;
   }
 
+  sPtrShader->reflect();
   return std::static_pointer_cast<GPixelShader>(sPtrShader);
 }
 
@@ -264,6 +267,7 @@ GDX11Device::createGeometryShader(SPtr<GShaderBlob> blob) {
     return nullptr;
   }
 
+  sPtrShader->reflect();
   return std::static_pointer_cast<GGeometryShader>(sPtrShader);
 }
 
@@ -285,6 +289,7 @@ GDX11Device::createComputeShader(SPtr<GShaderBlob> blob) {
     return nullptr;
   }
 
+  sPtrShader->reflect();
   return std::static_pointer_cast<GComputeShader>(sPtrShader);
 }
 

@@ -45,6 +45,9 @@ public:
   virtual void*
   get() override;
 
+  virtual void
+  reflect() override;
+
 public:
 
   SPtr<GDX11ShaderBlob> m_pBlob = nullptr;
@@ -75,6 +78,8 @@ public:
   virtual void*
   get() override;
 
+  virtual void
+  reflect() override;
 
 public:
 
@@ -107,6 +112,8 @@ public:
   virtual void*
   get() override;
 
+  virtual void
+  reflect() override;
 
 public:
 
@@ -140,6 +147,8 @@ public:
   virtual void*
   get() override;
 
+  virtual void
+  reflect() override;
 
 public:
 

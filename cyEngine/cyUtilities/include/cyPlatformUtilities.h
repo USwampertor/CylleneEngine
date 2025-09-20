@@ -38,9 +38,9 @@ public:
    *  @return	A String with the parameters formatted
    */
   template<typename ... Args>
-  static String format(const String& format, Args ... args) {
+  static String format(const String& formatStr, Args ... args) {
 
-    const char* formatCstr = format.c_str();
+    const char* formatCstr = formatStr.c_str();
 
     int32 size_s = std::snprintf(nullptr, 0, formatCstr, std::forward<Args>(args)...) + 1; // Extra space for '\0'
     if (size_s <= 0) { throwRuntimeError("Error during formatting."); }
@@ -145,6 +145,29 @@ public:
   static Pair<T, A>
   makePair(T value1, A value2) {
     return std::make_pair(value1, value2);
+  }
+
+  static String 
+  intToHex(const int32& toValue, bool optionalPrefix = false, char toFillWith = '\0')
+  {
+    StringStream stream;
+    stream << std::hex
+      << std::uppercase // Convert to hex and uppercase
+      << toValue;
+    String prefix = (optionalPrefix ? "0x" : "");
+    if (toFillWith != '\0')
+    {
+      SizeT size = static_cast<SizeT>(6 - stream.str().size());
+      String middle(size, toFillWith);
+      return prefix + middle + stream.str();
+    }
+    return prefix + stream.str();
+  }
+
+  static bool
+  isStringNumber(const String& s)
+  {
+    return !s.empty() && std::find_if(s.begin(), s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
   }
 
   /**

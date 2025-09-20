@@ -96,6 +96,15 @@ public:
     return min + static_cast<T>(value);
   }
 
+  static uint32
+  rollDice(const uint32 sides = 6, const uint32 count = 1) {
+    CY_ASSERT(sides > 1 && count > 0);
+    uint32 result = 0;
+    for (uint32 i = 0; i < count; ++i) {
+      result += getRanged<uint32>(1, sides);
+    }
+    return result;
+  }
 
   static float
   getRangeFloat(const float& min, const float& max);

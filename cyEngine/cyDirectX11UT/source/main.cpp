@@ -23,6 +23,7 @@
 #include <cyScene.h>
 #include <cySceneManager.h>
 #include <cyMath.h> 
+#include <cyWindowEvent.h>
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
@@ -55,7 +56,7 @@ struct PerPassConstantBuffer
 //   Matrix4 shadowProjection;
 // } shadowConstants;
 
-ShadowConstantBuffer shadowConstants;
+DefaultShadowConstantBuffer shadowConstants;
 
 /*
  *	@brief  Unit Testing main for Utilities
@@ -185,8 +186,8 @@ main(int argc, char* argv[])
     return -1;
   }
 
-  constantBufferData.resize(sizeof(ShadowConstantBuffer));
-  memset(constantBufferData.data(), 0, sizeof(ShadowConstantBuffer));
+  constantBufferData.resize(sizeof(DefaultShadowConstantBuffer));
+  memset(constantBufferData.data(), 0, sizeof(DefaultShadowConstantBuffer));
   SPtr<GraphicsBuffer> shadowCB = GraphicsDX11API::instance().createConstantBuffer(constantBufferData);
   if (!shadowCB) {
     WindowManager::showErrorMessage("Error", "Error creating Constant Buffer", 0);
@@ -344,8 +345,8 @@ main(int argc, char* argv[])
   float time = 0.0f;
   float deltaTime;
 
-  WindowManager::instance().m_windowEvent.addListener([&](SPtr<WindowEvent> event) {
-    if (+EVENTTYPE::E::eQUIT == event->type) {
+  WindowManager::instance().m_windowEvent.addListener([&](WPtr<WindowEvent> event) {
+    if (+EVENTTYPE::E::eQUIT == event.lock()->type) {
       std::cout << "Window closed" << std::endl;
       running = false;
     }
