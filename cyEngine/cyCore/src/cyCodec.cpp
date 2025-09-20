@@ -514,5 +514,49 @@ AudioCodec::decode(const File& f) {
   return nullptr;
 }
 
+void*
+MaterialCodec::decode(const File& f) {
+  // Read material JSON and pass the string to RMaterial
+  String content = f.readFile();
+  return reinterpret_cast<void*>(new String(content));
+}
+
+String
+MaterialCodec::encodeToJSON(const RMaterial& material) {
+  JSONDocument d; d.SetObject();
+  auto& allocator = d.GetAllocator();
+  d.AddMember("type", "material", allocator);
+
+  String shaderName = "";
+  if (!material.getBaseShader().expired()) {
+    shaderName = material.getBaseShader().lock()->getName();
+  }
+  d.AddMember("baseShader", shaderName, allocator);
+
+  JSONValue jvals; jvals.SetObject();
+  for (const auto& kv : material.getDefaultValues()) {
+    String key = kv.first;
+    RTexture* tex = reinterpret_cast<RTexture*>(kv.second);
+    if (tex) {
+      JSONValue keyValue(key.c_str(), allocator);
+      JSONValue valueValue(tex->getName().c_str(), allocator);
+      jvals.AddMember(keyValue, valueValue, allocator);
+    }
+  }
+  d.AddMember("values", jvals, allocator);
+
+  return d.stringify();
+}
+
+bool
+MaterialCodec::saveToFile(const RMaterial& material, const String& filePath) {
+  String json = encodeToJSON(material);
+  std::ofstream ofs(filePath, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+  if (!ofs.is_open()) return false;
+  ofs.write(json.c_str(), (std::streamsize)json.size());
+  ofs.close();
+  return true;
+}
+
 
 }
