@@ -6,6 +6,8 @@
 namespace CYLLENE_SDK
 {
 
+
+
   namespace GSHADERTYPE
   {
   BETTER_ENUM(E, uint32,
@@ -54,6 +56,21 @@ namespace CYLLENE_SDK
               eSAMPLERSTATE = 11
   );
   }
+
+static uint32 sizeOfShaderParam(GSHADERPARAM::E type)
+{
+  switch (type) {
+  case GSHADERPARAM::E::eFLOAT:    return sizeof(float);
+  case GSHADERPARAM::E::eINT:      return sizeof(int32);
+  case GSHADERPARAM::E::eUINT:     return sizeof(uint32);
+  case GSHADERPARAM::E::eVECTOR2:  return sizeof(Vector2f);
+  case GSHADERPARAM::E::eVECTOR3:  return sizeof(Vector3f);
+  case GSHADERPARAM::E::eVECTOR4:  return sizeof(Vector4f);
+  case GSHADERPARAM::E::eMATRIX3:  return sizeof(Matrix3);
+  case GSHADERPARAM::E::eMATRIX4:  return sizeof(Matrix4);
+  default:                         return 0;
+  }
+}
 
 struct GShaderBlob
 {

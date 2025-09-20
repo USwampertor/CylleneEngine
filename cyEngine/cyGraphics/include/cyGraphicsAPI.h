@@ -16,6 +16,7 @@
 #include <cyRResource.h>
 #include <cyVector2i.h>
 #include <cyGraphicsPipeline.h>
+#include <cyRay.h>
 
 #include "cyGraphicsBuffer.h"
 #include "cyGDepthStencilView.h"
@@ -231,6 +232,18 @@ public:
 	void
   drawInstanced(SPtr<BBeing> refObject, uint32 instanceCount);
 
+	//////////////////////////////////////////////////////////////////////////
+	// TODO: Check where this should go
+
+  Ray screenPointToRay(const Vector2i& screenPoint,
+											 WPtr<CCamera> camera);
+
+
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+
 	virtual void
 	present() = 0;
 
@@ -410,13 +423,16 @@ public:
 	SPtr<GInputLayout>
 	m_defaultLayout = nullptr;
 
-	SPtr<GInputLayout>
+  SPtr<GInputLayout>
 	m_modelInputLayout;
 
-	SPtr<GraphicsPipeline>
+  SPtr<GraphicsPipeline>
 	m_defaultPipeline = nullptr;
 
   Color m_clearColor = Color::MISSING;
+
+  SPtr<GraphicsBuffer> m_materialCB = nullptr;
+  uint32 m_materialCBSize = 0;
 };
 
 static bool

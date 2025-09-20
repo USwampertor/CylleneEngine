@@ -185,7 +185,6 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
   vertexBuffer.push_back(refMesh->m_pVertexBuffer);
 
   const uint32 vertexStride = sizeof(Vertex);
-  const uint32 indexStride = sizeof(unsigned short);
   const uint32 vertexOffset = 0;
 
   Vector<uint32> vertexStrides;
@@ -194,37 +193,111 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
   Vector<uint32> vertexOffsets;
   vertexOffsets.push_back(vertexOffset);
 
+  // TODO: Check if this is a better way of doing so
+  // Vector<SPtr<GraphicsBuffer>> vertexBuffer{ refMesh->m_pVertexBuffer };
+  // Vector<uint32> strides{ sizeof(Vertex) };
+  // Vector<uint32> offsets{ 0 };
+
   getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
   getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
 
 
   SPtr<RMaterial> materialInstance = meshRenderer->m_mesh->m_material;
-  materialInstance->getDefaultValues();
-
+  const auto& matValues = materialInstance->getDefaultValues();
+  SPtr<RShader> shaderRes = materialInstance->getBaseShader().lock(); 
+  SPtr<GShader> gShader = REINTERPRETPOINTER(GShader, getGGraphic<RShader>(shaderRes->getName()));
+  const Vector<GShaderValue>& shaderVals = gShader->getValues();
   // for each value set Shader Resource
 
-  if (refTexture != nullptr) {
-    Vector<SPtr<GShaderResourceView>> srvVector;
-    srvVector.push_back(refTexture->get()->getResource());
+   // Build constant-buffer data & texture array
+  Vector<char> materialCBData;
+  uint32 cbSize = 0;
+  for (auto& v : shaderVals)
+    if (v.type != +GSHADERPARAM::E::eTEXTURE2D &&
+        v.type != +GSHADERPARAM::E::eTEXTURECUBE &&
+        v.type != +GSHADERPARAM::E::eSAMPLERSTATE)
+      cbSize = std::max(cbSize, v.offset +
+        sizeOfShaderParam(v.type) * v.count);
+  materialCBData.resize(cbSize);
 
-    getDeviceContext()->setShaderResources(srvVector, 0, 1);
+  Vector<SPtr<GShaderResourceView>> srvs;
+  for (auto& sVal : shaderVals) {
+    auto it = matValues.find(sVal.name.c_str());
+    if (it == matValues.end()) continue;
+
+    if (sVal.type == +GSHADERPARAM::E::eTEXTURE2D ||
+        sVal.type == +GSHADERPARAM::E::eTEXTURECUBE) {
+      SPtr<RTexture> rTex = makeSharedPtr<RTexture>(it->second);
+      SPtr<GTexture> gTex = REINTERPRETPOINTER(GTexture, getGGraphic<RTexture>(rTex->getName()));
+      srvs.push_back(gTex->getResource());
+    }
+    else {
+      uint32 size = sizeOfShaderParam(sVal.type) * sVal.count;
+      memcpy(materialCBData.data() + sVal.offset, it->second, size);
+    }
   }
+
+  // Upload constant-buffer & textures
+  if (!materialCBData.empty()) {
+    // Ensure material constant buffer exists and is large enough for this shader
+    if (!m_materialCB || m_materialCBSize != cbSize) {
+      Vector<char> initData;
+      initData.resize(cbSize);
+      memset(initData.data(), 0, cbSize);
+      m_materialCB = createConstantBuffer(initData);
+      m_materialCBSize = cbSize;
+    }
+    writeToBuffer(m_materialCB, materialCBData);
+    Vector<SPtr<GraphicsBuffer>> gb{ m_materialCB };
+    getDeviceContext()->setVSConstantBuffer(2, 1, gb);
+    getDeviceContext()->setPSConstantBuffer(2, 1, gb);
+  }
+  if (!srvs.empty()) {
+    getDeviceContext()->setShaderResources(srvs, 0, srvs.size());
+  }
+
+  // --- Per-object constants -----------------------------------------------
+  DefaultPerObjectConstantBuffer perObjectConstants;
+  Vector<char> constantBufferData;
+
+  constantBufferData.resize(sizeof(DefaultPerObjectConstantBuffer));
+  memset(constantBufferData.data(), 0, sizeof(DefaultPerObjectConstantBuffer));
+  SPtr<GraphicsBuffer> perObjectCB = createConstantBuffer(constantBufferData);
 
   perObjectConstants.world = refObject->getTransform().lock()->m_worldMatrix;
   perObjectConstants.world.transpose();
-
-  constantBufferData.clear();
-  constantBufferData.resize(sizeof(perObjectConstants));
+  constantBufferData.assign(sizeof(perObjectConstants), 0);
   memcpy(constantBufferData.data(), &perObjectConstants, sizeof(perObjectConstants));
+  writeToBuffer(perObjectCB, constantBufferData);
+  Vector<SPtr<GraphicsBuffer>> objCB{ perObjectCB };
+  getDeviceContext()->setVSConstantBuffer(1, 1, objCB);
+  getDeviceContext()->setPSConstantBuffer(1, 1, objCB);
 
-  GraphicsAPI::instance().writeToBuffer(perObjectCB, constantBufferData);
-  Vector<SPtr<GraphicsBuffer>> gbVector;
-  gbVector.push_back(perObjectCB);
-  getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
-  getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
-
+  // Draw call ---------------------------------------------------------------
   getDeviceContext()->drawIndexed(refMesh);
+
+  // if (refTexture != nullptr) {
+  //   Vector<SPtr<GShaderResourceView>> srvVector;
+  //   srvVector.push_back(refTexture->get()->getResource());
+  // 
+  //   getDeviceContext()->setShaderResources(srvVector, 0, 1);
+  // }
+  // 
+  // perObjectConstants.world = refObject->getTransform().lock()->m_worldMatrix;
+  // perObjectConstants.world.transpose();
+  // 
+  // constantBufferData.clear();
+  // constantBufferData.resize(sizeof(perObjectConstants));
+  // memcpy(constantBufferData.data(), &perObjectConstants, sizeof(perObjectConstants));
+  // 
+  // GraphicsAPI::instance().writeToBuffer(perObjectCB, constantBufferData);
+  // Vector<SPtr<GraphicsBuffer>> gbVector;
+  // gbVector.push_back(perObjectCB);
+  // getDeviceContext()->setVSConstantBuffer(1, 1, gbVector);
+  // getDeviceContext()->setPSConstantBuffer(1, 1, gbVector);
+  // 
+  // getDeviceContext()->drawIndexed(refMesh);
 }
 
 void
