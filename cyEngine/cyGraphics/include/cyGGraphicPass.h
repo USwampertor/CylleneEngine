@@ -17,13 +17,14 @@
 namespace CYLLENE_SDK {
 
 class CCamera;
+class BBeing;
 
 struct DefaultShaderConstants
 {
-  float time;
-  float align1;
-  float align2;
-  float align3;
+  float time = 0;
+  float align1 = 0;
+  float align2 = 0;
+  float align3 = 0;
 };
 
 struct DefaultPerObjectConstantBuffer
@@ -42,7 +43,7 @@ struct DefaultPerPassConstantBuffer
 
 
 
-class CY_GRAPHICS_EXPORT GGraphicPass : public GGraphic, public GraphicPass
+class CY_GRAPHICS_EXPORT GGraphicPass : public GGraphic, public GraphicPass// , public std::enable_shared_from_this<GGraphicPass>
 {
 public:
 
@@ -56,7 +57,8 @@ public:
                           WPtr<GraphicsPipeline> newParentPipeline) {
     m_parentPipeline = newParentPipeline;
     m_camera = newParentCamera;
-    m_parentPipeline.lock()->addPass(makeSharedPtr<GraphicPass>(this));
+    // auto self = makeSharedPtr<GGraphicPass>(this); // std::static_pointer_cast<GraphicPass>(shared_from_this());
+    // m_parentPipeline.lock()->addPass(self);
     setID(m_parentPipeline.lock()->getPasses().size() - 1);
   }
   virtual void clear() = 0;
@@ -120,7 +122,12 @@ public:
   virtual void cleanup() override;
   virtual void shutdown() override;
 
-  virtual SPtr<GTexture> getOutputTexture() const override { return m_shadowDST; }
+  Vector<SPtr<GTexture>> getShadowTextures() {
+    return m_shadowDSTs;
+  }
+  virtual SPtr<GTexture> getOutputTexture() const override { 
+    return m_shadowDSTs.size() > 0 ? m_shadowDSTs.at(0) : m_shadowDST; 
+  }
   virtual SPtr<GDepthStencilView> getOutputDepthStencil() const { return m_shadowDSV; }
   virtual SPtr<GraphicsBuffer> getOutputBuffer() const { return m_shadowCB; }
 
@@ -131,6 +138,8 @@ public:
   SPtr<GVertexShader> m_pVShadowShader;
   SPtr<GTexture> m_shadowDST;
   SPtr<GDepthStencilView> m_shadowDSV;
+  Vector<SPtr<GTexture>> m_shadowDSTs;
+  Vector<SPtr<GDepthStencilView>> m_shadowDSVs;
 };
 
 /*
@@ -211,6 +220,8 @@ public:
 
   float m_time = 0.0f;
 
+  // Cached SAQ object for reuse
+  WPtr<BBeing> m_cachedSAQObject;
 };
 
 class CY_GRAPHICS_EXPORT GDefaultPPPass : public GGraphicPass
@@ -226,7 +237,7 @@ public:
   virtual void cleanup() override;
   virtual void shutdown() override;
 
-  virtual void* get() override {}
+  virtual void* get() override { return nullptr; }
   virtual void set(void*) override {}
 
   SPtr<GVertexShader> m_pVSAQShader;

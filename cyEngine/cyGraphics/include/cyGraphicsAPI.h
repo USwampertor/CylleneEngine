@@ -306,17 +306,17 @@ public:
     uint32 hash = Hash<String>()(realName);
     if (RMesh::staticType() == type) {
       if (m_meshRenderPool.find(hash) != m_meshRenderPool.end()) {
-        return std::reinterpret_pointer_cast<T>(m_meshRenderPool.at(hash));
+        return REINTERPRETPOINTER(GMesh, m_meshRenderPool.at(hash));
       }
     }
     else if (RTexture::staticType() == type) {
       if (m_textureRenderPool.find(hash) != m_textureRenderPool.end()) {
-        return std::reinterpret_pointer_cast<T>(m_textureRenderPool.at(hash));
+        return REINTERPRETPOINTER(GTexture, m_textureRenderPool.at(hash));
       }
     }
     else if (RShader::staticType() == type) {
       if (m_shaderRenderPool.find(hash) != m_shaderRenderPool.end()) {
-        return std::reinterpret_pointer_cast<T>(m_shaderRenderPool.at(hash));
+        return REINTERPRETPOINTER(GShader, m_shaderRenderPool.at(hash));
       }
     }
     return nullptr;

@@ -2,6 +2,11 @@
 
 #include "cyGraphicsPrerequisites.h"
 #include "cyGGraphic.h"
+#include "cyVector2f.h"
+#include "cyVector3f.h"
+#include "cyVector4f.h"
+#include "cyMatrix3.h"
+#include "cyMatrix4.h"
 
 namespace CYLLENE_SDK
 {

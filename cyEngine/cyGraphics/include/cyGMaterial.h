@@ -16,7 +16,7 @@ public:
 
   bool initialize();
 
-  GShader* GetShader() const { return m_shader.get(); }
+  GShader* GetShader() const { return m_shader.lock().get(); }
 
   const MaterialValue* GetDefaultValue(const std::string& name) const;
 
