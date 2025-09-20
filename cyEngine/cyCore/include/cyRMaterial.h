@@ -98,6 +98,9 @@ public:
   void
   setBaseShader(const SPtr<RShader>& shader) { m_shader = shader; }
 
+  WPtr<RShader>
+  getBaseShader() const { return m_shader; }
+
   const std::unordered_map<std::string, MaterialValue>&
   getDefaultValues() const { return m_values; }
 
