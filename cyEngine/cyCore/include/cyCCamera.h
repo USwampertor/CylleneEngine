@@ -75,7 +75,11 @@ public:
   bool m_viewDirty;
   bool projectionDirty;
 
-
+  /**
+   * Is this camera used for light/shadow casting?
+   * TODO: make a better checking for this
+   */
+  bool m_isLightCamera;
   // View Matrix is updated really by the transform component and then set as dirty
   Matrix4 m_view;
 
