@@ -99,7 +99,9 @@ namespace CYLLENE_SDK {
                 RGB_8_UNORM,
                 RG_8_UNORM,
                 R_8_UNORM,
-                D_8_UNORM);
+                D_8_UNORM,
+                D_24_UNORM_S8_UINT,
+                BGRA_8_UNORM);
   }
 
 
