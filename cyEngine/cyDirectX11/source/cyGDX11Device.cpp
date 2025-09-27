@@ -9,11 +9,99 @@
 #include "cyGDX11ShaderResourceView.h"
 #include "cyGDX11SamplerState.h"
 #include "cyGDX11BlendState.h"
+#include "cyGraphicsDX11API.h"
 
 #include <cyWindow.h>
 #include <cyRTexture.h>
 
 namespace CYLLENE_SDK {
+
+namespace {
+  static uint32 sanitizeDepthFormat(uint32 format) {
+    if (!COLORFORMAT::E::_is_valid(format)) {
+      return COLORFORMAT::E::D_24_UNORM_S8_UINT;
+    }
+    return format;
+  }
+
+  static bool isDepthStencilFormat(uint32 format) {
+    if (!COLORFORMAT::E::_is_valid(format)) {
+      return false;
+    }
+
+    switch (COLORFORMAT::E::_from_integral_unchecked(format)) {
+    case COLORFORMAT::E::D_32_FLOAT:
+    case COLORFORMAT::E::D_32_UINT:
+    case COLORFORMAT::E::D_32_SINT:
+    case COLORFORMAT::E::D_32_TYPELESS:
+    case COLORFORMAT::E::R_32_TYPELESS:
+    case COLORFORMAT::E::D_24_UNORM_S8_UINT:
+    case COLORFORMAT::E::D_8_FLOAT:
+    case COLORFORMAT::E::D_8_UINT:
+    case COLORFORMAT::E::D_8_SINT:
+    case COLORFORMAT::E::D_8_TYPELESS:
+    case COLORFORMAT::E::D_8_UNORM:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  static bool isRenderableColorFormat(uint32 format) {
+    if (!COLORFORMAT::E::_is_valid(format)) {
+      return false;
+    }
+    return !isDepthStencilFormat(format);
+  }
+
+  static uint32 resolveDepthTextureFormat(uint32 format, uint32 bindFlags) {
+    const uint32 sanitized = sanitizeDepthFormat(format);
+    const bool wantsSRV = (bindFlags & D3D11_BIND_SHADER_RESOURCE) != 0;
+
+    switch (COLORFORMAT::E::_from_integral_unchecked(sanitized)) {
+    case COLORFORMAT::E::D_32_FLOAT:
+      return wantsSRV ? COLORFORMAT::E::R_32_TYPELESS : sanitized;
+    case COLORFORMAT::E::D_32_UINT:
+    case COLORFORMAT::E::D_32_SINT:
+    case COLORFORMAT::E::D_32_TYPELESS:
+    case COLORFORMAT::E::R_32_TYPELESS:
+      return wantsSRV ? COLORFORMAT::E::R_32_TYPELESS : COLORFORMAT::E::D_32_FLOAT;
+    case COLORFORMAT::E::D_8_FLOAT:
+    case COLORFORMAT::E::D_8_UINT:
+    case COLORFORMAT::E::D_8_SINT:
+    case COLORFORMAT::E::D_8_TYPELESS:
+    case COLORFORMAT::E::D_8_UNORM:
+      return COLORFORMAT::E::D_24_UNORM_S8_UINT;
+    default:
+      return sanitized;
+    }
+  }
+
+  static uint32 resolveDepthViewFormat(uint32 format) {
+    const uint32 sanitized = sanitizeDepthFormat(format);
+
+    switch (COLORFORMAT::E::_from_integral_unchecked(sanitized)) {
+    case COLORFORMAT::E::R_32_TYPELESS:
+    case COLORFORMAT::E::D_32_TYPELESS:
+    case COLORFORMAT::E::D_32_UINT:
+    case COLORFORMAT::E::D_32_SINT:
+      return COLORFORMAT::E::D_32_FLOAT;
+    case COLORFORMAT::E::D_8_FLOAT:
+    case COLORFORMAT::E::D_8_UINT:
+    case COLORFORMAT::E::D_8_SINT:
+    case COLORFORMAT::E::D_8_TYPELESS:
+    case COLORFORMAT::E::D_8_UNORM:
+      return COLORFORMAT::E::D_24_UNORM_S8_UINT;
+    default:
+      return sanitized;
+    }
+  }
+
+  static uint32 resolveColorFormat(uint32 format) {
+    return isRenderableColorFormat(format) ? format : COLORFORMAT::E::RGBA_8_UNORM;
+  }
+}
+
 
 GDX11Device::~GDX11Device() {
   DX11_SAFE_RELEASE(m_pd3d11Device);
@@ -60,12 +148,19 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
                                     SPtr<GDepthStencilViewElement> dsvParams,
                                     SPtr<GTexture> texture) {
 
+  const uint32 requestedFormat = dsvParams ? dsvParams->format : COLORFORMAT::E::D_24_UNORM_S8_UINT;
+  const uint32 bindFlags = (dsvParams && dsvParams->flags > 0) ? dsvParams->flags : D3D11_BIND_DEPTH_STENCIL;
+  const uint32 viewFormat = resolveDepthViewFormat(requestedFormat);
+  const uint32 textureFormat = resolveDepthTextureFormat(texture ? requestedFormat : viewFormat, bindFlags);
+
+  if (dsvParams != nullptr) {
+    dsvParams->format = viewFormat;
+  }
+
   D3D11_DEPTH_STENCIL_VIEW_DESC* dsvDesc = dsvParams != nullptr ? new CD3D11_DEPTH_STENCIL_VIEW_DESC() : nullptr;
 
   if (dsvDesc != nullptr) {
-    // D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC();
-    // dsvDesc->Flags = 0;
-    dsvDesc->Format = static_cast<DXGI_FORMAT>(dsvParams->format);
+    dsvDesc->Format = colorFormatToDXGI(viewFormat);
     dsvDesc->Texture2D.MipSlice = 0;
     dsvDesc->ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsvDesc->Flags = 0;
@@ -73,36 +168,33 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
 
   SPtr<GDX11DepthStencilView> pDepthStencilView = std::make_shared<GDX11DepthStencilView>();
 
-  // TODO: Make some standard values for a Depth Stencil texture
   SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
-  if (dsvParams != nullptr) {
-    pTextureElement->width = dsvParams->width > 0 ? dsvParams->width : 128;
-    pTextureElement->height = dsvParams->height > 0 ? dsvParams->height : 128;
-    pTextureElement->mipLevels = dsvParams->mipLevels > 0 ? dsvParams->mipLevels : 1;
-    pTextureElement->format = dsvParams->format > 0 ? dsvParams->format : DXGI_FORMAT_D24_UNORM_S8_UINT;
-    pTextureElement->bindFlags = dsvParams->flags > 0 ? dsvParams->flags : D3D11_BIND_DEPTH_STENCIL;
-  }
-  else {
-    pTextureElement->width = 1;
-    pTextureElement->height = 1;
-    pTextureElement->mipLevels = 1;
-    pTextureElement->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    pTextureElement->bindFlags = D3D11_BIND_DEPTH_STENCIL;
-  }
-
+  const uint32 defaultDSWidth = (dsvParams == nullptr) ? 1u : 128u;
+  const uint32 defaultDSHeight = (dsvParams == nullptr) ? 1u : 128u;
+  pTextureElement->width = (dsvParams && dsvParams->width > 0) ? dsvParams->width : defaultDSWidth;
+  pTextureElement->height = (dsvParams && dsvParams->height > 0) ? dsvParams->height : defaultDSHeight;
+  pTextureElement->mipLevels = (dsvParams && dsvParams->mipLevels > 0) ? dsvParams->mipLevels : 1;
+  pTextureElement->format = textureFormat;
+  pTextureElement->bindFlags = bindFlags;
   pTextureElement->cpuAccessFlags = 0;
   pTextureElement->usage = D3D11_USAGE_DEFAULT;
 
-  pDepthStencilView->m_pTexture = (texture == nullptr) ?
-    std::static_pointer_cast<GDX11Texture>(createTexture2D(pTextureElement)) :
-    std::static_pointer_cast<GDX11Texture>(texture);
+  SPtr<GTexture> baseTexture = texture ? texture : createTexture2D(pTextureElement);
+  if (!baseTexture) {
+    WindowManager::instance().showErrorMessage("Error", "Error creating Depth Stencil texture", 0);
+    delete dsvDesc;
+    return nullptr;
+  }
 
-  // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(depthStencilView);
+  pDepthStencilView->m_pTexture = std::static_pointer_cast<GDX11Texture>(baseTexture);
 
   if (FAILED(m_pd3d11Device->CreateDepthStencilView(pDepthStencilView->m_pTexture->m_texture, dsvDesc, &pDepthStencilView->m_pDSV))) {
     WindowManager::instance().showErrorMessage("Error", "Error creating Depth Stencil view", 0);
+    delete dsvDesc;
     return nullptr;
   }
+
+  delete dsvDesc;
   return std::static_pointer_cast<GDepthStencilView>(pDepthStencilView);
 }
 
@@ -115,54 +207,62 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
   if (rtvParams != nullptr) {
     if (rtvParams->flags & D3D11_BIND_DEPTH_STENCIL) {
       requieresDepthStencil = true;
-
       rtvParams->flags = (rtvParams->flags & ~D3D11_BIND_DEPTH_STENCIL);
     }
   }
   
+  const uint32 resolvedRTVFormat = resolveColorFormat(rtvParams ? rtvParams->format : COLORFORMAT::E::RGBA_8_UNORM);
+  if (rtvParams != nullptr) {
+    rtvParams->format = resolvedRTVFormat;
+  }
+
   if (rtvDesc != nullptr) {
-    // D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = CD3D11_RENDER_TARGET_VIEW_DESC();
-    rtvDesc->Format = static_cast<DXGI_FORMAT>(rtvParams->format);
+    rtvDesc->Format = colorFormatToDXGI(resolvedRTVFormat);
     rtvDesc->Texture2D.MipSlice = 0;
     rtvDesc->ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
   }
 
   SPtr<GDX11RenderTargetView> pRenderTargetView = std::make_shared<GDX11RenderTargetView>();
   
-  // TODO: Make some standard values for a Render Target texture
   SPtr<GTextureElement> pTextureElement = std::make_shared<GTextureElement>();
-  
-  if (rtvParams != nullptr) {
-    pTextureElement->width = rtvParams->width > 0 ? rtvParams->width : 128;
-    pTextureElement->height = rtvParams->height > 0 ? rtvParams->height : 128;
-    pTextureElement->cpuAccessFlags = 0;
-    pTextureElement->mipLevels = rtvParams->mipLevels > 0 ? rtvParams->mipLevels : 1;
-    pTextureElement->format = rtvParams->format > 0 ? static_cast<DXGI_FORMAT>(rtvParams->format) : DXGI_FORMAT_R8G8B8A8_UNORM;
-    pTextureElement->usage = D3D11_USAGE_DEFAULT;
-    pTextureElement->bindFlags = rtvParams->flags > 0 ? rtvParams->flags : D3D11_BIND_RENDER_TARGET;
-  }
+  pTextureElement->width = (rtvParams && rtvParams->width > 0) ? rtvParams->width : 128;
+  pTextureElement->height = (rtvParams && rtvParams->height > 0) ? rtvParams->height : 128;
+  pTextureElement->cpuAccessFlags = 0;
+  pTextureElement->mipLevels = (rtvParams && rtvParams->mipLevels > 0) ? rtvParams->mipLevels : 1;
+  pTextureElement->format = resolvedRTVFormat;
+  pTextureElement->usage = D3D11_USAGE_DEFAULT;
+  pTextureElement->bindFlags = (rtvParams && rtvParams->flags > 0) ? rtvParams->flags : D3D11_BIND_RENDER_TARGET;
 
-  pRenderTargetView->m_pTexture = (pTexture == nullptr) ? 
-                                  std::static_pointer_cast<GDX11Texture>(createTexture2D(pTextureElement)) : 
-                                  std::static_pointer_cast<GDX11Texture>(pTexture);
-  
-  SPtr<GDepthStencilViewElement> dsvparams = std::make_shared<GDepthStencilViewElement>();
-  if (requieresDepthStencil) {
-    dsvparams->width = rtvParams->width > 0 ? rtvParams->width : 128;
-    dsvparams->height = rtvParams->height > 0 ? rtvParams->height : 128;
-    dsvparams->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    dsvparams->viewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    dsvparams->mipLevels = rtvParams->mipLevels > 0 ? rtvParams->mipLevels : 1;
-    dsvparams->flags = 0;
-  }
-  pRenderTargetView->m_pDSV = std::static_pointer_cast<GDX11DepthStencilView>(createDepthStencilView(dsvparams));
-
-  // SPtr<GDX11Texture> pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetView);
-  if (FAILED(m_pd3d11Device->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
-    WindowManager::instance().showErrorMessage("Error", "Error creating Render target view", 0);
+  SPtr<GTexture> renderTargetTexture = pTexture ? pTexture : createTexture2D(pTextureElement);
+  if (!renderTargetTexture) {
+    WindowManager::instance().showErrorMessage("Error", "Error creating Render Target texture", 0);
+    delete rtvDesc;
     return nullptr;
   }
 
+  pRenderTargetView->m_pTexture = std::static_pointer_cast<GDX11Texture>(renderTargetTexture);
+  
+  SPtr<GDepthStencilViewElement> dsvparams;
+  if (requieresDepthStencil) {
+    dsvparams = std::make_shared<GDepthStencilViewElement>();
+    dsvparams->width = pTextureElement->width;
+    dsvparams->height = pTextureElement->height;
+    dsvparams->format = COLORFORMAT::E::D_24_UNORM_S8_UINT;
+    dsvparams->viewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    dsvparams->mipLevels = pTextureElement->mipLevels;
+    dsvparams->flags = 0;
+  }
+  pRenderTargetView->m_pDSV = requieresDepthStencil
+    ? std::static_pointer_cast<GDX11DepthStencilView>(createDepthStencilView(dsvparams))
+    : nullptr;
+
+  if (FAILED(m_pd3d11Device->CreateRenderTargetView(pRenderTargetView->m_pTexture->m_texture, rtvDesc, &pRenderTargetView->m_pRTV))) {
+    WindowManager::instance().showErrorMessage("Error", "Error creating Render target view", 0);
+    delete rtvDesc;
+    return nullptr;
+  }
+
+  delete rtvDesc;
   return std::static_pointer_cast<GRenderTargetView>(pRenderTargetView);
 }
 
@@ -178,7 +278,12 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
     desc->ArraySize = 1;
     desc->BindFlags = textureParams->bindFlags;
     desc->CPUAccessFlags = textureParams->cpuAccessFlags;
-    desc->Format = static_cast<DXGI_FORMAT>(textureParams->format);
+    const bool requestsDepth = (textureParams->bindFlags & D3D11_BIND_DEPTH_STENCIL) != 0;
+    const uint32 resolvedTextureFormat = requestsDepth
+      ? resolveDepthTextureFormat(textureParams->format, textureParams->bindFlags)
+      : resolveColorFormat(textureParams->format);
+    textureParams->format = resolvedTextureFormat;
+    desc->Format = colorFormatToDXGI(resolvedTextureFormat);
     desc->Height = textureParams->height;
     desc->Width = textureParams->width;
     desc->MipLevels = textureParams->mipLevels;
@@ -188,6 +293,7 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
     desc->Usage = static_cast<D3D11_USAGE>(textureParams->usage);
   }
   if (FAILED(m_pd3d11Device->CreateTexture2D(desc, nullptr, &pTexture->m_texture))) {
+    delete desc;
     return nullptr;
   }
 
@@ -201,6 +307,7 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
     createShaderResourceView(pTexture, pSRVParams);
   }
 
+  delete desc;
   return std::static_pointer_cast<GTexture>(pTexture);
 }
 
@@ -326,11 +433,13 @@ GDX11Device::createShaderResourceView(SPtr<GTexture> shaderResourceView,
                                       SPtr<GShaderResourceViewElement> srvParams) {
   
   D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC();
-  if (srvParams->format == DXGI_FORMAT_R32_TYPELESS) {
-    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+  uint32 srvFormat = COLORFORMAT::E::_is_valid(srvParams->format) ? srvParams->format : COLORFORMAT::E::RGBA_8_UNORM;
+  srvParams->format = srvFormat;
+  if (srvFormat == COLORFORMAT::E::R_32_TYPELESS) {
+    srvDesc.Format = colorFormatToDXGI(COLORFORMAT::E::R_32_FLOAT);
   }
   else {
-    srvDesc.Format = static_cast<DXGI_FORMAT>(srvParams->format);
+    srvDesc.Format = colorFormatToDXGI(srvFormat);
   }
   srvDesc.Texture2D.MipLevels = srvParams->mipLevels;
   srvDesc.Texture2D.MostDetailedMip = 0;
@@ -362,7 +471,8 @@ GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
     D3D11_INPUT_ELEMENT_DESC desc;
     desc.SemanticName = element.semanticName.c_str();
     desc.SemanticIndex = element.semanticIndex;
-    desc.Format = static_cast<DXGI_FORMAT>(element.format);
+    const uint32 inputFormat = resolveColorFormat(element.format);
+    desc.Format = colorFormatToDXGI(inputFormat);
     desc.InputSlot = element.inputSlot;
     desc.AlignedByteOffset = element.alignedByteOffset;
     desc.InputSlotClass = static_cast<D3D11_INPUT_CLASSIFICATION>(element.inputSlotClass);

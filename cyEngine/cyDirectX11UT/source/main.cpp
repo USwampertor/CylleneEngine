@@ -124,15 +124,15 @@ main(int argc, char* argv[])
   compilePixelShader("particlePixelShader.hlsl", psParticleR, pParticleShader);
 
   Vector<GInputLayoutElement> inputDescs = {
-    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TANGENT",  0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 24,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 36,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0, 48,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,        0, 64,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BONES",    0, DXGI_FORMAT_R32G32B32A32_SINT,   0, 72,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "WEIGHTS",  0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0, 88,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "METADATA", 0, DXGI_FORMAT_R32G32B32A32_SINT,   0, 104, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    { "POSITION", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "NORMAL",   0, COLORFORMAT::E::RGB_32_FLOAT,     0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TANGENT",  0, COLORFORMAT::E::RGB_32_FLOAT,     0, 24,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BINORMAL", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 36,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "COLOR",    0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 48,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, COLORFORMAT::E::RG_32_FLOAT,        0, 64,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "BONES",    0, COLORFORMAT::E::RGBA_32_SINT,   0, 72,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "WEIGHTS",  0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 88,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "METADATA", 0, COLORFORMAT::E::RGBA_32_SINT,   0, 104, D3D11_INPUT_PER_VERTEX_DATA, 0 }
   };
 
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
@@ -278,7 +278,7 @@ main(int argc, char* argv[])
   shadowDepthStencilTextureDesc->height         = 1024;
   shadowDepthStencilTextureDesc->mipLevels      = 1;
   shadowDepthStencilTextureDesc->arraySize      = 1;
-  shadowDepthStencilTextureDesc->format         = DXGI_FORMAT_R32_TYPELESS;
+  shadowDepthStencilTextureDesc->format         = COLORFORMAT::E::R_32_TYPELESS;
   shadowDepthStencilTextureDesc->sampleCount    = 1;
   shadowDepthStencilTextureDesc->sampleQuality  = 0;
   shadowDepthStencilTextureDesc->usage          = D3D11_USAGE_DEFAULT;
@@ -288,7 +288,7 @@ main(int argc, char* argv[])
   SPtr<GTexture> shadowDepthStencilTexture = GraphicsDX11API::instance().createTexture2D(shadowDepthStencilTextureDesc);
 
   SPtr<GDepthStencilViewElement> shadowDepthStencilDesc = std::make_shared<GDepthStencilViewElement>();
-  shadowDepthStencilDesc->format  = DXGI_FORMAT_D32_FLOAT;
+  shadowDepthStencilDesc->format  = COLORFORMAT::E::D_32_FLOAT;
   shadowDepthStencilDesc->width   = 1024;
   shadowDepthStencilDesc->height  = 1024;
   shadowDepthStencilDesc->flags   = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
@@ -296,14 +296,14 @@ main(int argc, char* argv[])
   SPtr<GDepthStencilView> shadowDepthStencil = GraphicsDX11API::instance().getDevice()->createDepthStencilView(shadowDepthStencilDesc, shadowDepthStencilTexture);
 
   SPtr<GRenderTargetViewElement> colorRenderTargetDesc = std::make_shared<GRenderTargetViewElement>();
-  colorRenderTargetDesc->format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  colorRenderTargetDesc->format = COLORFORMAT::E::RGBA_32_FLOAT;
   colorRenderTargetDesc->width = 1280;
   colorRenderTargetDesc->height = 720;
   colorRenderTargetDesc->flags   = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_UNORDERED_ACCESS;
   SPtr<GRenderTargetView> colorRenderTarget = GraphicsDX11API::instance().getDevice()->createRenderTargetView(colorRenderTargetDesc);
   
   SPtr<GRenderTargetViewElement> positionRenderTargetDesc = std::make_shared<GRenderTargetViewElement>();
-  positionRenderTargetDesc->format  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  positionRenderTargetDesc->format  = COLORFORMAT::E::RGBA_32_FLOAT;
   positionRenderTargetDesc->width   = 1280;
   positionRenderTargetDesc->height  = 720;
   positionRenderTargetDesc->flags   = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
@@ -378,7 +378,7 @@ main(int argc, char* argv[])
 
       GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
-      GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
 
       if (refTexture != nullptr) {
         Vector<SPtr<GShaderResourceView>> srvVector;
@@ -572,7 +572,7 @@ main(int argc, char* argv[])
 
       GraphicsDX11API::instance().getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
-      GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(saqMesh->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      GraphicsDX11API::instance().getDeviceContext()->setIndexBuffer(saqMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
 
       Vector<SPtr<GShaderResourceView>> srvVector;
       srvVector.push_back(particleGTexture->getResource());

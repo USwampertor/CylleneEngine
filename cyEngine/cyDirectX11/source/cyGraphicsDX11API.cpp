@@ -112,7 +112,7 @@ GraphicsDX11API::initialize(void* pHandle) {
   scDesc.Width = rc.right;
   scDesc.Height = rc.bottom;
   // This is because we are using colors as float
-  scDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // DXGI_FORMAT_R32G32B32A32_FLOAT;
+  scDesc.Format = colorFormatToDXGI(COLORFORMAT::E::BGRA_8_UNORM); // DXGI_FORMAT_R32G32B32A32_FLOAT;
   scDesc.Stereo = false;
   scDesc.SampleDesc.Count = 1; // MSAA
   scDesc.SampleDesc.Quality = 0;
@@ -206,7 +206,7 @@ GraphicsDX11API::createSwapChain(SPtr<GDevice> device,
   scDesc.Width = rc.right;
   scDesc.Height = rc.bottom;
   // This is because we are using colors as float
-  scDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // DXGI_FORMAT_R32G32B32A32_FLOAT;
+  scDesc.Format = colorFormatToDXGI(COLORFORMAT::E::BGRA_8_UNORM); // DXGI_FORMAT_R32G32B32A32_FLOAT;
   scDesc.Stereo = false;
   scDesc.SampleDesc.Count = 1; // MSAA
   scDesc.SampleDesc.Quality = 0;
@@ -273,7 +273,7 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
   textureParams->width = texture->m_img->getWidth();
   textureParams->height = texture->m_img->getHeight();
   textureParams->bindFlags = D3D11_BIND_SHADER_RESOURCE;
-  textureParams->format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+  textureParams->format = COLORFORMAT::E::RGBA_32_FLOAT;
   textureParams->usage = D3D11_USAGE_DEFAULT;
   textureParams->cpuAccessFlags = 0;
   textureParams->mipLevels = 1;
@@ -302,7 +302,7 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
 //   textureParams->width = texture->m_img->getWidth();
 //   textureParams->height = texture->m_img->getHeight();
 //   textureParams->bindFlags = bindFlags | D3D11_BIND_SHADER_RESOURCE;
-//   textureParams->format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+//   textureParams->format = COLORFORMAT::E::RGBA_32_FLOAT;
 //   textureParams->usage = D3D11_USAGE_DEFAULT;
 //   textureParams->cpuAccessFlags = cpuAccessFlags;
 //   textureParams->mipLevels = mipFlags;
@@ -568,7 +568,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   textureParams->height = height;
   textureParams->cpuAccessFlags = 0;
   textureParams->mipLevels = 1;
-  textureParams->format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+  textureParams->format = COLORFORMAT::E::D_24_UNORM_S8_UINT;
   textureParams->usage = D3D11_USAGE_DEFAULT;
   textureParams->bindFlags = D3D11_BIND_DEPTH_STENCIL;
   SPtr<GTexture> pDepthStencil = createTexture2D(textureParams);
@@ -693,3 +693,4 @@ GCC_ALIGN(16)
 
 
 }
+

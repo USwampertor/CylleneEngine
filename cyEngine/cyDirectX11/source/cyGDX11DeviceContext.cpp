@@ -10,6 +10,7 @@
 #include "cyGDX11SamplerState.h"
 #include "cyGDX11Mesh.h"
 #include "cyGDX11RasterizerState.h"
+#include "cyGraphicsDX11API.h"
 
 namespace CYLLENE_SDK
 {
@@ -221,7 +222,7 @@ GDX11DeviceContext::setIndexBuffer(SPtr<GraphicsBuffer> buffer,
                                    uint32 format,
                                    uint32 offset) {
   SPtr<DX11GraphicsBuffer> pBuffer = std::static_pointer_cast<DX11GraphicsBuffer>(buffer);
-  m_pDeviceContext->IASetIndexBuffer(pBuffer->m_pBuffer, static_cast<DXGI_FORMAT>(format), offset);
+  m_pDeviceContext->IASetIndexBuffer(pBuffer->m_pBuffer, colorFormatToDXGI(format), offset);
 }
 
 void
@@ -365,3 +366,4 @@ GDX11DeviceContext::drawInstanced(SPtr<GMesh> mesh, uint32 instances) {
 
 
 }
+
