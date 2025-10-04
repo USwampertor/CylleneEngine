@@ -62,6 +62,7 @@ main(int argc, char* argv[])
   WPtr<CCamera> lightCam = lightBeing->createComponent<CCamera>();
   lightCam.lock()->setPerspective(1024.0f, 1024.0f, 0.1f, 200.0f, 60.0f);
   lightCam.lock()->setLookAt(Vector3f(0,0,0), Vector3f::UP);
+  lightCam.lock()->m_isLightCamera = true;
   // Add a light component and enable shadow casting
   auto lightComp = lightBeing->createComponent<CLight>();
   lightComp.lock()->m_castsShadows = true;
