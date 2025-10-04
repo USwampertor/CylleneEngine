@@ -157,6 +157,11 @@ GraphicsAPI::executePipelines() {
   for (auto& camera : cameras) {
     WPtr<CCamera> cameraPtr = camera.lock()->getComponent<CCamera>();
     if (cameraPtr.lock()) {
+
+      if (cameraPtr.lock()->m_isLightCamera) {
+        continue;
+      }
+
       WPtr<GraphicsPipeline> pipeline = cameraPtr.lock()->m_pipeline;
 
       for (auto& pass : pipeline.lock()->getPasses()) {
