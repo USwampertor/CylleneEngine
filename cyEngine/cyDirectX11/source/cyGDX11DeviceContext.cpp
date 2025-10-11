@@ -10,7 +10,7 @@
 #include "cyGDX11SamplerState.h"
 #include "cyGDX11Mesh.h"
 #include "cyGDX11RasterizerState.h"
-#include "cyGraphicsDX11API.h"
+#include "cyDirectXHelpers.h"
 
 namespace CYLLENE_SDK
 {
@@ -194,7 +194,7 @@ GDX11DeviceContext::setInputLayout(SPtr<GInputLayout> layout) {
 
 void
 GDX11DeviceContext::setPrimitiveTopology(uint32 topology) {
-  m_pDeviceContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(topology));
+  m_pDeviceContext->IASetPrimitiveTopology(primitiveTopologyToD3D3TOPOLOGY(GPRIMITIVE_TOPOLOGY::E::_from_integral_unchecked(topology)));
 }
 
 void
@@ -366,4 +366,5 @@ GDX11DeviceContext::drawInstanced(SPtr<GMesh> mesh, uint32 instances) {
 
 
 }
+
 

@@ -14,6 +14,7 @@
 #include "cyGDX11RenderTargetView.h"
 #include "cyGDX11InputLayout.h"
 #include "cyDX11GraphicsBuffer.h"
+#include "cyDirectXHelpers.h"
 
 #include <cyLogger.h>
 #include <cyWindow.h>
@@ -274,7 +275,7 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
   textureParams->height = texture->m_img->getHeight();
   textureParams->bindFlags = D3D11_BIND_SHADER_RESOURCE;
   textureParams->format = COLORFORMAT::E::RGBA_32_FLOAT;
-  textureParams->usage = D3D11_USAGE_DEFAULT;
+  textureParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
   textureParams->cpuAccessFlags = 0;
   textureParams->mipLevels = 1;
   SPtr<GTexture> pTexture = createTexture2D(textureParams);
@@ -303,7 +304,7 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
 //   textureParams->height = texture->m_img->getHeight();
 //   textureParams->bindFlags = bindFlags | D3D11_BIND_SHADER_RESOURCE;
 //   textureParams->format = COLORFORMAT::E::RGBA_32_FLOAT;
-//   textureParams->usage = D3D11_USAGE_DEFAULT;
+//   textureParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
 //   textureParams->cpuAccessFlags = cpuAccessFlags;
 //   textureParams->mipLevels = mipFlags;
 // 
@@ -492,7 +493,7 @@ GraphicsDX11API::createVertexBuffer(const Vector<char>& data) {
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
   bufferParams->data = data;
   bufferParams->byteSize = data.size();
-  bufferParams->usage = D3D11_USAGE_DEFAULT;
+  bufferParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
   bufferParams->bindFlags = D3D11_BIND_VERTEX_BUFFER;
   bufferParams->cpuAccessFlags = 0;
   SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
@@ -505,7 +506,7 @@ GraphicsDX11API::createIndexBuffer(const Vector<char>& data) {
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
   bufferParams->data = data;
   bufferParams->byteSize = data.size();
-  bufferParams->usage = D3D11_USAGE_DEFAULT;
+  bufferParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
   bufferParams->bindFlags = D3D11_BIND_INDEX_BUFFER;
   bufferParams->cpuAccessFlags = 0;
   SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
@@ -517,7 +518,7 @@ GraphicsDX11API::createConstantBuffer(const Vector<char>& data) {
   SPtr<GBufferElement> bufferParams = std::make_shared<GBufferElement>();
   bufferParams->data = data;
   bufferParams->byteSize = data.size();
-  bufferParams->usage = D3D11_USAGE_DEFAULT;
+  bufferParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
   bufferParams->bindFlags = D3D11_BIND_CONSTANT_BUFFER;
   bufferParams->cpuAccessFlags = 0;
   SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
@@ -569,7 +570,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   textureParams->cpuAccessFlags = 0;
   textureParams->mipLevels = 1;
   textureParams->format = COLORFORMAT::E::D_24_UNORM_S8_UINT;
-  textureParams->usage = D3D11_USAGE_DEFAULT;
+  textureParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
   textureParams->bindFlags = D3D11_BIND_DEPTH_STENCIL;
   SPtr<GTexture> pDepthStencil = createTexture2D(textureParams);
 

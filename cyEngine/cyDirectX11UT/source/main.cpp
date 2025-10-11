@@ -124,15 +124,15 @@ main(int argc, char* argv[])
   compilePixelShader("particlePixelShader.hlsl", psParticleR, pParticleShader);
 
   Vector<GInputLayoutElement> inputDescs = {
-    { "POSITION", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 0,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "NORMAL",   0, COLORFORMAT::E::RGB_32_FLOAT,     0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TANGENT",  0, COLORFORMAT::E::RGB_32_FLOAT,     0, 24,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BINORMAL", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 36,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "COLOR",    0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 48,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD", 0, COLORFORMAT::E::RG_32_FLOAT,        0, 64,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "BONES",    0, COLORFORMAT::E::RGBA_32_SINT,   0, 72,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "WEIGHTS",  0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 88,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "METADATA", 0, COLORFORMAT::E::RGBA_32_SINT,   0, 104, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    { "POSITION", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 0,   INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "NORMAL",   0, COLORFORMAT::E::RGB_32_FLOAT,     0, 12,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "TANGENT",  0, COLORFORMAT::E::RGB_32_FLOAT,     0, 24,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "BINORMAL", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 36,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "COLOR",    0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 48,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "TEXCOORD", 0, COLORFORMAT::E::RG_32_FLOAT,        0, 64,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "BONES",    0, COLORFORMAT::E::RGBA_32_SINT,   0, 72,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "WEIGHTS",  0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 88,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "METADATA", 0, COLORFORMAT::E::RGBA_32_SINT,   0, 104, INPUTCLASSIFICATION::E::PERVERTEX, 0 }
   };
 
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
@@ -281,7 +281,7 @@ main(int argc, char* argv[])
   shadowDepthStencilTextureDesc->format         = COLORFORMAT::E::R_32_TYPELESS;
   shadowDepthStencilTextureDesc->sampleCount    = 1;
   shadowDepthStencilTextureDesc->sampleQuality  = 0;
-  shadowDepthStencilTextureDesc->usage          = D3D11_USAGE_DEFAULT;
+  shadowDepthStencilTextureDesc->usage          = GRESOURCE_USAGE::E::eDEFAULT;
   shadowDepthStencilTextureDesc->bindFlags      = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
   shadowDepthStencilTextureDesc->cpuAccessFlags = 0;
   shadowDepthStencilTextureDesc->miscFlags      = 0;
@@ -431,7 +431,7 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setPixelShader(nullptr);
 
       GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
-      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST);
 
       Vector<SPtr<GRenderTargetView>> nullRTs;
       nullRTs.push_back(nullptr);
@@ -467,7 +467,7 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pShader);
 
       GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
-      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST);
 
       Vector<SPtr<GRenderTargetView>> targets;
       targets.push_back(colorRenderTarget);
@@ -521,7 +521,7 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pParticleShader);
 
       GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
-      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST);
 
       Vector<SPtr<GRenderTargetView>> targets;
       targets.push_back(colorRenderTarget);
@@ -606,7 +606,7 @@ main(int argc, char* argv[])
       GraphicsDX11API::instance().getDeviceContext()->setPixelShader(pSAQShader);
 
       GraphicsDX11API::instance().getDeviceContext()->setInputLayout(pInputLayout);
-      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+      GraphicsDX11API::instance().getDeviceContext()->setPrimitiveTopology(GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST);
 
       Vector<SPtr<GRenderTargetView>> targets;
       targets.push_back(backBufferRT);

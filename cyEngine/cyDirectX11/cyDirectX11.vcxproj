@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cyDirectX11Prerequisites.h" />
+    <ClInclude Include="include\cyDirectXHelpers.h" />
     <ClInclude Include="include\cyDX11GraphicsBuffer.h" />
     <ClInclude Include="include\cyGDX11BlendState.h" />
     <ClInclude Include="include\cyGDX11DepthStencilView.h" />

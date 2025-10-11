@@ -9,7 +9,7 @@
 #include "cyGDX11ShaderResourceView.h"
 #include "cyGDX11SamplerState.h"
 #include "cyGDX11BlendState.h"
-#include "cyGraphicsDX11API.h"
+#include "cyDirectXHelpers.h"
 
 #include <cyWindow.h>
 #include <cyRTexture.h>
@@ -177,7 +177,7 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
   pTextureElement->format = textureFormat;
   pTextureElement->bindFlags = bindFlags;
   pTextureElement->cpuAccessFlags = 0;
-  pTextureElement->usage = D3D11_USAGE_DEFAULT;
+  pTextureElement->usage = GRESOURCE_USAGE::E::eDEFAULT;
 
   SPtr<GTexture> baseTexture = texture ? texture : createTexture2D(pTextureElement);
   if (!baseTexture) {
@@ -230,7 +230,7 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
   pTextureElement->cpuAccessFlags = 0;
   pTextureElement->mipLevels = (rtvParams && rtvParams->mipLevels > 0) ? rtvParams->mipLevels : 1;
   pTextureElement->format = resolvedRTVFormat;
-  pTextureElement->usage = D3D11_USAGE_DEFAULT;
+  pTextureElement->usage = GRESOURCE_USAGE::E::eDEFAULT;
   pTextureElement->bindFlags = (rtvParams && rtvParams->flags > 0) ? rtvParams->flags : D3D11_BIND_RENDER_TARGET;
 
   SPtr<GTexture> renderTargetTexture = pTexture ? pTexture : createTexture2D(pTextureElement);
@@ -290,7 +290,7 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
     desc->MiscFlags = 0;
     desc->SampleDesc.Count = 1; //MSAA
     desc->SampleDesc.Quality = 0;
-    desc->Usage = static_cast<D3D11_USAGE>(textureParams->usage);
+    desc->Usage = usageToD3D11USAGE(GRESOURCE_USAGE::E::_from_integral_unchecked(textureParams->usage));
   }
   if (FAILED(m_pd3d11Device->CreateTexture2D(desc, nullptr, &pTexture->m_texture))) {
     delete desc;
@@ -475,7 +475,7 @@ GDX11Device::createInputLayout(const Vector<GInputLayoutElement>& descriptor,
     desc.Format = colorFormatToDXGI(inputFormat);
     desc.InputSlot = element.inputSlot;
     desc.AlignedByteOffset = element.alignedByteOffset;
-    desc.InputSlotClass = static_cast<D3D11_INPUT_CLASSIFICATION>(element.inputSlotClass);
+    desc.InputSlotClass = inputClassificationToD3D11INPUT(INPUTCLASSIFICATION::E::_from_integral_unchecked(element.inputSlotClass));
     desc.InstanceDataStepRate = element.instanceDataStepRate;
     d3d11Descriptor.push_back(desc);
   }
@@ -503,7 +503,7 @@ GDX11Device::createGraphicsBuffer(SPtr<GBufferElement> bufferParams) {
   D3D11_BUFFER_DESC desc;
   memset(&desc, 0, sizeof(desc));
 
-  desc.Usage = static_cast<D3D11_USAGE>(bufferParams->usage);
+  desc.Usage = usageToD3D11USAGE(GRESOURCE_USAGE::E::_from_integral_unchecked(bufferParams->usage));
   desc.ByteWidth = bufferParams->byteSize;
   desc.BindFlags = bufferParams->bindFlags;
   desc.CPUAccessFlags = bufferParams->cpuAccessFlags;
@@ -639,4 +639,7 @@ GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
 }
 
 }
+
+
+
 

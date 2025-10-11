@@ -66,6 +66,9 @@
     <ClInclude Include="include\cyGDX11BlendState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyDirectXHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyDX11GraphicsBuffer.cpp">
