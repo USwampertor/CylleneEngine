@@ -124,15 +124,15 @@ main(int argc, char* argv[])
   compilePixelShader("particlePixelShader.hlsl", psParticleR, pParticleShader);
 
   Vector<GInputLayoutElement> inputDescs = {
-    { "POSITION", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 0,   INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "NORMAL",   0, COLORFORMAT::E::RGB_32_FLOAT,     0, 12,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "TANGENT",  0, COLORFORMAT::E::RGB_32_FLOAT,     0, 24,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "BINORMAL", 0, COLORFORMAT::E::RGB_32_FLOAT,     0, 36,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "COLOR",    0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 48,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "TEXCOORD", 0, COLORFORMAT::E::RG_32_FLOAT,        0, 64,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "BONES",    0, COLORFORMAT::E::RGBA_32_SINT,   0, 72,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "WEIGHTS",  0, COLORFORMAT::E::RGBA_32_FLOAT,  0, 88,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
-    { "METADATA", 0, COLORFORMAT::E::RGBA_32_SINT,   0, 104, INPUTCLASSIFICATION::E::PERVERTEX, 0 }
+    { "POSITION", 0, COLORFORMAT::E::RGB_32_FLOAT,  0, 0,   INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "NORMAL",   0, COLORFORMAT::E::RGB_32_FLOAT,  0, 12,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "TANGENT",  0, COLORFORMAT::E::RGB_32_FLOAT,  0, 24,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "BINORMAL", 0, COLORFORMAT::E::RGB_32_FLOAT,  0, 36,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "COLOR",    0, COLORFORMAT::E::RGBA_32_FLOAT, 0, 48,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "TEXCOORD", 0, COLORFORMAT::E::RG_32_FLOAT,   0, 64,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "BONES",    0, COLORFORMAT::E::RGBA_32_SINT,  0, 72,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "WEIGHTS",  0, COLORFORMAT::E::RGBA_32_FLOAT, 0, 88,  INPUTCLASSIFICATION::E::PERVERTEX, 0 },
+    { "METADATA", 0, COLORFORMAT::E::RGBA_32_SINT,  0, 104, INPUTCLASSIFICATION::E::PERVERTEX, 0 }
   };
 
   SPtr<GInputLayout> pInputLayout = GraphicsDX11API::instance().createInputLayout(inputDescs, vShader);
@@ -282,7 +282,7 @@ main(int argc, char* argv[])
   shadowDepthStencilTextureDesc->sampleCount    = 1;
   shadowDepthStencilTextureDesc->sampleQuality  = 0;
   shadowDepthStencilTextureDesc->usage          = GRESOURCE_USAGE::E::eDEFAULT;
-  shadowDepthStencilTextureDesc->bindFlags      = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+  shadowDepthStencilTextureDesc->bindFlags      = GRESOURCE_BINDINGS::E::DEPTHSTENCIL | GRESOURCE_BINDINGS::E::SHADERRESOURCE;
   shadowDepthStencilTextureDesc->cpuAccessFlags = 0;
   shadowDepthStencilTextureDesc->miscFlags      = 0;
   SPtr<GTexture> shadowDepthStencilTexture = GraphicsDX11API::instance().createTexture2D(shadowDepthStencilTextureDesc);
@@ -291,22 +291,22 @@ main(int argc, char* argv[])
   shadowDepthStencilDesc->format  = COLORFORMAT::E::D_32_FLOAT;
   shadowDepthStencilDesc->width   = 1024;
   shadowDepthStencilDesc->height  = 1024;
-  shadowDepthStencilDesc->flags   = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-  shadowDepthStencilDesc->viewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+  shadowDepthStencilDesc->flags   = GRESOURCE_BINDINGS::E::DEPTHSTENCIL | GRESOURCE_BINDINGS::E::SHADERRESOURCE;
+  shadowDepthStencilDesc->viewDimension = GDSV_DIMENSION::E::TEXTURE2D;
   SPtr<GDepthStencilView> shadowDepthStencil = GraphicsDX11API::instance().getDevice()->createDepthStencilView(shadowDepthStencilDesc, shadowDepthStencilTexture);
 
   SPtr<GRenderTargetViewElement> colorRenderTargetDesc = std::make_shared<GRenderTargetViewElement>();
   colorRenderTargetDesc->format = COLORFORMAT::E::RGBA_32_FLOAT;
   colorRenderTargetDesc->width = 1280;
   colorRenderTargetDesc->height = 720;
-  colorRenderTargetDesc->flags   = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_UNORDERED_ACCESS;
+  colorRenderTargetDesc->flags   = GRESOURCE_BINDINGS::E::SHADERRESOURCE | GRESOURCE_BINDINGS::E::RENDERTARGET | GRESOURCE_BINDINGS::E::DEPTHSTENCIL | GRESOURCE_BINDINGS::E::UNORDEREDACCESS;
   SPtr<GRenderTargetView> colorRenderTarget = GraphicsDX11API::instance().getDevice()->createRenderTargetView(colorRenderTargetDesc);
   
   SPtr<GRenderTargetViewElement> positionRenderTargetDesc = std::make_shared<GRenderTargetViewElement>();
   positionRenderTargetDesc->format  = COLORFORMAT::E::RGBA_32_FLOAT;
   positionRenderTargetDesc->width   = 1280;
   positionRenderTargetDesc->height  = 720;
-  positionRenderTargetDesc->flags   = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
+  positionRenderTargetDesc->flags   = GRESOURCE_BINDINGS::E::SHADERRESOURCE | GRESOURCE_BINDINGS::E::RENDERTARGET | GRESOURCE_BINDINGS::E::UNORDEREDACCESS;
   SPtr<GRenderTargetView> positionRenderTarget = GraphicsDX11API::instance().getDevice()->createRenderTargetView(positionRenderTargetDesc);
   
   SPtr<GRasterizerElement> defaultRasDesc = std::make_shared<GRasterizerElement>();
@@ -410,17 +410,17 @@ main(int argc, char* argv[])
     // Clear
     {
       GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(shadowDepthStencil,
-                                                                            D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+                                                                            GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);
 
       GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(colorRenderTarget, Color::BLACK);
       GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(colorRenderTarget.get()->getDepthStencil(),
-                                                                            D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+                                                                            GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);
       
       GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(positionRenderTarget, Color::BLACK);
 
       GraphicsDX11API::instance().getDeviceContext()->clearRenderTargetView(backBufferRT, Color::MISSING);
       GraphicsDX11API::instance().getDeviceContext()->clearDepthStencilView(backBufferDS,
-                                                                            D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+                                                                            GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);
     }
 
     // Shadow pass
@@ -670,5 +670,8 @@ main(int argc, char* argv[])
 // 
 //   return res + EXIT_SUCCESS;
 }
+
+
+
 
 

@@ -103,7 +103,7 @@ GDX11DeviceContext::clearDepthStencilView(SPtr<GDepthStencilView> depthStencil,
   SPtr<GDX11DepthStencilView> pDepthStencilView = 
     std::static_pointer_cast<GDX11DepthStencilView>(depthStencil);
   
-  m_pDeviceContext->ClearDepthStencilView(pDepthStencilView->m_pDSV, clearFlags, depth, stencil);
+  m_pDeviceContext->ClearDepthStencilView(pDepthStencilView->m_pDSV, clearFlagsToD3D11CLEAR(clearFlags), depth, stencil);
 }
 
 void
@@ -366,5 +366,6 @@ GDX11DeviceContext::drawInstanced(SPtr<GMesh> mesh, uint32 instances) {
 
 
 }
+
 
 

@@ -273,7 +273,7 @@ GraphicsDX11API::createTexture2D(SPtr<RTexture> texture) {
   SPtr<GTextureElement> textureParams = std::make_shared<GTextureElement>();
   textureParams->width = texture->m_img->getWidth();
   textureParams->height = texture->m_img->getHeight();
-  textureParams->bindFlags = D3D11_BIND_SHADER_RESOURCE;
+  textureParams->bindFlags = GRESOURCE_BINDINGS::E::SHADERRESOURCE;
   textureParams->format = COLORFORMAT::E::RGBA_32_FLOAT;
   textureParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
   textureParams->cpuAccessFlags = 0;
@@ -494,7 +494,7 @@ GraphicsDX11API::createVertexBuffer(const Vector<char>& data) {
   bufferParams->data = data;
   bufferParams->byteSize = data.size();
   bufferParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
-  bufferParams->bindFlags = D3D11_BIND_VERTEX_BUFFER;
+  bufferParams->bindFlags = GRESOURCE_BINDINGS::E::VERTEXBUFFER;
   bufferParams->cpuAccessFlags = 0;
   SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
   return pBuffer;
@@ -507,7 +507,7 @@ GraphicsDX11API::createIndexBuffer(const Vector<char>& data) {
   bufferParams->data = data;
   bufferParams->byteSize = data.size();
   bufferParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
-  bufferParams->bindFlags = D3D11_BIND_INDEX_BUFFER;
+  bufferParams->bindFlags = GRESOURCE_BINDINGS::E::INDEXBUFFER;
   bufferParams->cpuAccessFlags = 0;
   SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
   return pBuffer;
@@ -519,7 +519,7 @@ GraphicsDX11API::createConstantBuffer(const Vector<char>& data) {
   bufferParams->data = data;
   bufferParams->byteSize = data.size();
   bufferParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
-  bufferParams->bindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  bufferParams->bindFlags = GRESOURCE_BINDINGS::E::CONSTANTBUFFER;
   bufferParams->cpuAccessFlags = 0;
   SPtr<GraphicsBuffer> pBuffer = m_pDevice->createGraphicsBuffer(bufferParams);
   return pBuffer;
@@ -571,7 +571,7 @@ GraphicsDX11API::queryInterface(int32 width, int32 height) {
   textureParams->mipLevels = 1;
   textureParams->format = COLORFORMAT::E::D_24_UNORM_S8_UINT;
   textureParams->usage = GRESOURCE_USAGE::E::eDEFAULT;
-  textureParams->bindFlags = D3D11_BIND_DEPTH_STENCIL;
+  textureParams->bindFlags = GRESOURCE_BINDINGS::E::DEPTHSTENCIL;
   SPtr<GTexture> pDepthStencil = createTexture2D(textureParams);
 
   m_pDepthStencilView = createDepthStencilView(nullptr, pDepthStencil);
@@ -602,7 +602,7 @@ GraphicsDX11API::queryInterface(const Vector2i & size) {
 void
 GraphicsDX11API::clear(const Color& color) {
   m_pDeviceContext->clearRenderTargetView(m_pRenderTargetView, color);
-  m_pDeviceContext->clearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+  m_pDeviceContext->clearDepthStencilView(m_pDepthStencilView, GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);
 }
 
 void
@@ -694,4 +694,6 @@ GCC_ALIGN(16)
 
 
 }
+
+
 

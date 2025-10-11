@@ -1,0 +1,141 @@
+#pragma once
+
+#include "cyDirectX11Prerequisites.h"
+#include <cyRTexture.h>
+#include <cyGGraphic.h>
+
+namespace CYLLENE_SDK {
+
+
+
+  static enum DXGI_FORMAT
+    colorFormatToDXGI(uint32 fmt) {
+    switch (COLORFORMAT::E::_from_integral_unchecked(fmt)) {
+    case COLORFORMAT::E::RGBA_32_FLOAT:       return DXGI_FORMAT_R32G32B32A32_FLOAT;
+    case COLORFORMAT::E::RGB_32_FLOAT:        return DXGI_FORMAT_R32G32B32_FLOAT;
+    case COLORFORMAT::E::RG_32_FLOAT:         return DXGI_FORMAT_R32G32_FLOAT;
+    case COLORFORMAT::E::R_32_FLOAT:          return DXGI_FORMAT_R32_FLOAT;
+    case COLORFORMAT::E::D_32_FLOAT:          return DXGI_FORMAT_D32_FLOAT;
+    case COLORFORMAT::E::RGBA_32_UINT:        return DXGI_FORMAT_R32G32B32A32_UINT;
+    case COLORFORMAT::E::RGB_32_UINT:         return DXGI_FORMAT_R32G32B32_UINT;
+    case COLORFORMAT::E::RG_32_UINT:          return DXGI_FORMAT_R32G32_UINT;
+    case COLORFORMAT::E::R_32_UINT:           return DXGI_FORMAT_R32_UINT;
+    case COLORFORMAT::E::D_32_UINT:           return DXGI_FORMAT_R32_UINT; // There is no D_32_UINT in DXGI, using R32_UINT instead
+    case COLORFORMAT::E::RGBA_32_SINT:        return DXGI_FORMAT_R32G32B32A32_SINT;
+    case COLORFORMAT::E::RGB_32_SINT:         return DXGI_FORMAT_R32G32B32_SINT;
+    case COLORFORMAT::E::RG_32_SINT:          return DXGI_FORMAT_R32G32_SINT;
+    case COLORFORMAT::E::R_32_SINT:           return DXGI_FORMAT_R32_SINT;
+    case COLORFORMAT::E::D_32_SINT:           return DXGI_FORMAT_R32_SINT; // There is no D_32_SINT in DXGI, using R32_SINT instead
+    case COLORFORMAT::E::RGBA_32_TYPELESS:    return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+    case COLORFORMAT::E::RGB_32_TYPELESS:     return DXGI_FORMAT_R32G32B32_TYPELESS;
+    case COLORFORMAT::E::RG_32_TYPELESS:      return DXGI_FORMAT_R32G32_TYPELESS;
+    case COLORFORMAT::E::R_32_TYPELESS:       return DXGI_FORMAT_R32_TYPELESS;
+    case COLORFORMAT::E::D_32_TYPELESS:       return DXGI_FORMAT_R32_TYPELESS; // There is no D_32_TYPELESS in DXGI, using R32_TYPELESS instead
+    case COLORFORMAT::E::RGBA_8_FLOAT:        return DXGI_FORMAT_R8G8B8A8_TYPELESS; // There is no RGBA_8_FLOAT in DXGI, using R8G8B8A8_TYPELESS instead
+    case COLORFORMAT::E::RGB_8_FLOAT:         return DXGI_FORMAT_R8G8B8A8_TYPELESS; // There is no RGB_8_FLOAT in DXGI, using R8G8B8A8_TYPELESS instead
+    case COLORFORMAT::E::RG_8_FLOAT:          return DXGI_FORMAT_R8G8_TYPELESS; // There is no RG_8_FLOAT in DXGI, using R8G8B8A8_TYPELESS instead
+    case COLORFORMAT::E::R_8_FLOAT:           return DXGI_FORMAT_R8_TYPELESS; // There is no R_8_FLOAT in DXGI, using R8G8B8A8_TYPELESS instead
+    case COLORFORMAT::E::D_8_FLOAT:           return DXGI_FORMAT_R8_TYPELESS; // There is no D_8_FLOAT in DXGI, using R8G8B8A8_TYPELESS instead
+    case COLORFORMAT::E::RGBA_8_UINT:         return DXGI_FORMAT_R8G8B8A8_UINT;
+    case COLORFORMAT::E::RGB_8_UINT:          return DXGI_FORMAT_R8G8B8A8_UINT; // There is no RGB_8_UINT in DXGI, using R8G8B8A8_UINT instead
+    case COLORFORMAT::E::RG_8_UINT:           return DXGI_FORMAT_R8G8_UINT;
+    case COLORFORMAT::E::R_8_UINT:            return DXGI_FORMAT_R8_UINT;
+    case COLORFORMAT::E::D_8_UINT:            return DXGI_FORMAT_R8_UINT; // There is no D_8_UINT in DXGI, using R8_UINT instead
+    case COLORFORMAT::E::RGBA_8_SINT:         return DXGI_FORMAT_R8G8B8A8_SINT;
+    case COLORFORMAT::E::RGB_8_SINT:          return DXGI_FORMAT_R8G8B8A8_SINT; // There is no RGB_8_SINT in DXGI, using R8G8B8A8_SINT instead
+    case COLORFORMAT::E::RG_8_SINT:           return DXGI_FORMAT_R8G8_SINT;
+    case COLORFORMAT::E::R_8_SINT:            return DXGI_FORMAT_R8_SINT;
+    case COLORFORMAT::E::D_8_SINT:            return DXGI_FORMAT_R8_SINT; // There is no D_8_SINT in DXGI, using R8_SINT instead
+    case COLORFORMAT::E::RGBA_8_TYPELESS:     return DXGI_FORMAT_R8G8B8A8_TYPELESS;
+    case COLORFORMAT::E::RGB_8_TYPELESS:      return DXGI_FORMAT_R8G8B8A8_TYPELESS; // There is no RGB_8_TYPELESS in DXGI, using R8G8B8A8_TYPELESS instead
+    case COLORFORMAT::E::RG_8_TYPELESS:       return DXGI_FORMAT_R8G8_TYPELESS;
+    case COLORFORMAT::E::R_8_TYPELESS:        return DXGI_FORMAT_R8_TYPELESS;
+    case COLORFORMAT::E::D_8_TYPELESS:        return DXGI_FORMAT_R8_TYPELESS; // There is no D_8_TYPELESS in DXGI, using R8_TYPELESS instead
+    case COLORFORMAT::E::RGBA_8_UNORM:        return DXGI_FORMAT_R8G8B8A8_UNORM;
+    case COLORFORMAT::E::RGB_8_UNORM:         return DXGI_FORMAT_R8G8B8A8_UNORM; // There is no RGB_8_UNORM in DXGI, using R8G8B8A8_UNORM instead
+    case COLORFORMAT::E::RG_8_UNORM:          return DXGI_FORMAT_R8G8_UNORM;
+    case COLORFORMAT::E::R_8_UNORM:           return DXGI_FORMAT_R8_UNORM;
+    case COLORFORMAT::E::D_8_UNORM:           return DXGI_FORMAT_R8_UNORM; // There is no D_8_UNORM in DXGI, using R8_UNORM instead
+    case COLORFORMAT::E::D_24_UNORM_S8_UINT:  return DXGI_FORMAT_D24_UNORM_S8_UINT;
+    case COLORFORMAT::E::BGRA_8_UNORM:        return DXGI_FORMAT_B8G8R8A8_UNORM;
+    default:                                  return DXGI_FORMAT_UNKNOWN;
+    }
+  }
+
+  static enum D3D11_INPUT_CLASSIFICATION
+    inputClassificationToD3D11INPUT(INPUTCLASSIFICATION::E classification) {
+    switch (classification) {
+    case INPUTCLASSIFICATION::E::PERVERTEX:   return D3D11_INPUT_PER_VERTEX_DATA;
+    case INPUTCLASSIFICATION::E::PERINSTANCE: return D3D11_INPUT_PER_INSTANCE_DATA;
+    default:                                  return D3D11_INPUT_PER_VERTEX_DATA;
+    }
+  }
+
+  static enum D3D11_USAGE
+    usageToD3D11USAGE(GRESOURCE_USAGE::E usage) {
+    switch (usage) {
+    case GRESOURCE_USAGE::E::eDEFAULT:   return D3D11_USAGE_DEFAULT;
+    case GRESOURCE_USAGE::E::eIMMUTABLE: return D3D11_USAGE_IMMUTABLE;
+    case GRESOURCE_USAGE::E::eDYNAMIC:   return D3D11_USAGE_DYNAMIC;
+    case GRESOURCE_USAGE::E::eSTAGING:   return D3D11_USAGE_STAGING;
+    default:                             return D3D11_USAGE_DEFAULT;
+    }
+  }
+
+static enum D3D_PRIMITIVE_TOPOLOGY
+primitiveTopologyToD3D3TOPOLOGY(GPRIMITIVE_TOPOLOGY::E topology) {
+  switch (topology) {
+  case GPRIMITIVE_TOPOLOGY::E::eUNKNOWN:            return D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+  case GPRIMITIVE_TOPOLOGY::E::ePOINTLIST:          return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+  case GPRIMITIVE_TOPOLOGY::E::eLINELIST:           return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+  case GPRIMITIVE_TOPOLOGY::E::eLINESTRIP:          return D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+  case GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST:       return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+  case GPRIMITIVE_TOPOLOGY::E::eTRIANGLESTRIP:      return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+  case GPRIMITIVE_TOPOLOGY::E::eLINELIST_ADJ:       return D3D11_PRIMITIVE_TOPOLOGY_LINELIST_ADJ;
+  case GPRIMITIVE_TOPOLOGY::E::eLINESTRIP_ADJ:      return D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ;
+  case GPRIMITIVE_TOPOLOGY::E::eTRIANGLELIST_ADJ:   return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ;
+  case GPRIMITIVE_TOPOLOGY::E::eTRIANGLESTRIP_ADJ:  return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ;
+  default:                                          return D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+  }
+
+}
+
+static uint32
+resourceBindingsToD3D11BINDINGS(uint32 bindings) {
+  uint32 d3d11Bindings = 0;
+  if (bindings & GRESOURCE_BINDINGS::E::VERTEXBUFFER)    d3d11Bindings |= D3D11_BIND_VERTEX_BUFFER;
+  if (bindings & GRESOURCE_BINDINGS::E::INDEXBUFFER)     d3d11Bindings |= D3D11_BIND_INDEX_BUFFER;
+  if (bindings & GRESOURCE_BINDINGS::E::CONSTANTBUFFER)  d3d11Bindings |= D3D11_BIND_CONSTANT_BUFFER;
+  if (bindings & GRESOURCE_BINDINGS::E::SHADERRESOURCE)  d3d11Bindings |= D3D11_BIND_SHADER_RESOURCE;
+  if (bindings & GRESOURCE_BINDINGS::E::STREAMOUTPUT)    d3d11Bindings |= D3D11_BIND_STREAM_OUTPUT;
+  if (bindings & GRESOURCE_BINDINGS::E::RENDERTARGET)    d3d11Bindings |= D3D11_BIND_RENDER_TARGET;
+  if (bindings & GRESOURCE_BINDINGS::E::DEPTHSTENCIL)    d3d11Bindings |= D3D11_BIND_DEPTH_STENCIL;
+  if (bindings & GRESOURCE_BINDINGS::E::UNORDEREDACCESS) d3d11Bindings |= D3D11_BIND_UNORDERED_ACCESS;
+  if (bindings & GRESOURCE_BINDINGS::E::DECODER)         d3d11Bindings |= D3D11_BIND_DECODER;
+  if (bindings & GRESOURCE_BINDINGS::E::ENCODER)         d3d11Bindings |= D3D11_BIND_VIDEO_ENCODER;
+  return d3d11Bindings;
+}
+
+static uint32
+clearFlagsToD3D11CLEAR(uint32 flags) {
+  uint32 d3d11Flags = 0;
+  if (flags & GCLEAR_FLAGS::E::DEPTH)   d3d11Flags |= D3D11_CLEAR_DEPTH;
+  if (flags & GCLEAR_FLAGS::E::STENCIL) d3d11Flags |= D3D11_CLEAR_STENCIL;
+  return d3d11Flags;
+}
+
+static D3D11_DSV_DIMENSION
+textureDimensionToD3D11DSVDIMENSION(GDSV_DIMENSION::E dimension) {
+  switch (dimension) {
+  case GDSV_DIMENSION::E::TEXTURE1D:          return D3D11_DSV_DIMENSION_TEXTURE1D;
+  case GDSV_DIMENSION::E::TEXTURE1DARRAY:     return D3D11_DSV_DIMENSION_TEXTURE1DARRAY;
+  case GDSV_DIMENSION::E::TEXTURE2D:          return D3D11_DSV_DIMENSION_TEXTURE2D;
+  case GDSV_DIMENSION::E::TEXTURE2DARRAY:     return D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+  case GDSV_DIMENSION::E::TEXTURE2DMS:        return D3D11_DSV_DIMENSION_TEXTURE2DMS;
+  case GDSV_DIMENSION::E::TEXTURE2DMSARRAY:   return D3D11_DSV_DIMENSION_TEXTURE2DMSARRAY;
+    // case GDSV_DIMENSION::E::TEXTURE3D:          return D3D11_DSV_DIMENSION_TEXTURE3D;
+  default:                                    return D3D11_DSV_DIMENSION_UNKNOWN;
+  }
+}
+
+} // namespace CYLLENE_SDK

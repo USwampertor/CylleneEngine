@@ -56,7 +56,7 @@ namespace {
 
   static uint32 resolveDepthTextureFormat(uint32 format, uint32 bindFlags) {
     const uint32 sanitized = sanitizeDepthFormat(format);
-    const bool wantsSRV = (bindFlags & D3D11_BIND_SHADER_RESOURCE) != 0;
+    const bool wantsSRV = (bindFlags & GRESOURCE_BINDINGS::E::SHADERRESOURCE) != 0;
 
     switch (COLORFORMAT::E::_from_integral_unchecked(sanitized)) {
     case COLORFORMAT::E::D_32_FLOAT:
@@ -149,7 +149,7 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
                                     SPtr<GTexture> texture) {
 
   const uint32 requestedFormat = dsvParams ? dsvParams->format : COLORFORMAT::E::D_24_UNORM_S8_UINT;
-  const uint32 bindFlags = (dsvParams && dsvParams->flags > 0) ? dsvParams->flags : D3D11_BIND_DEPTH_STENCIL;
+  const uint32 bindFlags = (dsvParams && dsvParams->flags > 0) ? dsvParams->flags : GRESOURCE_BINDINGS::E::DEPTHSTENCIL;
   const uint32 viewFormat = resolveDepthViewFormat(requestedFormat);
   const uint32 textureFormat = resolveDepthTextureFormat(texture ? requestedFormat : viewFormat, bindFlags);
 
@@ -162,7 +162,7 @@ GDX11Device::createDepthStencilView(// SPtr<GTexture> depthStencilView,
   if (dsvDesc != nullptr) {
     dsvDesc->Format = colorFormatToDXGI(viewFormat);
     dsvDesc->Texture2D.MipSlice = 0;
-    dsvDesc->ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+        dsvDesc->ViewDimension = textureDimensionToD3D11DSVDIMENSION(GDSV_DIMENSION::E::_from_integral_unchecked(dsvParams && dsvParams->viewDimension ? dsvParams->viewDimension : GDSV_DIMENSION::E::TEXTURE2D));
     dsvDesc->Flags = 0;
   }
 
@@ -205,9 +205,9 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
   
   bool requieresDepthStencil = false;
   if (rtvParams != nullptr) {
-    if (rtvParams->flags & D3D11_BIND_DEPTH_STENCIL) {
+    if (rtvParams->flags & GRESOURCE_BINDINGS::E::DEPTHSTENCIL) {
       requieresDepthStencil = true;
-      rtvParams->flags = (rtvParams->flags & ~D3D11_BIND_DEPTH_STENCIL);
+      rtvParams->flags = (rtvParams->flags & ~GRESOURCE_BINDINGS::E::DEPTHSTENCIL);
     }
   }
   
@@ -231,7 +231,7 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
   pTextureElement->mipLevels = (rtvParams && rtvParams->mipLevels > 0) ? rtvParams->mipLevels : 1;
   pTextureElement->format = resolvedRTVFormat;
   pTextureElement->usage = GRESOURCE_USAGE::E::eDEFAULT;
-  pTextureElement->bindFlags = (rtvParams && rtvParams->flags > 0) ? rtvParams->flags : D3D11_BIND_RENDER_TARGET;
+  pTextureElement->bindFlags = (rtvParams && rtvParams->flags > 0) ? rtvParams->flags : GRESOURCE_BINDINGS::E::RENDERTARGET;
 
   SPtr<GTexture> renderTargetTexture = pTexture ? pTexture : createTexture2D(pTextureElement);
   if (!renderTargetTexture) {
@@ -248,7 +248,7 @@ GDX11Device::createRenderTargetView(SPtr<GRenderTargetViewElement> rtvParams,
     dsvparams->width = pTextureElement->width;
     dsvparams->height = pTextureElement->height;
     dsvparams->format = COLORFORMAT::E::D_24_UNORM_S8_UINT;
-    dsvparams->viewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+        dsvparams->viewDimension = GDSV_DIMENSION::E::TEXTURE2D;
     dsvparams->mipLevels = pTextureElement->mipLevels;
     dsvparams->flags = 0;
   }
@@ -276,9 +276,9 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
 
   if (desc != nullptr) {
     desc->ArraySize = 1;
-    desc->BindFlags = textureParams->bindFlags;
+        desc->BindFlags = resourceBindingsToD3D11BINDINGS(textureParams->bindFlags);
     desc->CPUAccessFlags = textureParams->cpuAccessFlags;
-    const bool requestsDepth = (textureParams->bindFlags & D3D11_BIND_DEPTH_STENCIL) != 0;
+    const bool requestsDepth = (textureParams->bindFlags & GRESOURCE_BINDINGS::E::DEPTHSTENCIL) != 0;
     const uint32 resolvedTextureFormat = requestsDepth
       ? resolveDepthTextureFormat(textureParams->format, textureParams->bindFlags)
       : resolveColorFormat(textureParams->format);
@@ -298,7 +298,7 @@ GDX11Device::createTexture2D(SPtr<GTextureElement> textureParams) {
   }
 
   // TODO: Create shader resource view in case of flag on
-  if (textureParams->bindFlags & D3D11_BIND_SHADER_RESOURCE) {
+  if (textureParams->bindFlags & GRESOURCE_BINDINGS::E::SHADERRESOURCE) {
     SPtr<GShaderResourceViewElement> pSRVParams = std::make_shared<GShaderResourceViewElement>();
 
     pSRVParams->format = textureParams->format;
@@ -639,6 +639,8 @@ GDX11Device::createRasterizerState(SPtr<GRasterizerElement> rasterizerParams) {
 }
 
 }
+
+
 
 
 
