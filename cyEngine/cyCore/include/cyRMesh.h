@@ -13,7 +13,7 @@ class CY_CORE_EXPORT RMesh : public RResource {
   
 public:
 
-  RMesh() : RResource(RMesh::staticType()) {}
+  RMesh();
   
   static RESOURCE_TYPE::E 
   staticType() { 

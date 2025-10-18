@@ -70,6 +70,7 @@
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
     <ClCompile Include="src\cyCLight.cpp" />
     <ClCompile Include="src\cyCParticleEmitter.cpp" />
+    <ClCompile Include="src\cyEngineAssets.cpp" />
     <ClCompile Include="src\cyGraphicsPipeline.cpp" />
     <ClCompile Include="src\cyInput.cpp" />
     <ClCompile Include="src\cyRAsset.cpp" />
