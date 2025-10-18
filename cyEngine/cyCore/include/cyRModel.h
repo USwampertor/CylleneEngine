@@ -33,7 +33,7 @@ public:
 
   SPtr<SkeletonResource> m_skeleton;
 
-  bool m_hasSkeleton;
+  bool m_hasSkeleton = false;
 
 };
 

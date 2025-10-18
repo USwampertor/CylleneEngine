@@ -4,6 +4,7 @@
 #include "cyDefaultPrimitives.h"
 #include "cyRImage.h"
 #include "cyRMesh.h"
+#include "cyEngineAssets.h"
 #include "cyRModel.h"
 #include "cyRResource.h"
 #include "cyResourceManager.h"
@@ -190,10 +191,16 @@ processNode(SPtr<RModel>& m, aiNode* node, const aiScene* scene) {
     m->m_hasSkeleton = false;
     if (mesh->HasBones()) { m->m_hasSkeleton = true; }
     if (scene->HasMaterials()) {
-      // TODO: Get default material
-      m->m_meshes.back()->m_material = makeSharedPtr<RMaterial>();
+      // Ensure mesh has default material instead of an empty one
+      SPtr<RMaterial> defMat = ResourceManager::instance().get<RMaterial>("DefaultMaterial");
+      if (!defMat) {
+        defMat = ResourceManager::instance().create<RMaterial>("DefaultMaterial");
+        void* matData = const_cast<void*>(reinterpret_cast<const void*>(&DEFAULTMATERIALS::defaultMaterial));
+        defMat->setData(matData);
+      }
+      m->m_meshes.back()->m_material = defMat;
       aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
-      
+      (void)aiMat; // currently unused
     }
   }
 
