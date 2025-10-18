@@ -223,7 +223,7 @@ GDefaultGeometryPass::~GDefaultGeometryPass() {
 
 void
 GDefaultGeometryPass::initialize(WPtr<CCamera> newParentCamera, 
-                          WPtr<GraphicsPipeline> newParentPipeline) {
+                                 WPtr<GraphicsPipeline> newParentPipeline) {
   GGraphicPass::initialize(newParentCamera, newParentPipeline);
 
   if (m_camera.expired()) {
@@ -509,9 +509,8 @@ GDefaultParticlesPass::initialize(WPtr<CCamera> newParentCamera,
   // Prepare SAQ object once (optional reuse)
   SPtr<BBeing> saqObject = SceneManager::instance().createBeing<BBeing>("SAQ_Particles").lock();
   saqObject->getTransform().lock()->setLocalTransform(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
-  saqObject->createComponent<CMeshRenderer>();
-  SPtr<RMesh> saqMeshRes = ResourceManager::instance().get<RMesh>("SAQ");
-  saqObject->getComponent<CMeshRenderer>().lock()->setMesh(saqMeshRes);
+  SPtr<RModel> saqMeshRes = ResourceManager::instance().get<RModel>("saq");
+  saqObject->createComponent<CMeshRenderer>(saqMeshRes->m_meshes[0]);
   m_cachedSAQObject = saqObject;
 
 }
@@ -608,7 +607,7 @@ GDefaultParticlesPass::shutdown() {
 
 void
 GDefaultPPPass::initialize(WPtr<CCamera> newParentCamera, 
-                             WPtr<GraphicsPipeline> newParentPipeline) {
+                           WPtr<GraphicsPipeline> newParentPipeline) {
   GGraphicPass::initialize(newParentCamera, newParentPipeline);
 
   if (!m_pVSAQShader) {
@@ -746,9 +745,8 @@ GDefaultPPPass::execute() {
   }
   SPtr<BBeing> saqObject = SceneManager::instance().createBeing<BBeing>("SAQ_Particles").lock();
   saqObject->getTransform().lock()->setLocalTransform(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
-  saqObject->createComponent<CMeshRenderer>();
-  SPtr<RMesh> saqMeshRes = ResourceManager::instance().get<RMesh>("SAQ");
-  saqObject->getComponent<CMeshRenderer>().lock()->setMesh(saqMeshRes);
+  SPtr<RModel> saqMeshRes = ResourceManager::instance().get<RModel>("saq");
+  saqObject->createComponent<CMeshRenderer>(saqMeshRes->m_meshes[0]);
   
   // Full-screen draw using SAQ mesh only (no material rebinding)
   SPtr<GMesh> saqMesh = REINTERPRETPOINTER(GMesh, GraphicsAPI::instance().getGGraphic<RMesh>("SAQ"));

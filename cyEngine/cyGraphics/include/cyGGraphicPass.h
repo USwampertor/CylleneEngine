@@ -58,8 +58,6 @@ public:
                           WPtr<GraphicsPipeline> newParentPipeline) {
     m_parentPipeline = newParentPipeline;
     m_camera = newParentCamera;
-    // auto self = makeSharedPtr<GGraphicPass>(this); // std::static_pointer_cast<GraphicPass>(shared_from_this());
-    // m_parentPipeline.lock()->addPass(self);
     setID(m_parentPipeline.lock()->getPasses().size() - 1);
   }
   virtual void clear() = 0;

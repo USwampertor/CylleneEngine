@@ -45,21 +45,28 @@ GraphicsAPI::createDefaultObjects() {
   }
 
   m_defaultPipeline = makeSharedPtr<GraphicsPipeline>();
-  
 
   SPtr<GDefaultShadowPass> shadowPass = makeSharedPtr<GDefaultShadowPass>();
   m_defaultPipeline->addPass(shadowPass);
   shadowPass->initialize(directionalLight.lock()->getComponent<CCamera>(), m_defaultPipeline);
+  shadowPass->m_parentPipeline = m_defaultPipeline;
+
   SPtr<GDefaultGeometryPass> colorPass = makeSharedPtr<GDefaultGeometryPass>();
   m_defaultPipeline->addPass(colorPass);
   colorPass->initialize(mainCamera.lock()->getComponent<CCamera>(), m_defaultPipeline);
+  colorPass->m_parentPipeline = m_defaultPipeline;
+
   SPtr<GDefaultParticlesPass> particlesPass = makeSharedPtr<GDefaultParticlesPass>();
   m_defaultPipeline->addPass(particlesPass);
   particlesPass->initialize(mainCamera.lock()->getComponent<CCamera>(), m_defaultPipeline);
+  particlesPass->m_parentPipeline = m_defaultPipeline;
+
   SPtr<GDefaultPPPass> postProcessPass = makeSharedPtr<GDefaultPPPass>();
   m_defaultPipeline->addPass(postProcessPass);
   postProcessPass->initialize(mainCamera.lock()->getComponent<CCamera>(), m_defaultPipeline);
+  postProcessPass->m_parentPipeline = m_defaultPipeline;
 
+  mainCamera.lock()->getComponent<CCamera>().lock()->m_pipeline = m_defaultPipeline;
 }
 
 SPtr<GVertexShader>
@@ -165,8 +172,9 @@ GraphicsAPI::executePipelines() {
       WPtr<GraphicsPipeline> pipeline = cameraPtr.lock()->m_pipeline;
 
       for (auto& pass : pipeline.lock()->getPasses()) {
-        WPtr<GGraphicPass> passPtr = REINTERPRETPOINTER(GGraphicPass, pass);
-        passPtr.lock()->execute();
+        WPtr<GGraphicPass> passPtr = STATICPOINTER(GGraphicPass, pass);
+        auto pass = passPtr.lock();
+        pass->execute();
       }
     }
 
@@ -182,7 +190,7 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
   }
   
   SPtr<CMeshRenderer> meshRenderer = refObject->getComponent<CMeshRenderer>().lock();
-  SPtr<GMesh> refMesh = REINTERPRETPOINTER(GMesh, getGGraphic<RMesh>(meshRenderer->m_mesh->getName()));
+  SPtr<GMesh> refMesh = STATICPOINTER(GMesh, getGGraphic<RMesh>(meshRenderer->m_mesh->getName()));
   if (!refMesh) {
     Logger::instance().logWarning("This mesh was never registered when created into the graphics API");
     return;
@@ -208,7 +216,6 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
   getDeviceContext()->setVertexBuffers(0, 1, vertexBuffer, vertexStrides, vertexOffsets);
 
   getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
-
 
   SPtr<RMaterial> materialInstance = meshRenderer->m_mesh->m_material;
   const auto& matValues = materialInstance->getDefaultValues();
