@@ -174,6 +174,12 @@ GraphicsAPI::executePipelines() {
       for (auto& pass : pipeline.lock()->getPasses()) {
         WPtr<GGraphicPass> passPtr = STATICPOINTER(GGraphicPass, pass);
         auto pass = passPtr.lock();
+        pass->clear();
+      }
+
+      for (auto& pass : pipeline.lock()->getPasses()) {
+        WPtr<GGraphicPass> passPtr = STATICPOINTER(GGraphicPass, pass);
+        auto pass = passPtr.lock();
         pass->execute();
       }
     }
@@ -244,7 +250,7 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
         sVal.type == +GSHADERPARAM::E::eTEXTURECUBE) {
       RTexture* rTex = reinterpret_cast<RTexture*>(it->second);
       if (rTex) {
-        SPtr<GTexture> gTex = REINTERPRETPOINTER(GTexture, getGGraphic<RTexture>(rTex->getName()));
+        SPtr<GTexture> gTex = STATICPOINTER(GTexture, getGGraphic<RTexture>(rTex->getName()));
         if (gTex) srvs.push_back(gTex->getResource());
       }
     }

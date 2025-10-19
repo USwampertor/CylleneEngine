@@ -413,7 +413,7 @@ main(int argc, char* argv[])
 
       GraphicsAPI::instance().getDeviceContext()->clearRenderTargetView(colorRenderTarget, Color::BLACK);
       GraphicsAPI::instance().getDeviceContext()->clearDepthStencilView(colorRenderTarget.get()->getDepthStencil(),
-        GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);
+        GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);  
 
       GraphicsAPI::instance().getDeviceContext()->clearRenderTargetView(positionRenderTarget, Color::BLACK);
 
@@ -813,6 +813,8 @@ main(int argc, char* argv[])
   File saqFile = FileSystem::open(resDir.fullPath() + "/saq.fbx");
   SPtr<RModel> saqModel = ResourceManager::instance().loadFromPath<RModel>(saqFile.path());
   if (saqModel) { GraphicsAPI::instance().registerResource(saqModel); }
+  SPtr<RMesh> saqMesh = (saqModel && !saqModel->m_meshes.empty()) ? saqModel->m_meshes[0] : nullptr;
+  if (saqMesh && mat) { saqMesh->m_material = mat; }
 
   // Create default pipeline and passes bound to the camera/light beings
   GraphicsAPI::instance().createDefaultObjects();

@@ -140,6 +140,10 @@ public:
   drawIndexedInstanced(SPtr<GMesh> mesh, uint32 instances) = 0;
 
   virtual void
+  drawIndexedInstancedIndirect(Vector<SPtr<GraphicsBuffer>>, 
+                               uint32 instances) = 0;
+
+  virtual void
   dispatch(Vector3f threadGroupCount) = 0;
 
   virtual void

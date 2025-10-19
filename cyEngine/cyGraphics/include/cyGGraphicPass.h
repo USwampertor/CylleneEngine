@@ -9,6 +9,8 @@
 #include "cyGRenderTargetView.h"
 #include "cyGSamplerState.h"
 #include "cyGBlendState.h"
+#include "cyGShaderResourceView.h"
+#include "cyWindow.h"
 
 #include <cyGraphicsPipeline.h>
 
@@ -96,6 +98,10 @@ struct DefaultShadowConstantBuffer
 {
   Matrix4 shadowView = Matrix4::IDENTITY;
   Matrix4 shadowProjection = Matrix4::IDENTITY;
+  uint32 shadowCount = 0; // number of shadow maps bound
+  uint32 pad0 = 0;
+  uint32 pad1 = 0;
+  uint32 pad2 = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,6 +136,13 @@ public:
   virtual SPtr<GraphicsBuffer> getOutputBuffer() const { return m_shadowCB; }
 
   DefaultShadowConstantBuffer getShadowConstants() { return m_shadowConstants; }
+  Vector<SPtr<GShaderResourceView>> getShadowSRVs() const {
+    Vector<SPtr<GShaderResourceView>> srvs;
+    for (auto& t : m_shadowDSTs) {
+      if (t) srvs.push_back(t->getResource());
+    }
+    return srvs;
+  }
 
   DefaultShadowConstantBuffer m_shadowConstants;
   SPtr<GraphicsBuffer> m_shadowCB;
@@ -173,6 +186,7 @@ public:
   SPtr<GRenderTargetView> m_positionRenderTarget;
   SPtr<GraphicsBuffer> m_shaderConstantsBuffer;
 
+  SPtr<GBlendState> m_defaultBlend;
 
   float m_time = 0.0f;
 };

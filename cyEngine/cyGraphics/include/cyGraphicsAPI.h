@@ -35,7 +35,7 @@ namespace CYLLENE_SDK {
 
 	namespace GFXTYPE
 	{
-	BETTER_ENUM(E, uint32, 
+	BETTER_ENUM(E, int32, 
 							eUNKNOWN = -1,
 							eNONE = 0,
 							eDX09 = 1,
@@ -363,6 +363,9 @@ public:
 			}
 			else if (+SHADER_TYPE::E::PIXEL == shaderType) {
         newGShader = createPixelShader(shader, "pixel_main");
+			}
+			else if (+SHADER_TYPE::E::COMPUTE == shaderType) {
+				newGShader = createComputeShader(shader, "compute_main");
 			}
 			
       if (newGShader != nullptr) {
