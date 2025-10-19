@@ -10,6 +10,7 @@
 #include "cyGSamplerState.h"
 #include "cyGBlendState.h"
 #include "cyGShaderResourceView.h"
+#include "cyWindow.h"
 
 #include <cyGraphicsPipeline.h>
 
@@ -185,6 +186,7 @@ public:
   SPtr<GRenderTargetView> m_positionRenderTarget;
   SPtr<GraphicsBuffer> m_shaderConstantsBuffer;
 
+  SPtr<GBlendState> m_defaultBlend;
 
   float m_time = 0.0f;
 };
