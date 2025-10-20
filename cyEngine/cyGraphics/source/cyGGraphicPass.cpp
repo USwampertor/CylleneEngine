@@ -415,7 +415,8 @@ GDefaultGeometryPass::execute() {
   auto renderables = SceneManager::instance().findBeingsWithComponent<CMeshRenderer>();
   for (auto& obj : renderables) {
     if (auto sp = obj.lock()) {
-      GraphicsAPI::instance().draw(sp);
+      if (sp->isActive())
+        GraphicsAPI::instance().draw(sp);
     }
   }
 }
@@ -519,13 +520,30 @@ GDefaultParticlesPass::initialize(WPtr<CCamera> newParentCamera,
   alphaBlendDesc->writeMask = BLEND_MASK::E::ALL;
   m_alphaBlend = GraphicsAPI::instance().getDevice()->createBlendState(alphaBlendDesc);
 
+  Path resDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+
+  // Load texture referenced by particle material and register
+  File baseTexFile = FileSystem::open(resDir.fullPath() + "/particle.png");
+  SPtr<RImage> baseImage = ResourceManager::instance().loadFromPath<RImage>(baseTexFile.path());
+  SPtr<RTexture> baseTex = ResourceManager::instance().create<RTexture>(baseImage->getName());
+  baseTex->setImage(baseImage);
+  if (baseTex) { GraphicsAPI::instance().registerResource(baseTex); }
+
+  File matFile = FileSystem::open(resDir.fullPath() + "/particle.mat");
+  SPtr<RMaterial> mat = ResourceManager::instance().loadFromPath<RMaterial>(matFile.path());
+
   // Prepare SAQ object once (optional reuse)
   SPtr<BBeing> saqObject = SceneManager::instance().createBeing<BBeing>("SAQ_Particles").lock();
   saqObject->getTransform().lock()->setLocalTransform(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
+  
   SPtr<RModel> saqMeshRes = ResourceManager::instance().get<RModel>("saq");
-  saqObject->createComponent<CMeshRenderer>(saqMeshRes->m_meshes[0]);
-  m_cachedSAQObject = saqObject;
+  SPtr<RMesh> saqMesh = (saqMeshRes && !saqMeshRes->m_meshes.empty()) ? saqMeshRes->m_meshes[0] : nullptr;
 
+  saqObject->createComponent<CMeshRenderer>(saqMesh);
+  if (saqMesh && mat) { saqMesh->m_material = mat; }
+  
+  m_cachedSAQObject = saqObject;
+  saqObject->setActive(false);
 }
 
 

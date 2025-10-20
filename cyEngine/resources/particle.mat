@@ -1,0 +1,9 @@
+{
+  "type": "material",
+  "name": "particle",
+  "baseShader": "particlePixelShader",
+  "values": {
+    "txColor": "particle"
+  }
+}
+
