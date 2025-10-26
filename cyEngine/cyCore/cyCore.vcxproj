@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\cyCMaterialInstance.h" />
     <ClInclude Include="include\cyCMeshRenderer.h" />
     <ClInclude Include="include\cyCLight.h" />
     <ClInclude Include="include\cyCParticleEmitter.h" />
@@ -67,6 +68,7 @@
   <ItemGroup>
     <ClCompile Include="src\cyBBeing.cpp" />
     <ClCompile Include="src\cyCComponent.cpp" />
+    <ClCompile Include="src\cyCMaterialInstance.cpp" />
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
     <ClCompile Include="src\cyCLight.cpp" />
     <ClCompile Include="src\cyCParticleEmitter.cpp" />

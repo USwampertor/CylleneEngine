@@ -147,6 +147,9 @@
     <ClInclude Include="include\cyGraphicsPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyCMaterialInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -264,6 +267,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyEngineAssets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCMaterialInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -32,7 +32,7 @@ public:
 
   Vector<uint32> m_indexBuffer;
 
-  SPtr<RMaterial> m_material;
+  // SPtr<RMaterial> m_material;
 };
 
 }

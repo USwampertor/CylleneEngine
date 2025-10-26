@@ -101,13 +101,13 @@ public:
   WPtr<RShader>
   getBaseShader() const { return m_shader; }
 
-  const std::unordered_map<std::string, MaterialValue>&
+  const UnorderedMap<String, MaterialValue>&
   getDefaultValues() const { return m_values; }
 
 private:
 
   WPtr<RShader> m_shader;
-  std::unordered_map<std::string, MaterialValue> m_values;
+  UnorderedMap<String, MaterialValue> m_values;
 
 };
 

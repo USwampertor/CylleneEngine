@@ -5,6 +5,8 @@
 #include "cyRModel.h"
 #include "cyRMesh.h"
 
+#include "cyCMaterialInstance.h"
+
 #include <cyUtilities.h>
 
 
@@ -40,8 +42,11 @@ public:
   }
 
   SPtr<RMesh> m_mesh = nullptr;
-
   bool m_castsShadows = false;
+
+
+  WPtr<CMaterialInstance> m_materialInstance;
+
 };
 
 

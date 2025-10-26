@@ -22,6 +22,7 @@ namespace CYLLENE_SDK {
                 eLIGHT2D,
                 eLIGHT3D,
                 eMESHRENDERER,
+                eMATERIALINSTANCE,
                 ePARTICLEEMITTER,
                 eSHADER,
                 eSPRITE,
