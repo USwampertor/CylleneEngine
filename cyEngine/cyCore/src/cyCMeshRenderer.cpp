@@ -20,18 +20,27 @@ CMeshRenderer::setModel(const SPtr<RModel>& newModel) {
     WPtr<CMeshRenderer> subMesh = child->createComponent<CMeshRenderer>(newModel->m_meshes[i]);
     m_owner.lock()/*->getTransform()*/->addChild(child/*->getTransform()*/);
     
-    String matInstanceChildName = Utils::format("%s_matInst_%d", childName.c_str(), i);
-    subMesh.lock()->m_materialInstance = ResourceManager::instance().create<RMaterialInstance>(matInstanceChildName);
-    WPtr<RMaterial> ogMaterial = ResourceManager::instance().get<RMaterial>(newModel->m_meshes[i]->m_materialName);
+  }
+}
+
+void
+CMeshRenderer::createMaterialInstance() {
+  if (m_mesh) {
+    String matInstanceChildName = Utils::format("%s_matInst", m_owner.lock()->getName().c_str());
+    m_materialInstance = ResourceManager::instance().get<RMaterialInstance>(matInstanceChildName);
+    if (!m_materialInstance.lock()) {
+      m_materialInstance = ResourceManager::instance().create<RMaterialInstance>(matInstanceChildName);
+    }
+    WPtr<RMaterial> ogMaterial = ResourceManager::instance().get<RMaterial>(m_mesh->m_materialName);
     if (ogMaterial.lock()) {
-      subMesh.lock()->m_materialInstance.lock()->setMaterial(ogMaterial.lock());
+      m_materialInstance.lock()->setMaterial(ogMaterial.lock());
     }
-    else {
-      ogMaterial = ResourceManager::instance().get<RMaterial>("DefaultMaterial");
-      if (ogMaterial.lock()) {
-        subMesh.lock()->m_materialInstance.lock()->setMaterial(ogMaterial.lock());
-      }
-    }
+    // else {
+    //   ogMaterial = ResourceManager::instance().get<RMaterial>("DefaultMaterial");
+    //   if (ogMaterial.lock()) {
+    //     m_materialInstance.lock()->setMaterial(ogMaterial.lock());
+    //   }
+    // }
   }
 }
 
