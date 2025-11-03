@@ -5,7 +5,7 @@
 #include "cyRModel.h"
 #include "cyRMesh.h"
 
-#include "cyCMaterialInstance.h"
+#include "cyRMaterialInstance.h"
 
 #include <cyUtilities.h>
 
@@ -45,7 +45,7 @@ public:
   bool m_castsShadows = false;
 
 
-  WPtr<CMaterialInstance> m_materialInstance;
+  WPtr<RMaterialInstance> m_materialInstance;
 
 };
 

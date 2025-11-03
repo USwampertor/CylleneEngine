@@ -1,21 +1,10 @@
-#include "cyCMaterialInstance.h"
+#include "cyRMaterialInstance.h"
 #include <cyUtilities.h>
 
 namespace CYLLENE_SDK {
 
-const String
-CMaterialInstance::toString() {
-  String baseName = "<none>";
-  if (auto mat = m_material.lock()) {
-    baseName = mat->getName();
-  }
-  return Utils::format("Base: %s, Overrides: %zu",
-                       baseName.c_str(),
-                       static_cast<size_t>(m_overrides.size()));
-}
-
 void
-CMaterialInstance::setMaterial(const SPtr<RMaterial>& material) {
+RMaterialInstance::setMaterial(const SPtr<RMaterial>& material) {
   m_material = material;
 
   m_overrides.clear();
@@ -23,35 +12,35 @@ CMaterialInstance::setMaterial(const SPtr<RMaterial>& material) {
 }
 
 void
-CMaterialInstance::setValue(const String& name, MaterialValue value) {
+RMaterialInstance::setValue(const String& name, MaterialValue value) {
   m_overrides[name] = value;
 }
 
 void
-CMaterialInstance::clearValue(const String& name) {
+RMaterialInstance::clearValue(const String& name) {
   auto it = m_overrides.find(name);
   if (it != m_overrides.end()) m_overrides.erase(it);
 }
 
 void
-CMaterialInstance::clearAllValues() {
+RMaterialInstance::clearAllValues() {
   m_overrides.clear();
 }
 
 bool
-CMaterialInstance::hasValue(const String& name) const {
+RMaterialInstance::hasValue(const String& name) const {
   return m_overrides.find(name) != m_overrides.end();
 }
 
 MaterialValue
-CMaterialInstance::getValue(const String& name) const {
+RMaterialInstance::getValue(const String& name) const {
   auto it = m_overrides.find(name);
   if (it != m_overrides.end()) return it->second;
   return nullptr;
 }
 
 MaterialValue
-CMaterialInstance::getResolvedValue(const String& name) const {
+RMaterialInstance::getResolvedValue(const String& name) const {
   // Prefer override if present
   auto it = m_overrides.find(name);
   if (it != m_overrides.end()) return it->second;

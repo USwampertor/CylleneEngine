@@ -87,6 +87,8 @@ class CY_CORE_EXPORT RMaterial : public RResource
 public:
   RMaterial() : RResource(RMaterial::staticType()) {}
 
+  ~RMaterial() = default;
+
   static RESOURCE_TYPE::E staticType() { return RESOURCE_TYPE::E::eMATERIAL; }
 
   virtual void*

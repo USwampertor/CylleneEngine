@@ -32,7 +32,10 @@ public:
 
   Vector<uint32> m_indexBuffer;
 
-  // SPtr<RMaterial> m_material;
+  // Optional: material name bound to this mesh (filled by importer)
+  String m_materialName;
+
+  UnorderedMap<String, String> m_importData;
 };
 
 }

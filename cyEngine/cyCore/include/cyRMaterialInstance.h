@@ -10,18 +10,21 @@ namespace CYLLENE_SDK
 // CMaterialInstance represents a per-entity editable instance
 // that references a base RMaterial and carries per-instance
 // overrides for named material values.
-class CY_CORE_EXPORT CMaterialInstance : public CComponent
+class CY_CORE_EXPORT RMaterialInstance : public RResource
 {
 public:
-  CMaterialInstance(const SPtr<RMaterial>& material = nullptr)
-    : CComponent(CMaterialInstance::staticType()), m_material(material) {}
+  RMaterialInstance(const SPtr<RMaterial>& material = nullptr)
+    : RResource(RMaterialInstance::staticType()), m_material(material) {}
 
-  ~CMaterialInstance() = default;
+  ~RMaterialInstance() = default;
 
-  static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eMATERIALINSTANCE; }
+  static RESOURCE_TYPE::E staticType() { return RESOURCE_TYPE::E::eMATERIALINSTANCE; }
 
-  // Summary text for inspectors/debugging
-  virtual const String toString() override;
+  virtual void*
+  getData() override { return nullptr; }
+
+  virtual void
+  setData(void* data) {}
 
   // Base material reference
   void 

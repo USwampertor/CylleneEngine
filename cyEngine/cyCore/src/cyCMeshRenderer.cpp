@@ -17,8 +17,21 @@ CMeshRenderer::setModel(const SPtr<RModel>& newModel) {
     // child->createComponent<CTransform>(Vector3f::ZERO, 
     //                                    Vector3f::ONE, 
     //                                    Quaternion::IDENTITY); // TODO: REVISION ON HOW DO YOU GET TRANSFORM
-    child->createComponent<CMeshRenderer>(newModel->m_meshes[i]);
+    WPtr<CMeshRenderer> subMesh = child->createComponent<CMeshRenderer>(newModel->m_meshes[i]);
     m_owner.lock()/*->getTransform()*/->addChild(child/*->getTransform()*/);
+    
+    String matInstanceChildName = Utils::format("%s_matInst_%d", childName.c_str(), i);
+    subMesh.lock()->m_materialInstance = ResourceManager::instance().create<RMaterialInstance>(matInstanceChildName);
+    WPtr<RMaterial> ogMaterial = ResourceManager::instance().get<RMaterial>(newModel->m_meshes[i]->m_materialName);
+    if (ogMaterial.lock()) {
+      subMesh.lock()->m_materialInstance.lock()->setMaterial(ogMaterial.lock());
+    }
+    else {
+      ogMaterial = ResourceManager::instance().get<RMaterial>("DefaultMaterial");
+      if (ogMaterial.lock()) {
+        subMesh.lock()->m_materialInstance.lock()->setMaterial(ogMaterial.lock());
+      }
+    }
   }
 }
 
