@@ -10,6 +10,7 @@
 #include "cyGSamplerState.h"
 #include "cyGBlendState.h"
 #include "cyGShaderResourceView.h"
+#include "cyWindow.h"
 
 #include <cyGraphicsPipeline.h>
 
@@ -58,8 +59,6 @@ public:
                           WPtr<GraphicsPipeline> newParentPipeline) {
     m_parentPipeline = newParentPipeline;
     m_camera = newParentCamera;
-    // auto self = makeSharedPtr<GGraphicPass>(this); // std::static_pointer_cast<GraphicPass>(shared_from_this());
-    // m_parentPipeline.lock()->addPass(self);
     setID(m_parentPipeline.lock()->getPasses().size() - 1);
   }
   virtual void clear() = 0;
@@ -187,6 +186,7 @@ public:
   SPtr<GRenderTargetView> m_positionRenderTarget;
   SPtr<GraphicsBuffer> m_shaderConstantsBuffer;
 
+  SPtr<GBlendState> m_defaultBlend;
 
   float m_time = 0.0f;
 };

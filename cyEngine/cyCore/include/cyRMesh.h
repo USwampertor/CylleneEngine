@@ -13,7 +13,7 @@ class CY_CORE_EXPORT RMesh : public RResource {
   
 public:
 
-  RMesh() : RResource(RMesh::staticType()) {}
+  RMesh();
   
   static RESOURCE_TYPE::E 
   staticType() { 
@@ -32,7 +32,10 @@ public:
 
   Vector<uint32> m_indexBuffer;
 
-  SPtr<RMaterial> m_material;
+  // Optional: material name bound to this mesh (filled by importer)
+  String m_materialName;
+
+  UnorderedMap<String, String> m_importData;
 };
 
 }

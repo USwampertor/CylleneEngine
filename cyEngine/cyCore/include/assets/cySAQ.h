@@ -1,0 +1,1 @@
+"{\"type\": \"material\",\"name\" : \"DefaultPBR\",\"baseShader\" : \"pixelShader\",\"values\":{\"txColor\": \"cube_base.png\"}}"

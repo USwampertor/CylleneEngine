@@ -92,6 +92,8 @@ TEST_CASE("[module] testing module startup") {
 #define CLASSNAME(x) #x
 
 TEST_CASE("[being] Creation of beings") {
+  SceneManager::instance().createScene("beingCreation");
+  SceneManager::instance().changeScene("beingCreation");
   CHECK(BBeing::getClassName() == CLASSNAME(BBeing));
   CHECK(GameMode::getClassName() == CLASSNAME(GameMode));
 
@@ -119,6 +121,9 @@ TEST_CASE("[resource] Creation of textures") {
 }
 
 TEST_CASE("[resource] Creation of models") {
+  SceneManager::instance().createScene("modelCreation");
+  SceneManager::instance().changeScene("modelCreation");
+
   Path workingPath = FileSystem::getWorkingDirectory();
   File testModel = FileSystem::open(workingPath.fullPath() + "/../resources/cube.fbx");
   if (testModel.isFile() && testModel.exists()) {
@@ -129,14 +134,14 @@ TEST_CASE("[resource] Creation of models") {
     CHECK((r->m_meshes[0])->m_indexBuffer.size() == 36);
   }
   Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
-  File testModel2 = FileSystem::open(resourceDir.fullPath() + "/Mabis.fbx");
+  File testModel2 = FileSystem::open(resourceDir.fullPath() + "/Mabis2.fbx");
   if (testModel2.isFile() && testModel2.exists()) {
     std::cout << testModel2.path() << std::endl;
     SPtr<RModel> r = ResourceManager::instance().loadFromPath<RModel>(testModel2.path());
-    SPtr<BBeing> b = ClassRegister::createBeing<BBeing>();
-    b->setName("b1");
+    WPtr<BBeing> b = SceneManager::instance().createBeing<BBeing>("b1");
+    b.lock()->setName("b1");
     // b->createComponent<CTransform>();
-    WPtr<CMeshRenderer> model = b->createComponent<CMeshRenderer>();
+    WPtr<CMeshRenderer> model = b.lock()->createComponent<CMeshRenderer>();
     model.lock()->setModel(r);
     std::cout << r->getName() << std::endl;
     for (int i = 0; i < r->m_meshes.size(); ++i) {

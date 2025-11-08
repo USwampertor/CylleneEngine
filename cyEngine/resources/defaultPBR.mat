@@ -1,0 +1,9 @@
+{
+  "type": "material",
+  "name": "defaultPBR",
+  "baseShader": "pixelShader",
+  "values": {
+    "txColor": "cube_base"
+  }
+}
+

@@ -87,6 +87,8 @@ class CY_CORE_EXPORT RMaterial : public RResource
 public:
   RMaterial() : RResource(RMaterial::staticType()) {}
 
+  ~RMaterial() = default;
+
   static RESOURCE_TYPE::E staticType() { return RESOURCE_TYPE::E::eMATERIAL; }
 
   virtual void*
@@ -101,13 +103,13 @@ public:
   WPtr<RShader>
   getBaseShader() const { return m_shader; }
 
-  const std::unordered_map<std::string, MaterialValue>&
+  const UnorderedMap<String, MaterialValue>&
   getDefaultValues() const { return m_values; }
 
 private:
 
   WPtr<RShader> m_shader;
-  std::unordered_map<std::string, MaterialValue> m_values;
+  UnorderedMap<String, MaterialValue> m_values;
 
 };
 

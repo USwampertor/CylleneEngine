@@ -22,6 +22,7 @@ namespace CYLLENE_SDK {
                 eLIGHT2D,
                 eLIGHT3D,
                 eMESHRENDERER,
+                eMATERIALINSTANCE,
                 ePARTICLEEMITTER,
                 eSHADER,
                 eSPRITE,
@@ -33,7 +34,11 @@ class CY_CORE_EXPORT CComponent
 {
 public:
 
-  CComponent() = default;
+  CComponent() {
+    m_onDestroy += [this]() {
+      this->m_owner.reset();
+    };
+  }
 
   CComponent(const COMPONENT_TYPE::E& type) : m_type(type) { }
 
@@ -55,15 +60,30 @@ public:
   virtual const String
   toString() = 0;
 
+  /*
+   *	@brief	DEPRECATED: Use onCreate Event instead
+   *	@param
+   *  @return
+   */
   virtual void 
   onCreate() {}
 
+  /*
+   *	@brief	DEPRECATED: Use onInit Event instead
+   *	@param
+   *  @return
+   */
   virtual void 
   onInit() {}
 
+  /*
+   *	@brief	DEPRECATED: Use onDestroy Event instead
+   *	@param		
+   *  @return	
+   */
   virtual void 
   onDestroy() {
-    m_owner.reset();
+    // m_owner.reset();
   }
 
   virtual void 
@@ -77,6 +97,12 @@ public:
 public:
 
   Event<void> m_onUpdate;
+
+  Event<void> m_onCreate;
+
+  Event<void> m_onInit;
+
+  Event<void> m_onDestroy;
 
 protected:
 

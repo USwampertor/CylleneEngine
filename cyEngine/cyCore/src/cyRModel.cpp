@@ -130,6 +130,11 @@ RModel::setData(void* data) {
       m_meshes.back()->m_indexBuffer.push_back(index.GetInt());
     }
 
+    // Material name (optional)
+    if (mesh.HasMember("material") && mesh["material"].IsString()) {
+      m_meshes.back()->m_materialName = mesh["material"].GetString();
+    }
+
 
     // Finished with mesh number subMeshIndex
     ++subMeshIndex;

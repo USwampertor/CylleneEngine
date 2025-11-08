@@ -4,6 +4,7 @@
 #include "cyDefaultPrimitives.h"
 #include "cyRImage.h"
 #include "cyRMesh.h"
+#include "cyEngineAssets.h"
 #include "cyRModel.h"
 #include "cyRResource.h"
 #include "cyResourceManager.h"
@@ -176,29 +177,230 @@ processMesh(SPtr<RMesh>& m, aiMesh* node) {
   }
 }
 
+String 
+getBasenameFromPath(const String& inPath) {
+  Path p(inPath);
+  return p.baseName();
+}
+
+Path
+backRecursivelyFindTexturePath(const Path& basePath, const String& baseName, int counter) {
+  
+  
+  
+  String folder = FileSystem::open(basePath.path()).isDirectory() ? basePath.path() : basePath.directoryPath();
+
+  Path testPath = Path(folder + baseName);
+  if (FileSystem::exists(testPath.fullPath())) {
+    return testPath;
+  }
+  else {
+
+    // Check for other folders first
+    File dir = FileSystem::open(folder);
+    Vector<Path> subFolders;
+    if (dir.isDirectory()) {
+      for (FileIterator it = dir.begin(); it != dir.end(); ++it) {
+        std::string path = *it;
+        File subdir = FileSystem::open(path);
+        if (subdir.isDirectory()) {
+          subFolders.push_back(Path(path));
+        }
+      }
+    }
+
+    // Search in subfolders
+    for (const Path& subFolder : subFolders) {
+      File subdir = FileSystem::open(folder);
+      if (subdir.isDirectory()) {
+        Path possiblePath = Path(subFolder.fullPath() + "/" + baseName);
+        if (FileSystem::exists(possiblePath.fullPath())) {
+          return possiblePath;
+        }
+      }
+    }
+
+    if (counter < 5) { // Limit recursion depth
+      Path parentFolder = folder + "../";
+      if (parentFolder.fullPath() != parentFolder.driveLetter()) {
+        return backRecursivelyFindTexturePath(parentFolder, baseName, counter + 1);
+      }
+    }
+  }
+  // error Not found
+  return Path("");
+}
+
+String 
+getAssimpPath(aiMaterial* mat, aiTextureType type) {
+  aiString texPath;
+  if (mat->GetTextureCount(type) > 0 && mat->GetTexture(type, 0, &texPath) == AI_SUCCESS) {
+    Path p(texPath.C_Str());
+    return p.fileName();
+  }
+  return String("");
+}
+
+String 
+getTextureBaseName(aiMaterial* mat, aiTextureType type) {
+  aiString texPath;
+  if (mat->GetTextureCount(type) > 0 && mat->GetTexture(type, 0, &texPath) == AI_SUCCESS) {
+    return getBasenameFromPath(String(texPath.C_Str()));
+  }
+  return String("");
+}
+
+String 
+createMaterialFromAssimp(aiMaterial* aiMat,
+                         const String& defaultName,
+                         const Path& p) {
+
+  String matName = defaultName;
+  // Try to get material name from assimp
+  aiString aiName;
+  if (AI_SUCCESS == aiMat->Get(AI_MATKEY_NAME, aiName)) {
+    if (aiName.length > 0) matName = String(aiName.C_Str());
+  }
+  // Build values map using common PBR channels available from Assimp
+  UnorderedMap<String, String> values; // key -> texture resource name
+  UnorderedMap<String, String> valueImages; // key -> texture resource name
+  // Albedo / Diffuse
+  String albedo = getTextureBaseName(aiMat, aiTextureType_DIFFUSE);
+  String albedoImage = getAssimpPath(aiMat, aiTextureType_DIFFUSE);
+  if (!albedo.empty()) {
+    values["albedo"] = albedo;
+    valueImages["albedoImage"] = albedoImage; // default white
+  }
+  // Normal
+  String normal = getTextureBaseName(aiMat, aiTextureType_NORMALS);
+  String normalImage = getAssimpPath(aiMat, aiTextureType_NORMALS);
+  if (normal.empty()) normal = getTextureBaseName(aiMat, aiTextureType_HEIGHT); // fallback
+  if (normalImage.empty()) normalImage = getAssimpPath(aiMat, aiTextureType_HEIGHT); // fallback
+  if (!normal.empty()) { 
+    values["normal"] = normal; 
+    valueImages["normalImage"] = normalImage; // default
+  }
+  // Metallic (use SPECULAR as a generic fallback)
+  String metallic = getTextureBaseName(aiMat, aiTextureType_SPECULAR);
+  String metallicImage = getAssimpPath(aiMat, aiTextureType_SPECULAR);
+  if (!metallic.empty()) {
+    values["metallic"] = metallic;
+    valueImages["metallicImage"] = metallicImage; // default black
+  }
+  // Roughness (use SHININESS as a generic fallback)
+  String roughness = getTextureBaseName(aiMat, aiTextureType_SHININESS);
+  String roughnessImage = getAssimpPath(aiMat, aiTextureType_SHININESS);
+  if (!roughness.empty()) {
+    values["roughness"] = roughness;
+    valueImages["roughnessImage"] = roughnessImage; // default white
+  }
+  // Emissive
+  String emissive = getTextureBaseName(aiMat, aiTextureType_EMISSIVE);
+  String emissiveImage = getAssimpPath(aiMat, aiTextureType_EMISSIVE);
+  if (!emissive.empty()) {
+    values["emissive"] = emissive;
+    valueImages["emissiveImage"] = emissiveImage; // default black
+  }
+  // Occlusion (use AMBIENT as a generic fallback)
+  String occlusion = getTextureBaseName(aiMat, aiTextureType_AMBIENT);
+  String occlusionImage = getAssimpPath(aiMat, aiTextureType_AMBIENT);
+  if (!occlusion.empty()) {
+    values["occlusion"] = occlusion;
+    valueImages["occlusionImage"] = occlusionImage; // default white
+  }
+  // Opacity
+  String opacity = getTextureBaseName(aiMat, aiTextureType_OPACITY);
+  String opacityImage = getAssimpPath(aiMat, aiTextureType_OPACITY);
+  if (!opacity.empty()) {
+    values["opacity"] = opacity;
+    valueImages["opacityImage"] = opacityImage; // default white
+  }
+  // Register texture resources so material JSON can resolve names when encoding
+  for (const auto& kv : values) {
+    if (!kv.second.empty()) {
+      String imgString = kv.first + "Image";
+      String imgPath = valueImages[imgString];
+      // imgPath = imgPath.fileName();
+      // String p =  imgPath.fullPath();
+      String baseName = kv.second;
+      String parentPath = p.directoryPath();
+      Path possiblePath = backRecursivelyFindTexturePath(parentPath, imgPath, 0);
+      if (possiblePath.fullPath().empty() || !FileSystem::exists(possiblePath.fullPath())) {
+        Logger::instance().logWarning(Utils::format("Could not find texture image for material %s, texture %s", 
+                                                    matName.c_str(), 
+                                                    imgPath.c_str()));
+        continue;
+      }
+      WPtr<RImage> img = ResourceManager::instance().loadFromPath<RImage>(possiblePath.fullPath());
+      WPtr<RTexture> txt = ResourceManager::instance().create<RTexture>(kv.second);
+      if (img.lock()) {
+        txt.lock()->setImage(img.lock());
+      }
+    }
+  }
+  // Create and populate material via JSON so it fills default values
+  JSONDocument d; d.SetObject();
+  auto& allocator = d.GetAllocator();
+  d.AddMember("type", "material", allocator);
+
+  // Use default material's base shader if available
+  String baseShaderName = "";
+  {
+    JSONDocument defMat;
+    defMat.Parse(DEFAULTMATERIALS::defaultMaterial);
+    if (!defMat.HasParseError() && defMat.HasMember("baseShader") && defMat["baseShader"].IsString()) {
+      baseShaderName = defMat["baseShader"].GetString();
+    }
+  }
+  if (baseShaderName.empty()) {
+    baseShaderName = "DefaultShader"; // fallback
+  }
+  {
+    JSONValue bs(baseShaderName.c_str(), allocator);
+    d.AddMember("baseShader", bs, allocator);
+  }
+  JSONValue jvals; jvals.SetObject();
+  for (const auto& kv : values) {
+    JSONValue key(kv.first.c_str(), allocator);
+    JSONValue val(kv.second.c_str(), allocator);
+    jvals.AddMember(key, val, allocator);
+  }
+  d.AddMember("values", jvals, allocator);
+  String json = d.stringify();
+  SPtr<RMaterial> mat = ResourceManager::instance().create<RMaterial>(matName);
+  void* jsonPtr = const_cast<void*>(reinterpret_cast<const void*>(&json));
+  mat->setData(jsonPtr);
+  Path newMatPath = CY_PROJECT_DIR.path() + Utils::format("/%s.mat", matName.c_str());
+  String pathStr = newMatPath.directoryPath();
+  if (!FileSystem::exists(pathStr)) {
+    FileSystem::createFolder(newMatPath.directoryPath());
+  }
+  // Persist the material by encoding the actual RMaterial (not the JSON string)
+  ResourceManager::instance().getCodec<CDCodec>(RESOURCE_TYPE::E::eMATERIAL)->encode(newMatPath, mat.get());
+  return matName;
+}
+
 
 void
-processNode(SPtr<RModel>& m, aiNode* node, const aiScene* scene) {
+processNode(SPtr<RModel>& m, aiNode* node, const aiScene* scene, const Path& p) {
   uint32 i = 0;
   for (i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    // String childName = Utils::format("%s_sub%d", m->getPath().baseName().c_str(), i);
-    // SPtr<RMesh> newMesh = 
-
+    
     m->m_meshes.push_back(makeSharedPtr<RMesh>());
     processMesh(m->m_meshes.back(), mesh);
     m->m_hasSkeleton = false;
     if (mesh->HasBones()) { m->m_hasSkeleton = true; }
     if (scene->HasMaterials()) {
-      // TODO: Get default material
-      m->m_meshes.back()->m_material = makeSharedPtr<RMaterial>();
       aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
-      
+      String fallbackName = Utils::format("%s_mat%u", node->mName.C_Str(), i);
+      String newName = createMaterialFromAssimp(aiMat, fallbackName, p);
+      m->m_meshes.back()->m_materialName = newName;
     }
   }
 
   for (i = 0; i < node->mNumChildren; ++i) {
-    processNode(m, node->mChildren[i], scene);
+    processNode(m, node->mChildren[i], scene, p);
   }
 
 }
@@ -244,7 +446,7 @@ ModelCodec::decode(const File& f) {
   }
 
   // Meshes
-  processNode(model, scene->mRootNode, scene);
+  processNode(model, scene->mRootNode, scene, p);
 
   // Bones
 
@@ -370,6 +572,16 @@ ModelCodec::decode(const File& f) {
     jsonMesh.AddMember("indices", jsonIndices, allocator);
 
     // material
+    {
+      String matName = model->m_meshes[i]->m_materialName;
+      JSONValue matVal;
+      if (!matName.empty()) {
+        matVal.SetString(matName.c_str(), (rapidjson::SizeType)matName.size(), allocator);
+      } else {
+        matVal.SetString("");
+      }
+      jsonMesh.AddMember("material", matVal, allocator);
+    }
 
     // bones
 
@@ -545,7 +757,7 @@ MaterialCodec::encodeToJSON(const RMaterial& material) {
   }
   d.AddMember("values", jvals, allocator);
 
-  return d.stringify();
+  return d.prettyString();
 }
 
 bool
@@ -558,5 +770,11 @@ MaterialCodec::saveToFile(const RMaterial& material, const String& filePath) {
   return true;
 }
 
+
+void
+MaterialCodec::encode(const Path& pathToResource, void* data) {
+  RMaterial* material = reinterpret_cast<RMaterial*>(data);
+  saveToFile(*material, pathToResource.fullPath());
+}
 
 }

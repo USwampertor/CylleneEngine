@@ -5,6 +5,8 @@
 #include "cyRModel.h"
 #include "cyRMesh.h"
 
+#include "cyRMaterialInstance.h"
+
 #include <cyUtilities.h>
 
 
@@ -19,6 +21,14 @@ public:
   CMeshRenderer(const SPtr<RMesh>& newMesh = nullptr)
     : CComponent(CMeshRenderer::staticType()) {
     m_mesh = newMesh;
+    if (m_mesh) {
+      createMaterialInstance();
+    }
+    m_onInit += [this]() {
+      if (m_mesh) {
+        createMaterialInstance();
+      }
+    };
   }
 
   ~CMeshRenderer() = default;
@@ -26,10 +36,14 @@ public:
   void
   setMesh(const SPtr<RMesh>& newMesh) {
     m_mesh = newMesh;
+    createMaterialInstance();
   }
 
   void
   setModel(const SPtr<RModel>& newModel);
+
+  void
+  createMaterialInstance();
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eMESHRENDERER; }
 
@@ -40,8 +54,11 @@ public:
   }
 
   SPtr<RMesh> m_mesh = nullptr;
-
   bool m_castsShadows = false;
+
+
+  WPtr<RMaterialInstance> m_materialInstance;
+
 };
 
 

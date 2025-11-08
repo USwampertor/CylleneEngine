@@ -6,7 +6,7 @@
 namespace CYLLENE_SDK {
 
 class RMesh;
-class SkeletonResource;
+class RSkeleton;
 
 class CY_CORE_EXPORT RModel : public RResource
 {
@@ -31,9 +31,9 @@ public:
 
   Vector<SPtr<RMesh>> m_meshes;
 
-  SPtr<SkeletonResource> m_skeleton;
+  SPtr<RSkeleton> m_skeleton;
 
-  bool m_hasSkeleton;
+  bool m_hasSkeleton = false;
 
 };
 

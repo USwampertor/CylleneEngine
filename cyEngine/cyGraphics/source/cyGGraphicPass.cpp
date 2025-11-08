@@ -223,7 +223,7 @@ GDefaultGeometryPass::~GDefaultGeometryPass() {
 
 void
 GDefaultGeometryPass::initialize(WPtr<CCamera> newParentCamera, 
-                          WPtr<GraphicsPipeline> newParentPipeline) {
+                                 WPtr<GraphicsPipeline> newParentPipeline) {
   GGraphicPass::initialize(newParentCamera, newParentPipeline);
 
   if (m_camera.expired()) {
@@ -325,12 +325,22 @@ GDefaultGeometryPass::initialize(WPtr<CCamera> newParentCamera,
 
   SPtr<GRasterizerElement> defaultRasDesc = makeSharedPtr<GRasterizerElement>();
   SPtr<GRasterizerState> m_rasterState = GraphicsAPI::instance().getDevice()->createRasterizerState(defaultRasDesc);
+  
+  // Blend states
+  SPtr<GBlendElement> defaultBlendDesc = std::make_shared<GBlendElement>();
+  defaultBlendDesc->enabled = false;
+  defaultBlendDesc->writeMask = BLEND_MASK::E::ALL;
+  m_defaultBlend = GraphicsAPI::instance().getDevice()->createBlendState(defaultBlendDesc);
 
 }
 
 void
 GDefaultGeometryPass::clear() {
+  GraphicsAPI::instance().getDeviceContext()->clearRenderTargetView(m_colorRenderTarget, Color::BLACK);
+  GraphicsAPI::instance().getDeviceContext()->clearDepthStencilView(m_colorRenderTarget.get()->getDepthStencil(),
+    GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);
 
+  GraphicsAPI::instance().getDeviceContext()->clearRenderTargetView(m_positionRenderTarget, Color::BLACK);
 }
 
 void
@@ -342,6 +352,7 @@ GDefaultGeometryPass::execute() {
   deltaTime = Time::instance().deltaTime(deltaType);
   m_time += deltaTime * 0.001f;
   Vector<char> shaderConstantsData;
+  shaderConstantsData.resize(sizeof(m_shaderConstants));
   m_shaderConstants.time = m_time;
   memcpy(shaderConstantsData.data(), &m_shaderConstants, sizeof(m_shaderConstants));
   GraphicsAPI::instance().writeToBuffer(m_shaderConstantsBuffer, shaderConstantsData);
@@ -368,6 +379,8 @@ GDefaultGeometryPass::execute() {
   GraphicsAPI::instance().getDeviceContext()->setRenderTargets(2,
                                                                targets,
                                                                m_colorRenderTarget.get()->getDepthStencil());
+  
+  GraphicsAPI::instance().getDeviceContext()->setBlendState(m_defaultBlend);
 
   Vector<SPtr<GraphicsBuffer>> scVector;
   scVector.push_back(m_shaderConstantsBuffer);
@@ -402,7 +415,8 @@ GDefaultGeometryPass::execute() {
   auto renderables = SceneManager::instance().findBeingsWithComponent<CMeshRenderer>();
   for (auto& obj : renderables) {
     if (auto sp = obj.lock()) {
-      GraphicsAPI::instance().draw(sp);
+      if (sp->isActive())
+        GraphicsAPI::instance().draw(sp);
     }
   }
 }
@@ -480,7 +494,7 @@ GDefaultParticlesPass::initialize(WPtr<CCamera> newParentCamera,
   m_linearSampler = GraphicsAPI::instance().getDevice()->createSamplerState(samplerDesc);
 
   // Color/Geometry pass dependency
-  WPtr<GGraphicPass> geometryPass = REINTERPRETPOINTER(GDefaultGeometryPass, m_parentPipeline.lock()->getAt(1));
+  WPtr<GGraphicPass> geometryPass = STATICPOINTER(GGraphicPass, m_parentPipeline.lock()->getAt(1));
   m_dependencies.try_emplace(1, geometryPass);
 
   // Shader constants buffer
@@ -506,14 +520,41 @@ GDefaultParticlesPass::initialize(WPtr<CCamera> newParentCamera,
   alphaBlendDesc->writeMask = BLEND_MASK::E::ALL;
   m_alphaBlend = GraphicsAPI::instance().getDevice()->createBlendState(alphaBlendDesc);
 
+  Path resDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+
+  // Load texture referenced by particle material and register
+  File baseTexFile = FileSystem::open(resDir.fullPath() + "/particle.png");
+  SPtr<RImage> baseImage = ResourceManager::instance().loadFromPath<RImage>(baseTexFile.path());
+  SPtr<RTexture> baseTex = ResourceManager::instance().create<RTexture>(baseImage->getName());
+  baseTex->setImage(baseImage);
+  if (baseTex) { GraphicsAPI::instance().registerResource(baseTex); }
+
+  File matFile = FileSystem::open(resDir.fullPath() + "/particle.mat");
+  SPtr<RMaterial> mat = ResourceManager::instance().loadFromPath<RMaterial>(matFile.path());
+
   // Prepare SAQ object once (optional reuse)
   SPtr<BBeing> saqObject = SceneManager::instance().createBeing<BBeing>("SAQ_Particles").lock();
   saqObject->getTransform().lock()->setLocalTransform(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
-  saqObject->createComponent<CMeshRenderer>();
-  SPtr<RMesh> saqMeshRes = ResourceManager::instance().get<RMesh>("SAQ");
-  saqObject->getComponent<CMeshRenderer>().lock()->setMesh(saqMeshRes);
-  m_cachedSAQObject = saqObject;
+  
+  SPtr<RModel> saqMeshRes = ResourceManager::instance().get<RModel>("saq");
+  SPtr<RMesh> saqMesh = (saqMeshRes && !saqMeshRes->m_meshes.empty()) ? saqMeshRes->m_meshes[0] : nullptr;
 
+  saqObject->createComponent<CMeshRenderer>(saqMesh);
+  if (saqMesh && mat) { 
+    auto meshRenderer = saqObject->getComponent<CMeshRenderer>().lock();
+    if (meshRenderer) {
+      meshRenderer->m_materialInstance.lock()->setMaterial(mat);
+    }
+  }
+  if (!mat) {
+    auto meshRenderer = saqObject->getComponent<CMeshRenderer>().lock();
+    if (meshRenderer) {
+      meshRenderer->m_materialInstance.reset();
+    }
+  }
+  
+  m_cachedSAQObject = saqObject;
+  saqObject->setActive(false);
 }
 
 
@@ -531,6 +572,7 @@ GDefaultParticlesPass::execute() {
   deltaTime = Time::instance().deltaTime(deltaType);
   m_time += deltaTime * 0.001f;
   Vector<char> shaderConstantsData;
+  shaderConstantsData.resize(sizeof(m_shaderConstants));
   m_shaderConstants.time = m_time;
   memcpy(shaderConstantsData.data(), &m_shaderConstants, sizeof(m_shaderConstants));
   GraphicsAPI::instance().writeToBuffer(m_shaderConstantsBuffer, shaderConstantsData);
@@ -552,7 +594,7 @@ GDefaultParticlesPass::execute() {
 
   Vector<SPtr<GRenderTargetView>> targets;
 
-  SPtr<GDefaultGeometryPass> geometryPass = REINTERPRETPOINTER(GDefaultGeometryPass, m_dependencies[1].lock());
+  SPtr<GDefaultGeometryPass> geometryPass = STATICPOINTER(GDefaultGeometryPass, m_dependencies[1].lock());
 
   targets.push_back( geometryPass->getOutputRenderTarget());
   GraphicsAPI::instance().getDeviceContext()->setRenderTargets(1,
@@ -593,6 +635,8 @@ GDefaultParticlesPass::execute() {
   if (auto so = m_cachedSAQObject.lock()) {
     GraphicsAPI::instance().drawInstanced(so, 100);
   }
+
+  GraphicsAPI::instance().getDeviceContext()->setBlendState(m_defaultBlend);
 }
 
 void
@@ -608,7 +652,7 @@ GDefaultParticlesPass::shutdown() {
 
 void
 GDefaultPPPass::initialize(WPtr<CCamera> newParentCamera, 
-                             WPtr<GraphicsPipeline> newParentPipeline) {
+                           WPtr<GraphicsPipeline> newParentPipeline) {
   GGraphicPass::initialize(newParentCamera, newParentPipeline);
 
   if (!m_pVSAQShader) {
@@ -633,7 +677,7 @@ GDefaultPPPass::initialize(WPtr<CCamera> newParentCamera,
   }
 
   if (!m_pPSAQShader) {
-    SPtr<RShader> psSAQR = ResourceManager::instance().get<RShader>("particlePixelShader");
+    SPtr<RShader> psSAQR = ResourceManager::instance().get<RShader>("saqPixelShader");
     if (psSAQR) {
       m_pPSAQShader = GraphicsAPI::instance().createPixelShader(psSAQR, "pixel_main");
       if (!m_pPSAQShader) {
@@ -665,12 +709,23 @@ GDefaultPPPass::initialize(WPtr<CCamera> newParentCamera,
 
   samplerDesc->filter = SAMPLERFILTER::E::eLINEAR;
   m_linearSampler = GraphicsAPI::instance().getDevice()->createSamplerState(samplerDesc);
+
+  WPtr<GGraphicPass> shadowPass = STATICPOINTER(GGraphicPass, m_parentPipeline.lock()->getAt(0));
+  m_dependencies.try_emplace(0, shadowPass);
+
+  WPtr<GGraphicPass> geometryPass = STATICPOINTER(GGraphicPass, m_parentPipeline.lock()->getAt(1));
+  m_dependencies.try_emplace(1, geometryPass);
 }
 
 
 void
 GDefaultPPPass::clear() {
+  SPtr<GRenderTargetView> backBufferRT = GraphicsAPI::instance().m_pRenderTargetView;
+  SPtr<GDepthStencilView> backBufferDS = GraphicsAPI::instance().m_pDepthStencilView;
 
+  GraphicsAPI::instance().getDeviceContext()->clearRenderTargetView(backBufferRT, Color::MISSING);
+  GraphicsAPI::instance().getDeviceContext()->clearDepthStencilView(backBufferDS,
+    GCLEAR_FLAGS::E::DEPTH | GCLEAR_FLAGS::E::STENCIL, 1.0f, 0);
 }
 
 void
@@ -702,8 +757,8 @@ GDefaultPPPass::execute() {
                                                                targets,
                                                                backBufferDS);
 
-  SPtr<GDefaultShadowPass> shadowPass = REINTERPRETPOINTER(GDefaultShadowPass, m_dependencies[0].lock());
-  SPtr<GDefaultGeometryPass> geometryPass = REINTERPRETPOINTER(GDefaultGeometryPass, m_dependencies[1].lock());
+  SPtr<GDefaultShadowPass> shadowPass = STATICPOINTER(GDefaultShadowPass, m_dependencies[0].lock());
+  SPtr<GDefaultGeometryPass> geometryPass = STATICPOINTER(GDefaultGeometryPass, m_dependencies[1].lock());
 
   // Build shadow constants locally (avoid taking address of rvalues)
   DefaultShadowConstantBuffer shadowConsts;
@@ -744,14 +799,13 @@ GDefaultPPPass::execute() {
   if (!srvVector.empty()) {
     GraphicsAPI::instance().getDeviceContext()->setShaderResources(srvVector, 0, (uint32)srvVector.size());
   }
-  SPtr<BBeing> saqObject = SceneManager::instance().createBeing<BBeing>("SAQ_Particles").lock();
-  saqObject->getTransform().lock()->setLocalTransform(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
-  saqObject->createComponent<CMeshRenderer>();
-  SPtr<RMesh> saqMeshRes = ResourceManager::instance().get<RMesh>("SAQ");
-  saqObject->getComponent<CMeshRenderer>().lock()->setMesh(saqMeshRes);
+  //SPtr<BBeing> saqObject = SceneManager::instance().createBeing<BBeing>("SAQ_Particles").lock();
+  //saqObject->getTransform().lock()->setLocalTransform(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
+  //SPtr<RModel> saqMeshRes = ResourceManager::instance().get<RModel>("saq");
+  //saqObject->createComponent<CMeshRenderer>(saqMeshRes->m_meshes[0]);
   
   // Full-screen draw using SAQ mesh only (no material rebinding)
-  SPtr<GMesh> saqMesh = REINTERPRETPOINTER(GMesh, GraphicsAPI::instance().getGGraphic<RMesh>("SAQ"));
+  SPtr<GMesh> saqMesh = STATICPOINTER(GMesh, GraphicsAPI::instance().getGGraphic<RMesh>("saq_sub0"));
   if (saqMesh) {
     GraphicsAPI::instance().draw(saqMesh);
   }

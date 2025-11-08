@@ -83,6 +83,9 @@ public:
   virtual void*
   decode(const File& f) = 0;
 
+  virtual void
+  encode(const Path& pathToResource, void* data) {}
+
   // virtual SPtr<Resource>
   // load(const Path& pathToResource) = 0;
   // 
@@ -298,6 +301,8 @@ public:
   bool
   saveToFile(const RMaterial& material, const String& filePath);
 
+  virtual void
+  encode(const Path& pathToResource, void* data) override;
 };
   
 class CY_CORE_EXPORT AudioCodec : public CDCodec

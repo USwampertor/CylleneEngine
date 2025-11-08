@@ -83,6 +83,7 @@ pixel_main(PixelInput Input)
     acc += lightColor * lightAtt;
   }
     
+  //Output.color = float4(albedo * acc, 1.0f);
   Output.color = float4(albedo * acc, 1.0f);
   Output.position = float4(position, 1.0f);
     
