@@ -106,8 +106,10 @@ public:
     if (m_components.find(type) == m_components.end()) {
       // m_components.insert(Utils::makePair(type, makeSharedPtr<T>(args ...)));
       SPtr<T> newComponent = makeSharedPtr<T>(std::forward<Args>(args)...);
+      m_components.at(type)->m_onCreate.invoke();
       m_components.try_emplace(type, newComponent);
       m_components.at(type)->setOwner(m_self);
+      m_components.at(type)->m_onInit.invoke();
     }
 
     // In any case, either existing or non existing, we can just return what is at
@@ -123,11 +125,6 @@ public:
     createComponent<CTransform>();
   }
 
-  /*
-   *	@brief	DEPRECATED: Use onInit Event instead
-   *	@param		
-   *  @return	
-   */
   virtual void 
   onInit() {}
 
