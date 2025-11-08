@@ -24,6 +24,11 @@ public:
     if (m_mesh) {
       createMaterialInstance();
     }
+    m_onInit += [this]() {
+      if (m_mesh) {
+        createMaterialInstance();
+      }
+    };
   }
 
   ~CMeshRenderer() = default;

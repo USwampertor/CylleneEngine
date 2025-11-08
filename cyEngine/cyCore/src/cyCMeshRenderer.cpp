@@ -25,7 +25,7 @@ CMeshRenderer::setModel(const SPtr<RModel>& newModel) {
 
 void
 CMeshRenderer::createMaterialInstance() {
-  if (m_mesh) {
+  if (m_mesh && m_owner.lock()) {
     String matInstanceChildName = Utils::format("%s_matInst", m_owner.lock()->getName().c_str());
     m_materialInstance = ResourceManager::instance().get<RMaterialInstance>(matInstanceChildName);
     if (!m_materialInstance.lock()) {

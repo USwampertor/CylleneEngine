@@ -123,6 +123,11 @@ public:
     createComponent<CTransform>();
   }
 
+  /*
+   *	@brief	DEPRECATED: Use onInit Event instead
+   *	@param		
+   *  @return	
+   */
   virtual void 
   onInit() {}
 
