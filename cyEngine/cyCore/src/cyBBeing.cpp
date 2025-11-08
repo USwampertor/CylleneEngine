@@ -7,7 +7,8 @@ void
 BBeing::removeAllComponents() {
   // Remove all components and clear the map
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-    it->second->onDestroy(); // Clear owner reference
+    // it->second->onDestroy(); // Clear owner reference
+    it->second->m_onDestroy.invoke();
   }
   m_components.clear();
 }
