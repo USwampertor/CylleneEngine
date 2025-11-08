@@ -19,6 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\assets\cyAtlasIcon.h" />
+    <ClInclude Include="include\assets\cyCameraIcon.h" />
+    <ClInclude Include="include\assets\cyChecker.h" />
+    <ClInclude Include="include\assets\cyDefaultMaterial.h" />
+    <ClInclude Include="include\assets\cyDefaultPBRMaterial.h" />
+    <ClInclude Include="include\assets\cyDefaultPBRShader.h" />
+    <ClInclude Include="include\assets\cyDefaultShader.h" />
+    <ClInclude Include="include\assets\cyJSONIcon.h" />
+    <ClInclude Include="include\assets\cyKimchi.h" />
+    <ClInclude Include="include\assets\cyLightIcon.h" />
+    <ClInclude Include="include\assets\cyMissingTexture.h" />
+    <ClInclude Include="include\assets\cyMoon.h" />
+    <ClInclude Include="include\assets\cySAQ.h" />
+    <ClInclude Include="include\cyRMaterialInstance.h" />
     <ClInclude Include="include\cyCMeshRenderer.h" />
     <ClInclude Include="include\cyCLight.h" />
     <ClInclude Include="include\cyCParticleEmitter.h" />
@@ -67,6 +81,7 @@
   <ItemGroup>
     <ClCompile Include="src\cyBBeing.cpp" />
     <ClCompile Include="src\cyCComponent.cpp" />
+    <ClCompile Include="src\cyRMaterialInstance.cpp" />
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
     <ClCompile Include="src\cyCLight.cpp" />
     <ClCompile Include="src\cyCParticleEmitter.cpp" />

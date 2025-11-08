@@ -14,6 +14,7 @@ namespace CYLLENE_SDK {
                 eFONT,
                 eIMAGE,
                 eMATERIAL,
+                eMATERIALINSTANCE,  
                 eMESH,
                 eMODEL,
                 eSCENE,

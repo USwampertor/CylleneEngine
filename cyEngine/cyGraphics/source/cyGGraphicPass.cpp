@@ -540,7 +540,18 @@ GDefaultParticlesPass::initialize(WPtr<CCamera> newParentCamera,
   SPtr<RMesh> saqMesh = (saqMeshRes && !saqMeshRes->m_meshes.empty()) ? saqMeshRes->m_meshes[0] : nullptr;
 
   saqObject->createComponent<CMeshRenderer>(saqMesh);
-  if (saqMesh && mat) { saqMesh->m_material = mat; }
+  if (saqMesh && mat) { 
+    auto meshRenderer = saqObject->getComponent<CMeshRenderer>().lock();
+    if (meshRenderer) {
+      meshRenderer->m_materialInstance.lock()->setMaterial(mat);
+    }
+  }
+  if (!mat) {
+    auto meshRenderer = saqObject->getComponent<CMeshRenderer>().lock();
+    if (meshRenderer) {
+      meshRenderer->m_materialInstance.reset();
+    }
+  }
   
   m_cachedSAQObject = saqObject;
   saqObject->setActive(false);

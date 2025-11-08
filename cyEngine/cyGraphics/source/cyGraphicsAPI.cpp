@@ -223,9 +223,14 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
 
   getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
 
-  SPtr<RMaterial> materialInstance = meshRenderer->m_mesh->m_material;
-  const auto& matValues = materialInstance->getDefaultValues();
-  SPtr<RShader> shaderRes = materialInstance->getBaseShader().lock(); 
+
+  SPtr<RMaterialInstance> materialInstance = meshRenderer->m_materialInstance.lock();
+  const auto& matValues = materialInstance->getOverrides();
+  SPtr<RShader> shaderRes = materialInstance->getMaterial().lock()->getBaseShader().lock();
+  //SPtr<RMaterial> materialInstance = meshRenderer->m_mesh->m_material;
+  // const auto& matValues = materialInstance->getDefaultValues();
+  // SPtr<RShader> shaderRes = materialInstance->getBaseShader().lock(); 
+
   SPtr<GShader> gShader = REINTERPRETPOINTER(GShader, getGGraphic<RShader>(shaderRes->getName()));
   const Vector<GShaderValue>& shaderVals = gShader->getValues();
   // for each value set Shader Resource
@@ -323,7 +328,10 @@ GraphicsAPI::draw(SPtr<BBeing> refObject) {
 }
 
 void
-GraphicsAPI::draw(SPtr<RMesh> rmesh) {
+GraphicsAPI::draw(SPtr<CMeshRenderer> rmeshrenderer) {
+
+  SPtr<RMesh> rmesh = rmeshrenderer->m_mesh;
+
   if (!rmesh) return;
 
   SPtr<GMesh> refMesh = REINTERPRETPOINTER(GMesh, getGGraphic<RMesh>(rmesh->getName()));
@@ -342,10 +350,15 @@ GraphicsAPI::draw(SPtr<RMesh> rmesh) {
   getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
 
   // Material constants and SRVs
-  SPtr<RMaterial> materialInstance = rmesh->m_material;
+  SPtr<RMaterialInstance> materialInstance = rmeshrenderer->m_materialInstance.lock();
+  // SPtr<RMaterial> materialInstance = rmesh->m_material;
   if (materialInstance) {
-    const auto& matValues = materialInstance->getDefaultValues();
-    SPtr<RShader> shaderRes = materialInstance->getBaseShader().lock();
+
+    const auto& matValues = materialInstance->getOverrides();
+    SPtr<RShader> shaderRes = materialInstance->getMaterial().lock()->getBaseShader().lock();
+
+    // const auto& matValues = materialInstance->getDefaultValues();
+    // SPtr<RShader> shaderRes = materialInstance->getBaseShader().lock();
     if (shaderRes) {
       SPtr<GShader> gShader = REINTERPRETPOINTER(GShader, getGGraphic<RShader>(shaderRes->getName()));
       if (gShader) {
@@ -520,9 +533,12 @@ GraphicsAPI::drawInstanced(SPtr<BBeing> refObject, uint32 instanceCount) {
   getDeviceContext()->setIndexBuffer(refMesh->m_pIndexBuffer, COLORFORMAT::E::R_32_UINT, 0);
 
 
-  SPtr<RMaterial> materialInstance = meshRenderer->m_mesh->m_material;
-  const auto& matValues = materialInstance->getDefaultValues();
-  SPtr<RShader> shaderRes = materialInstance->getBaseShader().lock();
+  SPtr<RMaterialInstance> materialInstance = meshRenderer->m_materialInstance.lock();
+  const auto& matValues = materialInstance->getOverrides();
+  SPtr<RShader> shaderRes = materialInstance->getMaterial().lock()->getBaseShader().lock();
+  //SPtr<RMaterial> materialInstance = meshRenderer->m_mesh->m_material;
+  // const auto& matValues = materialInstance->getDefaultValues();
+  // SPtr<RShader> shaderRes = materialInstance->getBaseShader().lock(); 
   SPtr<GShader> gShader = REINTERPRETPOINTER(GShader, getGGraphic<RShader>(shaderRes->getName()));
   const Vector<GShaderValue>& shaderVals = gShader->getValues();
   // for each value set Shader Resource

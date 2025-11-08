@@ -803,10 +803,13 @@ main(int argc, char* argv[])
 
   // Create a being with a cube mesh and assign the material
   SPtr<RMesh> cubeMesh = (cubeModel && !cubeModel->m_meshes.empty()) ? cubeModel->m_meshes[0] : nullptr;
-  if (cubeMesh && mat) { cubeMesh->m_material = mat; }
   SPtr<BBeing> cubeBeing = SceneManager::instance().createBeing<BBeing>("Cube").lock();
   cubeBeing->getTransform().lock()->setLocalTransform(Vector3f(0,0,0), Vector3f::ONE, Quaternion::IDENTITY);
   auto mr = cubeBeing->createComponent<CMeshRenderer>(cubeModel->m_meshes[0]);
+  if (cubeMesh && mat) { 
+    mr.lock()->m_materialInstance.lock()->setMaterial(mat);
+    // cubeMesh->m_material = mat; 
+  }
   // if (cubeMesh) { mr.lock()->setMesh(cubeMesh); }
 
   // Ensure SAQ model for post-process exists and register it
@@ -814,7 +817,7 @@ main(int argc, char* argv[])
   SPtr<RModel> saqModel = ResourceManager::instance().loadFromPath<RModel>(saqFile.path());
   if (saqModel) { GraphicsAPI::instance().registerResource(saqModel); }
   SPtr<RMesh> saqMesh = (saqModel && !saqModel->m_meshes.empty()) ? saqModel->m_meshes[0] : nullptr;
-  if (saqMesh && mat) { saqMesh->m_material = mat; }
+  if (saqMesh && mat) { saqMesh->m_materialName = mat->getName(); }
 
   // Create default pipeline and passes bound to the camera/light beings
   GraphicsAPI::instance().createDefaultObjects();

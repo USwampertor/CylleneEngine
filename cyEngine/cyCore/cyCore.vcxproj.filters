@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="engineAssets">
+      <UniqueIdentifier>{1fc67d15-9293-4019-9823-6c3abf800622}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cyResourceManager.h">
@@ -147,6 +150,48 @@
     <ClInclude Include="include\cyGraphicsPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyRMaterialInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cySAQ.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyMoon.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyMissingTexture.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyLightIcon.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyKimchi.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyJSONIcon.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyDefaultShader.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyDefaultMaterial.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyChecker.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyCameraIcon.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyAtlasIcon.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyDefaultPBRMaterial.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\cyDefaultPBRShader.h">
+      <Filter>engineAssets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -264,6 +309,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyEngineAssets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyRMaterialInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -12,6 +12,7 @@
 #include <cyRShader.h>
 #include <cyRTexture.h>
 #include <cyRMesh.h>
+#include <cyCMeshRenderer.h>
 #include <cyRModel.h>
 #include <cyRResource.h>
 #include <cyVector2i.h>
@@ -224,7 +225,7 @@ public:
 	draw(SPtr<BBeing> refObject);
 
 	void
-	draw(SPtr<RMesh> refMesh);
+	draw(SPtr<CMeshRenderer> rmeshrenderer);
 
 	void
 	draw(SPtr<GMesh> refMesh);
