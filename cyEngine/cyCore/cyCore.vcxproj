@@ -39,7 +39,6 @@
     <ClInclude Include="include\cyGraphicsPipeline.h" />
     <ClInclude Include="include\cyRAsset.h" />
     <ClInclude Include="include\cyRAudio.h" />
-    <ClInclude Include="include\cyAudioAPI.h" />
     <ClInclude Include="include\cyBaseUI.h" />
     <ClInclude Include="include\cyBBeing.h" />
     <ClInclude Include="include\cyCCamera.h" />
@@ -90,7 +89,6 @@
     <ClCompile Include="src\cyInput.cpp" />
     <ClCompile Include="src\cyRAsset.cpp" />
     <ClCompile Include="src\cyRAudio.cpp" />
-    <ClCompile Include="src\cyAudioAPI.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
     <ClCompile Include="src\cyCCamera.cpp" />
     <ClCompile Include="src\cyClassRegister.cpp" />

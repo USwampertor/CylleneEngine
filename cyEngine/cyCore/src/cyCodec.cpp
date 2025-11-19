@@ -16,13 +16,12 @@
 #include <cyJSON.h>
 #include <cyStdHeaders.h>
 
-// Sound decoding
+// Audio/Sound decoding
 
 
 // Shader decoding
 
 // Model decoding
-
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags

@@ -87,9 +87,6 @@
     <ClInclude Include="include\cyRAudio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyAudioAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyRTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -231,9 +228,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyRAudio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cyAudioAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyRTexture.cpp">
