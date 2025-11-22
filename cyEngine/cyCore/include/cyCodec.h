@@ -326,8 +326,8 @@ public:
     return RESOURCE_TYPE::E::eAUDIO;
   }
 
-  virtual void*
-  decode(const File& f) override;
+  // virtual void*
+  // decode(const File& f) override;
 };
 
 }

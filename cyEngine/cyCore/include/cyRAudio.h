@@ -6,6 +6,14 @@
 #include <cyTime.h>
 
 namespace CYLLENE_SDK {
+
+struct AudioData
+{
+  int m_sampleRate = 0;
+  int m_channels = 0;
+  Vector<float> m_samples;
+};
+
 class CY_CORE_EXPORT RAudio : public RResource {
 
 public:
@@ -18,6 +26,12 @@ public:
 
   double
   getDuration(const DELTA_TYPE::E& in);
+
+  virtual void*
+  getData() override;
+
+  virtual void
+  setData(void* data) override;
 
 private:
 
