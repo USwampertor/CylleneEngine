@@ -743,7 +743,7 @@ main(int argc, char* argv[])
 
   WindowManager::startUp();
   WindowManager::instance().init();
-  WindowManager::instance().createWindow("Test", Vector2i(1280, 720));
+  WindowManager::instance().createWindow("Test", Vector2i(640, 420));
 
   void* hwnd = WindowManager::instance().getWindowHandle(0);
   loadGFXModule(GFXTYPE::E::eDX11);
