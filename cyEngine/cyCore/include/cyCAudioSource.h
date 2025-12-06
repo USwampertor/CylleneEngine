@@ -2,7 +2,6 @@
 #include "cyCorePrerequisites.h"
 #include "cyRAudio.h"
 #include "cyCComponent.h"
-#include "cyAudioBackend.h"
 
 namespace CYLLENE_SDK {
 
@@ -11,12 +10,10 @@ namespace CYLLENE_SDK {
  *	@brief	An audio source that holds an audio clip to be played.
  *
  */
-class CAudioSource : public CComponent {
+class CY_CORE_EXPORT CAudioSource : public CComponent {
 public: 
 
-  CAudioSource() : CComponent(CAudioSource::staticType()) {
-    AudioBackend::ensureOpenAL();
-  }
+  CAudioSource();
   
   ~CAudioSource();
 

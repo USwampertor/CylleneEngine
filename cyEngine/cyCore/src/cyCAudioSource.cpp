@@ -2,6 +2,7 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <cyLogger.h>
+#include "cyAudioBackend.h"
 
 #include <algorithm>
 #include <chrono>
@@ -58,6 +59,10 @@ uploadToBuffer(ALuint bufferId, RAudio& clip) {
 
 }
 
+
+CAudioSource::CAudioSource() : CComponent(CAudioSource::staticType()) {
+  AudioBackend::ensureOpenAL();
+}
 
 CAudioSource::~CAudioSource() {
   if (alcGetCurrentContext()) {

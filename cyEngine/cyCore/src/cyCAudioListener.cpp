@@ -20,6 +20,14 @@ setListenerOrientation(const Vector3f& forward, const Vector3f& up) {
 
 }
 
+CAudioListener::CAudioListener() : CComponent(CAudioListener::staticType()) {
+  AudioBackend::ensureOpenAL();
+  setPosition(m_position);
+  setVelocity(m_velocity);
+  setOrientation(m_forward, m_up);
+  setGain(m_gain);
+}
+
 CAudioListener::~CAudioListener() = default;
 
 void

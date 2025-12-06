@@ -1,6 +1,5 @@
 #pragma once
 #include "cyCorePrerequisites.h"
-#include "cyAudioBackend.h"
 #include "cyCComponent.h"
 
 #include <cyVector3f.h>
@@ -11,16 +10,10 @@ namespace CYLLENE_SDK {
  *  @class  CAudioListener
  *  @brief  Represents the global OpenAL listener state.
  */
-class CAudioListener : public CComponent {
+class CY_CORE_EXPORT CAudioListener : public CComponent {
 public:
 
-  CAudioListener() : CComponent(CAudioListener::staticType()) {
-    AudioBackend::ensureOpenAL();
-    setPosition(m_position);
-    setVelocity(m_velocity);
-    setOrientation(m_forward, m_up);
-    setGain(m_gain);
-  }
+  CAudioListener();
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eAUDIOLISTENER; }
 
