@@ -18,45 +18,37 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dx12intro.cpp" />
-    <ClCompile Include="source\cyAgent.cpp" />
-    <ClCompile Include="source\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\cyAgent.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9cb16dba-bd9c-42ce-b01b-7ecce253fcb1}</ProjectGuid>
-    <RootNamespace>cySpecialty</RootNamespace>
+    <ProjectGuid>{e8dbb677-9180-4386-abc8-00a5d4289c08}</ProjectGuid>
+    <RootNamespace>cyDX12App</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -79,47 +71,44 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin/$(PlatformTarget)/</OutDir>
     <IntDir>$(SolutionDir)intermediate/$(ProjectName)/$(PlatformTarget)/$(Configuration)/</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <IncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin/$(PlatformTarget)/</OutDir>
     <IntDir>$(SolutionDir)intermediate/$(ProjectName)/$(PlatformTarget)/$(Configuration)/</IntDir>
+    <IncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin/$(PlatformTarget)/</OutDir>
     <IntDir>$(SolutionDir)intermediate/$(ProjectName)/$(PlatformTarget)/$(Configuration)/</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <IncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin/$(PlatformTarget)/</OutDir>
     <IntDir>$(SolutionDir)intermediate/$(ProjectName)/$(PlatformTarget)/$(Configuration)/</IntDir>
+    <IncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(DEVLIBS)DirectX-Headers/include/directx/;$(WindowsSDK_IncludePath);</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>
-      </PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/;$(SolutionDir)cyGraphics/include/;$(CUDA_PATH)/include/</AdditionalIncludeDirectories>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;$(CUDA_PATH)/lib/$(Platform)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dxguid.lib;OpenCL.lib;shell32.lib;user32.lib;cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;cyGraphicsd.lib;cppfsd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,46 +117,34 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>
-      </PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/;$(SolutionDir)cyGraphics/include/;$(CUDA_PATH)/include/</AdditionalIncludeDirectories>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;$(CUDA_PATH)/lib/$(Platform)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dxguid.lib;OpenCL.lib;shell32.lib;user32.lib;cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib;cyGraphics.lib;cppfs.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>
-      </PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/;$(SolutionDir)cyGraphics/include/;$(CUDA_PATH)/include/</AdditionalIncludeDirectories>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;$(CUDA_PATH)/lib/$(Platform)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dxguid.lib;OpenCL.lib;shell32.lib;user32.lib;cyUtilitiesd.lib;cyCored.lib;cyMathd.lib;cyRandomd.lib;cyGraphicsd.lib;cppfsd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -176,26 +153,35 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>
-      </PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/;$(SolutionDir)cyGraphics/include/;$(CUDA_PATH)/include/</AdditionalIncludeDirectories>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/;$(SolutionDir)cyUtilities/include/;$(SolutionDir)cyCore/include/;$(SolutionDir)cyMath/include/;$(SolutionDir)cyRandom/include/</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/;$(SolutionDir)lib/$(PlatformTarget)/;$(CUDA_PATH)/lib/$(Platform)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dxguid.lib;OpenCL.lib;shell32.lib;user32.lib;cyUtilities.lib;cyCore.lib;cyMath.lib;cyRandom.lib;cyGraphics.lib;cppfs.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="cyDX12App.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cyDX12App.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="cyDX12App.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="cyDX12App.ico" />
+    <Image Include="small.ico" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

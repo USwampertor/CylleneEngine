@@ -17,11 +17,12 @@
 #include <cyStdHeaders.h>
 
 // Audio/Sound decoding
-// #include <ffmpeg/libavformat/avformat.h>
-// #include <ffmpeg/libavcodec/avcodec.h>
-// #include <ffmpeg/libswresample/swresample.h>
-// #include <ffmpeg/libavutil/opt.h>
-// #include <ffmpeg/libavutil/channel_layout.h>
+#define DR_FLAC_IMPLEMENTATION
+#define DR_MP3_IMPLEMENTATION
+#define DR_WAV_IMPLEMENTATION
+#include <dr_libs/dr_flac.h>
+#include <dr_libs/dr_mp3.h>
+#include <dr_libs/dr_wav.h>
 
 // Shader decoding
 
@@ -722,215 +723,95 @@ namespace CYLLENE_SDK {
 
   }
 
-// void
-// cleanupffmpeg(AVFormatContext* formatCtx,
-//               AVCodecContext* codecCtx, 
-//               SwrContext* swrCtx, 
-//               AVFrame* frame,
-//               AVPacket* packet) {
-//   if (packet) av_packet_free(&packet);
-//   if (frame) av_frame_free(&frame);
-//   if (swrCtx) swr_free(&swrCtx);
-//   if (codecCtx) avcodec_free_context(&codecCtx);
-//   if (formatCtx) avformat_close_input(&formatCtx);
-// }
-// 
-// 
-//   
-// void*
-// AudioCodec::decode(const File& f) {
-//   AVFormatContext* formatCtx = nullptr;
-//   AVCodecContext* codecCtx = nullptr;
-//   SwrContext* swrCtx = nullptr;
-//   AVFrame* frame = nullptr;
-//   AVPacket* packet = nullptr;
-//   AudioData* audioData = nullptr;
-// 
-//   // auto cleanup = [&]() {
-//   //   if (packet) av_packet_free(&packet);
-//   //   if (frame) av_frame_free(&frame);
-//   //   if (swrCtx) swr_free(&swrCtx);
-//   //   if (codecCtx) avcodec_free_context(&codecCtx);
-//   //   if (formatCtx) avformat_close_input(&formatCtx);
-//   // };
-// 
-//   auto logError = [&](const String& msg) {
-//     Logger::instance().logError(Utils::format("%s [%s]", msg.c_str(), f.path().c_str()));
-//     };
-// 
-//   if (avformat_open_input(&formatCtx, f.path().c_str(), nullptr, nullptr) < 0) {
-//     logError("Could not open audio file");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   if (avformat_find_stream_info(formatCtx, nullptr) < 0) {
-//     logError("Could not read audio stream info");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   int audioStreamIndex = -1;
-//   for (uint32 i = 0; i < formatCtx->nb_streams; ++i) {
-//     if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-//       audioStreamIndex = static_cast<int>(i);
-//       break;
-//     }
-//   }
-// 
-//   if (audioStreamIndex == -1) {
-//     logError("No audio stream found in file");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   AVCodecParameters* codecpar = formatCtx->streams[audioStreamIndex]->codecpar;
-//   const AVCodec* codec = avcodec_find_decoder(codecpar->codec_id);
-//   if (!codec) {
-//     logError("Unsupported audio codec");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   codecCtx = avcodec_alloc_context3(codec);
-//   if (!codecCtx) {
-//     logError("Failed to allocate codec context");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   if (avcodec_parameters_to_context(codecCtx, codecpar) < 0) {
-//     logError("Failed to fill codec context");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   if (avcodec_open2(codecCtx, codec, nullptr) < 0) {
-//     logError("Failed to open codec");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   int sampleRate = codecCtx->sample_rate;
-//   int channels = codecCtx->ch_layout.nb_channels;
-//   AVChannelLayout inLayout;
-//   if (codecCtx->ch_layout.nb_channels > 0) {
-//     av_channel_layout_copy(&inLayout, &codecCtx->ch_layout);
-//   } else {
-//     av_channel_layout_default(&inLayout, channels);
-//   }
-//   AVChannelLayout outLayout;
-//   av_channel_layout_copy(&outLayout, &inLayout);
-// 
-//   int swrRes = swr_alloc_set_opts2(&swrCtx,
-//                                    &outLayout,
-//                                    AV_SAMPLE_FMT_FLT,
-//                                    sampleRate,
-//                                    &inLayout,
-//                                    codecCtx->sample_fmt,
-//                                    codecCtx->sample_rate,
-//                                    0,
-//                                    nullptr);
-//   if (swrRes < 0 || !swrCtx || swr_init(swrCtx) < 0) {
-//     logError("Failed to initialize resampler");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   frame = av_frame_alloc();
-//   packet = av_packet_alloc();
-//   if (!frame || !packet) {
-//     logError("Failed to allocate ffmpeg frame or packet");
-//     cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//     return nullptr;
-//   }
-// 
-//   const int outChannels = outLayout.nb_channels;
-//   channels = outChannels;
-//   Vector<float> samples;
-// 
-//   auto convertFrame = [&](AVFrame* inputFrame) -> bool {
-//     int maxOutSamples = swr_get_out_samples(swrCtx, inputFrame->nb_samples);
-//     if (maxOutSamples <= 0) return false;
-// 
-//     Vector<float> converted;
-//     converted.resize(maxOutSamples * outChannels);
-//     uint8_t* outData[1] = { reinterpret_cast<uint8_t*>(converted.data()) };
-// 
-//     int convertedSamples = swr_convert(swrCtx,
-//                                        outData,
-//                                        maxOutSamples,
-//                                        inputFrame->data,
-//                                        inputFrame->nb_samples);
-//     if (convertedSamples < 0) return false;
-// 
-//     converted.resize(convertedSamples * outChannels);
-//     samples.insert(samples.end(), converted.begin(), converted.end());
-//     return true;
-//   };
-// 
-//   int readRet = 0;
-//   while ((readRet = av_read_frame(formatCtx, packet)) >= 0) {
-//     if (packet->stream_index != audioStreamIndex) {
-//       av_packet_unref(packet);
-//       continue;
-//     }
-// 
-//     if (avcodec_send_packet(codecCtx, packet) < 0) {
-//       av_packet_unref(packet);
-//       logError("Failed while sending audio packet to decoder");
-//       cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//       return nullptr;
-//     }
-// 
-//     av_packet_unref(packet);
-// 
-//     while (true) {
-//       int receiveRet = avcodec_receive_frame(codecCtx, frame);
-//       if (receiveRet == AVERROR(EAGAIN) || receiveRet == AVERROR_EOF) break;
-//       if (receiveRet < 0) {
-//         logError("Failed while receiving decoded audio frame");
-//         cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//         return nullptr;
-//       }
-// 
-//       if (!convertFrame(frame)) {
-//         logError("Failed while converting audio frame");
-//         cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//         return nullptr;
-//       }
-// 
-//       av_frame_unref(frame);
-//     }
-//   }
-// 
-//   avcodec_send_packet(codecCtx, nullptr);
-//   while (true) {
-//     int receiveRet = avcodec_receive_frame(codecCtx, frame);
-//     if (receiveRet == AVERROR(EAGAIN) || receiveRet == AVERROR_EOF) break;
-//     if (receiveRet < 0) {
-//       logError("Failed while flushing audio decoder");
-//       cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//       return nullptr;
-//     }
-// 
-//     if (!convertFrame(frame)) {
-//       logError("Failed while converting flushed audio frame");
-//       cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//       return nullptr;
-//     }
-// 
-//     av_frame_unref(frame);
-//   }
-// 
-//   audioData = new AudioData();
-//   audioData->m_sampleRate = sampleRate;
-//   audioData->m_channels = channels;
-//   audioData->m_samples = std::move(samples);
-// 
-//   cleanupffmpeg(formatCtx, codecCtx, swrCtx, frame, packet);
-//   return reinterpret_cast<void*>(audioData);
-// }
+void*
+AudioCodec::decode(const File& f) {
+
+  Path p(f.path());
+  String ext = Utils::toLowerCase(p.extension().substr(1));
+
+  if (std::find(m_fileExtensions.begin(), m_fileExtensions.end(), ext) == m_fileExtensions.end()) {
+    Logger::instance().logError(
+      Utils::format("AudioCodec: Unsupported audio format (%s)", p.fullPath()));
+    return nullptr;
+  }
+
+  UPtr<AudioData> audioData = std::make_unique<AudioData>();
+
+  auto logAndReturn = [&](const String& message) -> void* {
+    Logger::instance().logError(Utils::format("AudioCodec: %s (%s)", message, p.fullPath()));
+    return nullptr;
+  };
+
+  if (ext == "wav") {
+    drwav wav;
+    if (!drwav_init_file(&wav, p.fullPath().c_str(), nullptr)) {
+      return logAndReturn("Failed to open WAV file");
+    }
+
+    const drwav_uint64 totalFrames = wav.totalPCMFrameCount;
+    const uint32 channels = wav.channels;
+    const int sampleRate = static_cast<int>(wav.sampleRate);
+
+    Vector<float> samples(static_cast<size_t>(totalFrames * channels));
+    const drwav_uint64 framesRead = drwav_read_pcm_frames_f32(&wav, totalFrames, samples.data());
+    drwav_uninit(&wav);
+
+    samples.resize(static_cast<size_t>(framesRead * channels));
+
+    audioData->m_sampleRate = sampleRate;
+    audioData->m_channels = static_cast<int>(channels);
+    audioData->m_samples = std::move(samples);
+
+    return reinterpret_cast<void*>(audioData.release());
+  }
+  else if (ext == "mp3") {
+    drmp3_config config;
+    drmp3_uint64 frameCount = 0;
+
+    float* sampleData = drmp3_open_file_and_read_pcm_frames_f32(
+      p.fullPath().c_str(), &config, &frameCount, nullptr);
+
+    if (!sampleData) {
+      return logAndReturn("Failed to decode MP3 file");
+    }
+
+    const size_t totalSamples = static_cast<size_t>(frameCount * config.channels);
+    audioData->m_samples.assign(sampleData, sampleData + totalSamples);
+
+    drmp3_free(sampleData, nullptr);
+
+    audioData->m_sampleRate = static_cast<int>(config.sampleRate);
+    audioData->m_channels = static_cast<int>(config.channels);
+
+    return reinterpret_cast<void*>(audioData.release());
+  }
+  else if (ext == "flac") {
+    drflac* flac = drflac_open_file(p.fullPath().c_str(), nullptr);
+    if (!flac) {
+      return logAndReturn("Failed to open FLAC file");
+    }
+
+    const drflac_uint64 totalFrames = flac->totalPCMFrameCount;
+    const uint32 channels = flac->channels;
+    const int sampleRate = flac->sampleRate;
+
+    Vector<float> samples(static_cast<size_t>(totalFrames * channels));
+    const drflac_uint64 framesRead = drflac_read_pcm_frames_f32(flac, totalFrames, samples.data());
+
+    drflac_close(flac);
+
+    samples.resize(static_cast<size_t>(framesRead * channels));
+
+    audioData->m_sampleRate = sampleRate;
+    audioData->m_channels = static_cast<int>(channels);
+    audioData->m_samples = std::move(samples);
+
+    return reinterpret_cast<void*>(audioData.release());
+  }
+
+  return logAndReturn("Unsupported audio format");
+}
+
 
 void*
 MaterialCodec::decode(const File& f) {

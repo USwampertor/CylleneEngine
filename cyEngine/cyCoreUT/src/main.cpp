@@ -17,6 +17,8 @@
 #include <cyCrashHandler.h>
 #include <cyCTransform.h>
 #include <cyCCamera.h> 
+#include <cyCAudioListener.h>
+#include <cyCAudioSource.h>
 #include <cyCLight.h>
 #include <cyCMeshRenderer.h>
 #include <cyFileSystem.h>
@@ -24,6 +26,7 @@
 #include <cyLogger.h>
 #include <cyMath.h>
 #include <cyResourceManager.h>
+#include <cyRAudio.h>
 #include <cyRImage.h>
 #include <cyRMesh.h>
 #include <cyRModel.h>
@@ -338,6 +341,29 @@ TEST_SUITE("Scene System Tests") {
     CHECK(Vector3f::areNearlySame(childWorldPos, childLocalPos + parentPos));
 
   }
+
+  TEST_CASE("Audio Source Playback") {
+    SceneManager::instance().createScene("AudioScene");
+    SceneManager::instance().changeScene("AudioScene");
+    auto audioBeing = SceneManager::instance().instantiateBeing<BBeing>(Vector3f(0, 0, 0));
+    auto audioSource = audioBeing.lock()->createComponent<CAudioSource>();
+    Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
+    File audioFile = FileSystem::open(resourceDir.fullPath() + "/areyousureaboutthat.wav");
+    SPtr<RAudio> audioClip = ResourceManager::instance().loadFromPath<RAudio>(audioFile.path());
+    audioSource.lock()->setClip(audioClip);
+    // Test play
+    audioSource.lock()->play();
+    CHECK(audioSource.lock()->isPlaying());
+    // Test pause
+    audioSource.lock()->pause();
+    CHECK_FALSE(audioSource.lock()->isPlaying());
+    // Test stop
+    audioSource.lock()->play();
+    audioSource.lock()->stop();
+    CHECK_FALSE(audioSource.lock()->isPlaying());
+  }
+
+  
 
 
 }
