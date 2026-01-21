@@ -17,6 +17,7 @@
 #include <cyCrashHandler.h>
 #include <cyCTransform.h>
 #include <cyCCamera.h> 
+#include <cyAudioManager.h>
 #include <cyCAudioListener.h>
 #include <cyCAudioSource.h>
 #include <cyCLight.h>
@@ -43,7 +44,12 @@
 #include <cyScene.h>
 #include <cySNode.h>
 #include <cyCParticleEmitter.h>
+#include <cyThread.h>
 
+
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
 
 using namespace CYLLENE_SDK;
 
@@ -198,7 +204,7 @@ TEST_CASE("[window] Window creation") {
   Time::instance().init();
   Time::instance().update();
   Time::instance().deltaTime();
-  while (running) {
+  while (timer < 3000.0f ) {
     // eventQueue->update();
     Time::instance().update();
     WindowManager::instance().update();
@@ -345,22 +351,64 @@ TEST_SUITE("Scene System Tests") {
   TEST_CASE("Audio Source Playback") {
     SceneManager::instance().createScene("AudioScene");
     SceneManager::instance().changeScene("AudioScene");
+
+    AudioManager::startUp();
+    auto devices = AudioManager::instance().getAvailableDevices();
+    for (const auto& device : devices) {
+      std::cout << "Available Audio Device: " << device << std::endl;
+    }
+    
+    std::cout << AudioManager::instance().getDefaultDevice() << std::endl;
+    std::cout << AudioManager::instance().getCurrentDevice() << std::endl;
+
     auto audioBeing = SceneManager::instance().instantiateBeing<BBeing>(Vector3f(0, 0, 0));
     auto audioSource = audioBeing.lock()->createComponent<CAudioSource>();
     Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
-    File audioFile = FileSystem::open(resourceDir.fullPath() + "/areyousureaboutthat.wav");
+    File audioFile = FileSystem::open(resourceDir.fullPath() + "/areyousureaboutthat.mp3");
     SPtr<RAudio> audioClip = ResourceManager::instance().loadFromPath<RAudio>(audioFile.path());
     audioSource.lock()->setClip(audioClip);
     // Test play
-    audioSource.lock()->play();
+
+    auto thread1 = std::thread([&]() {
+      audioSource.lock()->play();
+    });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     CHECK(audioSource.lock()->isPlaying());
     // Test pause
-    audioSource.lock()->pause();
+    
+    auto thread12 = std::thread([&]() {
+      audioSource.lock()->pause();
+
+    });
+    thread12.join();
     CHECK_FALSE(audioSource.lock()->isPlaying());
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+
     // Test stop
-    audioSource.lock()->play();
+    auto thread2 = std::thread([&]() {
+      audioSource.lock()->play();
+    });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     audioSource.lock()->stop();
     CHECK_FALSE(audioSource.lock()->isPlaying());
+
+    thread1.join();
+    thread2.join();
+    ALCdevice* device;
+    ALCcontext* ctx;
+
+    ctx = alcGetCurrentContext();
+    if (ctx == nullptr) {
+      return;
+    }
+
+    device = alcGetContextsDevice(ctx);
+
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(ctx);
+    alcCloseDevice(device);
   }
 
   

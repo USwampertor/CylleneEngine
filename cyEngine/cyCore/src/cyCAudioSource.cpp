@@ -3,6 +3,7 @@
 #include <AL/alc.h>
 #include <cyLogger.h>
 #include "cyAudioBackend.h"
+#include "cyAudioManager.h"
 
 #include <algorithm>
 #include <chrono>
@@ -61,7 +62,17 @@ uploadToBuffer(ALuint bufferId, RAudio& clip) {
 
 
 CAudioSource::CAudioSource() : CComponent(CAudioSource::staticType()) {
-  AudioBackend::ensureOpenAL();
+  // AudioBackend::ensureOpenAL();
+  m_onClipLoaded += [this]() {
+    setClipBuffer();
+  };
+  if (AudioManager::isStarted()) {
+    if (AudioManager::instance().ensureIsInit()) {
+      if (m_sourceId == 0) {
+        alGenSources(1, &m_sourceId);
+      }
+    }
+  }
 }
 
 CAudioSource::~CAudioSource() {
@@ -79,7 +90,9 @@ CAudioSource::~CAudioSource() {
 
 void
 CAudioSource::play() {
-  if (!AudioBackend::ensureOpenAL()) return;
+  if (!AudioManager::instance().ensureIsInit()) {
+    Logger::instance().logError("Error handling playback: OpenAL was not ensured");
+  }
 
   SPtr<RAudio> clip = m_clip.lock();
   if (!clip) {
@@ -87,14 +100,19 @@ CAudioSource::play() {
     return;
   }
 
+  alSourcePlay(m_sourceId);
+  m_isPlaying = true;
+}
+
+void
+CAudioSource::setClipBuffer() {
+
   if (m_bufferId == 0) {
     alGenBuffers(1, &m_bufferId);
   }
-  if (m_sourceId == 0) {
-    alGenSources(1, &m_sourceId);
-  }
 
-  if (!uploadToBuffer(m_bufferId, *clip)) {
+  if (!uploadToBuffer(m_bufferId, *m_clip.lock())) {
+    Logger::instance().logError("Error handling playback: OpenAL did not upload buffer");
     return;
   }
 
@@ -103,8 +121,6 @@ CAudioSource::play() {
   alSourcei(m_sourceId, AL_LOOPING, m_loop ? AL_TRUE : AL_FALSE);
   alSourcef(m_sourceId, AL_PITCH, m_pitch);
 
-  alSourcePlay(m_sourceId);
-  m_isPlaying = true;
 }
 
 void
@@ -115,7 +131,9 @@ CAudioSource::playDelayed(float delay) {
 
 void
 CAudioSource::stop() {
-  if (!AudioBackend::ensureOpenAL() || m_sourceId == 0) return;
+  if (!AudioManager::instance().ensureIsInit() || m_sourceId == 0) {
+    Logger::instance().logError("Error handling pause: OpenAL was not ensured");
+  }
 
   alSourceStop(m_sourceId);
   alSourceRewind(m_sourceId);
@@ -124,7 +142,9 @@ CAudioSource::stop() {
 
 void
 CAudioSource::pause() {
-  if (!AudioBackend::ensureOpenAL() || m_sourceId == 0) return;
+  if (!AudioManager::instance().ensureIsInit() || m_sourceId == 0) {
+    Logger::instance().logError("Error handling pause: OpenAL was not ensured");
+  }
 
   alSourcePause(m_sourceId);
   m_isPlaying = false;
@@ -137,12 +157,14 @@ CAudioSource::playOnce(SPtr<RAudio> audio) {
   WPtr<RAudio> previousClip = m_clip;
   bool previousLoop = m_loop;
 
-  m_clip = audio;
+  // m_clip = audio;
   m_loop = false;
-
+  setClip(audio);
   play();
-
-  m_clip = previousClip;
+  if (previousClip.lock() != nullptr) {
+    setClip(previousClip);
+  }
+  // m_clip = previousClip;
   m_loop = previousLoop;
 }
 

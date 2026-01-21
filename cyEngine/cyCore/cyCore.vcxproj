@@ -33,6 +33,7 @@
     <ClInclude Include="include\assets\cyMoon.h" />
     <ClInclude Include="include\assets\cySAQ.h" />
     <ClInclude Include="include\cyAudioBackend.h" />
+    <ClInclude Include="include\cyAudioManager.h" />
     <ClInclude Include="include\cyCAudioListener.h" />
     <ClInclude Include="include\cyCAudioMaterial.h" />
     <ClInclude Include="include\cyCAudioMixer.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyAudioManager.cpp" />
     <ClCompile Include="src\cyBBeing.cpp" />
     <ClCompile Include="src\cyCAudioListener.cpp" />
     <ClCompile Include="src\cyCAudioMaterial.cpp" />

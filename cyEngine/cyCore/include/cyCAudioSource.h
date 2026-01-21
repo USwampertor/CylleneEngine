@@ -2,6 +2,7 @@
 #include "cyCorePrerequisites.h"
 #include "cyRAudio.h"
 #include "cyCComponent.h"
+#include <cyEvent.h>
 
 namespace CYLLENE_SDK {
 
@@ -25,8 +26,8 @@ public:
                                       m_clip.lock()->getName().c_str() : 
                                       "audio source without clip"), 
                                      (m_isPlaying ?
-                                      "is playing" :
-                                       "is not playing"));
+                                      "playing" :
+                                      "not playing"));
   }
 
   void
@@ -47,6 +48,7 @@ public:
   void
   setClip(WPtr<RAudio> clip) {
     m_clip = clip;
+    m_onClipLoaded.invoke();
   }
 
   WPtr<RAudio>
@@ -67,7 +69,7 @@ public:
 
   bool m_spatialize = false;
 
-  int m_priority = 128;
+  int32 m_priority = 128;
 
   bool m_isPlaying = false;
 
@@ -83,9 +85,14 @@ public:
 
 private:
 
-  unsigned int m_sourceId = 0;
+  void
+  setClipBuffer();
 
-  unsigned int m_bufferId = 0;
+  uint32 m_sourceId = 0;
+
+  uint32 m_bufferId = 0;
+
+  Event<void> m_onClipLoaded;
 
 };
 

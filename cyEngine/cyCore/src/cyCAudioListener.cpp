@@ -3,6 +3,7 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <cyLogger.h>
+#include "cyAudioManager.h"
 
 #include <algorithm>
 
@@ -21,7 +22,7 @@ setListenerOrientation(const Vector3f& forward, const Vector3f& up) {
 }
 
 CAudioListener::CAudioListener() : CComponent(CAudioListener::staticType()) {
-  AudioBackend::ensureOpenAL();
+  AudioManager::instance().ensureIsInit();
   setPosition(m_position);
   setVelocity(m_velocity);
   setOrientation(m_forward, m_up);
@@ -32,21 +33,21 @@ CAudioListener::~CAudioListener() = default;
 
 void
 CAudioListener::setPosition(const Vector3f& position) {
-  if (!AudioBackend::ensureOpenAL()) return;
+  if (!AudioManager::instance().ensureIsInit()) return;
   m_position = position;
   alListener3f(AL_POSITION, position.x, position.y, position.z);
 }
 
 void
 CAudioListener::setVelocity(const Vector3f& velocity) {
-  if (!AudioBackend::ensureOpenAL()) return;
+  if (!AudioManager::instance().ensureIsInit()) return;
   m_velocity = velocity;
   alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
 
 void
 CAudioListener::setOrientation(const Vector3f& forward, const Vector3f& up) {
-  if (!AudioBackend::ensureOpenAL()) return;
+  if (!AudioManager::instance().ensureIsInit()) return;
   m_forward = forward;
   m_up = up;
   setListenerOrientation(m_forward, m_up);
@@ -54,7 +55,7 @@ CAudioListener::setOrientation(const Vector3f& forward, const Vector3f& up) {
 
 void
 CAudioListener::setGain(float gain) {
-  if (!AudioBackend::ensureOpenAL()) return;
+  if (!AudioManager::instance().ensureIsInit()) return;
   m_gain = std::max(0.0f, gain);
   alListenerf(AL_GAIN, m_gain);
 }
