@@ -28,6 +28,7 @@
 #include <type_traits>
 
 
+
 //#define USING_EASTL
 
 #ifndef  USING_EASTL
@@ -133,6 +134,9 @@ namespace CYLLENE_SDK {
 
   using RunTimeError  = std::runtime_error;
 
+  template<typename T>
+  using ResultOf = std::result_of<T>;
+
   template<typename T, typename A>
   using Pair = std::pair<T, A>;
 
@@ -140,6 +144,8 @@ namespace CYLLENE_SDK {
   using Tuple = std::tuple<T, A>;
 
   using Thread = std::thread;
+
+  using ThreadID = std::thread::id;
 
   template<class Key,
            class Hash = std::hash<Key>,

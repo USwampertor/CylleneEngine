@@ -21,6 +21,9 @@ namespace CYLLENE_SDK {
 struct CY_UTILITY_EXPORT PlatformUtils {
 public:
 
+  template<typename ... Args>
+# define CY_FORWARD(x) std::forward<Args>(x)...
+
   /*
    *	@brief	runs a command with the given commandLine. This is a wrapper for system() function
    *	@param	const String& commandLine the cmd line to run
@@ -42,11 +45,15 @@ public:
 
     const char* formatCstr = formatStr.c_str();
 
-    int32 size_s = std::snprintf(nullptr, 0, formatCstr, std::forward<Args>(args)...) + 1; // Extra space for '\0'
+    int32 size_s = std::snprintf(nullptr, 
+                                 0, 
+                                 formatCstr,
+                                 CY_FORWARD(args)) + 1;
+                                 // std::forward<Args>(args)...) + 1; // Extra space for '\0'
     if (size_s <= 0) { throwRuntimeError("Error during formatting."); }
     auto size = static_cast<size_t>(size_s);
     auto buf = std::make_unique<char[]>(size);
-    std::snprintf(buf.get(), size, formatCstr, std::forward<Args>(args)...);
+    std::snprintf(buf.get(), size, formatCstr, CY_FORWARD(args));
     return String(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
   }
 
