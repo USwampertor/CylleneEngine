@@ -17,6 +17,7 @@
 #include <ctime>
 #include <chrono>
 #include <fstream>
+#include <future>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -162,6 +163,12 @@ namespace CYLLENE_SDK {
 
   template<typename T>
   using WPtr = std::weak_ptr<T>;
+
+
+  using ConditionVariable = std::condition_variable;
+
+  template<typename T>
+  using Future = std::future<T>;
 }
 
 

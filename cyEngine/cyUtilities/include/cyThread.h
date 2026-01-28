@@ -6,15 +6,9 @@
 #include "cySmartPointers.h"
 #include "cyEvent.h"
 
-#include <future>
 
 namespace CYLLENE_SDK
 {
-
-using ConditionVariable = std::condition_variable;
-
-template<typename T>
-using Future = std::future<T>;
 
 namespace THREAD_TYPE
 {
@@ -77,7 +71,7 @@ public:
   void
   enqueue(F&& f, Args&& ... args) {
     MULock lock(m_queueMutex);
-    auto task = Callback<void>([fn = std::bind(std::forward<F>(f), CY_FORWARD(args))]() mutable {
+    auto task = Callback<void>([fn = std::bind(std::forward<F>(f), std::forward<Args>(args)...)]() mutable {
       fn();
     });
     // wrap the callable and its params into a void() job
@@ -98,7 +92,7 @@ public:
     using return_type = typename std::result_of<F(Args...)>::type;
 
     auto task = makeSharedPtr<std::packaged_task<return_type()>>(
-      std::bind(std::forward<F>(f), CY_FORWARD(args))
+      std::bind(std::forward<F>(f), std::forward<Args>(args)...)
     );
 
     Future<return_type> res = task->get_future(); {
@@ -167,7 +161,7 @@ void
 enqueueToThread(F&& f, Args&& ... args) {
   // using Job = Callback<void>;
   // wrap the callable and its params into a void() job
-  ThreadManager::instance().enqueue(f, CY_FORWARD(args));
+  ThreadManager::instance().enqueue(f, std::forward<Args>(args)...);
 //   ThreadManager::instance().enqueue(Job([fn = std::bind(std::forward<F>(f), std::forward<Args>(args)...)]() mutable {
 //     fn();
 //   }));
@@ -177,7 +171,7 @@ template<typename F, typename ... Args>
 auto 
 enqueueFuture(F&& f, Args&& ... args) {
   // wrap the callable and its params into a void() job
-  return ThreadManager::instance().enqueueFuture(f, CY_FORWARD(args));
+  return ThreadManager::instance().enqueueFuture(f, std::forward<Args>(args)...);
 }
 
 
