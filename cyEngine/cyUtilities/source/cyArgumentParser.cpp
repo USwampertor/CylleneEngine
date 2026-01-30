@@ -35,7 +35,7 @@ ArgumentParser::parse(const int& argc, const char* argv[])
       addFlag(currentFlag);
     }
     else if (!currentFlag.empty()) {  // If not a flag, treat as a parameter for the last flag
-      std::smatch match;
+      StringMatch match;
       if (std::regex_match(arg, match, paramRegex)) {
         if (match[1].matched) {  // Multi-word parameter in quotes
           // arguments[currentFlag].push_back(match[1].str());
@@ -68,16 +68,16 @@ ArgumentParser::parse(const String& parameters) {
   Regex flagRegex(R"(-\w+)");
   Regex paramRegex(R"delim("([^"]+)"|\b(?!-)\S+\b)delim");
   StringMatch match;
-  if (std::regex_search(input, match, flagRegex)) {
+  if (regexSearch(input, match, flagRegex)) {
     String flag = match.str();
     input = match.suffix().str();  // Remaining string after the flag
 
     // Find parameters after the flag
     Vector<String> params;
-    auto paramStart = std::sregex_iterator(input.begin(),
-                                           input.end(), 
-                                           paramRegex);
-    auto paramEnd = std::sregex_iterator();
+    auto paramStart = SRegexIterator(input.begin(),
+                                     input.end(), 
+                                     paramRegex);
+    auto paramEnd = SRegexIterator();
 
     for (std::sregex_iterator i = paramStart; i != paramEnd; ++i) {
       if ((*i)[1].matched) {  // Check if the quoted group matched
