@@ -74,19 +74,19 @@ class CY_UTILITY_EXPORT Log
       m_time(otherLog.m_time) {}
 
   const String
-  ToString();
+  toString() const;
 
   const String&
-  GetMessage();
+  getMsg() const;
 
   const LOG_VERBOSITY::E&
-  GetVerbosity();
+  getVerbosity() const;
 
   const LOG_CHANNEL::E&
-  GetChannel();
+  getChannel() const;
 
-  const LOG_OUTPUT::E&
-  GetOutput();
+  const Bitset<5>&
+  getOutput() const;
   
 private:
 

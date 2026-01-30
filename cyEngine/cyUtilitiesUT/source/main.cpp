@@ -10,6 +10,7 @@
 #include <cyLogger.h>
 #include <cyEvent.h>
 #include <cyTime.h> 
+#include <cyThread.h>
 #include <cyDLLLoader.h>
 #include <cyJSON.h>
 // Using namespace for ease of use
@@ -18,6 +19,12 @@ using namespace CYLLENE_SDK;
 void
 testFunction(int foo) {
   std::cout << foo << std::endl;
+}
+
+int 
+fooFunction(int bar) {
+  Threading::sleepFor(Miliseconds(2000));
+  return bar * 2;
 }
 
 /*
@@ -47,6 +54,15 @@ main(int argc, char* argv[])
 TEST_SUITE("Modules") {
   TEST_CASE("Logger") {
     Logger::startUp();
+    Logger::instance().onLogAdded().addListener([](const Log& newLog) {
+      std::cout << "New log added: " << newLog.getMsg() << std::endl;
+      });
+    Logger::instance().log("Test log message", LOG_VERBOSITY::E::eDEFAULT, LOG_CHANNEL::E::eDEFAULT, LOG_OUTPUT::E::eCONSOLE);
+    Logger::instance().log("Test log message 2", LOG_VERBOSITY::E::eDEFAULT, LOG_CHANNEL::E::eDEFAULT, LOG_OUTPUT::E::eCONSOLE);
+    Logger::instance().log("Test log message 3", LOG_VERBOSITY::E::eDEFAULT, LOG_CHANNEL::E::eDEFAULT, LOG_OUTPUT::E::eCONSOLE);
+  
+  
+    Logger::instance().dump();
   }
 
   TEST_CASE("Time") {
@@ -99,7 +115,14 @@ TEST_SUITE("Smart Pointers") {
 }
 
 TEST_SUITE("Threads") {
+  TEST_CASE("Basic Thread operations") {
+    ThreadManager::startUp();
+    enqueueToThread(testFunction, 12);
+    auto future = enqueueFuture(fooFunction, 123);
+    Threading::sleepFor(Miliseconds(1000));
 
+    std::cout << future.get() << std::endl;
+  }
 }
 
 TEST_SUITE("Time") {

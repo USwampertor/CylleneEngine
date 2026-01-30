@@ -46,7 +46,8 @@ namespace CYLLENE_SDK
     getStackTrace();
 
     void
-    logErrorAndStackTrace(const String& message, const String& stackTrace) const;
+    logErrorAndStackTrace(const String& message, 
+                          const String& stackTrace) const;
 
     void
     logErrorAndStackTrace(const String& type,
