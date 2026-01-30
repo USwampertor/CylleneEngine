@@ -11,7 +11,22 @@
 
 #include "cyUtilitiesPrerequisites.h"
 
+#include <type_traits>
+#include <utility>
+
 namespace CYLLENE_SDK {
+
+
+
+template<typename T>
+constexpr T&& forwarding(T&& arg) noexcept {
+  return std::forward<T>(arg);
+}
+
+template <typename... Args>
+constexpr auto forwardArgs(Args&&... args) noexcept {
+  return std::forward_as_tuple(std::forward<Args>(args)...);
+}
 
 /*
  *	@struct PlatformUtils	
@@ -42,7 +57,11 @@ public:
 
     const char* formatCstr = formatStr.c_str();
 
-    int32 size_s = std::snprintf(nullptr, 0, formatCstr, std::forward<Args>(args)...) + 1; // Extra space for '\0'
+    int32 size_s = std::snprintf(nullptr, 
+                                 0, 
+                                 formatCstr,
+                                 std::forward<Args>(args)...) + 1;
+                                 // std::forward<Args>(args)...) + 1; // Extra space for '\0'
     if (size_s <= 0) { throwRuntimeError("Error during formatting."); }
     auto size = static_cast<size_t>(size_s);
     auto buf = std::make_unique<char[]>(size);
@@ -148,8 +167,7 @@ public:
   }
 
   static String 
-  intToHex(const int32& toValue, bool optionalPrefix = false, char toFillWith = '\0')
-  {
+  intToHex(const int32& toValue, bool optionalPrefix = false, char toFillWith = '\0') {
     StringStream stream;
     stream << std::hex
       << std::uppercase // Convert to hex and uppercase
@@ -165,14 +183,35 @@ public:
   }
 
   static bool
-  isStringNumber(const String& s)
-  {
+  isStringNumber(const String& s) {
     return !s.empty() && std::find_if(s.begin(), s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
   }
+
+  template <typename CharT, typename Traits>
+  std::basic_ostream<CharT, Traits>&
+  endLine(std::basic_ostream<CharT, Traits>& os) {
+    return std::endl(os);
+  }
+
 
   /**
    * A blank string
    */
   static const String BLANKSTRING;
 };
+
+
+// 
+// // helper that replicates std::forward semantics (safe to call as forwardArg<Args>(args)...)
+// template<typename T>
+// constexpr T&& forwardArg(std::remove_reference_t<T>& arg) noexcept {
+//   return static_cast<T&&>(arg);
+// }
+// 
+// template<typename T>
+// constexpr T&& forwardArg(std::remove_reference_t<T>&& arg) noexcept {
+//   static_assert(!std::is_lvalue_reference<T>::value, "bad forwardArg<T> call");
+//   return static_cast<T&&>(arg);
+// }
+
 }

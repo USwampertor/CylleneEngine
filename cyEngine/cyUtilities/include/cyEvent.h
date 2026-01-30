@@ -22,41 +22,34 @@ public:
   ~Event() = default;
 
   void
-  addListener(const Callback<ReturnType, Args...>& newFunction)
-  {
+  addListener(const Callback<ReturnType, Args...>& newFunction) {
     m_events.push_back(newFunction);
   }
 
   void 
-  invoke(Args&&... args)
-  {
-    for (auto& e : m_events)
-    {
+  invoke(Args&&... args) {
+    for (auto& e : m_events) {
       e(std::forward<Args>(args)...);
     }
   }
 
   void
-  removeListener(const Callback<ReturnType, Args...>& newFunction)
-  {
+  removeListener(const Callback<ReturnType, Args...>& newFunction) {
     m_events.erase(std::remove(m_events.begin(), m_events.end(), newFunction), m_events.end());
   }
 
   void 
-  removeAllListeners()
-  {
+  removeAllListeners() {
     m_events.clear();
   }
 
   void
-  operator+=(const Callback<ReturnType, Args...>& newFunction)
-  {
+  operator+=(const Callback<ReturnType, Args...>& newFunction) {
     addListener(newFunction);
   }
 
   void
-  operator-=(const Callback<ReturnType, Args...>& newFunction)
-  {
+  operator-=(const Callback<ReturnType, Args...>& newFunction) {
     removeListener(newFunction);
   }
 

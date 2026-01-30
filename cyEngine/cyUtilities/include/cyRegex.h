@@ -16,10 +16,25 @@
 
 namespace CYLLENE_SDK
 {
-  template<typename T, typename Tr = std::regex_traits<T>>
-  using BasicRegex = std::basic_regex<T, Tr>;
-  using Regex = std::regex;
-  using StringMatch = std::smatch;
-  using CharMatch = std::cmatch;
+template<typename T, typename Tr = std::regex_traits<T>>
+using BasicRegex = std::basic_regex<T, Tr>;
+  
+using Regex = std::regex;
+  
+using StringMatch = std::smatch;
+  
+using CharMatch = std::cmatch;
+
+using SRegexIterator = std::sregex_iterator;
+
+using CRegexIterator = std::cregex_iterator;
+
+template <typename... Args>
+decltype(auto) regexSearch(Args&&... args) {
+  return std::regex_search(std::forward<Args>(args)...);
+}
+
+
+
 }
 
