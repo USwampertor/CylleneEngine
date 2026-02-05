@@ -3,7 +3,6 @@
 #include "cyCorePrerequisites.h"
 
 #include "cyRResource.h"
-#include <better-enums/enum.h>
 
 
 namespace CYLLENE_SDK {

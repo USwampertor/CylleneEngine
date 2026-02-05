@@ -1,9 +1,12 @@
 #include "cyCAudioSource.h"
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <cyLogger.h>
+
 #include "cyAudioBackend.h"
 #include "cyAudioManager.h"
+
+#include <cyLogger.h>
+#include <cyThread.h>
 
 #include <algorithm>
 #include <chrono>
@@ -31,31 +34,35 @@ convertToPCM16(const Vector<float>& samples) {
   return pcm;
 }
 
-bool
+uint32
 uploadToBuffer(ALuint bufferId, RAudio& clip) {
   UPtr<AudioData> data(reinterpret_cast<AudioData*>(clip.getData()));
   if (!data || data->m_sampleRate <= 0 || data->m_channels <= 0 || data->m_samples.empty()) {
     Logger::instance().logError("OpenAL-soft: Invalid audio data passed to CAudioSource");
-    return false;
+    return 0;
   }
 
   ALenum format = getALFormat(data->m_channels);
   if (format == 0) {
     Logger::instance().logError("OpenAL-soft: Unsupported channel configuration");
-    return false;
+    return 0;
   }
 
   Vector<int16_t> pcm = convertToPCM16(data->m_samples);
-  alBufferData(bufferId, format, pcm.data(),
+  alBufferData(bufferId, 
+               format, 
+               pcm.data(),
                static_cast<ALsizei>(pcm.size() * sizeof(int16_t)),
                data->m_sampleRate);
 
   if (alGetError() != AL_NO_ERROR) {
     Logger::instance().logError("OpenAL-soft: Failed to upload audio buffer");
-    return false;
+    if (bufferId && alIsBuffer(bufferId)) {
+      alDeleteBuffers(1, &bufferId);
+    }
+    return 0;
   }
-
-  return true;
+  return bufferId;
 }
 
 }
@@ -68,9 +75,7 @@ CAudioSource::CAudioSource() : CComponent(CAudioSource::staticType()) {
   };
   if (AudioManager::isStarted()) {
     if (AudioManager::instance().ensureIsInit()) {
-      if (m_sourceId == 0) {
-        alGenSources(1, &m_sourceId);
-      }
+      alGenSources(1, &m_sourceId);
     }
   }
 }
@@ -110,11 +115,13 @@ CAudioSource::setClipBuffer() {
   if (m_bufferId == 0) {
     alGenBuffers(1, &m_bufferId);
   }
-
-  if (!uploadToBuffer(m_bufferId, *m_clip.lock())) {
+  uint32 result = uploadToBuffer(m_bufferId, *m_clip.lock());
+  if (!result) {
     Logger::instance().logError("Error handling playback: OpenAL did not upload buffer");
     return;
   }
+
+  m_bufferId = result;
 
   alSourcei(m_sourceId, AL_BUFFER, static_cast<ALint>(m_bufferId));
   alSourcef(m_sourceId, AL_GAIN, m_mute ? 0.0f : m_volume);
@@ -125,8 +132,13 @@ CAudioSource::setClipBuffer() {
 
 void
 CAudioSource::playDelayed(float delay) {
-  std::this_thread::sleep_for(std::chrono::duration<float>(delay));
-  play();
+
+  enqueueToThread([this, delay]() {
+    Miliseconds d(static_cast<int32>(delay));
+    Threading::sleepFor(d);
+    play();
+  });
+  // std::this_thread::sleep_for(std::chrono::duration<float>(delay));
 }
 
 void
@@ -166,6 +178,64 @@ CAudioSource::playOnce(SPtr<RAudio> audio) {
   }
   // m_clip = previousClip;
   m_loop = previousLoop;
+}
+
+void
+CAudioSource::setPosition(const Vector3f& position) {
+  if (!AudioManager::instance().ensureIsInit()) {
+    return;
+  }
+  // m_position = position;
+  alSource3f(m_sourceId, SOURCE_PROPERTIES::E::ePOSITION, position.x, position.y, position.z);
+  // alSource3f(m_sourceId, AL_POSITION, position.x, position.y, position.z);
+  AUDIO_ERROR::E error = AUDIO_ERROR::E::_from_integral(alGetError());
+  if (error != +AUDIO_ERROR::E::eNONE) {
+    Logger::instance().logError(Utils::format("alGenBuffers: %s", error._to_string()));
+  }
+}
+
+void
+CAudioSource::setVelocity(const Vector3f& velocity) {
+  if (!AudioManager::instance().ensureIsInit()) {
+    return;
+  }
+  // m_velocity = velocity;
+  alSource3f(m_sourceId, SOURCE_PROPERTIES::E::eVELOCITY, velocity.x, velocity.y, velocity.z);
+  // alSource3f(m_sourceId, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+  AUDIO_ERROR::E error = AUDIO_ERROR::E::_from_integral(alGetError());
+  if (error != +AUDIO_ERROR::E::eNONE) {
+    Logger::instance().logError(Utils::format("alGenBuffers: %s", error._to_string()));
+  }
+}
+
+void
+CAudioSource::setDirection(const Vector3f& forward) {
+  if (!AudioManager::instance().ensureIsInit()) {
+    return;
+  }
+  // m_forward = forward;
+  // m_up = up;
+  alSource3f(m_sourceId, SOURCE_PROPERTIES::E::eDIRECTION, forward.x, forward.y, forward.z);
+  // alSource3f(m_sourceId, AL_DIRECTION, forward.x, forward.y, forward.z);
+  AUDIO_ERROR::E error = AUDIO_ERROR::E::_from_integral(alGetError());
+  if (error != +AUDIO_ERROR::E::eNONE) {
+    Logger::instance().logError(Utils::format("alGenBuffers: %s", error._to_string()));
+  }
+}
+
+void
+CAudioSource::applyTransformChanges(const Matrix4& newTransform) {
+  if (!AudioManager::instance().ensureIsInit() || m_sourceId == 0) {
+    Logger::instance().logError("Error handling transform changes: OpenAL was not ensured");
+  }
+  Vector3f position = newTransform.getPosition();
+  Vector3f forward = newTransform.getForwardVector();
+  // TODO: Calculate velocity based on previous position and time delta
+  Vector3f velocity = Vector3f::ZERO; 
+  
+  setPosition(position);
+  setDirection(forward);
+  setVelocity(velocity);
 }
 
 }

@@ -125,6 +125,11 @@ public:
     createComponent<CTransform>();
   }
 
+  Map<COMPONENT_TYPE::E, SPtr<CComponent>>&
+  getAllComponents() {
+    return m_components;
+  }
+
   virtual void 
   onInit() {}
 

@@ -19,10 +19,19 @@ public:
 
   virtual const String
   toString() override {
-    return Utils::format("position: %s", m_position.toString());
+    return Utils::format("Audio Listener with gain: %2.2f", m_gain);
   }
 
   ~CAudioListener();
+
+
+  void
+  setGain(float gain);
+
+  void
+  applyTransformChanges(const Matrix4& newTransform) override;
+
+private:
 
   void
   setPosition(const Vector3f& position);
@@ -33,15 +42,13 @@ public:
   void
   setOrientation(const Vector3f& forward, const Vector3f& up);
 
-  void
-  setGain(float gain);
+// TODO: Maybe remove these as they can be redundant with the transform component
+//   Vector3f m_position = Vector3f::ZERO;
+//   Vector3f m_velocity = Vector3f::ZERO;
+//   Vector3f m_forward = Vector3f::FRONT;
+//   Vector3f m_up = Vector3f::UP;
 
-private:
 
-  Vector3f m_position = Vector3f::ZERO;
-  Vector3f m_velocity = Vector3f::ZERO;
-  Vector3f m_forward = Vector3f::FRONT;
-  Vector3f m_up = Vector3f::UP;
   float m_gain = 1.0f;
 };
 

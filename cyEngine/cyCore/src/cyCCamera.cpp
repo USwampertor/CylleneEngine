@@ -56,5 +56,17 @@ CCamera::changeCameraType(const CAMERA_TYPE::E& type) {
 
 }
 
+void
+CCamera::applyTransformChanges(const Matrix4& newTransform) {
+  if (m_owner.lock() == nullptr) {
+    return;
+  }
+
+  if (m_view == m_owner.lock()->getComponent<CTransform>().lock()->m_localMatrix) {
+    return;
+  }
+  m_view = m_owner.lock()->getComponent<CTransform>().lock()->m_localMatrix;
+}
+
 
 }

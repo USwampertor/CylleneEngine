@@ -2,6 +2,7 @@
 #include "cyCorePrerequisites.h"
 
 #include <cyEvent.h>
+#include <cyMatrix4.h>
 
 
 namespace CYLLENE_SDK {
@@ -94,6 +95,9 @@ public:
     return m_owner;
   }
 
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) = 0; 
+
 public:
 
   Event<void> m_onUpdate;
@@ -103,6 +107,8 @@ public:
   Event<void> m_onInit;
 
   Event<void> m_onDestroy;
+
+  Event<void, const Matrix4&> m_onTransformChanged;
 
 protected:
 

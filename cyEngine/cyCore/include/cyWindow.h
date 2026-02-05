@@ -40,8 +40,6 @@
 # undef CreateWindow
 #endif // CreateWindow
 
-#include <better-enums/enum.h>
-
 namespace CYLLENE_SDK {
 
 using Window         = SDL_Window; 

@@ -204,12 +204,13 @@ TEST_CASE("[window] Window creation") {
   Time::instance().init();
   Time::instance().update();
   Time::instance().deltaTime();
-  while (timer < 3000.0f ) {
+  while (timer < 300.0f ) {
     // eventQueue->update();
     Time::instance().update();
     WindowManager::instance().update();
-    timer += Time::instance().deltaTime();
+    timer += Time::instance().deltaTime(DELTA_TYPE::E::eMILLISECOND);
   }
+  WindowManager::instance().destroyWindow(0);
 }
 
 TEST_SUITE("Scene System Tests") {
@@ -357,45 +358,62 @@ TEST_SUITE("Scene System Tests") {
     for (const auto& device : devices) {
       std::cout << "Available Audio Device: " << device << std::endl;
     }
-    
+
     std::cout << AudioManager::instance().getDefaultDevice() << std::endl;
     std::cout << AudioManager::instance().getCurrentDevice() << std::endl;
 
-    auto audioBeing = SceneManager::instance().instantiateBeing<BBeing>(Vector3f(0, 0, 0));
-    auto audioSource = audioBeing.lock()->createComponent<CAudioSource>();
+    auto audioBeing1 = SceneManager::instance().instantiateBeing<BBeing>(Vector3f(0, 0, 0));
+    auto audioSource1 = audioBeing1.lock()->createComponent<CAudioSource>();
+    auto audioBeing2 = SceneManager::instance().instantiateBeing<BBeing>(Vector3f(0, 0, 0));
+    auto audioSource2 = audioBeing2.lock()->createComponent<CAudioSource>();
     Path resourceDir = FileSystem::getWorkingDirectory().directoryPath() + "../resources";
-    File audioFile = FileSystem::open(resourceDir.fullPath() + "/areyousureaboutthat.mp3");
-    SPtr<RAudio> audioClip = ResourceManager::instance().loadFromPath<RAudio>(audioFile.path());
-    audioSource.lock()->setClip(audioClip);
+    File audioFile1 = FileSystem::open(resourceDir.fullPath() + "/areyousureaboutthat.mp3");
+    File audioFile2 = FileSystem::open(resourceDir.fullPath() + "/metaldoor.mp3");
+    SPtr<RAudio> audioClip1 = ResourceManager::instance().loadFromPath<RAudio>(audioFile1.path());
+    SPtr<RAudio> audioClip2 = ResourceManager::instance().loadFromPath<RAudio>(audioFile2.path());
+    audioSource1.lock()->setClip(audioClip1);
+    audioSource2.lock()->setClip(audioClip2);
+
+    auto listenerBeing1 = SceneManager::instance().instantiateBeing<BBeing>(Vector3f(0, 0, 0));
+    auto audioListener1 = listenerBeing1.lock()->createComponent<CAudioListener>();
+
+   
+
     // Test play
+    listenerBeing1.lock()->getTransform().lock()->setLocalPosition(Vector3f(0, 0, -10));
+    audioBeing1.lock()->getTransform().lock()->setLocalPosition(Vector3f(-5, 0, 0));
+    audioBeing2.lock()->getTransform().lock()->setLocalPosition(Vector3f(5, 0, 0));
 
-    auto thread1 = std::thread([&]() {
-      audioSource.lock()->play();
-    });
+    std::cout << "Playing audio..." << std::endl;
+    audioSource1.lock()->play();
+    audioSource2.lock()->play();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    CHECK(audioSource.lock()->isPlaying());
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    CHECK(audioSource1.lock()->isPlaying());
     // Test pause
     
-    auto thread12 = std::thread([&]() {
-      audioSource.lock()->pause();
+    audioSource1.lock()->pause();
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    audioSource2.lock()->stop();
 
-    });
-    thread12.join();
-    CHECK_FALSE(audioSource.lock()->isPlaying());
+    CHECK_FALSE(audioSource1.lock()->isPlaying());
     std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
     // Test stop
-    auto thread2 = std::thread([&]() {
-      audioSource.lock()->play();
-    });
+    audioSource1.lock()->play();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    audioSource.lock()->stop();
-    CHECK_FALSE(audioSource.lock()->isPlaying());
+    audioSource1.lock()->stop();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    audioSource2.lock()->play();
 
-    thread1.join();
-    thread2.join();
+    CHECK_FALSE(audioSource1.lock()->isPlaying());
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    audioSource2.lock()->pause();
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    audioSource2.lock()->play();
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+
     ALCdevice* device;
     ALCcontext* ctx;
 

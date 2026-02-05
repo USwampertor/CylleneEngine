@@ -28,6 +28,10 @@ public:
     return toReturn;
   }
 
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) override {}
+
+
 public:
 
   LIGHT3DTYPE::E m_type = LIGHT3DTYPE::E::GLOBAL;

@@ -61,6 +61,20 @@ public:
     return m_isPlaying;
   }
 
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) override;
+
+private:
+
+  void
+  setPosition(const Vector3f& position);
+
+  void
+  setVelocity(const Vector3f& velocity);
+
+  void
+  setDirection(const Vector3f& forward);
+
 public:
 
   float m_volume = 1.0f;

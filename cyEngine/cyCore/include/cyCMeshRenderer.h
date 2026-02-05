@@ -53,6 +53,9 @@ public:
     return toReturn;
   }
 
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) override {}
+
   SPtr<RMesh> m_mesh = nullptr;
   bool m_castsShadows = false;
 
