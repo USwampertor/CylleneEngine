@@ -2,6 +2,7 @@
 #include "cyCorePrerequisites.h"
 #include "cyRAudio.h"
 #include "cyCComponent.h"
+
 #include <cyEvent.h>
 
 namespace CYLLENE_SDK {
@@ -30,11 +31,17 @@ public:
                                       "not playing"));
   }
 
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) override;
+
   void
   play();
 
   void
   playDelayed(float delay);
+
+  void
+  playOnce(SPtr<RAudio> audio);
 
   void
   stop();
@@ -43,7 +50,9 @@ public:
   pause();
 
   void
-  playOnce(SPtr<RAudio> audio);
+  setVolume(float volume) {
+    m_volume = Math::clamp(volume, 0.0f, 1.0f);
+  }
 
   void
   setClip(WPtr<RAudio> clip) {
@@ -61,9 +70,6 @@ public:
     return m_isPlaying;
   }
 
-  virtual void
-  applyTransformChanges(const Matrix4& newTransform) override;
-
 private:
 
   void
@@ -75,38 +81,70 @@ private:
   void
   setDirection(const Vector3f& forward);
 
+#if AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+  int32
+  playCallback(void* outputBuffer,
+               void* inputBuffer,
+               unsigned int nFrames,
+               double streamTime,
+               APIAudioStatus status,
+               void* userData);
+#endif // AUDIO_BACKEND
+
 public:
 
-  float m_volume = 1.0f;
+  float 
+  m_volume = 1.0f;
 
-  bool m_loop = false;
+  bool 
+  m_loop = false;
 
-  bool m_spatialize = false;
+  bool 
+  m_spatialize = false;
 
-  int32 m_priority = 128;
+  int32 
+  m_priority;
 
-  bool m_isPlaying = false;
+  bool 
+  m_isPlaying = false;
 
-  bool m_mute = false;
+  bool
+  m_isPaused = false;
 
-  bool m_playOnAwake = false;
+  bool 
+  m_mute = false;
 
-  bool m_bypassEffects = false;
+  bool 
+  m_playOnAwake = false;
 
-  float m_pitch = 1.0f;
+  bool 
+  m_bypassEffects = false;
 
-  WPtr<RAudio> m_clip;
+  float 
+  m_pitch = 1.0f;
+
+  WPtr<RAudio> 
+  m_clip;
 
 private:
 
   void
   setClipBuffer();
 
-  uint32 m_sourceId = 0;
+  uint32 
+  m_sourceId = 0;
 
-  uint32 m_bufferId = 0;
+  uint32 
+  m_bufferId = 0;
 
-  Event<void> m_onClipLoaded;
+  uint64
+  m_frameIndex = 0;
+
+  Event<void> 
+  m_onClipLoaded;
+
+  APIAudio 
+  m_apiAudio;
 
 };
 

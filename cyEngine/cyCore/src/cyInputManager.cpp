@@ -43,14 +43,14 @@ Vector2i
 InputManager::getWindowMousePosition() {
   Vector2f pos;
   SDL_GetMouseState(&pos.x, &pos.y);
-  return Vector2i(static_cast<int>(pos.x), static_cast<int>(pos.y));
+  return Vector2i(static_cast<int32>(pos.x), static_cast<int>(pos.y));
 }
 
 Vector2i
 InputManager::getScreenMousePosition() {
   Vector2f pos;
   SDL_GetGlobalMouseState(&pos.x, &pos.y);
-  return Vector2i(static_cast<int>(pos.x), static_cast<int>(pos.y));
+  return Vector2i(static_cast<int32>(pos.x), static_cast<int>(pos.y));
 }
 
 void

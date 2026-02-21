@@ -403,7 +403,7 @@ public:
   EVENTTYPE::E
   getLastEventType(const uint32& window);
 
-  static int
+  static int32
   showMessageBox(const MessageBoxData data, int32 id) {
 
     // WinMsgDesc desc;
@@ -414,7 +414,7 @@ public:
     // desc.defaultButton = WinMsgDefaultButton::Button1;
     // 
     // return xwin::showMessageBox(desc);
-    int buttonId = 0;
+    int32 buttonId = 0;
 
     Vector<SDL_MessageBoxButtonData> buttons;
     
@@ -430,7 +430,7 @@ public:
     SDL_MessageBoxColorScheme* colorScheme = nullptr;
     if (data.colorScheme != nullptr) {
       colorScheme = new SDL_MessageBoxColorScheme();
-      for (int i = 0; i < MESSAGEBOXCOLORTYPE::E::_size(); ++i) {
+      for (int32 i = 0; i < MESSAGEBOXCOLORTYPE::E::_size(); ++i) {
         colorScheme->colors[i].r = data.colorScheme->colors[i].r * 255;
         colorScheme->colors[i].g = data.colorScheme->colors[i].g * 255;
         colorScheme->colors[i].b = data.colorScheme->colors[i].b * 255;

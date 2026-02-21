@@ -27,6 +27,7 @@ RAudio::getData() {
   data->m_sampleRate = m_sampleRate;
   data->m_channels = m_channels;
   data->m_samples = m_samples;
+  data->m_totalFrames = m_totalFrames;
   return reinterpret_cast<void*>(data);
 }
 
@@ -37,6 +38,7 @@ RAudio::setData(void* data) {
   m_sampleRate = audioData->m_sampleRate;
   m_channels = audioData->m_channels;
   m_samples = audioData->m_samples;
+  m_totalFrames = audioData->m_totalFrames;
   delete audioData;
 }
 

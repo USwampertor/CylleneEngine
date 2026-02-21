@@ -188,7 +188,7 @@ namespace CYLLENE_SDK {
   }
 
   Path
-    backRecursivelyFindTexturePath(const Path& basePath, const String& baseName, int counter) {
+    backRecursivelyFindTexturePath(const Path& basePath, const String& baseName, int32 counter) {
 
 
 
@@ -750,7 +750,7 @@ AudioCodec::decode(const File& f) {
 
     const drwav_uint64 totalFrames = wav.totalPCMFrameCount;
     const uint32 channels = wav.channels;
-    const int sampleRate = static_cast<int>(wav.sampleRate);
+    const int32 sampleRate = static_cast<int32>(wav.sampleRate);
 
     Vector<float> samples(static_cast<size_t>(totalFrames * channels));
     const drwav_uint64 framesRead = drwav_read_pcm_frames_f32(&wav, totalFrames, samples.data());
@@ -759,8 +759,9 @@ AudioCodec::decode(const File& f) {
     samples.resize(static_cast<size_t>(framesRead * channels));
 
     audioData->m_sampleRate = sampleRate;
-    audioData->m_channels = static_cast<int>(channels);
+    audioData->m_channels = static_cast<int32>(channels);
     audioData->m_samples = std::move(samples);
+    audioData->totalFrames = totalFrames;
 
     return reinterpret_cast<void*>(audioData.release());
   }
@@ -780,8 +781,9 @@ AudioCodec::decode(const File& f) {
 
     drmp3_free(sampleData, nullptr);
 
-    audioData->m_sampleRate = static_cast<int>(config.sampleRate);
-    audioData->m_channels = static_cast<int>(config.channels);
+    audioData->m_sampleRate = static_cast<int32>(config.sampleRate);
+    audioData->m_channels = static_cast<int32>(config.channels);
+    audioData->totalFrames = frameCount;
 
     return reinterpret_cast<void*>(audioData.release());
   }
@@ -793,7 +795,7 @@ AudioCodec::decode(const File& f) {
 
     const drflac_uint64 totalFrames = flac->totalPCMFrameCount;
     const uint32 channels = flac->channels;
-    const int sampleRate = flac->sampleRate;
+    const int32 sampleRate = flac->sampleRate;
 
     Vector<float> samples(static_cast<size_t>(totalFrames * channels));
     const drflac_uint64 framesRead = drflac_read_pcm_frames_f32(flac, totalFrames, samples.data());
@@ -803,8 +805,9 @@ AudioCodec::decode(const File& f) {
     samples.resize(static_cast<size_t>(framesRead * channels));
 
     audioData->m_sampleRate = sampleRate;
-    audioData->m_channels = static_cast<int>(channels);
+    audioData->m_channels = static_cast<int32>(channels);
     audioData->m_samples = std::move(samples);
+    audioData->totalFrames = totalFrames;
 
     return reinterpret_cast<void*>(audioData.release());
   }

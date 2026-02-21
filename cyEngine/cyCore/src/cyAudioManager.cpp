@@ -1,14 +1,15 @@
 #include "cyAudioManager.h"
 #include <cyLogger.h>
 
-#include <AL/al.h>
-#include <AL/alc.h>
+#include "cyAudioBackend.h"
+
 
 namespace CYLLENE_SDK {
 
 void
 AudioManager::onStartUp() {
-  String name;
+  String deviceName;
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   ALCdevice* device;
   ALCcontext* ctx;
 
@@ -35,19 +36,27 @@ AudioManager::onStartUp() {
 
   // name = nullptr;
   if (alcIsExtensionPresent(device, "ALC_ENUMERATE_ALL_EXT")) {
-    name = alcGetString(device, ALC_ALL_DEVICES_SPECIFIER);
+    deviceName = alcGetString(device, ALC_ALL_DEVICES_SPECIFIER);
   }
-  if (name.empty() || alcGetError(device) != AL_NO_ERROR) {
-    name = alcGetString(device, ALC_DEVICE_SPECIFIER);
+  if (deviceName.empty() || alcGetError(device) != AL_NO_ERROR) {
+    deviceName = alcGetString(device, ALC_DEVICE_SPECIFIER);
   }
-  Logger::instance().log(Utils::format("Opened \"%s\"\n", name));
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+  m_currentDevice = getDefaultDevice();
+  deviceName = m_currentDevice.name;
+#endif // AUDIO_BACKEND
+
+  Logger::instance().log(Utils::format("Opened \"%s\"\n", deviceName));
   Logger::instance().log("AudioManager started up.");
 }
 
-Vector<String>
+Vector<AudioDevice>
 AudioManager::getAvailableDevices() {
-  Vector<String> devices = {};
-  int code = 0;
+
+  Vector<AudioDevice> devices = {};
+
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
+  int32 code = 0;
   if (alcIsExtensionPresent(NULL, "ALC_ENUMERATE_ALL_EXT") != AL_TRUE) {
     if (alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT") != AL_TRUE) {
       Logger::instance().logWarning("Device enumeration not supported.");
@@ -68,13 +77,43 @@ AudioManager::getAvailableDevices() {
   String device;
 
   while (std::getline(ss, device, '\0')) {
-    devices.push_back(device);
+    AudioDevice audioDevice;
+    audioDevice.name = device;
+    devices.push_back(audioDevice);
   }
+
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+  APIAudio audio;
+
+  int32 deviceCount = audio.getDeviceCount();
+
+  for (int32 i = 0; i < deviceCount; ++i) {
+    auto deviceInfo = audio.getDeviceInfo(i);
+
+    AudioDevice audioDevice;
+    audioDevice.name = deviceInfo.name;
+    audioDevice.id = deviceInfo.ID;
+    audioDevice.outputChannels = deviceInfo.outputChannels;
+    audioDevice.intputChannels = deviceInfo.inputChannels;
+    audioDevice.duplexChannels = deviceInfo.duplexChannels;
+    audioDevice.isDefaultOutput = deviceInfo.isDefaultOutput;
+    audioDevice.supportedSampleRates = deviceInfo.sampleRates;
+    audioDevice.nativeFormats = Bitset<32>(deviceInfo.nativeFormats);
+
+    devices.push_back(audioDevice);
+  }
+
+
+#endif // AUDIO_BACKEND
+
   return devices;
 }
 
-String
+AudioDevice
 AudioManager::getCurrentDevice() {
+  AudioDevice device;
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   ALCcontext* ctx = alcGetCurrentContext();
   if (ctx == nullptr) {
     return "";
@@ -84,11 +123,22 @@ AudioManager::getCurrentDevice() {
     return "";
   }
   String name = alcGetString(device, ALC_DEVICE_SPECIFIER);
-  return name;
+  if (name.empty() || alcGetError(device) != AL_NO_ERROR) {
+    return device;
+  }
+  device.name = name;
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+  device = m_currentDevice;
+
+#endif // AUDIO_BACKEND
+  return device;
 }
 
 void
 AudioManager::setCurrentDevice(const String& deviceName) {
+
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   // Shut down current context and device
   onShutDown();
   // Open new device
@@ -107,12 +157,31 @@ AudioManager::setCurrentDevice(const String& deviceName) {
     Logger::instance().logError("Could not set audio context for device: " + deviceName);
     return;
   }
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+  auto devices = getAvailableDevices();
+
+  auto it = std::find_if(devices.begin(), devices.end(), [&deviceName](const AudioDevice& device) {
+    return device.name == deviceName;
+    });
+
+  if (it == devices.end()) {
+    Logger::instance().logError("Could not find audio device: " + deviceName);
+  }
+  else {
+    m_currentDevice = *it;
+  }
+#endif // AUDIO_BACKEND
   Logger::instance().log("Switched to audio device: " + deviceName);
 }
 
-String
+AudioDevice
 AudioManager::getDefaultDevice() {
-  int code = 0;
+
+  AudioDevice defaultDevice;
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
+
+  int32 code = 0;
   if (alcIsExtensionPresent(NULL, "ALC_ENUMERATE_ALL_EXT") != AL_TRUE) {
     if (alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT") != AL_TRUE) {
       Logger::instance().logWarning("Device enumeration not supported.");
@@ -122,23 +191,45 @@ AudioManager::getDefaultDevice() {
   }
   code = ALC_DEFAULT_ALL_DEVICES_SPECIFIER;
 
-  String defaultDevice = alcGetString(nullptr, code);
-  if (defaultDevice.empty() || alcGetError(nullptr) != AL_NO_ERROR) {
+  String defaultDeviceName = alcGetString(nullptr, code);
+  if (defaultDeviceName.empty() || alcGetError(nullptr) != AL_NO_ERROR) {
     Logger::instance().logWarning("Could not get default device.");
-    return "";
+    return defaultDevice;
   }
+
+  defaultDevice.name = defaultDeviceName;
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+  auto devices = getAvailableDevices();
+
+  auto it = std::find_if(devices.begin(), devices.end(), [](const AudioDevice& device) {
+    return device.isDefaultOutput;
+    });
+
+  if (it == devices.end()) {
+    Logger::instance().logError("Could not find default device: ");
+  }
+  else {
+    defaultDevice = *it;
+  }
+#endif
+
   return defaultDevice;
 }
 
 bool
 AudioManager::ensureIsInit() {
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   ALCcontext* ctx = alcGetCurrentContext();
   return ctx != nullptr;
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+  return !m_currentDevice.name.empty();
+#endif
 }
 
 void
 AudioManager::onShutDown() {
-
+# if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   ALCdevice* device;
   ALCcontext* ctx;
 
@@ -152,6 +243,9 @@ AudioManager::onShutDown() {
   alcMakeContextCurrent(nullptr);
   alcDestroyContext(ctx);
   alcCloseDevice(device);
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+#endif // AUDIO_BACKEND
 
   Logger::instance().log("AudioManager shut down.");
 }
