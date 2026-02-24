@@ -84,6 +84,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyAudioBackend.cpp" />
     <ClCompile Include="src\cyAudioManager.cpp" />
     <ClCompile Include="src\cyBBeing.cpp" />
     <ClCompile Include="src\cyCAudioListener.cpp" />

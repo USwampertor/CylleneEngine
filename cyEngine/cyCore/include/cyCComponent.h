@@ -16,6 +16,7 @@ namespace CYLLENE_SDK {
                 eANIMATOR,
                 eAUDIOLISTENER,
                 eAUDIOSOURCE,
+                eAUDIOMATERIAL,
                 eCAMERA,
                 eCOLLIDER2D,
                 eCOLLIDER3D,

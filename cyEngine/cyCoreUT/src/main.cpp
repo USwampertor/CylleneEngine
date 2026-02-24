@@ -356,11 +356,11 @@ TEST_SUITE("Scene System Tests") {
     AudioManager::startUp();
     auto devices = AudioManager::instance().getAvailableDevices();
     for (const auto& device : devices) {
-      std::cout << "Available Audio Device: " << device << std::endl;
+      std::cout << "Available Audio Device: " << device.name << std::endl;
     }
 
-    std::cout << AudioManager::instance().getDefaultDevice() << std::endl;
-    std::cout << AudioManager::instance().getCurrentDevice() << std::endl;
+    std::cout << AudioManager::instance().getDefaultDevice().name << std::endl;
+    std::cout << AudioManager::instance().getCurrentDevice().name << std::endl;
 
     auto audioBeing1 = SceneManager::instance().instantiateBeing<BBeing>(Vector3f(0, 0, 0));
     auto audioSource1 = audioBeing1.lock()->createComponent<CAudioSource>();

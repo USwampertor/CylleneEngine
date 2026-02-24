@@ -9,8 +9,8 @@
 #include "cyCTransform.h"
 
 namespace CYLLENE_SDK {
-namespace {
 
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
 void
 setListenerOrientation(const Vector3f& forward, const Vector3f& up) {
   const float orientation[6] = {
@@ -23,8 +23,7 @@ setListenerOrientation(const Vector3f& forward, const Vector3f& up) {
     Logger::instance().logError(Utils::format("alGenBuffers: %s", error._to_string()));
   }
 }
-
-}
+#endif
 
 CAudioListener::CAudioListener() : CComponent(CAudioListener::staticType()) {
   if (!AudioManager::instance().ensureIsInit()) {
@@ -44,16 +43,20 @@ CAudioListener::CAudioListener() : CComponent(CAudioListener::staticType()) {
     };
 }
 
-CAudioListener::~CAudioListener() = default;
-
 void
 CAudioListener::setPosition(const Vector3f& position) {
   if (!AudioManager::instance().ensureIsInit()) {
     return;
   }
+  AUDIO_ERROR::E error = AUDIO_ERROR::E::eUNKNOWN;
+
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   // m_position = position;
   alListener3f(LISTENER_PROPERTIES::E::ePOSITION, position.x, position.y, position.z);
-  AUDIO_ERROR::E error = AUDIO_ERROR::E::_from_integral(alGetError());
+  error = AUDIO_ERROR::E::_from_integral(alGetError());
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+#endif // AUDIO_BACKEND
   if (error != +AUDIO_ERROR::E::eNONE) {
     Logger::instance().logError(Utils::format("alGenBuffers: %s", error._to_string()));
   }
@@ -64,9 +67,15 @@ CAudioListener::setVelocity(const Vector3f& velocity) {
   if (!AudioManager::instance().ensureIsInit()) {
     return;
   }
+  AUDIO_ERROR::E error = AUDIO_ERROR::E::eUNKNOWN;
+
   // m_velocity = velocity;
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   alListener3f(LISTENER_PROPERTIES::E::eVELOCITY, velocity.x, velocity.y, velocity.z);
-  AUDIO_ERROR::E error = AUDIO_ERROR::E::_from_integral(alGetError());
+  error = AUDIO_ERROR::E::_from_integral(alGetError());
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+#endif // AUDIO_BACKEND
   if (error != +AUDIO_ERROR::E::eNONE) {
     Logger::instance().logError(Utils::format("alGenBuffers: %s", error._to_string()));
   }
@@ -77,9 +86,11 @@ CAudioListener::setOrientation(const Vector3f& forward, const Vector3f& up) {
   if (!AudioManager::instance().ensureIsInit()) {
     return;
   }
-  // m_forward = forward;
-  // m_up = up;
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   setListenerOrientation(forward, up);
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+#endif // AUDIO_BACKEND
 }
 
 void
@@ -87,9 +98,16 @@ CAudioListener::setGain(float gain) {
   if (!AudioManager::instance().ensureIsInit()) {
     return;
   }
+  
+  AUDIO_ERROR::E error = AUDIO_ERROR::E::eUNKNOWN;
   m_gain = std::max(0.0f, gain);
+
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   alListenerf(LISTENER_PROPERTIES::E::eGAIN, m_gain);
   AUDIO_ERROR::E error = AUDIO_ERROR::E::_from_integral(alGetError());
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+#endif // AUDIO_BACKEND
   if (error != +AUDIO_ERROR::E::eNONE) {
     Logger::instance().logError(Utils::format("alGenBuffers: %s", error._to_string()));
   }

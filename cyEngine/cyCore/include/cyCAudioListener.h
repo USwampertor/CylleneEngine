@@ -13,7 +13,9 @@ namespace CYLLENE_SDK {
 class CY_CORE_EXPORT CAudioListener : public CComponent {
 public:
 
-  CAudioListener();
+  CAudioListener(); // CAudioListener() : CComponent(CAudioListener::staticType()) {}
+
+  ~CAudioListener() = default;
 
   static COMPONENT_TYPE::E staticType() { return COMPONENT_TYPE::E::eAUDIOLISTENER; }
 
@@ -21,9 +23,6 @@ public:
   toString() override {
     return Utils::format("Audio Listener with gain: %2.2f", m_gain);
   }
-
-  ~CAudioListener();
-
 
   void
   setGain(float gain);

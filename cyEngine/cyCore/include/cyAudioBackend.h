@@ -3,6 +3,7 @@
 
 #include "cyCorePrerequisites.h"
 
+#include "cyVector3f.h"
 // TODO: Make this a DLL instead of macro definitions
 
 #define AUDIO_BACKEND_OPENAL 1
@@ -25,6 +26,11 @@
 #endif
 
 #define AUDIO_PRIORITY_DEFAULT 128
+#define AUDIO_PRIORITY_MAX 255
+
+#define AUDIO_MAX_CHANNELS 8
+
+#define AUDIO_NUM_BANDS 6
 
 namespace CYLLENE_SDK {
 
@@ -110,78 +116,55 @@ namespace CYLLENE_SDK {
   }
 #elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
 
-  namespace AUDIO_STATE {
+  namespace AUDIO_TRACK_STATE {
   BETTER_ENUM(E, int32,
-              eSTOPPED  = rt::audio::STREAM_STOPPED,
-              eSTOPPING = rt::audio::STREAM_STOPPING,
-              eRUNNING  = rt::audio::STREAM_RUNNING,
-              eCLOSED   = rt::audio::STREAM_CLOSED);
+              eSTOPPED  = 0,    // rt::audio::STREAM_STOPPED,
+              eSTOPPING = 1,    // rt::audio::STREAM_STOPPING,
+              eRUNNING  = 2,    // rt::audio::STREAM_RUNNING,
+              eCLOSED   = -50); // rt::audio::STREAM_CLOSED);
 
   }
 
-  namespace AUDIO_MODE {
+  namespace AUDIO_STREAM_MODE {
   BETTER_ENUM(E, int32,
-              eOUTPUT         = rt::audio::OUTPUT,
-              eINPUT          = rt::audio::INPUT,
-              eDUPLEX         = rt::audio::DUPLEX,
-              eUNINITIALIZED  = rt::audio::UNINITIALIZED);
-
-
-  
+              eOUTPUT         = 0,    // rt::audio::OUTPUT,
+              eINPUT          = 1,    // rt::audio::INPUT,
+              eDUPLEX         = 2,    // rt::audio::DUPLEX,
+              eUNINITIALIZED  = -50); // rt::audio::UNINITIALIZED);
 
   }
 
-  using APIAudio = rt::audio::RtAudio;
-  using APIAudioDeviceInfo = rt::audio::RtAudio::DeviceInfo;
-  using APIAudioParams = rt::audio::RtAudio::StreamParameters;
-  using APIAudioFormat = rt::audio::RtAudioFormat;
-  using APIAudioStatus = rt::audio::RtAudioStreamStatus;
+  namespace AUDIO_OS_API {
+  BETTER_ENUM(E, int32,
+              eUNKNOWN         = 0,   // rt::audio::UNSPECIFIED,    
+              eMACOSX          = 1,   // rt::audio::MACOSX_CORE,    
+              eLINUX_ALSA      = 2,   // rt::audio::LINUX_ALSA,    
+              eUNIX_JACK       = 3,   // rt::audio::UNIX_JACK);    
+              eLINUX_PULSE     = 4,   // rt::audio::LINUX_PULSE,   
+              eLINUX_OSS       = 5,   // rt::audio::LINUX_OSS,     
+              eWINDOWS_ASIO    = 6,   // rt::audio::WINDOWS_ASIO,  
+              eWINDOWS_WASAPI  = 7,   // rt::audio::WINDOWS_WASAPI, 
+              eWINDOWS_DS      = 8,   // rt::audio::WINDOWS_DS,    
+              eDUMMY           = 9);  // rt::audio::RTAUDIO_DUMMY
+  }
+
+  using APIAudio            = rt::audio::RtAudio;
+  using APIAudioDeviceInfo  = rt::audio::RtAudio::DeviceInfo;
+  using APIAudioParams      = rt::audio::RtAudio::StreamParameters;
+  using APIAudioFormat      = rt::audio::RtAudioFormat;
+  using APIAudioStatus      = rt::audio::RtAudioStreamStatus;
 
 #endif // AUDIO_BACKEND
 
 
   int32
-  audioFormatToAPIFormat(AUDIO_FORMAT::E format) {
+  audioFormatToAPIFormat(AUDIO_FORMAT::E format);
 
-#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
-    switch (format) {
-    case AUDIO_FORMAT::E::eS8:
-      return AL_FORMAT_MONO8;
-    case AUDIO_FORMAT::E::eS16:
-      return AL_FORMAT_MONO16;
-    case AUDIO_FORMAT::E::eS24:
-      // OpenAL does not support 24-bit directly; usually packed into 32-bit
-      return AL_FORMAT_MONO_FLOAT32;
-    case AUDIO_FORMAT::E::eS32:
-      return AL_FORMAT_MONO_FLOAT32;
-    case AUDIO_FORMAT::E::eF32:
-      return AL_FORMAT_MONO_FLOAT32;
-    case AUDIO_FORMAT::E::eF64:
-      // OpenAL does not support 64-bit float directly
-      return AL_FORMAT_MONO_FLOAT32;
-    default:
-      return AL_FORMAT_MONO16;
-    }
-#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
-    switch (format) {
-    case AUDIO_FORMAT::E::eS8:
-      return RTAUDIO_SINT8;
-    case AUDIO_FORMAT::E::eS16:
-      return RTAUDIO_SINT16;
-    case AUDIO_FORMAT::E::eS24:
-      return RTAUDIO_SINT24;
-    case AUDIO_FORMAT::E::eS32:
-      return RTAUDIO_SINT32;
-    case AUDIO_FORMAT::E::eF32:
-      return RTAUDIO_FLOAT32;
-    case AUDIO_FORMAT::E::eF64:
-      return RTAUDIO_FLOAT64;
-    default:
-      return RTAUDIO_SINT16;
-    }
-#endif
-  }
-
-
+struct PathContribution
+{
+  float delay;                          // seconds
+  float attenuation[AUDIO_NUM_BANDS];   // spectral attenuation
+  Vector3f direction;                   // for spatialization
+};
 
 } // namespace CYLLENE_SDK

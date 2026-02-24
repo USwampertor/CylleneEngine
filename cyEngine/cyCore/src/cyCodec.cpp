@@ -761,7 +761,7 @@ AudioCodec::decode(const File& f) {
     audioData->m_sampleRate = sampleRate;
     audioData->m_channels = static_cast<int32>(channels);
     audioData->m_samples = std::move(samples);
-    audioData->totalFrames = totalFrames;
+    audioData->m_totalFrames = totalFrames;
 
     return reinterpret_cast<void*>(audioData.release());
   }
@@ -783,7 +783,7 @@ AudioCodec::decode(const File& f) {
 
     audioData->m_sampleRate = static_cast<int32>(config.sampleRate);
     audioData->m_channels = static_cast<int32>(config.channels);
-    audioData->totalFrames = frameCount;
+    audioData->m_totalFrames = frameCount;
 
     return reinterpret_cast<void*>(audioData.release());
   }
@@ -807,7 +807,7 @@ AudioCodec::decode(const File& f) {
     audioData->m_sampleRate = sampleRate;
     audioData->m_channels = static_cast<int32>(channels);
     audioData->m_samples = std::move(samples);
-    audioData->totalFrames = totalFrames;
+    audioData->m_totalFrames = totalFrames;
 
     return reinterpret_cast<void*>(audioData.release());
   }

@@ -3,7 +3,6 @@
 
 #include "cyAudioBackend.h"
 
-
 namespace CYLLENE_SDK {
 
 void

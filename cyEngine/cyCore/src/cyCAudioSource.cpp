@@ -68,7 +68,7 @@ CAudioSource::playCallback(void* outputBuffer,
                            void* inputBuffer,
                            unsigned int nFrames,
                            double streamTime,
-                           APIAudioStatus status,
+                           int32 status,
                            void* userData) {
   if (status) {
     Logger::instance().logWarning("RtAudio stream underflow detected in CAudioSource callback");

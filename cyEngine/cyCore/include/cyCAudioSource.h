@@ -1,7 +1,10 @@
 #pragma once
 #include "cyCorePrerequisites.h"
-#include "cyRAudio.h"
+
+#include "cyAudioBackend.h"
 #include "cyCComponent.h"
+#include "cyRAudio.h"
+
 
 #include <cyEvent.h>
 
@@ -83,12 +86,12 @@ private:
 
 #if AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
   int32
-  playCallback(void* outputBuffer,
-               void* inputBuffer,
-               unsigned int nFrames,
-               double streamTime,
-               APIAudioStatus status,
-               void* userData);
+    playCallback(void* outputBuffer,
+      void* inputBuffer,
+      unsigned int nFrames,
+      double streamTime,
+      int32 status,
+      void* userData);
 #endif // AUDIO_BACKEND
 
 public:
@@ -125,6 +128,11 @@ public:
 
   WPtr<RAudio> 
   m_clip;
+
+  float
+  m_gain = 1.0f;
+
+  Vector<PathContribution> m_pathContributions;
 
 private:
 

@@ -4,6 +4,8 @@
 #include <cyModule.h>
 #include <cyThread.h>
 
+#include "cyAudioBackend.h"
+
 namespace CYLLENE_SDK {
 
 struct AudioDevice
@@ -41,8 +43,10 @@ struct AudioParameters
 {
   int32
   sampleRate;
+  
   int32
   channels;
+
   AUDIO_FORMAT::E
   format;
 };

@@ -22,6 +22,7 @@ struct AudioData
   
   Vector<float> 
   m_samples;
+
 };
 
 class CY_CORE_EXPORT RAudio : public RResource {
