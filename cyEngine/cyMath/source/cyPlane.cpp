@@ -5,6 +5,15 @@
 
 namespace CYLLENE_SDK {
 
+  float
+  Plane::getDistance() const {
+    const Vector3f n = getUnitNormal();
+    if (n.isZero()) {
+      return 0.0f;
+    }
+    return n | m_origin;
+  }
+
   String
   Plane::toString() {
     return Utils::format("A: %s, B: %s, Height: %2.f");

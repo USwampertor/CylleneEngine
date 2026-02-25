@@ -710,11 +710,11 @@ public:
   template<typename T>
   static T
   fasttan(T rad) {
-    return (rad -
-            (std::pow(rad, 3) * 0.3333333333f ) +
-            (std::pow(rad, 5) * 0.1333333333f ) -
-            (std::pow(rad, 7) * 0.0539682539f ) +
-            (std::pow(rad, 9) * 0.0218694885f ));
+    return static_cast<T>((rad -
+                           (std::pow(rad, 3) * 0.3333333333f ) +
+                           (std::pow(rad, 5) * 0.1333333333f ) -
+                           (std::pow(rad, 7) * 0.0539682539f ) +
+                           (std::pow(rad, 9) * 0.0218694885f )));
 
 
 //       return (rad -
