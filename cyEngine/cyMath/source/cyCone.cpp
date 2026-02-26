@@ -1,6 +1,19 @@
 #include "cyCone.h"
+#include "cyIntersections.h"
+
+#include <cyUtilities.h>
 
 namespace CYLLENE_SDK {
+
+String
+Cone::toString() {
+  return Utils::format("Radius: %2.f, Height: %2.f", m_radius, m_height);
+}
+
+bool
+Cone::intersects(const Primitive& other) {
+  return COLLISIONS::intersects(*this, other);
+}
 
 void
 Cone::setDimensions(const float& radius, const float& height) {
@@ -37,5 +50,6 @@ float
 Cone::getVolume() const {
   return (getBaseArea() * m_height) / 3.0f;
 }
+
 
 }

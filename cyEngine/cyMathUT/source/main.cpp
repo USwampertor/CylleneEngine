@@ -4,6 +4,10 @@
 #include <cyAABB.h>
 #include <cyCapsule.h>
 #include <cyColor.h>
+#include <cyCone.h>
+#include <cyCylinder.h>
+#include <cyFrustum.h>
+#include <cyIntersections.h>
 #include <cyLine.h>
 #include <cyLogger.h>
 #include <cyMath.h>
@@ -11,8 +15,11 @@
 #include <cyMatrix4.h>
 #include <cyMatrix3.h>
 #include <cyOBB.h>
+#include <cyPlane.h>
 #include <cyQuaternion.h>
+#include <cyRay.h>
 #include <cyRotor.h>
+#include <cySphere.h>
 #include <cyTensor.h>
 #include <cyTime.h>
 #include <cyUnitTesting.h>
@@ -28,6 +35,7 @@
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
+using namespace COLLISIONS;
 
 // Helper function to compare matrices
 bool matrixEquals(const Matrix4& a, const Matrix4& b) {
@@ -850,8 +858,39 @@ TEST_SUITE("Primitive Tests") {
   TEST_CASE("Rect-Rect Collision") {
     Rect r0(0, 0, 10, 10);
     Rect r1(5, 5, 10, 10);
-    CHECK(r0.getType() == +PRIMITIVE_TYPE::E::OBB);
-    CHECK_FALSE(r0.intersects(r1));
+    CHECK(r0.getType() == +PRIMITIVE_TYPE::E::eRECT);
+    CHECK(r0.intersects(r1));
+  }
+
+  TEST_CASE("Cross Primitive Collision Smoke Tests") {
+    AABB box(Vector3f(-1.0f, -1.0f, -1.0f), Vector3f(1.0f, 1.0f, 1.0f));
+    Sphere sphere(Vector3f(0.0f, 0.0f, 0.0f), 0.5f);
+    Ray ray(Vector3f(-5.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f));
+    Plane plane(Vector3f::ZERO, Vector3f::ONEY);
+    Line line(Vector3f(-2.0f, 0.0f, 0.0f), Vector3f(2.0f, 0.0f, 0.0f));
+    Capsule capsule(Vector3f(-0.5f, 0.0f, 0.0f), Vector3f(0.5f, 0.0f, 0.0f), 0.25f);
+    Point point(1.0f, 1.0f, 0.0f);
+    Rect rect(0, 0, 2, 2);
+    Cone cone(1.0f, 2.0f);
+    Cylinder cylinder(1.0f, 2.0f);
+    Frustum frustum(0.1f, 10.0f, 60.0f, 1.0f);
+    OBB obb(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
+
+    CHECK(COLLISIONS::intersects(box, sphere));
+    CHECK(COLLISIONS::intersects(sphere, box));
+
+    CHECK(COLLISIONS::intersects(ray, box));
+    CHECK(COLLISIONS::intersects(box, ray));
+
+    CHECK(COLLISIONS::intersects(plane, sphere));
+    CHECK(COLLISIONS::intersects(line, plane));
+    CHECK(COLLISIONS::intersects(capsule, line));
+    CHECK(COLLISIONS::intersects(point, rect));
+
+    CHECK(COLLISIONS::intersects(cone, sphere));
+    CHECK(COLLISIONS::intersects(cylinder, sphere));
+    CHECK(COLLISIONS::intersects(frustum, sphere));
+    CHECK(COLLISIONS::intersects(obb, sphere));
   }
 }
 

@@ -6,6 +6,10 @@
 
 namespace CYLLENE_SDK {
 
+/**
+ * @class Sphere
+ * @brief A sphere defined by a center point and radius.
+ */
 class CY_MATH_EXPORT Sphere : public Primitive
 {
 public:
@@ -28,30 +32,27 @@ public:
 
   static PRIMITIVE_TYPE::E
   staticType() {
-    return PRIMITIVE_TYPE::E::SPHERE;
+    return PRIMITIVE_TYPE::E::eSPHERE;
   }
 
-  float
-  getDiameter() {
-    return m_radius * 2.0f;
-  }
+  
+  virtual String
+  toString() override;
 
-  float
-  getDiameter() const {
-    return m_radius * 2.0f;
-  }
+  virtual bool
+  intersects(const Primitive& other) override;
 
-  /**
+   /**
    * @brief Sets both center and radius.
+   * @param center The new center of the sphere.
+   * @param radius The new radius of the sphere. Must be non-negative for a valid
    */
   void
-  set(const Vector3f& center, const float& radius) {
-    m_center = center;
-    m_radius = radius;
-  }
+  setDimensions(const Vector3f& center, const float& radius);
 
   /**
    * @brief Sets sphere center.
+   * @param center The new center of the sphere.
    */
   void
   setCenter(const Vector3f& center) {
@@ -60,6 +61,7 @@ public:
 
   /**
    * @brief Sets sphere radius.
+   * @param radius The new radius of the sphere. Must be non-negative for a valid sphere.
    */
   void
   setRadius(const float& radius) {
@@ -68,6 +70,7 @@ public:
 
   /**
    * @brief Gets sphere center.
+   * @return The center of the sphere as a Vector3f.
    */
   const Vector3f&
   getCenter() const {
@@ -76,6 +79,7 @@ public:
 
   /**
    * @brief Gets sphere radius.
+   * @return The radius of the sphere as a float. Must be non-negative for a valid sphere.
    */
   float
   getRadius() const {
@@ -83,69 +87,67 @@ public:
   }
 
   /**
+   * @brief Gets the diameter of the sphere.
+   * @return The diameter of the sphere, which is twice the radius.
+   */
+  float
+  getDiameter() const;
+
+  /**
    * @brief Checks if sphere has valid dimensions.
+   * @return True if the radius is non-negative, false otherwise. 
+   *         A valid sphere must have a non-negative radius.
    */
   bool
-  isValid() const {
-    return m_radius >= 0.0f;
-  }
+  isValid() const;
 
   /**
    * @brief Circumference of the great circle.
    */
   float
-  getCircumference() const {
-    return 2.0f * Math::PI * m_radius;
-  }
+  getCircumference() const;
 
   /**
    * @brief Surface area.
    */
   float
-  getSurfaceArea() const {
-    return 4.0f * Math::PI * Math::sqr(m_radius);
-  }
+  getSurfaceArea() const;
 
   /**
    * @brief Volume.
    */
   float
-  getVolume() const {
-    return (4.0f / 3.0f) * Math::PI * Math::pow(m_radius, 3.0f);
-  }
+  getVolume() const;
 
   /**
    * @brief Point containment test (inside or on boundary).
    */
   bool
-  contains(const Vector3f& point) const {
-    return Vector3f::sqrDistance(point, m_center) <= Math::sqr(m_radius);
-  }
+  contains(const Vector3f& point) const;
 
   /**
    * @brief Closest point on sphere surface to world point.
    */
   Vector3f
-  closestPoint(const Vector3f& point) const {
-    const Vector3f toPoint = point - m_center;
-    if (toPoint.sqrMagnitude() <= Math::EPSILONF) {
-      return m_center + Vector3f::RIGHT * m_radius;
-    }
-    return m_center + toPoint.normalized() * m_radius;
-  }
+  closestPoint(const Vector3f& point) const;
 
-  virtual String
-  toString() override;
-
-  virtual bool
-  intersects(const Primitive& other) override;
-
+  /**
+   * @brief Expands the sphere to include the given point if it's outside the current sphere.
+   * @param pos The point to include in the sphere.
+   */
   void
   expandTo(const Vector3f& pos);
 
 public:
 
+  /**
+   * @brief Center of the sphere.
+   */
   Vector3f m_center;
+
+  /**
+   * @brief Radius of the sphere. Must be non-negative for a valid sphere.
+   */
   float m_radius;
 
 };

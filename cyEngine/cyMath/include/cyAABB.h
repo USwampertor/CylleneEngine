@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "cyMathPrerequisites.h"
@@ -44,7 +45,7 @@ public:
 
   static PRIMITIVE_TYPE::E 
   staticType() {
-    return PRIMITIVE_TYPE::E::AABB;
+    return PRIMITIVE_TYPE::E::eAABB;
   }
 
   virtual String
@@ -73,7 +74,7 @@ public:
    * @param max Maximum corner of the box.
    */
   void
-  setBoundaries(const Vector3f& min, const Vector3f& max);
+  setDimensions(const Vector3f& min, const Vector3f& max);
 
   /**
    * @brief Sets minimum corner.

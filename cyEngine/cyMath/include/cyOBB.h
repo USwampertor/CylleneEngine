@@ -34,29 +34,36 @@ public:
       m_orientation(orientation) {}
 
   static PRIMITIVE_TYPE::E staticType() {
-    return PRIMITIVE_TYPE::E::OBB;
+    return PRIMITIVE_TYPE::E::eOBB;
   }
+  
+  virtual String
+  toString() override;
 
-  Vector3f
-  getDimensions();
+  virtual bool
+  intersects(const Primitive& other) override;
 
+  /**
+   * @brief Gets the full dimensions of the OBB (width, height, depth).
+   * @return full dimensions (2 * half extents).
+   */
   Vector3f
-  getDimensions() const {
-    return m_hExtents * 2.0f;
-  }
+  getDimensions() const;
 
   /**
    * @brief Sets all OBB properties at once.
+   * @param center The center of the OBB in world space.
+   * @param halfExtents The half extents (half width, half height, half depth) of the OBB.
+   * @param orientation The orientation of the OBB as a quaternion.
    */
   void
-  setTransform(const Vector3f& center, const Vector3f& halfExtents, const Quaternion& orientation) {
-    m_center = center;
-    m_hExtents = halfExtents;
-    m_orientation = orientation;
-  }
+  setDimensions(const Vector3f& center, 
+                const Vector3f& halfExtents, 
+                const Quaternion& orientation);
 
   /**
    * @brief Sets center.
+   * @param center The center of the OBB in world space.
    */
   void
   setCenter(const Vector3f& center) {
@@ -65,6 +72,7 @@ public:
 
   /**
    * @brief Sets half extents.
+   * @param halfExtents The half extents (half width, half height, half depth) of the OBB.
    */
   void
   setHalfExtents(const Vector3f& halfExtents) {
@@ -73,6 +81,7 @@ public:
 
   /**
    * @brief Sets orientation.
+   * @param orientation The orientation of the OBB as a quaternion.
    */
   void
   setOrientation(const Quaternion& orientation) {
@@ -81,6 +90,7 @@ public:
 
   /**
    * @brief Gets center.
+   * @return The center of the OBB in world space.
    */
   const Vector3f&
   getCenter() const {
@@ -89,6 +99,7 @@ public:
 
   /**
    * @brief Gets half extents.
+   * @return The half extents (half width, half height, half depth) of the OBB.
    */
   const Vector3f&
   getHalfExtents() const {
@@ -97,6 +108,7 @@ public:
 
   /**
    * @brief Gets orientation.
+   * @return The orientation of the OBB as a quaternion.
    */
   const Quaternion&
   getOrientation() const {
@@ -105,111 +117,107 @@ public:
 
   /**
    * @brief Returns true when extents are non-negative.
+   * @return True if all half extents are >= 0, false otherwise.
    */
   bool
-  isValid() const {
-    return m_hExtents.x >= 0.0f &&
-           m_hExtents.y >= 0.0f &&
-           m_hExtents.z >= 0.0f;
-  }
+  isValid() const;
 
   /**
    * @brief Returns local X axis in world space.
+   * @return Local X axis (right) of the OBB in world space.
    */
   Vector3f
-  getRightAxis() const {
-    return m_orientation.getMatrix4Rotation().getRightVector();
-  }
+  getRightAxis() const;
 
   /**
    * @brief Returns local Y axis in world space.
+   * @return Local Y axis (up) of the OBB in world space.
    */
   Vector3f
-  getUpAxis() const {
-    return m_orientation.getMatrix4Rotation().getUpVector();
-  }
+  getUpAxis() const;
 
   /**
    * @brief Returns local Z axis in world space.
+   * @return Local Z axis (forward) of the OBB in world space.
    */
   Vector3f
-  getForwardAxis() const {
-    return m_orientation.getMatrix4Rotation().getForwardVector();
-  }
+  getForwardAxis() const;
 
   /**
    * @brief Volume = (2ex)(2ey)(2ez).
+   * @return The volume of the OBB using full dimensions.
    */
   float
-  getVolume() const {
-    const Vector3f d = getDimensions();
-    return d.x * d.y * d.z;
-  }
+  getVolume() const;
 
   /**
    * @brief Surface area = 2(xy + xz + yz) using full dimensions.
+   * @return The surface area of the OBB using full dimensions.
    */
   float
-  getSurfaceArea() const {
-    const Vector3f d = getDimensions();
-    return 2.0f * (d.x * d.y + d.x * d.z + d.y * d.z);
-  }
+  getSurfaceArea() const;
 
   /**
    * @brief Closest point on/in OBB to world point.
+   * @param point The world point to find the closest point to.
+   * @return The closest point on or inside the OBB to the given world point.
    */
   Vector3f
-  closestPoint(const Vector3f& point) const {
-    const Vector3f d = point - m_center;
-    const Vector3f right = getRightAxis();
-    const Vector3f up = getUpAxis();
-    const Vector3f forward = getForwardAxis();
-
-    float x = Math::clamp(Vector3f::dot(d, right), -m_hExtents.x, m_hExtents.x);
-    float y = Math::clamp(Vector3f::dot(d, up), -m_hExtents.y, m_hExtents.y);
-    float z = Math::clamp(Vector3f::dot(d, forward), -m_hExtents.z, m_hExtents.z);
-
-    return m_center + right * x + up * y + forward * z;
-  }
+  closestPoint(const Vector3f& point) const;
 
   /**
    * @brief Checks if world point lies inside (or on boundary).
+   * @param point The world point to check for containment.
+   * @return True if the point is inside or on the boundary of the OBB, false otherwise.
+   *
+   *         This method works by transforming the point into the OBB's local space and checking
+   *         if it lies within the half extents along each local axis.
    */
   bool
-  contains(const Vector3f& point) const {
-    const Vector3f d = point - m_center;
-    const Vector3f right = getRightAxis();
-    const Vector3f up = getUpAxis();
-    const Vector3f forward = getForwardAxis();
+  contains(const Vector3f& point) const;
 
-    const float x = Vector3f::dot(d, right);
-    const float y = Vector3f::dot(d, up);
-    const float z = Vector3f::dot(d, forward);
-
-    return Math::abs(x) <= m_hExtents.x &&
-           Math::abs(y) <= m_hExtents.y &&
-           Math::abs(z) <= m_hExtents.z;
-  }
-
-  virtual String
-  toString() override;
-
-  virtual bool
-  intersects(const Primitive& other) override;
-
+  /**
+   * @brief Expands the OBB to include the given world point.
+   * @param pos The world point to expand the OBB to include.
+   *
+   *        This method works by finding the closest point on the OBB to the given point and then
+   *        expanding the half extents if necessary to include that point. The center may also be
+   *        adjusted if the new point lies outside the current bounds of the OBB.
+   */
   void
   expandTo(const Vector3f& pos);
 
+
+  /**
+   * @brief Expands the OBB to include another OBB.
+   * @param other The other OBB to expand this OBB to include.
+   */
   void
   expandTo(const OBB& other);
 
+  /**
+   * @brief Projects the OBB onto the given axis and returns the radius of the projection.
+   * @param axis The axis to project the OBB onto (should be normalized).
+   * @return The radius of the OBB's projection onto the given axis.
+   */
   float
   projectOntoAxis(const Vector3f& axis) const;
 
 public:
 
+  /**
+   * @brief The center of the OBB in world space.
+   */
   Vector3f m_center;
+
+  /**
+   * @brief The half extents (half width, half height, half depth) of the OBB.
+   */
   Vector3f m_hExtents;
+
+  /**
+   * @brief The orientation of the OBB as a quaternion.
+   */
   Quaternion m_orientation;
 
 };

@@ -1,3 +1,4 @@
+
 #pragma once
 #include "cyMathPrerequisites.h"
 
@@ -14,19 +15,19 @@ namespace CYLLENE_SDK
   {
   BETTER_ENUM(E, 
               uint32,
-              NONE = 0, 
-              AABB,
-              CAPSULE,
-              CONE,
-              CYLINDER,
-              FRUSTUM,
-              LINE,
-              OBB,
-              PLANE,
-              POINT,
-              RAY,
-              RECT,  
-              SPHERE);
+              eNONE = 0, 
+              eAABB,
+              eCAPSULE,
+              eCONE,
+              eCYLINDER,
+              eFRUSTUM,
+              eLINE,
+              eOBB,
+              ePLANE,
+              ePOINT,
+              eRAY,
+              eRECT,  
+              eSPHERE);
   }
 
 
@@ -55,7 +56,7 @@ public:
    */
   static PRIMITIVE_TYPE::E staticType() {
     CY_ASSERT(true && "IMPLEMENT THIS");
-    return PRIMITIVE_TYPE::E::NONE;
+    return PRIMITIVE_TYPE::E::eNONE;
   }
 
   /**
@@ -81,7 +82,7 @@ public:
 
 protected:
   
-  PRIMITIVE_TYPE::E m_type = PRIMITIVE_TYPE::E::NONE;
+  PRIMITIVE_TYPE::E m_type = PRIMITIVE_TYPE::E::eNONE;
 };
 
 }

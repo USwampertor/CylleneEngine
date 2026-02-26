@@ -195,7 +195,7 @@
     <ClInclude Include="include\cyCone.h" />
     <ClInclude Include="include\cyCylinder.h" />
     <ClInclude Include="include\cyEulerHelpers.h" />
-    <ClInclude Include="include\cyFrustrum.h" />
+    <ClInclude Include="include\cyFrustum.h" />
     <ClInclude Include="include\cyIntersections.h" />
     <ClInclude Include="include\cyLine.h" />
     <ClInclude Include="include\cyMath.h" />
@@ -226,6 +226,7 @@
     <ClCompile Include="source\cyColor.cpp" />
     <ClCompile Include="source\cyCone.cpp" />
     <ClCompile Include="source\cyCylinder.cpp" />
+    <ClCompile Include="source\cyFrustum.cpp" />
     <ClCompile Include="source\cyIntersections.cpp" />
     <ClCompile Include="source\cyLine.cpp" />
     <ClCompile Include="source\cyOBB.cpp" />

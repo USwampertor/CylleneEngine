@@ -46,7 +46,7 @@ public:
       m_height(other.m_height) {}
 
   static PRIMITIVE_TYPE::E staticType() {
-    return PRIMITIVE_TYPE::E::CONE;
+    return PRIMITIVE_TYPE::E::eCONE;
   }
 
   virtual String

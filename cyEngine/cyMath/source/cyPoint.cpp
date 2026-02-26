@@ -8,40 +8,13 @@
 #include "cyCapsule.h"
 #include "cyAABB.h"
 #include "cyOBB.h"
+#include "cyIntersections.h"
 
 namespace CYLLENE_SDK {
 
 bool
 Point::intersects(const Primitive& other) {
-  const PRIMITIVE_TYPE::E type = other.getType();
-
-  if (type == +PRIMITIVE_TYPE::E::POINT) {
-    const Point& otherPoint = static_cast<const Point&>(other);
-    return (Math::isNearSame(this->x, otherPoint.x) && 
-            Math::isNearSame(this->y, otherPoint.y) && 
-            Math::isNearSame(this->z, otherPoint.z));
-  }
-  else if (type == +PRIMITIVE_TYPE::E::LINE) {
-    const Line& otherLine = static_cast<const Line&>(other);
-  }
-  else if (type == +PRIMITIVE_TYPE::E::PLANE) {
-    const Plane& otherPlane = static_cast<const Plane&>(other);
-  }
-  else if (type == +PRIMITIVE_TYPE::E::SPHERE) {
-    const Sphere& otherSphere = static_cast<const Sphere&>(other);
-  }
-  else if (type == +PRIMITIVE_TYPE::E::CAPSULE) {
-    const Capsule& otherCapsule = static_cast<const Capsule&>(other);
-  }
-  else if (type == +PRIMITIVE_TYPE::E::AABB) {
-    const AABB& otherAABB = static_cast<const AABB&>(other);
-  }
-  else if (type == +PRIMITIVE_TYPE::E::OBB) {
-    const OBB& otherOBB = static_cast<const OBB&>(other);
-  }
-
-
-  return false;
+  return COLLISIONS::intersects(*this, other);
 }
 
 
@@ -49,5 +22,60 @@ String
 Point::toString() {
   return static_cast<Vector3f*>(this)->toString();
 }
+
+void
+Point::setDimensions(const float& nx, const float& ny, const float& nz) {
+  x = nx;
+  y = ny;
+  z = nz;
+}
+
+void
+Point::setDimensions(const Vector3f& v) {
+  x = v.x;
+  y = v.y;
+  z = v.z;
+}
+
+Vector3f
+Point::toVector3f() const {
+  return Vector3f(x, y, z);
+}
+
+float
+Point::sqrDistanceTo(const Point& other) const {
+  return Vector3f::sqrDistance(*this, other);
+}
+
+float
+Point::distanceTo(const Point& other) const {
+  return Vector3f::distance(*this, other);
+}
+
+float
+Point::sqrDistanceTo(const Vector3f& other) const {
+  return Vector3f::sqrDistance(*this, other);
+}
+
+float
+Point::distanceTo(const Vector3f& other) const {
+  return Vector3f::distance(*this, other);
+}
+
+Point
+Point::midpoint(const Point& other) const {
+  return Point((x + other.x) * 0.5f,
+    (y + other.y) * 0.5f,
+    (z + other.z) * 0.5f);
+}
+
+Point
+Point::lerp(const Point& other, const float& t) const {
+  const float clampedT = Math::clamp(t, 0.0f, 1.0f);
+  return Point(x + (other.x - x) * clampedT,
+    y + (other.y - y) * clampedT,
+    z + (other.z - z) * clampedT);
+}
+
 
 }

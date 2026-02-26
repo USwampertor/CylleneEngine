@@ -35,7 +35,7 @@ public:
 
   static PRIMITIVE_TYPE::E 
   staticType() {
-    return PRIMITIVE_TYPE::E::CAPSULE;
+    return PRIMITIVE_TYPE::E::eCAPSULE;
   }
 
   virtual String
@@ -60,6 +60,25 @@ public:
    */
   void
   setDimensions(const Vector3f& a, const Vector3f& b, const float& radius);
+
+  /**
+   * @brief sets point A
+   * @param a First segment point.
+   */
+  void
+  setPointA(const Vector3f& a) {
+    m_pointA = a;
+  }
+
+  /**
+   * @brief sets point B
+   * @param b Second segment point.
+   */
+   void
+    setPointB(const Vector3f& b) {
+     m_pointB = b;
+   }
+
 
   /**
    * @brief Sets capsule radius.
@@ -122,7 +141,7 @@ public:
   /**
    * @brief Segment length between endpoints.
    * @return Length of the segment defined by points A and B, 
-   *          calculated as the distance between them.
+   *         calculated as the distance between them.
    */
   float
   getSegmentLength() const;
