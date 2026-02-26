@@ -1,3 +1,9 @@
+/**
+ * @file cyRay.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Ray.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 
@@ -73,9 +79,18 @@ public:
     return PRIMITIVE_TYPE::E::eRAY;
   }
 
+  /**
+   * @brief Checks if this ray intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
+  /**
+   * @brief Converts ray to string representation.
+   * @return Formatted ray string.
+   */
   virtual String
   toString() override;
 
@@ -178,7 +193,7 @@ public:
   /**
    * @brief Squared distance from world point to this ray.
    * @param point The world space point to measure distance to.
-   * @return The squared distance from the given world point to the }
+   * @return The squared distance from the given world point to the
    *         closest point on the ray.
    */
   float
@@ -206,4 +221,5 @@ public:
 };
 
 }
+
 

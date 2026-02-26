@@ -1,3 +1,9 @@
+/**
+ * @file cyPoint.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Point.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 
@@ -29,9 +35,18 @@ public:
   static PRIMITIVE_TYPE::E 
   staticType() { return PRIMITIVE_TYPE::E::ePOINT; }
 
+  /**
+   * @brief Checks if this point intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
+  /**
+   * @brief Converts point to string representation.
+   * @return Formatted point string.
+   */
   virtual String
   toString() override;
 
@@ -111,4 +126,5 @@ public:
 };
 
 }
+
 

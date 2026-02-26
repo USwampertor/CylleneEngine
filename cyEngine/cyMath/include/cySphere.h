@@ -1,3 +1,9 @@
+/**
+ * @file cySphere.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Sphere.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 #include "cyMath.h"
@@ -36,16 +42,25 @@ public:
   }
 
   
+  /**
+   * @brief Converts sphere to string representation.
+   * @return Formatted sphere string.
+   */
   virtual String
   toString() override;
 
+  /**
+   * @brief Checks if this sphere intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
-   /**
+  /**
    * @brief Sets both center and radius.
    * @param center The new center of the sphere.
-   * @param radius The new radius of the sphere. Must be non-negative for a valid
+   * @param radius The new radius of the sphere.
    */
   void
   setDimensions(const Vector3f& center, const float& radius);
@@ -103,30 +118,37 @@ public:
 
   /**
    * @brief Circumference of the great circle.
+   * @return Circumference of the sphere's great circle.
    */
   float
   getCircumference() const;
 
   /**
    * @brief Surface area.
+   * @return Surface area of the sphere.
    */
   float
   getSurfaceArea() const;
 
   /**
    * @brief Volume.
+   * @return Volume of the sphere.
    */
   float
   getVolume() const;
 
   /**
    * @brief Point containment test (inside or on boundary).
+   * @param point World-space point to test.
+   * @return True if point is inside or on the sphere.
    */
   bool
   contains(const Vector3f& point) const;
 
   /**
    * @brief Closest point on sphere surface to world point.
+   * @param point World-space point.
+   * @return Closest point on the sphere surface.
    */
   Vector3f
   closestPoint(const Vector3f& point) const;
@@ -153,4 +175,5 @@ public:
 };
 
 }
+
 

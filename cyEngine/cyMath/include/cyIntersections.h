@@ -1,3 +1,9 @@
+/**
+ * @file cyIntersections.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Intersections.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 
@@ -9,16 +15,16 @@ namespace CYLLENE_SDK {
   namespace COLLISIONS {
 
   /**
-  * @brief Check if an Primitive intersects with another Primitive. Internally it will check the type
-  * of the Primitive and call the appropriate intersection function.
-  * @param aabb The first Primitive to check
-  * @param plane The second Primitive to check against
-  * @return True if the Primitive intersects with the other Primitive, false otherwise
-  */
+   * @brief Checks whether one primitive intersects another primitive.
+   * @param first First primitive to test.
+   * @param second Second primitive to test.
+   * @return True if the primitives intersect, false otherwise.
+   */
   CY_MATH_EXPORT bool
-  intersects(const Primitive& aabb, const Primitive& plane);
+  intersects(const Primitive& first, const Primitive& second);
 
   }
 }
+
 
 

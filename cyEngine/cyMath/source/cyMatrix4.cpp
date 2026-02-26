@@ -413,11 +413,11 @@ Matrix4::orthogonal(const float& width,
 #elif GAPI_MATHTYPE == GAPI_DX
 #if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 1.0f / (zFar - zNear);
+  m[3][2] = -zNear / (zFar - zNear);
 #elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
-#endif
-
   m[3][2] = -zNear / (zNear - zFar);
+#endif
 #endif
 
   m[3][3] = 1.0f;
@@ -455,11 +455,11 @@ Matrix4::orthogonal(const float& top,
 #elif GAPI_MATHTYPE == GAPI_DX
 #if HANDSYSTEM == HANDSYS_LH
   m[2][2] = 1.0f / (zFar - zNear);
+  m[3][2] = -zNear / (zFar - zNear);
 #elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
-#endif
-
   m[3][2] = -zNear / (zNear - zFar);
+#endif
 #endif
 
   m[3][3] = 1.0f;
@@ -485,15 +485,15 @@ Matrix4::perspective(const float width,
 
   *this = Matrix4(f / aspect,      0.0f,    0.0f,                              0.0f,
                   0.0f,            f,       0.0f,                              0.0f,
-                  0.0f,            0.0f,    (zFar + zNear) * rangeInv,        -1.0f,
-                  0.0f,            0.0f,    (2.0f * zFar * zNear) * rangeInv,  0.0f);
+                  0.0f,            0.0f,    (zFar + zNear) * rangeInv,         (2.0f * zFar * zNear) * rangeInv,
+                  0.0f,            0.0f,   -1.0f,                               0.0f);
 #elif GAPI_MATHTYPE == GAPI_DX
   const float f = 1.0f / std::tanf(halfFOVrads);
 
   *this = Matrix4(f / aspect,     0.0f,        0.0f,                       0.0f,
                   0.0f,           f,           0.0f,                       0.0f,
-                  0.0f,           0.0f,        zFar * rangeInv,            1.0f,
-                  0.0f,           0.0f,       -zNear * zFar * rangeInv,    0.0f);
+                  0.0f,           0.0f,        zFar * rangeInv,           -zNear * zFar * rangeInv,
+                  0.0f,           0.0f,        1.0f,                       0.0f);
 #endif
   return *this;
 //   float FOVrads = Math::DEG2RAD * FOVangle;

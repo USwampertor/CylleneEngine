@@ -1,3 +1,9 @@
+/**
+ * @file cyCylinder.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Cylinder.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 
@@ -37,9 +43,18 @@ public:
     return PRIMITIVE_TYPE::E::eCYLINDER;
   }
 
+  /**
+   * @brief Converts cylinder to string representation.
+   * @return Formatted cylinder string.
+   */
   virtual String
   toString() override;
 
+  /**
+   * @brief Checks if this cylinder intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
@@ -90,9 +105,7 @@ public:
 
   /**
    * @brief Gets cylinder diameter.
-   * @return The diameter of the cylinder, which is twice the radius. 
-             This is a common measurement used in various calculations and can be 
-             more intuitive in certain contexts than the radius alone.
+   * @return The diameter of the cylinder, which is twice the radius.
    */
   float
   getDiameter() const;
@@ -159,7 +172,7 @@ public:
    */
   float m_radius;
 
-  /* 
+  /**
    * @brief Height of the cylinder.
    */
   float m_height;
@@ -167,3 +180,4 @@ public:
 };
 
 }
+

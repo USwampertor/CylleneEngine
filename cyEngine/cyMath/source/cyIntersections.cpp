@@ -92,6 +92,285 @@ namespace CYLLENE_SDK {
     return Vector3f::sqrDistance(c1, c2);
   }
 
+  Vector3f
+  toObbLocalPoint(const OBB& obb, const Vector3f& p) {
+    const Vector3f d = p - obb.getCenter();
+    const Vector3f right = obb.getRightAxis();
+    const Vector3f up = obb.getUpAxis();
+    const Vector3f forward = obb.getForwardAxis();
+    return Vector3f(Vector3f::dot(d, right),
+                    Vector3f::dot(d, up),
+                    Vector3f::dot(d, forward));
+  }
+
+  Vector3f
+  toObbLocalDir(const OBB& obb, const Vector3f& d) {
+    const Vector3f right = obb.getRightAxis();
+    const Vector3f up = obb.getUpAxis();
+    const Vector3f forward = obb.getForwardAxis();
+    return Vector3f(Vector3f::dot(d, right),
+                    Vector3f::dot(d, up),
+                    Vector3f::dot(d, forward));
+  }
+
+  bool
+  segmentIntersectsAabbCentered(const Vector3f& p0,
+                                const Vector3f& p1,
+                                const Vector3f& halfExtents) {
+    const Vector3f d = p1 - p0;
+    float tmin = 0.0f;
+    float tmax = 1.0f;
+
+    for (uint32 axis = 0; axis < 3; ++axis) {
+      const float o = p0[axis];
+      const float dir = d[axis];
+      const float bmin = -halfExtents[axis];
+      const float bmax = halfExtents[axis];
+
+      if (Math::abs(dir) <= Math::EPSILONF) {
+        if (o < bmin || o > bmax) return false;
+        continue;
+      }
+
+      const float invD = 1.0f / dir;
+      float t1 = (bmin - o) * invD;
+      float t2 = (bmax - o) * invD;
+      if (t1 > t2) {
+        const float tmp = t1;
+        t1 = t2;
+        t2 = tmp;
+      }
+
+      tmin = Math::max(tmin, t1);
+      tmax = Math::min(tmax, t2);
+      if (tmin > tmax) return false;
+    }
+
+    return true;
+  }
+
+  bool
+  rayIntersectsAabbCentered(const Vector3f& origin,
+                            const Vector3f& dir,
+                            const Vector3f& halfExtents) {
+    float tmin = -std::numeric_limits<float>::infinity();
+    float tmax = std::numeric_limits<float>::infinity();
+
+    for (uint32 axis = 0; axis < 3; ++axis) {
+      const float o = origin[axis];
+      const float d = dir[axis];
+      const float bmin = -halfExtents[axis];
+      const float bmax = halfExtents[axis];
+
+      if (Math::abs(d) <= Math::EPSILONF) {
+        if (o < bmin || o > bmax) return false;
+        continue;
+      }
+
+      const float invD = 1.0f / d;
+      float t1 = (bmin - o) * invD;
+      float t2 = (bmax - o) * invD;
+      if (t1 > t2) {
+        const float tmp = t1;
+        t1 = t2;
+        t2 = tmp;
+      }
+
+      tmin = Math::max(tmin, t1);
+      tmax = Math::min(tmax, t2);
+      if (tmin > tmax) return false;
+    }
+
+    return tmax >= 0.0f;
+  }
+
+  bool
+  obbIntersectsObb(const OBB& a, const OBB& b) {
+    const float eps = 1e-6f;
+
+    Vector3f A[3] = { a.getRightAxis().normalized(), a.getUpAxis().normalized(), a.getForwardAxis().normalized() };
+    Vector3f B[3] = { b.getRightAxis().normalized(), b.getUpAxis().normalized(), b.getForwardAxis().normalized() };
+
+    const Vector3f ea = a.getHalfExtents();
+    const Vector3f eb = b.getHalfExtents();
+
+    float R[3][3] = {};
+    float AbsR[3][3] = {};
+    for (uint32 i = 0; i < 3; ++i) {
+      for (uint32 j = 0; j < 3; ++j) {
+        R[i][j] = Vector3f::dot(A[i], B[j]);
+        AbsR[i][j] = Math::abs(R[i][j]) + eps;
+      }
+    }
+
+    const Vector3f tWorld = b.getCenter() - a.getCenter();
+    float t[3] = {
+      Vector3f::dot(tWorld, A[0]),
+      Vector3f::dot(tWorld, A[1]),
+      Vector3f::dot(tWorld, A[2])
+    };
+
+    for (uint32 i = 0; i < 3; ++i) {
+      const float ra = ea[i];
+      const float rb = eb.x * AbsR[i][0] + eb.y * AbsR[i][1] + eb.z * AbsR[i][2];
+      if (Math::abs(t[i]) > ra + rb) return false;
+    }
+
+    for (uint32 j = 0; j < 3; ++j) {
+      const float ra = ea.x * AbsR[0][j] + ea.y * AbsR[1][j] + ea.z * AbsR[2][j];
+      const float rb = eb[j];
+      const float tj = Math::abs(t[0] * R[0][j] + t[1] * R[1][j] + t[2] * R[2][j]);
+      if (tj > ra + rb) return false;
+    }
+
+    for (uint32 i = 0; i < 3; ++i) {
+      for (uint32 j = 0; j < 3; ++j) {
+        const uint32 i1 = (i + 1) % 3;
+        const uint32 i2 = (i + 2) % 3;
+        const uint32 j1 = (j + 1) % 3;
+        const uint32 j2 = (j + 2) % 3;
+
+        const float ra = ea[i1] * AbsR[i2][j] + ea[i2] * AbsR[i1][j];
+        const float rb = eb[j1] * AbsR[i][j2] + eb[j2] * AbsR[i][j1];
+        const float tij = Math::abs(t[i2] * R[i1][j] - t[i1] * R[i2][j]);
+        if (tij > ra + rb) return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool
+  aabbIntersectsObb(const AABB& aabb, const OBB& obb) {
+    OBB boxAsObb(aabb.getCenter(), aabb.getHalfExtents(), Quaternion::IDENTITY);
+    return obbIntersectsObb(boxAsObb, obb);
+  }
+
+  bool
+  obbIntersectsSphere(const OBB& obb, const Sphere& sphere) {
+    const Vector3f closest = obb.closestPoint(sphere.getCenter());
+    return Vector3f::sqrDistance(closest, sphere.getCenter()) <= Math::sqr(sphere.getRadius());
+  }
+
+  bool
+  obbIntersectsPlane(const OBB& obb, const Plane& plane) {
+    const Vector3f n = plane.getUnitNormal();
+    const float r = obb.projectOntoAxis(n);
+    const float s = Vector3f::dot(n, obb.getCenter() - plane.getOrigin());
+    return Math::abs(s) <= r;
+  }
+
+  bool
+  obbIntersectsLine(const OBB& obb, const Line& line) {
+    const Vector3f p0 = toObbLocalPoint(obb, line.getPointA());
+    const Vector3f p1 = toObbLocalPoint(obb, line.getPointB());
+    return segmentIntersectsAabbCentered(p0, p1, obb.getHalfExtents());
+  }
+
+  bool
+  obbIntersectsRay(const OBB& obb, const Ray& ray) {
+    const Vector3f originLocal = toObbLocalPoint(obb, ray.getOrigin());
+    const Vector3f dirLocal = toObbLocalDir(obb, ray.getDirection());
+    return rayIntersectsAabbCentered(originLocal, dirLocal, obb.getHalfExtents());
+  }
+
+  float
+  raySegmentSqrDistance(const Ray& ray, const Vector3f& a, const Vector3f& b, float& outRayT, float& outSegT) {
+    const Vector3f u = ray.getDirection();
+    const Vector3f v = b - a;
+    const Vector3f w = ray.getOrigin() - a;
+    const float A = Vector3f::dot(u, u);
+    const float B = Vector3f::dot(u, v);
+    const float C = Vector3f::dot(v, v);
+    const float D = Vector3f::dot(u, w);
+    const float E = Vector3f::dot(v, w);
+    const float denom = A * C - B * B;
+
+    if (A <= Math::EPSILONF && C <= Math::EPSILONF) {
+      outRayT = 0.0f;
+      outSegT = 0.0f;
+      return Vector3f::sqrDistance(ray.getOrigin(), a);
+    }
+
+    if (A <= Math::EPSILONF) {
+      outRayT = 0.0f;
+      const float t = (C <= Math::EPSILONF) ? 0.0f : Math::clamp(E / C, 0.0f, 1.0f);
+      outSegT = t;
+      return Vector3f::sqrDistance(ray.getOrigin(), a + v * t);
+    }
+
+    if (C <= Math::EPSILONF) {
+      outSegT = 0.0f;
+      const float s = Math::max(0.0f, Vector3f::dot(a - ray.getOrigin(), u) / A);
+      outRayT = s;
+      return Vector3f::sqrDistance(a, ray.getOrigin() + u * s);
+    }
+
+    float sN = 0.0f;
+    float sD = denom;
+    float tN = 0.0f;
+    float tD = denom;
+
+    if (denom <= Math::EPSILONF) {
+      sN = 0.0f;
+      sD = 1.0f;
+      tN = E;
+      tD = C;
+    }
+    else {
+      sN = B * E - C * D;
+      tN = A * E - B * D;
+      if (sN < 0.0f) {
+        sN = 0.0f;
+        tN = E;
+        tD = C;
+      }
+    }
+
+    if (tN < 0.0f) {
+      tN = 0.0f;
+      sN = -D;
+      sD = A;
+      if (sN < 0.0f) {
+        sN = 0.0f;
+      }
+    }
+    else if (tN > tD) {
+      tN = tD;
+      sN = B - D;
+      sD = A;
+      if (sN < 0.0f) {
+        sN = 0.0f;
+      }
+    }
+
+    const float sc = (Math::abs(sN) <= Math::EPSILONF ? 0.0f : sN / sD);
+    const float tc = (Math::abs(tN) <= Math::EPSILONF ? 0.0f : tN / tD);
+
+    outRayT = sc;
+    outSegT = tc;
+
+    const Vector3f dP = w + u * sc - v * tc;
+    return dP.sqrMagnitude();
+  }
+
+  bool
+  capsuleIntersectsPlane(const Capsule& capsule, const Plane& plane) {
+    const float d0 = plane.signedDistanceTo(capsule.getPointA());
+    const float d1 = plane.signedDistanceTo(capsule.getPointB());
+    if (Math::abs(d0) <= capsule.getRadius() || Math::abs(d1) <= capsule.getRadius()) return true;
+    if (d0 * d1 < 0.0f) return true;
+    return false;
+  }
+
+  bool
+  rayIntersectsCapsule(const Ray& ray, const Capsule& capsule) {
+    float rayT = 0.0f;
+    float segT = 0.0f;
+    const float d2 = raySegmentSqrDistance(ray, capsule.getPointA(), capsule.getPointB(), rayT, segT);
+    return d2 <= Math::sqr(capsule.getRadius());
+  }
+
   bool
   aabbIntersectsAabb(const AABB& a, const AABB& b) {
     return a.getMin().x <= b.getMax().x && a.getMax().x >= b.getMin().x &&
@@ -351,6 +630,10 @@ namespace CYLLENE_SDK {
       return aabbIntersectsSphere(static_cast<const AABB&>(*a), static_cast<const Sphere&>(*b));
     }
 
+    if (typeA == +PRIMITIVE_TYPE::E::eAABB && typeB == +PRIMITIVE_TYPE::E::eOBB) {
+      return aabbIntersectsObb(static_cast<const AABB&>(*a), static_cast<const OBB&>(*b));
+    }
+
     if (typeA == +PRIMITIVE_TYPE::E::eCAPSULE && typeB == +PRIMITIVE_TYPE::E::eCAPSULE) {
       const Capsule& c0 = static_cast<const Capsule&>(*a);
       const Capsule& c1 = static_cast<const Capsule&>(*b);
@@ -377,6 +660,14 @@ namespace CYLLENE_SDK {
       const Sphere& sphere = static_cast<const Sphere&>(*b);
       const float d2 = pointSegmentSqrDistance(sphere.getCenter(), capsule.getPointA(), capsule.getPointB());
       return d2 <= Math::sqr(capsule.getRadius() + sphere.getRadius());
+    }
+
+    if (typeA == +PRIMITIVE_TYPE::E::eCAPSULE && typeB == +PRIMITIVE_TYPE::E::ePLANE) {
+      return capsuleIntersectsPlane(static_cast<const Capsule&>(*a), static_cast<const Plane&>(*b));
+    }
+
+    if (typeA == +PRIMITIVE_TYPE::E::eCAPSULE && typeB == +PRIMITIVE_TYPE::E::eRAY) {
+      return rayIntersectsCapsule(static_cast<const Ray&>(*b), static_cast<const Capsule&>(*a));
     }
 
     if (typeA == +PRIMITIVE_TYPE::E::eLINE && typeB == +PRIMITIVE_TYPE::E::eLINE) {
@@ -406,6 +697,10 @@ namespace CYLLENE_SDK {
       return Math::abs(d0) <= Math::SMALLNUMBER ||
              Math::abs(d1) <= Math::SMALLNUMBER ||
              (d0 * d1 < 0.0f);
+    }
+
+    if (typeA == +PRIMITIVE_TYPE::E::eLINE && typeB == +PRIMITIVE_TYPE::E::eOBB) {
+      return obbIntersectsLine(static_cast<const OBB&>(*b), static_cast<const Line&>(*a));
     }
 
     if (typeA == +PRIMITIVE_TYPE::E::ePLANE && typeB == +PRIMITIVE_TYPE::E::ePLANE) {
@@ -444,6 +739,10 @@ namespace CYLLENE_SDK {
       return plane.distanceTo(sphere.getCenter()) <= sphere.getRadius();
     }
 
+    if (typeA == +PRIMITIVE_TYPE::E::ePLANE && typeB == +PRIMITIVE_TYPE::E::eOBB) {
+      return obbIntersectsPlane(static_cast<const OBB&>(*b), static_cast<const Plane&>(*a));
+    }
+
     if (typeA == +PRIMITIVE_TYPE::E::ePOINT && typeB == +PRIMITIVE_TYPE::E::ePOINT) {
       const Point& p0 = static_cast<const Point&>(*a);
       const Point& p1 = static_cast<const Point&>(*b);
@@ -462,12 +761,35 @@ namespace CYLLENE_SDK {
       return pointRaySqrDistance(sphere.getCenter(), ray) <= Math::sqr(sphere.getRadius());
     }
 
+    if (typeA == +PRIMITIVE_TYPE::E::eRAY && typeB == +PRIMITIVE_TYPE::E::eOBB) {
+      return obbIntersectsRay(static_cast<const OBB&>(*b), static_cast<const Ray&>(*a));
+    }
+
     if (typeA == +PRIMITIVE_TYPE::E::eRECT && typeB == +PRIMITIVE_TYPE::E::eRECT) {
       return rectIntersectsRect(static_cast<const Rect&>(*a), static_cast<const Rect&>(*b));
     }
 
     if (typeA == +PRIMITIVE_TYPE::E::ePOINT && typeB == +PRIMITIVE_TYPE::E::eRECT) {
       return rectContainsPoint(static_cast<const Rect&>(*b), static_cast<const Point&>(*a));
+    }
+
+    if (typeA == +PRIMITIVE_TYPE::E::eOBB && typeB == +PRIMITIVE_TYPE::E::eOBB) {
+      return obbIntersectsObb(static_cast<const OBB&>(*a), static_cast<const OBB&>(*b));
+    }
+
+    if (typeA == +PRIMITIVE_TYPE::E::eOBB && typeB == +PRIMITIVE_TYPE::E::ePOINT) {
+      return static_cast<const OBB&>(*a).contains(static_cast<const Point&>(*b).toVector3f());
+    }
+
+    if (typeA == +PRIMITIVE_TYPE::E::eOBB && typeB == +PRIMITIVE_TYPE::E::eSPHERE) {
+      return obbIntersectsSphere(static_cast<const OBB&>(*a), static_cast<const Sphere&>(*b));
+    }
+
+    if (typeA == +PRIMITIVE_TYPE::E::eCAPSULE && typeB == +PRIMITIVE_TYPE::E::eOBB) {
+      Vector3f c;
+      float r;
+      if (!toBoundingSphere(*a, c, r)) return false;
+      return obbIntersectsSphere(static_cast<const OBB&>(*b), Sphere(c, r));
     }
 
     if (typeA == +PRIMITIVE_TYPE::E::eSPHERE && typeB == +PRIMITIVE_TYPE::E::eSPHERE) {

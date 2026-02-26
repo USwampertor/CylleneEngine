@@ -1,3 +1,9 @@
+/**
+ * @file cyRect.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Rect.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 #include "cyMath.h"
@@ -6,15 +12,22 @@
 
 namespace CYLLENE_SDK {
 
-/*
- *	@class Rect
- *	@brief A rectangle primitive.
+/**
+ * @class Rect
+ * @brief Rectangle primitive.
  */
 class CY_MATH_EXPORT Rect : public Primitive
 {
 public:
+  /**
+   * @brief Constructs a zero-initialized rectangle.
+   */
   Rect() : Primitive(Rect::staticType()) {}
 
+  /**
+   * @brief Copy constructor.
+   * @param other Source rectangle.
+   */
   Rect(const Rect& other)
     : Primitive(Rect::staticType()),
       m_x(other.m_x),
@@ -22,6 +35,13 @@ public:
       m_width(other.m_width),
       m_height(other.m_height) {}
 
+  /**
+   * @brief Constructs rectangle from position and size.
+   * @param nx X coordinate.
+   * @param ny Y coordinate.
+   * @param nwidth Width.
+   * @param nheight Height.
+   */
   Rect(uint32 nx, uint32 ny, uint32 nwidth, uint32 nheight)
     : Primitive(Rect::staticType()),
       m_x(nx),
@@ -34,9 +54,18 @@ public:
     return PRIMITIVE_TYPE::E::eRECT;
   }
 
+  /**
+   * @brief Checks if this rectangle intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
+  /**
+   * @brief Converts rectangle to string representation.
+   * @return Formatted rectangle string.
+   */
   virtual String
   toString() override;
 
@@ -179,7 +208,7 @@ public:
 
   /**
    * @brief Gets the bottom edge (y + height)
-   * @param The bottom edge (y + height)
+   * @return The bottom edge (y + height).
    */
   uint32
   getBottom() const;
@@ -201,15 +230,15 @@ public:
   getArea() const;
 
   /**
-    * @brief Gets the perimeter of the rectangle.
-    * @return The perimeter of the rectangle calculated as 2 times the sum of width and height.
-    */
+   * @brief Gets the perimeter of the rectangle.
+   * @return The perimeter of the rectangle calculated as 2 times the sum of width and height.
+   */
   uint32
   getPerimeter() const;
 
   /**
    * @brief Gets the center point of the rectangle.
-   * @return A Vector2i representing the x and y coordinates of the rectangle's center point,
+   * @return A Vector2i representing the x and y coordinates of the rectangle's center point.
    */
   Vector2i
   getCenter() const;
@@ -227,8 +256,8 @@ public:
    * @brief Checks if a point is contained within the rectangle (including edges).
    * @param point A Vector2i representing the x and y coordinates of the point to check.
    * @return True if the point is inside the rectangle or on its edge, false otherwise.
-    *         If the point has negative coordinates, it is considered outside the rectangle, 
-    *         as rectangles are defined in the positive coordinate space.
+   *         If the point has negative coordinates, it is considered outside the rectangle, 
+   *         as rectangles are defined in the positive coordinate space.
    */
   bool
   contains(const Vector2i& point) const;
@@ -288,3 +317,4 @@ public:
 };
 
 }
+

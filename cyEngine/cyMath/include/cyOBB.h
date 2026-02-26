@@ -1,3 +1,9 @@
+/**
+ * @file cyOBB.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for OBB.
+ */
 #pragma once
 
 #include "cyMathPrerequisites.h"
@@ -11,6 +17,10 @@
 
 namespace CYLLENE_SDK {
 
+/**
+ * @class OBB
+ * @brief Oriented bounding box defined by center, half extents, and orientation.
+ */
 class CY_MATH_EXPORT OBB : public Primitive
 {
 public:
@@ -37,9 +47,18 @@ public:
     return PRIMITIVE_TYPE::E::eOBB;
   }
   
+  /**
+   * @brief Converts OBB to string representation.
+   * @return Formatted OBB string.
+   */
   virtual String
   toString() override;
 
+  /**
+   * @brief Checks if this OBB intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
@@ -223,4 +242,5 @@ public:
 };
 
 }
+
 

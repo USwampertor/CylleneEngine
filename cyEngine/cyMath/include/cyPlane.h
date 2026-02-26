@@ -1,3 +1,9 @@
+/**
+ * @file cyPlane.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Plane.
+ */
 #pragma once
 
 #include "cyMathPrerequisites.h"
@@ -15,11 +21,19 @@ namespace CYLLENE_SDK
 class CY_MATH_EXPORT Plane : public Primitive
 {
 public:
+  /**
+   * @brief Default constructor.
+   */
   Plane()
     : Primitive(Plane::staticType()),
       m_origin(Vector3f::ZERO),
       m_normal(Vector3f::ONEZ) {}
 
+  /**
+   * @brief Constructs a plane from origin and normal.
+   * @param origin A point on the plane.
+   * @param normal Plane normal.
+   */
   Plane(const Vector3f& origin, const Vector3f& normal)
     : Primitive(Plane::staticType()),
       m_origin(origin),
@@ -29,9 +43,18 @@ public:
     return PRIMITIVE_TYPE::E::ePLANE;
   }
 
+  /**
+   * @brief Checks if this plane intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
+  /**
+   * @brief Converts plane to string representation.
+   * @return Formatted plane string.
+   */
   virtual String
   toString() override;
 
@@ -55,7 +78,7 @@ public:
   /**
    * @brief Sets plane normal.
    * @param normal The normal vector of the plane (does not need to be normalized).
-    *              The plane is considered valid if the normal has non-zero magnitude.
+   *               The plane is considered valid if the normal has non-zero magnitude.
    */
   void
   setNormal(const Vector3f& normal) {
@@ -74,7 +97,7 @@ public:
   /**
    * @brief Gets plane normal.
    * @return The normal vector of the plane (may not be normalized). The plane is considered valid if the normal has non-zero magnitude.
-    *        Normalizing the normal vector can be done with getUnitNormal() or normalize().
+   *         Normalizing the normal vector can be done with getUnitNormal() or normalize().
    */
   const Vector3f&
   getNormal() const {
@@ -128,7 +151,7 @@ public:
    * @brief Signed distance from point to plane.
    * @param point The point to measure distance from.
    * @return The signed distance from the point to the plane. Positive if in front of the plane, negative if behind, and zero if on the plane.
-    *         The distance is calculated as (n | (point - origin)), where n is the unit normal vector.
+   *         The distance is calculated as (n | (point - origin)), where n is the unit normal vector.
    */
   float
   signedDistanceTo(const Vector3f& point) const;
@@ -167,7 +190,7 @@ public:
    * @brief Returns +1 if in front, -1 if behind, 0 if on plane.
    * @param point The point to check which side of the plane it is on.
    * @param tolerance The distance tolerance for considering the point to be on the plane.
-   * @return 1 if the signed distance from the point to the plane is greater than the
+   * @return 1 if the point is in front of the plane, -1 if behind, and 0 if within tolerance.
    */
   int32
   sideOf(const Vector3f& point, const float& tolerance = Math::SMALLNUMBER) const;
@@ -188,3 +211,4 @@ private:
 
 
 }
+

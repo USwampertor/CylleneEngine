@@ -1,3 +1,9 @@
+/**
+ * @file cyPrimitive.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Primitive.
+ */
 
 #pragma once
 #include "cyMathPrerequisites.h"
@@ -30,7 +36,10 @@ namespace CYLLENE_SDK
               eSPHERE);
   }
 
-
+/**
+ * @class Primitive
+ * @brief Abstract base type for all math primitives used in intersection tests.
+ */
 class CY_MATH_EXPORT Primitive
 {
 public:
@@ -75,14 +84,17 @@ public:
    * @return A string describing the primitive's properties and type.
    * 
    * @note This is a virtual function that should be overridden in derived classes to provide
-   *       specific intersection logic based on the types of primitives being compared.
+   *       a type-specific printable representation.
    */
   virtual String
   toString() = 0;
 
 protected:
-  
+  /**
+   * @brief Runtime type identifier for the primitive.
+   */
   PRIMITIVE_TYPE::E m_type = PRIMITIVE_TYPE::E::eNONE;
 };
 
 }
+

@@ -1,3 +1,9 @@
+/**
+ * @file cyCapsule.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Capsule.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 #include "cyMath.h"
@@ -38,9 +44,18 @@ public:
     return PRIMITIVE_TYPE::E::eCAPSULE;
   }
 
+  /**
+   * @brief Converts capsule to string representation.
+   * @return Formatted capsule string.
+   */
   virtual String
   toString() override;
 
+  /**
+   * @brief Checks if this capsule intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
@@ -74,10 +89,10 @@ public:
    * @brief sets point B
    * @param b Second segment point.
    */
-   void
-    setPointB(const Vector3f& b) {
-     m_pointB = b;
-   }
+  void
+  setPointB(const Vector3f& b) {
+    m_pointB = b;
+  }
 
 
   /**
@@ -91,7 +106,7 @@ public:
 
   /**
    * @brief Gets first segment point.
-   * @return a First segment point.
+   * @return First segment point.
    */
   const Vector3f&
   getPointA() const {
@@ -100,7 +115,7 @@ public:
 
   /**
    * @brief Gets second segment point.
-   * @return b Second segment point.
+   * @return Second segment point.
    */
   const Vector3f&
   getPointB() const {
@@ -109,7 +124,7 @@ public:
 
   /**
    * @brief Gets capsule radius.
-   * @return radius Capsule radius.
+   * @return Capsule radius.
    */
   float
   getRadius() const {
@@ -171,7 +186,7 @@ public:
   /**
    * @brief Volume of the cylindrical middle section only.
    * @return Volume of the cylindrical part of the capsule, calculated as the area 
-   *         of the circular cross-section (π * radius^2) multiplied by the length of 
+   *         of the circular cross-section (pi * radius^2) multiplied by the length of 
    *         the segment between points A and B.
    */
   float
@@ -180,7 +195,7 @@ public:
   /**
    * @brief Volume contributed by the two hemispherical caps.
    * @return Volume of the two hemispherical caps combined, calculated as the volume 
-   *         of a sphere with the same radius (4/3 * π * radius^3) since the two 
+   *         of a sphere with the same radius (4/3 * pi * radius^3) since the two 
    *         hemispheres together form a full sphere.
    */
   float
@@ -188,7 +203,7 @@ public:
 
   /**
    * @brief Total capsule volume.
-   * @return Total volume of the capsule, calculated as the sum of the cylindrical volume
+   * @return Total volume of the capsule (cylinder volume + caps volume).
    */
   float
   getVolume() const;
@@ -196,7 +211,7 @@ public:
   /**
    * @brief Surface area of the cylindrical middle section only.
    * @return Surface area of the cylindrical part of the capsule, calculated as the 
-   *         circumference of the circular cross-section (2 * π * radius) multiplied by 
+   *         circumference of the circular cross-section (2 * pi * radius) multiplied by 
    *         the length of the segment between points A and B, representing the lateral 
    *         surface area of the cylinder.
    */
@@ -207,15 +222,14 @@ public:
    * @brief Surface area contributed by both hemispherical caps.
    * @return Surface area of the two hemispherical caps combined, 
    *         calculated as the surface area of a sphere with the same radius 
-   *         (4 * π * radius^2) since the two hemispheres together form a full sphere.
+   *         (4 * pi * radius^2) since the two hemispheres together form a full sphere.
    */
   float
   getCapsSurfaceArea() const;
 
   /**
    * @brief Total capsule surface area.
-   * @return Total surface area of the capsule, calculated as the sum of 
-   *         the cylindrical surface area
+   * @return Total surface area of the capsule (cylinder area + caps area).
    */
   float
   getSurfaceArea() const;
@@ -223,21 +237,23 @@ public:
 public:
 
   /**
-   * One of the points of the capsule
+   * @brief One endpoint of the capsule segment.
    */
   Vector3f m_pointA;
 
   /**
-   * The other point of the capsule
+   * @brief Other endpoint of the capsule segment.
    */
   Vector3f m_pointB;
   
   /**
-   * The radius of the capsule
+   * @brief Radius of the capsule.
    */
   float m_radius;
 
 };
 
 }
+
+
 

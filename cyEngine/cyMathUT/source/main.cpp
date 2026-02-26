@@ -599,22 +599,38 @@ TEST_SUITE("Matrix4 Tests") {
       Matrix4 ortho;
       ortho.orthogonal(800, 600, 0.1f, 100.0f);
 
-      // Should transform z from [0.1, 100] to [-1, 1] in GAPI_GL
+      // Validate NDC depth mapping for the active graphics API.
       Vector3f nearPoint = ortho.transformPosition(Vector3f(0, 0, 0.1f));
       Vector3f farPoint = ortho.transformPosition(Vector3f(0, 0, 100.0f));
 
+#if GAPI_MATHTYPE == GAPI_GL
       CHECK(nearPoint.z == doctest::Approx(-1.0f).epsilon(0.01f));
       CHECK(farPoint.z == doctest::Approx(1.0f).epsilon(0.01f));
+#elif GAPI_MATHTYPE == GAPI_DX
+      CHECK(nearPoint.z == doctest::Approx(0.0f).epsilon(0.01f));
+      CHECK(farPoint.z == doctest::Approx(1.0f).epsilon(0.01f));
+#endif
     }
 
     SUBCASE("Perspective") {
       Matrix4 persp;
       persp.perspective(800, 600, 0.1f, 100.0f, 45.0f);
 
-      // Should transform z properly with perspective divide
+      // Should transform z properly with perspective divide for active API depth range.
+#if GAPI_MATHTYPE == GAPI_GL
       Vector4f point = persp.transformPositionV4(Vector4f(0, 0, -5.0f, 1.0f));
+#else
+      Vector4f point = persp.transformPositionV4(Vector4f(0, 0, 5.0f, 1.0f));
+#endif
       point /= point.w; // Perspective divide
-      CHECK(point.z > 0.0f); // Should be in front of camera
+
+#if GAPI_MATHTYPE == GAPI_GL
+      CHECK(point.z > -1.0f);
+      CHECK(point.z < 1.0f);
+#elif GAPI_MATHTYPE == GAPI_DX
+      CHECK(point.z > 0.0f);
+      CHECK(point.z < 1.0f);
+#endif
     }
   }
 
@@ -842,7 +858,7 @@ TEST_SUITE("Primitive Tests") {
 
     SUBCASE("Non-Colliding Capsules (Separated)") {
       Capsule cap1 = { Vector3f(0, 0, 0), Vector3f(2, 0, 0), 1.0f };
-      Capsule cap2 = { Vector3f(3, 0, 0), Vector3f(5, 0, 0), 1.0f };
+      Capsule cap2 = { Vector3f(5, 0, 0), Vector3f(7, 0, 0), 1.0f };
 
       CHECK(cap1.intersects(cap2) == false); // Should NOT collide
     }
@@ -891,6 +907,18 @@ TEST_SUITE("Primitive Tests") {
     CHECK(COLLISIONS::intersects(cylinder, sphere));
     CHECK(COLLISIONS::intersects(frustum, sphere));
     CHECK(COLLISIONS::intersects(obb, sphere));
+
+    AABB obbOverlapBox(Vector3f(-0.25f, -0.25f, -0.25f), Vector3f(0.25f, 0.25f, 0.25f));
+    CHECK(COLLISIONS::intersects(obbOverlapBox, obb));
+
+    Plane planeX(Vector3f::ZERO, Vector3f::ONEX);
+    CHECK(COLLISIONS::intersects(planeX, obb));
+
+    Ray forwardRay(Vector3f(-2.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f));
+    CHECK(COLLISIONS::intersects(forwardRay, obb));
+
+    Capsule acrossPlane(Vector3f(-1.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f), 0.1f);
+    CHECK(COLLISIONS::intersects(acrossPlane, planeX));
   }
 }
 

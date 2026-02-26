@@ -1,3 +1,9 @@
+/**
+ * @file cyCone.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Cone.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 
@@ -49,9 +55,18 @@ public:
     return PRIMITIVE_TYPE::E::eCONE;
   }
 
+  /**
+   * @brief Converts cone to string representation.
+   * @return Formatted cone string.
+   */
   virtual String
   toString() override;
 
+  /**
+   * @brief Checks if this cone intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
@@ -144,15 +159,16 @@ public:
 public:
 
   /**
-   * Radius of the cone's base. Must be positive for a valid cone.
+   * @brief Radius of the cone's base.
    */
   float m_radius;
 
   /**
-   * Height of the cone. Must be positive for a valid cone.
+   * @brief Height of the cone.
    */
   float m_height;
 
 };
 
 }
+

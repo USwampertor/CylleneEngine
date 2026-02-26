@@ -1,3 +1,9 @@
+/**
+ * @file cyAABB.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for AABB.
+ */
 
 #pragma once
 
@@ -48,9 +54,18 @@ public:
     return PRIMITIVE_TYPE::E::eAABB;
   }
 
+  /**
+   * @brief Converts AABB to string representation.
+   * @return Formatted AABB string.
+   */
   virtual String
   toString() override;
 
+  /**
+   * @brief Checks if this AABB intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
@@ -200,4 +215,5 @@ public:
 };
 
 }
+
 

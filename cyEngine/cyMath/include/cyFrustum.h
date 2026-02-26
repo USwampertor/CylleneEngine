@@ -1,3 +1,9 @@
+/**
+ * @file cyFrustum.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Frustum.
+ */
 #pragma once
 #include "cyMathPrerequisites.h"
 
@@ -44,17 +50,26 @@ public:
     return PRIMITIVE_TYPE::E::eFRUSTUM;
   }
 
+  /**
+   * @brief Converts frustum to string representation.
+   * @return Formatted frustum string.
+   */
   virtual String
   toString() override;
 
+  /**
+   * @brief Checks if this frustum intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
   /**
    * @brief Set perspective frustum parameters.
    * @param nearPlane Distance to the near clipping plane. Must be positive and less than farPlane.
-   * @param farPlane Distance to the far clipping plane. Must be greater than nearPlane
-   * @param fovYDegrees Vertical field of view in degrees. 
+   * @param farPlane Distance to the far clipping plane. Must be greater than nearPlane.
+   * @param fovYDegrees Vertical field of view in degrees.
    * @param aspectRatio Aspect ratio (width/height) of the frustum.
    */
   void
@@ -65,7 +80,7 @@ public:
 
   /**
    * @brief Set near plane distance.
-   * @param nearPlane Distance to the near clipping plane. Must be positive and less than
+   * @param nearPlane Distance to the near clipping plane.
    */
   void
   setNearPlane(const float& nearPlane) {
@@ -74,7 +89,7 @@ public:
 
   /**
    * @brief Set far plane distance.
-   * @param farPlane Distance to the far clipping plane. Must be greater than nearPlane
+   * @param farPlane Distance to the far clipping plane.
    */
   void
   setFarPlane(const float& farPlane) {
@@ -83,7 +98,7 @@ public:
 
   /**
    * @brief Set vertical field of view in degrees.
-   * @param fovYDegrees Vertical field of view in degrees
+   * @param fovYDegrees Vertical field of view in degrees.
    */
   void
   setFovYDegrees(const float& fovYDegrees) {
@@ -92,7 +107,7 @@ public:
 
   /**
    * @brief Set aspect ratio (width/height) of the frustum.
-   * @param aspectRatio Aspect ratio (width/height) of the frustum
+   * @param aspectRatio Aspect ratio (width/height) of the frustum.
    */
   void
   setAspectRatio(const float& aspectRatio) {
@@ -100,8 +115,8 @@ public:
   }
 
   /**
-   * @brief Getters for frustum near plane.
-   * @return The current values of the near plane
+   * @brief Gets near plane distance.
+   * @return Near plane distance.
    */
   float
   getNearPlane() const {
@@ -109,8 +124,8 @@ public:
   }
 
   /**
-   * @brief Getters for frustum far plane.
-   * @return The current values of the far plane
+   * @brief Gets far plane distance.
+   * @return Far plane distance.
    */
   float
   getFarPlane() const {
@@ -118,8 +133,8 @@ public:
   }
 
   /**
-   * @brief Getters for frustum vertical field of view in degrees.
-   * @return The current values of the vertical field of view in degrees
+   * @brief Gets vertical field of view in degrees.
+   * @return Vertical field of view in degrees.
    */
   float
   getFovYDegrees() const {
@@ -127,8 +142,8 @@ public:
   }
 
   /**
-   * @brief Getters for frustum aspect ratio (width/height).
-   * @return The current values of the aspect ratio (width/height)
+   * @brief Gets aspect ratio.
+   * @return Aspect ratio (width/height).
    */
   float
   getAspectRatio() const {
@@ -137,119 +152,105 @@ public:
 
   /**
    * @brief True when near/far/fov/aspect are physically valid.
-   * @return True if the frustum parameters are valid (near plane > 0, far plane > near plane,
+   * @return True if parameters are valid, false otherwise.
    */
   bool
   isValid() const;
 
   /**
-   * @brief gets the depth of the frustum, which is the distance between the near and far planes.
-   * @return The depth of the frustum, calculated as the difference between the far plane
+   * @brief Gets frustum depth.
+   * @return Distance between far and near planes.
    */
   float
   getDepth() const;
 
   /**
-   * @brief gets the vertical field of view in radians,
-            which is used for various calculations related to the frustum's geometry.
-   * @return The vertical field of view in radians, calculated by converting the stored
+   * @brief Gets half vertical field of view in radians.
+   * @return Half of vertical field of view, in radians.
    */
   float
   getHalfFovYRadians() const;
 
   /**
-   * @brief gets the half width and half height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The half width and half height of the near and far planes, calculated using
+   * @brief Gets near plane half height.
+   * @return Half height of near plane.
    */
   float
   getNearHalfHeight() const;
 
   /**
-   * @brief gets the half width and half height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The half width and half height of the near and far planes, calculated using
+   * @brief Gets near plane half width.
+   * @return Half width of near plane.
    */
   float
   getNearHalfWidth() const;
 
   /**
-   * @brief gets the half width and half height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The half width and half height of the near and far planes, calculated using
+   * @brief Gets far plane half height.
+   * @return Half height of far plane.
    */
   float
   getFarHalfHeight() const;
 
   /**
-   * @brief gets the half width and half height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The half width and half height of the near and far planes, calculated using
+   * @brief Gets far plane half width.
+   * @return Half width of far plane.
    */
   float
   getFarHalfWidth() const;
 
   /**
-   * @brief gets the full width and height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The full width and height of the near and far planes, calculated by doubling
+   * @brief Gets near plane full width.
+   * @return Full width of near plane.
    */
   float
   getNearWidth() const;
 
   /**
-   * @brief gets the full width and height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The full width and height of the near and far planes, calculated by doubling
+   * @brief Gets near plane full height.
+   * @return Full height of near plane.
    */
   float
   getNearHeight() const;
 
   /**
-   * @brief gets the full width and height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The full width and height of the near and far planes, calculated by doubling
+   * @brief Gets far plane full width.
+   * @return Full width of far plane.
    */
   float
   getFarWidth() const;
 
   /**
-   * @brief gets the full width and height of the near and far planes, which are used to calculate
-            the dimensions of the frustum at different distances from the viewer.
-   * @return The full width and height of the near and far planes, calculated by doubling
+   * @brief Gets far plane full height.
+   * @return Full height of far plane.
    */
   float
   getFarHeight() const;
 
   /**
-   * @brief Gets the area of the near plane of the frustum.
-   * @return The area of the near plane, calculated as the product 
-   *         of the width and height of the near plane.
+   * @brief Gets near plane area.
+   * @return Area of near plane.
    */
   float
   getNearArea() const;
 
   /**
-   * @brief Gets the area of the far plane of the frustum, which is calculated as 
-   *        the product of the width and height of the far plane.
-   * @return The area of the far plane, calculated as the product of the width and height
-   *         of the far plane.
+   * @brief Gets far plane area.
+   * @return Area of far plane.
    */
   float
   getFarArea() const;
 
   /**
-   * @brief Volume of a truncated pyramid frustum.
-   * @return The volume of the frustum, calculated using the formula for the volume 
-   *         of a truncated pyramid,
+   * @brief Gets frustum volume.
+   * @return Volume of frustum.
    */
   float
   getVolume() const;
 
   /**
-   * @brief Gets the center point of the frustum in view space, which is the midpoint 
-   *        between the near and far planes along the view direction.
-   * @return The center point of the frustum in view space, calculated as the midpoint between
+   * @brief Gets frustum center in view space.
+   * @return Center point between near and far planes.
    */
   Vector3f
   getCenter() const;
@@ -275,10 +276,10 @@ public:
   float m_fovYDegrees;
 
   /**
-   * @brief Aspect ratio (width/height) of the frustum, which is used to calculate 
-            the horizontal dimensions
+   * @brief Aspect ratio (width/height) of the frustum.
    */
   float m_aspectRatio;
 };
 
 }
+

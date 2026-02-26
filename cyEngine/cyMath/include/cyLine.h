@@ -1,3 +1,9 @@
+/**
+ * @file cyLine.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Line.
+ */
 #pragma once
 
 #include "cyMathPrerequisites.h"
@@ -8,26 +14,25 @@
 namespace CYLLENE_SDK
 {
 
-/*
- *	@class  Line 
- *	@brief  Defines two positions in space bound to each other
- *
+/**
+ * @class Line  
+ * @brief Line segment defined by two endpoints in 3D space.
  */
 class CY_MATH_EXPORT Line : public Primitive
 {
 public:
-  /*
-   *	@brief  Default constructor
+  /**
+   * @brief Default constructor.
    */
   Line() 
     : Primitive(Line::staticType()),
       m_a(Vector3f::ZERO),
       m_b(Vector3f::ZERO) {}
 
-  /*
-   *	@brief  Constructor taking two vectors
-   *	@param  const Point& a - Point a
-   *	@param  const Point& b - Point b
+  /**
+   * @brief Constructs a line segment from two endpoints.
+   * @param a Endpoint A.
+   * @param b Endpoint B.
    */
   Line(const Vector3f& a, const Vector3f& b)
     : Primitive(Line::staticType()),
@@ -38,9 +43,18 @@ public:
     return PRIMITIVE_TYPE::E::eLINE;
   }
 
+  /**
+   * @brief Checks if this line intersects another primitive.
+   * @param other Primitive to test.
+   * @return True if intersecting.
+   */
   virtual bool
   intersects(const Primitive& other) override;
 
+  /**
+   * @brief Converts line segment to string representation.
+   * @return Formatted line string.
+   */
   virtual String
   toString() override;
 
@@ -157,5 +171,6 @@ private:
 };
 
 }
+
 
 
