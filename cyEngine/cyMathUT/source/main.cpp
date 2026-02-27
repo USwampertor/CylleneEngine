@@ -621,8 +621,10 @@ TEST_SUITE("Matrix4 Tests") {
       Vector4f point = persp.transformPositionV4(Vector4f(0, 0, -5.0f, 1.0f));
 #else
       Vector4f point = persp.transformPositionV4(Vector4f(0, 0, 5.0f, 1.0f));
+      Vector4f point2 = persp.transformPositionV4(Vector4f(1, 2, 5.0f, 1.0f));
 #endif
       point /= point.w; // Perspective divide
+      point2 /= point2.w;
 
 #if GAPI_MATHTYPE == GAPI_GL
       CHECK(point.z > -1.0f);
