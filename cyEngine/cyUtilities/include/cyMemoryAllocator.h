@@ -1,12 +1,9 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyMemoryAllocator.h
- * @author Marco "Swampy" Millan
- * @date 8/4/2021
- * @brief 
- * 
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for MemoryAllocator.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #pragma once
 
@@ -35,56 +32,109 @@ using std::ptrdiff_t;
 class MemoryAllocatorBase;
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
+/**
+ * @brief Allocates memory aligned to 16 bytes.
+ * @param size Number of bytes to allocate.
+ * @return Pointer to allocated memory.
+ */
 inline void*
 platformAlignedAlloc16(SizeT size) {
   return _aligned_malloc(size, 16);
 }
 
+/**
+ * @brief Frees memory allocated with platformAlignedAlloc16().
+ * @param ptr Pointer to free.
+ */
 inline void
 platformAlignedFree16(void* ptr) {
   _aligned_free(ptr);
 }
 
+/**
+ * @brief Allocates memory aligned to the requested boundary.
+ * @param size Number of bytes to allocate.
+ * @param alignment Alignment in bytes.
+ * @return Pointer to allocated memory.
+ */
 inline void*
 platformAlignedAlloc(SizeT size, SizeT alignment) {
   return _aligned_malloc(size, alignment);
 }
 
+/**
+ * @brief Frees memory allocated with platformAlignedAlloc().
+ * @param ptr Pointer to free.
+ */
 inline void
 platformAlignedFree(void* ptr) {
   _aligned_free(ptr);
 }
 #elif CY_PLATFORM == CY_PLATFORM_LINUX || CY_PLATFORM == CY_PLATFORM_ANDROID
+/**
+ * @brief Allocates memory aligned to 16 bytes.
+ * @param size Number of bytes to allocate.
+ * @return Pointer to allocated memory.
+ */
 inline void*
 platformAlignedAlloc16(SizeT size) {
   return ::memalign(16, size);
 }
 
+/**
+ * @brief Frees memory allocated with platformAlignedAlloc16().
+ * @param ptr Pointer to free.
+ */
 inline void
 platformAlignedFree16(void* ptr) {
   ::free(ptr);
 }
 
+/**
+ * @brief Allocates memory aligned to the requested boundary.
+ * @param size Number of bytes to allocate.
+ * @param alignment Alignment in bytes.
+ * @return Pointer to allocated memory.
+ */
 inline void*
   platformAlignedAlloc(SizeT size, SizeT alignment) {
   return ::memalign(alignment, size);
 }
 
+/**
+ * @brief Frees memory allocated with platformAlignedAlloc().
+ * @param ptr Pointer to free.
+ */
 inline void
   platformAlignedFree(void* ptr) {
   ::free(ptr);
 }
 #else //16 byte alignment by default
+/**
+ * @brief Allocates memory aligned to 16 bytes.
+ * @param size Number of bytes to allocate.
+ * @return Pointer to allocated memory.
+ */
 inline void*
   platformAlignedAlloc16(SizeT size) {
   return ::malloc(size);
 }
 
+/**
+ * @brief Frees memory allocated with platformAlignedAlloc16().
+ * @param ptr Pointer to free.
+ */
 inline void
   platformAlignedFree16(void* ptr) {
   ::free(ptr);
 }
 
+/**
+ * @brief Allocates memory aligned to the requested boundary.
+ * @param size Number of bytes to allocate.
+ * @param alignment Alignment in bytes.
+ * @return Pointer to allocated memory.
+ */
 inline void*
   platformAlignedAlloc(SizeT size, SizeT alignment) {
   void* data = ::malloc(size + (alignment - 1) + sizeof(void*));
@@ -106,18 +156,26 @@ inline void
 #endif
 
 /**
-  * @class MemoryCounter
-  * @brief Thread safe class used for storing total number of memory
-  *        allocations and deallocations, primarily for statistic purposes.
-  */
+ * @class MemoryCounter
+ * @brief Thread safe class used for storing total number of memory
+ *        allocations and deallocations, primarily for statistic purposes.
+ */
 class MemoryCounter
 {
 public:
+  /**
+   * @brief Gets number of allocation calls on current thread.
+   * @return Allocation counter value.
+   */
   static CY_UTILITY_EXPORT uint64
     getNumAllocs() {
     return m_allocs;
   }
 
+  /**
+   * @brief Gets number of free calls on current thread.
+   * @return Free counter value.
+   */
   static CY_UTILITY_EXPORT uint64
     getNumFrees() {
     return m_frees;
@@ -127,14 +185,16 @@ private:
   friend class MemoryAllocatorBase;
 
   /**
-    * Thread local data can't be exported, so some magic to make it accessible
-    * from MemoryAllocator
-    */
+   * @brief Increments allocation counter.
+   */
   static CY_UTILITY_EXPORT void
     incrementAllocCount() {
     ++m_allocs;
   }
 
+  /**
+   * @brief Increments free counter.
+   */
   static CY_UTILITY_EXPORT void
     incrementFreeCount() {
     ++m_frees;
@@ -145,18 +205,24 @@ private:
 };
 
 /**
-  * @class MemoryAllocatorBase
-  * @brief Base class all memory allocators need to inherit.
-  *        Provides allocation and free counting.
-  */
+ * @class MemoryAllocatorBase
+ * @brief Base class all memory allocators need to inherit.
+ *        Provides allocation and free counting.
+ */
 class MemoryAllocatorBase
 {
  protected:
+  /**
+   * @brief Increments allocation counter.
+   */
   static void
     incrementAllocCount() {
     MemoryCounter::incrementAllocCount();
   }
 
+  /**
+   * @brief Increments free counter.
+   */
   static void
     incrementFreeCount() {
     MemoryCounter::incrementFreeCount();
@@ -164,16 +230,21 @@ class MemoryAllocatorBase
 };
 
 /**
-  * @class MemoryAllocator
-  * @brief Provides a generic implementation. Specialize for specific
-  *        categories as needed. For example you might implement a pool
-  *        allocator for specific types in order to reduce allocation overhead.
-  *        By default standard malloc/free are used.
-  */
+ * @class MemoryAllocator
+ * @brief Provides a generic implementation. Specialize for specific
+ *        categories as needed. For example you might implement a pool
+ *        allocator for specific types in order to reduce allocation overhead.
+ *        By default standard malloc/free are used.
+ */
 template<class T>
 class MemoryAllocator : public MemoryAllocatorBase
 {
  public:
+  /**
+   * @brief Allocates raw memory.
+   * @param bytes Number of bytes to allocate.
+   * @return Pointer to allocated memory.
+   */
   static void*
   allocate(SizeT bytes) {
 #if CY_PROFILING_ENABLED
@@ -183,11 +254,11 @@ class MemoryAllocator : public MemoryAllocatorBase
   }
 
   /**
-    * @brief Allocates @p bytes and aligns them to the specified boundary (in bytes).
-    *        If the alignment is less or equal to 16 it is more efficient to use the
-    *        allocateAligned16() alternative of this method.
-    *        Alignment must be power of two.
-    */
+   * @brief Allocates @p bytes and aligns them to the specified boundary (in bytes).
+   *        If the alignment is less or equal to 16 it is more efficient to use the
+   *        allocateAligned16() alternative of this method.
+   *        Alignment must be power of two.
+   */
   static void*
   allocateAligned(SizeT bytes, SizeT alignment) {
 #if CY_PROFILING_ENABLED
@@ -197,8 +268,8 @@ class MemoryAllocator : public MemoryAllocatorBase
   }
 
   /**
-    * @brief Allocates @p bytes and aligns them to a 16 byte boundary.
-    */
+   * @brief Allocates @p bytes and aligns them to a 16 byte boundary.
+   */
   static void*
   allocateAligned16(SizeT bytes) {
 #if CY_PROFILING_ENABLED
@@ -207,6 +278,10 @@ class MemoryAllocator : public MemoryAllocatorBase
     return platformAlignedAlloc16(bytes);
   }
 
+  /**
+   * @brief Frees memory allocated with allocate().
+   * @param ptr Pointer to free.
+   */
   static void
   free(void* ptr) {
 #if CY_PROFILING_ENABLED
@@ -216,8 +291,8 @@ class MemoryAllocator : public MemoryAllocatorBase
   }
 
   /**
-    * @brief Frees memory allocated with allocateAligned()
-    */
+   * @brief Frees memory allocated with allocateAligned()
+   */
   static void
   freeAligned(void* ptr) {
 #if CY_PROFILING_ENABLED
@@ -227,8 +302,8 @@ class MemoryAllocator : public MemoryAllocatorBase
   }
 
   /**
-    * @brief Frees memory allocated with allocateAligned16()
-    */
+   * @brief Frees memory allocated with allocateAligned16()
+   */
   static void
   freeAligned16(void* ptr) {
 #if CY_PROFILING_ENABLED
@@ -239,15 +314,15 @@ class MemoryAllocator : public MemoryAllocatorBase
 };
 
 /**
-  * @brief General allocator provided by the OS. Use for persistent long term
-  *        allocations, and allocations that don't happen often.
-  */
+ * @class GenAlloc
+ * @brief General allocator tag used by default allocation helpers.
+ */
 class GenAlloc
 {};
 
 /**
-  * @brief Allocates the specified number of bytes.
-  */
+ * @brief Allocates the specified number of bytes.
+ */
 template<class Alloc>
 inline void*
 cy_alloc(SizeT count) {
@@ -255,8 +330,8 @@ cy_alloc(SizeT count) {
 }
 
 /**
-  * @brief Allocates enough bytes to hold the specified type, but doesn't construct it.
-  */
+ * @brief Allocates enough bytes to hold the specified type, but doesn't construct it.
+ */
 template<class T, class Alloc>
 inline T*
 cy_alloc() {
@@ -264,8 +339,8 @@ cy_alloc() {
 }
 
 /**
-  * @brief Creates and constructs an array of "count" elements.
-  */
+ * @brief Creates and constructs an array of "count" elements.
+ */
 template<class T, class Alloc>
 inline T*
 cy_newN(SizeT count) {
@@ -279,8 +354,8 @@ cy_newN(SizeT count) {
 }
 
 /**
-  * @brief Create a new object with the specified allocator and the specified parameters.
-  */
+ * @brief Create a new object with the specified allocator and the specified parameters.
+ */
 template<class T, class Alloc, class... Args>
 T*
 cy_new(Args&& ...args) {
@@ -288,8 +363,8 @@ cy_new(Args&& ...args) {
 }
 
 /**
-  * @brief Frees all the bytes allocated at the specified location.
-  */
+ * @brief Frees all the bytes allocated at the specified location.
+ */
 template<class Alloc>
 inline void
 cy_free(void* ptr) {
@@ -297,8 +372,8 @@ cy_free(void* ptr) {
 }
 
 /**
-  * @brief Destructs and frees the specified object.
-  */
+ * @brief Destructs and frees the specified object.
+ */
 template<class T, class Alloc = GenAlloc>
 inline void
 cy_delete(T* ptr) {
@@ -307,8 +382,8 @@ cy_delete(T* ptr) {
 }
 
 /**
-  * @brief Destructs and frees the specified array of objects.
-  */
+ * @brief Destructs and frees the specified array of objects.
+ */
 template<class T, class Alloc = GenAlloc>
 inline void
 cy_deleteN(T* ptr, SizeT count) {
@@ -320,21 +395,21 @@ cy_deleteN(T* ptr, SizeT count) {
 
 /***************************************************************************/
 /**
-  * Default versions of all alloc/free/new/delete methods which call GenAlloc
-  */
+ * Default versions of all alloc/free/new/delete methods which call GenAlloc
+ */
   /***************************************************************************/
 
   /**
-  * @brief Allocates the specified number of bytes.
-  */
+   * @brief Allocates the specified number of bytes.
+   */
 inline void*
 cy_alloc(SizeT count) {
   return MemoryAllocator<GenAlloc>::allocate(count);
 }
 
 /**
-  * @brief Allocates enough bytes to hold the specified type, but doesn't construct it.
-  */
+ * @brief Allocates enough bytes to hold the specified type, but doesn't construct it.
+ */
 template<class T>
 inline T*
 cy_alloc() {
@@ -342,25 +417,25 @@ cy_alloc() {
 }
 
 /**
-  * @brief Allocates the specified number of bytes aligned to the provided boundary.
-  *        Boundary is in bytes and must be a power of two.
-  */
+ * @brief Allocates the specified number of bytes aligned to the provided boundary.
+ *        Boundary is in bytes and must be a power of two.
+ */
 inline void*
 cy_alloc_aligned(SizeT count, SizeT align) {
   return MemoryAllocator<GenAlloc>::allocateAligned(count, align);
 }
 
 /**
-  * @brief Allocates the specified number of bytes aligned to a 16 bytes boundary.
-  */
+ * @brief Allocates the specified number of bytes aligned to a 16 bytes boundary.
+ */
 inline void*
 cy_alloc_aligned16(SizeT count) {
   return MemoryAllocator<GenAlloc>::allocateAligned16(count);
 }
 
 /**
-  * @brief Creates and constructs an array of "count" elements.
-  */
+ * @brief Creates and constructs an array of "count" elements.
+ */
 template<class T>
 inline T*
 cy_allocN(SizeT count) {
@@ -368,8 +443,8 @@ cy_allocN(SizeT count) {
 }
 
 /**
-* @brief Creates and constructs an array of "count" elements.
-*/
+ * @brief Creates and constructs an array of "count" elements.
+ */
 template<class T>
 inline T*
 cy_newN(SizeT count) {
@@ -382,8 +457,8 @@ cy_newN(SizeT count) {
 }
 
 /**
-  * @brief Create a new object with the specified allocator and the specified parameters.
-  */
+ * @brief Create a new object with the specified allocator and the specified parameters.
+ */
 template<class T, class... Args>
 T*
 cy_new(Args&& ...args) {
@@ -391,24 +466,24 @@ cy_new(Args&& ...args) {
 }
 
 /**
-  * @brief Frees all the bytes allocated at the specified location.
-  */
+ * @brief Frees all the bytes allocated at the specified location.
+ */
 inline void
 cy_free(void* ptr) {
   MemoryAllocator<GenAlloc>::free(ptr);
 }
 
 /**
-  * @brief Frees memory previously allocated with ge_alloc_aligned().
-  */
+ * @brief Frees memory previously allocated with ge_alloc_aligned().
+ */
 inline void
 cy_free_aligned(void* ptr) {
   MemoryAllocator<GenAlloc>::freeAligned(ptr);
 }
 
 /**
-  * @brief Frees memory previously allocated with ge_alloc_aligned16().
-  */
+ * @brief Frees memory previously allocated with ge_alloc_aligned16().
+ */
 inline void
 cy_free_aligned16(void* ptr) {
   MemoryAllocator<GenAlloc>::freeAligned16(ptr);
@@ -433,9 +508,11 @@ cy_free_aligned16(void* ptr) {
   MemoryAllocator<Alloc>::free(ptr);
 
 /**
-  * @brief Allocator for the standard library that internally uses the
-  *        Genesis Engine memory allocator.
-  */
+ * @class StdAlloc
+ * @brief STL-compatible allocator backed by engine allocation helpers.
+ * @tparam T Value type.
+ * @tparam Alloc Allocator tag type.
+ */
 template <class T, class Alloc = GenAlloc>
 class StdAlloc
 {
@@ -448,25 +525,61 @@ class StdAlloc
   using size_type = SizeT;
   using difference_type = ptrdiff_t;
 
+  /**
+   * @brief Default constructor.
+   */
   constexpr StdAlloc() = default;
+  /**
+   * @brief Move constructor.
+   */
   constexpr StdAlloc(StdAlloc&&) = default;
+  /**
+   * @brief Copy constructor.
+   */
   constexpr StdAlloc(const StdAlloc&) = default;
 
+  /**
+   * @brief Converting constructor from another StdAlloc specialization.
+   * @tparam U Source value type.
+   * @tparam Alloc2 Source allocator tag.
+   * @param other Other allocator instance.
+   */
   template<class U, class Alloc2>
-  constexpr StdAlloc(const StdAlloc<U, Alloc2>&) _NOEXCEPT {}
+  constexpr StdAlloc(const StdAlloc<U, Alloc2>& other) _NOEXCEPT {
+    (void)other;
+  }
 
+  /**
+   * @brief Equality comparison for allocator types.
+   * @tparam U Other value type.
+   * @tparam Alloc2 Other allocator tag.
+   * @return Always true for compatible stateless allocators.
+   */
   template<class U, class Alloc2>
   constexpr bool
-  operator==(const StdAlloc<U, Alloc2>&) const _NOEXCEPT {
+  operator==(const StdAlloc<U, Alloc2>& other) const _NOEXCEPT {
+    (void)other;
     return true;
   }
 
+  /**
+   * @brief Inequality comparison for allocator types.
+   * @tparam U Other value type.
+   * @tparam Alloc2 Other allocator tag.
+   * @return Always false for compatible stateless allocators.
+   */
   template<class U, class Alloc2>
   constexpr bool
-  operator!=(const StdAlloc<U, Alloc2>&) const _NOEXCEPT {
+  operator!=(const StdAlloc<U, Alloc2>& other) const _NOEXCEPT {
+    (void)other;
     return false;
   }
 
+  /**
+   * @class rebind
+   * @brief STL allocator rebind helper.
+   * @tparam U Rebound value type.
+   */
   template<class U>
   class rebind
   {
@@ -475,8 +588,8 @@ class StdAlloc
   };
 
   /**
-    * @brief Allocate but don't initialize number elements of type T.
-    */
+   * @brief Allocate but don't initialize number elements of type T.
+   */
   static T*
   allocate(const SizeT num) {
     if (0 == num) {
@@ -496,28 +609,36 @@ class StdAlloc
   }
 
   /**
-    * @brief Deallocate storage p of deleted elements.
-    */
+   * @brief Deallocate storage p of deleted elements.
+   */
   static void
   deallocate(pointer p, SizeT) {
     cy_free<Alloc>(p);
   }
 
+  /**
+   * @brief Returns maximum number of allocatable elements.
+   * @return Maximum element count.
+   */
   static constexpr SizeT
   max_size() {
     return NumericLimits<SizeT>::max() / sizeof(T);
   }
 
+  /**
+   * @brief Destroys an element in allocated storage.
+   * @param p Pointer to element to destroy.
+   */
   static constexpr void
   destroy(pointer p) {
     p->~T();
   }
 
   /**
-    * @brief This version of construct() (with a varying number of parameters)
-    *        seems necessary in order to use some STL data structures from
-    *        libstdc++-4.8, but compilation fails on OSX, hence the #if.
-    */
+   * @brief This version of construct() (with a varying number of parameters)
+   *        seems necessary in order to use some STL data structures from
+   *        libstdc++-4.8, but compilation fails on OSX, hence the #if.
+   */
   template<class... Args>
   static void
   construct(pointer p, Args&& ...args) {
@@ -525,3 +646,4 @@ class StdAlloc
   }
 };
 }
+

@@ -1,12 +1,10 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyJSON.h
- * @author Marco "Swampy" Millan
- * @date 10/18/2021
- * @brief JSON utility for serialization
- * 
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for JSON.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+
 #pragma once
 
 #define RAPIDJSON_HAS_STDSTRING 1
@@ -24,33 +22,39 @@
 
 #include "cyStdHeaders.h"
 
-
 namespace CYLLENE_SDK {
 
-// using JSONDocument = rapidjson::Document;
+// Redefinitions
+using JSONFileReader    = rapidjson::FileReadStream;
 
-using JSONFileReader = rapidjson::FileReadStream;
+using JSONFileWriter    = rapidjson::FileWriteStream;
 
-using JSONFileWriter = rapidjson::FileWriteStream;
+using JSONIStream       = rapidjson::IStreamWrapper;
 
-using JSONIStream = rapidjson::IStreamWrapper;
-
-using JSONOStream = rapidjson::OStreamWrapper;
-
-template<typename T>
-using JSONPrettyWriter = rapidjson::PrettyWriter<T>;
-
-using JSONValue = rapidjson::Value;
+using JSONOStream       = rapidjson::OStreamWrapper;
 
 template<typename T>
-using JSONWriter = rapidjson::Writer<T>;
+using JSONPrettyWriter  = rapidjson::PrettyWriter<T>;
 
-using JSONStringBuffer = rapidjson::StringBuffer;
+using JSONValue         = rapidjson::Value;
 
+template<typename T>
+using JSONWriter        = rapidjson::Writer<T>;
+
+using JSONStringBuffer  = rapidjson::StringBuffer;
+
+/**
+ * @class JSONDocument
+ * @brief RapidJSON document wrapper with string serialization helpers.
+ */
 class JSONDocument : public rapidjson::Document
 {
 public:
 
+  /**
+   * @brief Serializes document to compact JSON string.
+   * @return Compact JSON string.
+   */
   const CYLLENE_SDK::String
   stringify() {
     JSONStringBuffer buffer;
@@ -59,6 +63,10 @@ public:
     return buffer.GetString();
   }
   
+  /**
+   * @brief Serializes document to pretty formatted JSON string.
+   * @return Pretty JSON string.
+   */
   const CYLLENE_SDK::String
   prettyString() {
     JSONStringBuffer buffer;

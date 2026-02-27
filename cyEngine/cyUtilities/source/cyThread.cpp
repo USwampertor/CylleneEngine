@@ -16,15 +16,18 @@ void
 ThreadManager::iterate() {
   while (true) {
     {
-      MULock lock(m_queueMutex);
-      m_mutexCondition.wait(lock, [this]() {
-        return m_shouldTerminate || !m_jobs.empty();
-      });
-      if (m_shouldTerminate) {
-        return;
+      Callback<void> job;
+      {
+        MULock lock(m_queueMutex);
+        m_mutexCondition.wait(lock, [this]() {
+          return m_shouldTerminate || !m_jobs.empty();
+          });
+        if (m_shouldTerminate && m_jobs.empty()) {
+          return;
+        }
+        job = m_jobs.front();
+        m_jobs.pop();
       }
-      auto job = m_jobs.front();
-      m_jobs.pop();
       job();
     }
 
@@ -49,8 +52,10 @@ ThreadManager::busy() {
 
 void
 ThreadManager::stop() {
-  MULock lock(m_queueMutex);
-  m_shouldTerminate = true;
+  {
+    MULock lock(m_queueMutex);
+    m_shouldTerminate = true;
+  }
   m_mutexCondition.notify_all();
   for (auto& thread : m_threads) {
     if (thread->joinable()) {

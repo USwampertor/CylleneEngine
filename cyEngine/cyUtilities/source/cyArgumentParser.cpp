@@ -104,8 +104,7 @@ ArgumentParser::addFlag(const String& newFlag) {
 }
 
 void
-ArgumentParser::setFlagValue(const String& flag, const String& newParameter)
-{
+ArgumentParser::setFlagValue(const String& flag, const String& newParameter) {
   if (m_flagMap.find(flag) != m_flagMap.end())
   {
     m_flagMap[flag].push_back(newParameter);
@@ -121,8 +120,12 @@ ArgumentParser::getFlagValues(const String& flag) {
 }
 
 bool
-ArgumentParser::removeFlag(const String& flag)
-{
+ArgumentParser::hasFlag(const String& flag) {
+  return m_flagMap.find(flag) != m_flagMap.end();
+}
+
+bool
+ArgumentParser::removeFlag(const String& flag) {
   if (m_flagMap.find(flag) != m_flagMap.end()) {
     m_flagMap.erase(m_flagMap.find(flag));
     return true;

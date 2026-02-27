@@ -1,12 +1,10 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file Utilities.h
- * @author Marco "Swampy" Millan
- * @date 8/6/2021
- * @brief 
- * 
+ * @file cyUtilities.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Utilities.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
@@ -24,3 +22,4 @@ namespace CYLLENE_SDK {
   using Utils = PlatformUtils;
 #endif
 }
+

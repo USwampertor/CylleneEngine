@@ -1,12 +1,9 @@
-/*********************************************/
-/*
- * @file 	cyVector3f
- * @author	Marco "Swampertor" Millan
- * @date	11/08/2021
- * @brief	Vector3 made with floats
- *
+/**
+ * @file cyVector3f.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Vector3f.
  */
-/******************************************** */
 #pragma once
 
 #include "cyMathPrerequisites.h"
@@ -14,552 +11,517 @@
 
 namespace CYLLENE_SDK {
 
+// Forward declaration
 class Vector2f;
 class Vector2i;
-
 class Vector4f;
 
+/**
+ * @class Vector3f
+ * @brief A vector object with x y z components
+ */
 class CY_MATH_EXPORT Vector3f {
 public:
-
+  /**
+   * @brief Constructs an uninitialized vector.
+   */
   Vector3f() = default;
 
+  /**
+   * @brief Constructs a copy of another vector.
+   * @param other Source vector.
+   */
   Vector3f(const Vector3f& other);
 
+  /**
+   * @brief Constructs from a 2D float vector.
+   * @param other Source 2D vector.
+   */
   Vector3f(const Vector2f& other);
 
+  /**
+   * @brief Constructs from a 2D integer vector.
+   * @param other Source 2D vector.
+   */
   Vector3f(const Vector2i& other);
 
+  /**
+   * @brief Constructs from a 4D vector.
+   * @param other Source 4D vector.
+   */
   Vector3f(const Vector4f& other);
  
+  /**
+   * @brief Constructs from explicit components.
+   * @param nx X component.
+   * @param ny Y component.
+   * @param nz Z component.
+   */
   Vector3f(const float& nx, const float& ny, const float& nz = 0);
 
+  /**
+   * @brief Destroys the vector.
+   */
   ~Vector3f() = default;
 
   /**
-    * @brief () operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief () operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   */
   const float&
   operator()(const uint32& index) const;
     
   /**
-    * @brief () operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief () operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   */
   float&
   operator()(const uint32& index);
     
   /**
-    * @brief [] operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief [] operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   */
   const float
   operator[](const uint32& index) const;
 
   /**
-    * @brief [] operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief [] operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   */
   float&
   operator[](const uint32& index);
 
   /**
-    * @brief + operator overload
-    * @param b the other matrix to add
-    * @return a vector sum of *this and v
-    *
-    */
+   * @brief + operator overload
+   * @param v Vector to add.
+   * @return a vector sum of *this and v
+   */
   Vector3f
   operator+(const Vector3f& v) const;
 
   /**
-    * @brief - operator overload
-    * @param b the other matrix to substract
-    * @return a vector difference of *this and v
-    *
-    */
+   * @brief - operator overload
+   * @param v Vector to subtract.
+   * @return a vector difference of *this and v
+   */
   Vector3f
   operator-(const Vector3f& v) const;
 
   /**
-    * @brief * operator overload
-    * @param b the other matrix to multiply
-    * @return a vector multiplication of *this times v
-    *
-    */
+   * @brief * operator overload
+   * @param v Vector to multiply component-wise.
+   * @return a vector multiplication of *this times v
+   */
   Vector3f
   operator*(const Vector3f& v) const;
 
   /**
-    * @brief / operator overload
-    * @param b the other matrix to divide
-    * @return a vector division of *this divided by v
-    *
-    */
+   * @brief / operator overload
+   * @param v Vector to divide component-wise.
+   * @return a vector division of *this divided by v
+   */
   Vector3f
   operator/(const Vector3f& v) const;
 
   /**
-    * @brief + operator overload
-    * @param plus the float to add to all vector
-    * @return a vector sum of *this + plus
-    *
-    */
+   * @brief + operator overload
+   * @param plus the float to add to all vector
+   * @return a vector sum of *this + plus
+   */
   Vector3f
   operator+(const float& plus) const;
 
   /**
-    * @brief - operator overload
-    * @param minus the float to subtract to all vector
-    * @return a vector difference of *this - minus
-    *
-    */
+   * @brief - operator overload
+   * @param minus the float to subtract to all vector
+   * @return a vector difference of *this - minus
+   */
   Vector3f
   operator-(const float& minus) const;
 
   /**
-    * @brief * operator overload
-    * @param times the float to multiply all vector
-    * @return a vector multiplication of *this times times
-    *
-    */
+   * @brief * operator overload
+   * @param times the float to multiply all vector
+   * @return a vector multiplication of *this times times
+   */
   Vector3f
   operator*(const float& times) const;
 
   /**
-    * @brief / operator overload
-    * @param under the float to divide all vector
-    * @return a vector divided of *this divided by times
-    *
-    */
+   * @brief / operator overload
+   * @param under the float to divide all vector
+   * @return a vector divided of *this divided by times
+   */
   Vector3f
   operator/(const float& under) const;
 
   /**
-    * @brief | operator overload for dot product
-    * @param the other vector
-    * @return dot product
-    *
-    */
+   * @brief | operator overload for dot product
+   * @param v Other vector.
+   * @return dot product
+   */
   float
   operator|(const Vector3f& v) const;
 
   /**
-    * @brief ^ operator overload for cross product
-    * @param the other vector
-    * @return cross product
-    *
-    */
+   * @brief ^ operator overload for cross product
+   * @param v Other vector.
+   * @return cross product
+   */
   Vector3f
   operator^(const Vector3f& v) const;
 
   /**
-    * @brief == operator overload
-    * @param the other vector to compare
-    * @return true if this components are == to v components
-    *
-    */
+   * @brief == operator overload
+   * @param v Vector to compare.
+   * @return true if this components are == to v components
+   */
   bool
   operator==(const Vector3f& v) const;
 
   /**
-    * @brief != operator overload
-    * @param the other vector to compare
-    * @return true if this components are != to v components
-    *
-    */
+   * @brief != operator overload
+   * @param v Vector to compare.
+   * @return true if this components are != to v components
+   */
   bool
   operator!=(const Vector3f& v) const;
 
   /**
-    * @brief < operator overload
-    * @param the other vector to compare
-    * @return true if this components are < to v components
-    *
-    */
+   * @brief < operator overload
+   * @param v Vector to compare.
+   * @return true if this components are < to v components
+   */
   bool
   operator<(const Vector3f& v) const;
 
   /**
-    * @brief > operator overload
-    * @param the other vector to compare
-    * @return true if this components are > to v components
-    *
-    */
+   * @brief > operator overload
+   * @param v Vector to compare.
+   * @return true if this components are > to v components
+   */
   bool
   operator>(const Vector3f& v) const;
 
   /**
-    * @brief <= operator overload
-    * @param the other vector to compare
-    * @return true if this components are <= to v components
-    *
-    */
+   * @brief <= operator overload
+   * @param v Vector to compare.
+   * @return true if this components are <= to v components
+   */
   bool
   operator<=(const Vector3f& v) const;
 
   /**
-    * @brief >= operator overload
-    * @param the other vector to compare
-    * @return true if this components are >= to v components
-    *
-    */
+   * @brief >= operator overload
+   * @param v Vector to compare.
+   * @return true if this components are >= to v components
+   */
   bool
   operator>=(const Vector3f& v) const;
 
   /**
-    * @brief - operator overload
-    * @param
-    * @return the negative of the vector
-    *
-    */
+   * @brief - operator overload
+   * @return the negative of the vector
+   */
   Vector3f
   operator-() const;
 
   /**
-    * @brief += operator overload
-    * @param the other vector to add
-    * @return *this + v components
-    *
-    */
+   * @brief += operator overload
+   * @param v Vector to add.
+   * @return *this + v components
+   */
   Vector3f&
   operator+=(const Vector3f& v);
 
   /**
-    * @brief -= operator overload
-    * @param the other vector to subtract
-    * @return *this - v components
-    *
-    */
+   * @brief -= operator overload
+   * @param v Vector to subtract.
+   * @return *this - v components
+   */
   Vector3f&
   operator-=(const Vector3f& v);
 
   /**
-    * @brief *= operator overload
-    * @param the other vector to multiply
-    * @return *this * v components
-    *
-    */
+   * @brief *= operator overload
+   * @param v Vector to multiply component-wise.
+   * @return *this * v components
+   */
   Vector3f&
   operator*=(const Vector3f& v);
 
   /**
-    * @brief /= operator overload
-    * @param the other vector to divide
-    * @return *this / v components
-    *
-    */
+   * @brief /= operator overload
+   * @param v Vector to divide component-wise.
+   * @return *this / v components
+   */
   Vector3f&
   operator/=(const Vector3f& v);
 
   /**
-    * @brief *= operator overload
-    * @param the float to multiply with
-    * @return *this * float
-    *
-    */
+   * @brief *= operator overload
+   * @param scale Scalar multiplier.
+   * @return *this * float
+   */
   Vector3f&
   operator*=(const float& scale);
 
   /**
-    * @brief /= operator overload
-    * @param the float to divide the vector
-    * @return *this / float
-    *
-    */
+   * @brief /= operator overload
+   * @param scale Scalar divisor.
+   * @return *this / float
+   */
   Vector3f&
   operator/=(const float& scale);
 
   /**
-    * @brief the dot product
-    * @param a Vector3 and b Vector3
-    * @return the dot product between a and b
-    *
-    */
+   * @brief Computes the dot product between two vectors.
+   * @param a First vector.
+   * @param b Second vector.
+   * @return Dot product value.
+   */
   static float
   dot(const Vector3f& a, const Vector3f& b);
 
   /**
-    * @brief the cross product
-    * @param a Vector3 and b Vector3
-    * @return the cross product between a and b
-    *
-    */
+   * @brief Computes the cross product between two vectors.
+   * @param a First vector.
+   * @param b Second vector.
+   * @return Cross product vector.
+   */
   static Vector3f
   cross(const Vector3f& a, const Vector3f& b);
 
   /**
-    * @brief the projection of b over a
-    * @param Vector3 a the one used as scale
-    * @param Vector3 b the one projecting on a
-    * @return scale of b in a
-    *
-    */
+   * @brief Computes scalar projection of b onto a.
+   * @param a Projection axis.
+   * @param b Vector to project.
+   * @return Scalar projection value.
+   */
   static float
   projection(const Vector3f& a, const Vector3f& b);
 
   /**
-    * @brief the square distance
-    * @param a Vector3 and b Vector3
-    * @return the square distance between the two points
-    *
-    */
+   * @brief Computes squared distance between two vectors.
+   * @param a First vector.
+   * @param b Second vector.
+   * @return Squared distance.
+   */
   static float
   sqrDistance(const Vector3f& a, const Vector3f& b);
 
   /**
-    * @brief the distance between two points in 2d space
-    * @param a Vector3 and b Vector3
-    * @return the distance between the two points
-    *
-    */
+   * @brief Computes distance between two vectors.
+   * @param a First vector.
+   * @param b Second vector.
+   * @return Distance value.
+   */
   static float
   distance(const Vector3f& a, const Vector3f& b);
 
   /**
-    * @brief sets the value of a Vector3
-    * @param float x
-    * @param float y
-    * @param float z
-    * @return
-    *
-    */
+   * @brief Sets vector components.
+   * @param newX X component.
+   * @param newY Y component.
+   * @param newZ Z component.
+   */
   void
   setValues(const float& newX, const float& newY, const float& newZ);
 
   /**
-    * @brief gets the min between two vectors
-    * @param the other vector to compare
-    * @return
-    *
-    */
+   * @brief Applies component-wise minimum with another vector.
+   * @param v Vector to compare against.
+   */
   void
   min(const Vector3f& v);
 
   /**
-    * @brief gets the max between two vectors
-    * @param the other vector to compare
-    * @return
-    *
-    */
+   * @brief Applies component-wise maximum with another vector.
+   * @param v Vector to compare against.
+   */
   void
   max(const Vector3f& v);
 
   /**
-    * @brief floors the components
-    * @param
-    * @return
-    *
-    */
+   * @brief Floors each vector component in place.
+   */
   void
   floor();
 
   /**
-    * @brief ceils the components
-    * @param
-    * @return
-    *
-    */
+   * @brief Ceils each vector component in place.
+   */
   void
   ceiling();
 
   /**
-    * @brief rounds the components x.0 <- -> y.0
-    * @param
-    * @return
-    *
-    */
+   * @brief Rounds each vector component in place.
+   */
   void
   round();
 
   /**
-    * @brief rounds components taking in account also x.0 - x.5 - y.0
-    * @param
-    * @return
-    *
-    */
+   * @brief Rounds each component using half-step behavior.
+   */
   void
   roundHalf();
 
   /**
-    * @brief gets the highest value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief Gets the highest component value.
+   * @return Highest component value.
+   */
   float
   getHighest() const;
 
   /**
-    * @brief gets the least value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief Gets the lowest component value.
+   * @return Lowest component value.
+   */
   float
   getLowest() const;
 
   /**
-    * @brief gets the magnitude value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief Gets vector magnitude.
+   * @return Magnitude value.
+   */
   float
   magnitude() const;
 
   /**
-    * @brief gets the squared magnitude value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief Gets squared vector magnitude.
+   * @return Squared magnitude value.
+   */
   float
   sqrMagnitude() const;
 
   /**
-    * @brief gets the normalized version of the vector
-    * @param
-    * @return the normalized vector
-    *
-    */
+   * @brief Returns normalized copy of this vector.
+   * @return Normalized vector.
+   */
   Vector3f
   normalized() const;
 
   /**
-    * @brief gets the normalized version of the vector
-    * @param
-    * @return the normalized vector
-    *
-    */
+   * @brief Returns normalized copy using fast-path variant.
+   * @return Normalized vector.
+   */
   Vector3f
   qNormalized() const;
 
   /**
-    * @brief normalizes the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief Normalizes this vector in place.
+   */
   void
   normalize();
 
   /**
-    * @brief normalizes the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief Normalizes this vector in place using fast-path variant.
+   */
   void
   qNormalize();
 
   /**
-    * @brief Checks if the vector is empty (0s)
-    * @param
-    * @return true if it is empty
-    *
-    */
+   * @brief Checks whether the vector is zero.
+   * @return True if all components are zero.
+   */
   bool
   isZero() const;
 
   /**
-    * @brief Checks if one vector is near the same as another vector based in an error
-    * @param Vector other, error (default is LITTLENUMBER)
-    * @return true if based on the error is the same
-    *
-    */
+   * @brief Checks whether two vectors are nearly equal.
+   * @param a First vector.
+   * @param b Second vector.
+   * @param error Allowed absolute tolerance.
+   * @return True if vectors are nearly equal.
+   */
   static bool
   areNearlySame(const Vector3f& a, const Vector3f& b, const float& error = Math::SMALLNUMBER);
 
   /**
-    * @brief Returns the vector as a printable string
-    * @param 
-    * @return String with the values of the vector
-    *
-    */
+   * @brief Returns vector as a printable string.
+   * @return String representation of the vector.
+   */
   String
   toString();
 
   /**
-    * Vector3 that has all values 0
-    */
+   * @brief Vector constant with all components set to 0.
+   */
   static const Vector3f ZERO;
 
   /**
-    * Vector3 that has all values 1
-    */
+   * @brief Vector constant with all components set to 1.
+   */
   static const Vector3f ONE;
 
   /**
-    * Vector3 that has x value 1
-    */
+   * @brief Unit vector along +X.
+   */
   static const Vector3f ONEX;
 
   /**
-    * Vector3 that has y value 1
-    */
+   * @brief Unit vector along +Y.
+   */
   static const Vector3f ONEY;
 
   /**
-    * Vector3 that has x value 1
-    */
+   * @brief Unit vector along +Z.
+   */
   static const Vector3f ONEZ;
 
   /**
-    * Vector3 that has x value 1
-    */
+   * @brief Right direction vector.
+   */
   static const Vector3f RIGHT;
 
   /**
-    * Vector3 with y value 1
-    */
+   * @brief Up direction vector.
+   */
   static const Vector3f UP;
 
   /**
-    * Vector3 with z value 1
-    */
+   * @brief Forward direction vector.
+   */
   static const Vector3f FRONT;
 
   /**
-    * Vector3 that has x value -1
-    */
+   * @brief Left direction vector.
+   */
   static const Vector3f LEFT;
 
   /**
-    * Vector3 with y value -1
-    */
+   * @brief Down direction vector.
+   */
   static const Vector3f DOWN;
 
   /**
-    * Vector3 with z value -1
-    */
+   * @brief Backward direction vector.
+   */
   static const Vector3f BACK;
 
 public:
 
   /**
-    * @brief X value of the vector
-    */
+   * @brief X value of the vector
+   */
   float x;
 
   /**
-    * @brief Y value of the vector
-    */
+   * @brief Y value of the vector
+   */
   float y;
 
   /**
-    * @brief Z value of the vector
-    */
+   * @brief Z value of the vector
+   */
   float z;
 
 };
 }
+
+
