@@ -1,15 +1,12 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file   	cyUnitTesting.h
- * @author 	Marco "Swampy" Millan
- * @date 	  2024/11/14
- * @brief 	This is to have all doctest related systems in an 
- *          include file
- *
- * 
+ * @file cyUnitTesting.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for UnitTesting.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+
 #pragma once
+
 #include "cyUtilitiesPrerequisites.h"
 
 #define DOCTEST_CONFIG_IMPLEMENT
@@ -17,7 +14,6 @@
 
 #define ANKERL_NANOBENCH_IMPLEMENT
 #include <nanobench/nanobench.h>
-
 
 namespace CYLLENE_SDK {
 
@@ -32,6 +28,4 @@ using Benchmark = ankerl::nanobench::Bench;
 Benchmark().epochs(times).run(name, __VA_ARGS__);
 
 }
-
-
 

@@ -1,12 +1,10 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file Utilities.h
- * @author Marco "Swampy" Millan
- * @date 8/6/2021
- * @brief
- *
+ * @file cyPlatformUtilities.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for PlatformUtilities.
  */
- /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
@@ -16,41 +14,50 @@
 
 namespace CYLLENE_SDK {
 
-
-
+/**
+ * @brief Perfect-forwards an argument.
+ * @tparam T Argument type.
+ * @param arg Argument to forward.
+ * @return Forwarded argument.
+ */
 template<typename T>
 constexpr T&& forwarding(T&& arg) noexcept {
   return std::forward<T>(arg);
 }
 
+/**
+ * @brief Packs forwarded arguments into a tuple.
+ * @tparam Args Argument types.
+ * @param args Arguments to forward.
+ * @return Tuple of forwarded arguments.
+ */
 template <typename... Args>
 constexpr auto forwardArgs(Args&&... args) noexcept {
   return std::forward_as_tuple(std::forward<Args>(args)...);
 }
 
-/*
- *	@struct PlatformUtils	
- *	@brief	A series of utilities that are agnostic to the OS
- *
+/**
+ * @struct PlatformUtils
+ * @brief OS-agnostic utility helpers for strings, formatting, and process control.
  */
 struct CY_UTILITY_EXPORT PlatformUtils {
 public:
 
-  /*
-   *	@brief	runs a command with the given commandLine. This is a wrapper for system() function
-   *	@param	const String& commandLine the cmd line to run
+  /**
+   * @brief Runs a shell command line.
+   * @param commandLine Command to execute.
    */
   static void
   runCommand(const String& commandLine) {
     system(commandLine.c_str());
   }
 
-  /*
-   *	@brief	Formats a string with given parameters.
-   *          This is a snprintf() wrapper but using String objects
-   *	@param  const String& format the string with formats
-   *	@param  Args ... args the arguments to pass to the formatting
-   *  @return	A String with the parameters formatted
+  /**
+   * @brief Formats a string using printf-style placeholders.
+   * @tparam Args Argument types.
+   * @param formatStr Format string.
+   * @param args Format arguments.
+   * @return Formatted string.
    */
   template<typename ... Args>
   static String format(const String& formatStr, Args ... args) {
@@ -69,11 +76,11 @@ public:
     return String(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
   }
 
-  /*
-   *	@brief  formats the TM object into a specific string type	
-   *	@param  const TM& toFormat the TM to format
-   *	@param  const String& format the format 
-   *  @return	String with the TM formatted
+  /**
+   * @brief Formats a `tm` value using a strftime format string.
+   * @param toformat Time structure to format.
+   * @param format Strftime format string.
+   * @return Formatted time string.
    */
   static String
   timeFormat(const TM& toformat, const String& format) {
@@ -82,10 +89,11 @@ public:
     return String(buffer);
   }
 
-  /*
-   *	@brief Changes a number to a string. This is just a std::to_string wrapper
-   *	@param  const T& number - The number to format to string
-   *  @return	a String with the number
+  /**
+   * @brief Converts a numeric value to string.
+   * @tparam T Numeric type.
+   * @param number Number to convert.
+   * @return Converted string.
    */
   template<typename T>
   static String 
@@ -93,28 +101,28 @@ public:
     return std::to_string(number);
   }
 
-  /*
-   *	@brief	Throws a std::exception with the given message
-   *	@param	const String& message the message the exception will have
+  /**
+   * @brief Throws a standard exception with the given message.
+   * @param message Exception message.
    */
   static void 
   throwException(const String& message) {
     throw::std::exception(message.c_str());
   }
 
-  /*
-   *	@brief	throws a std::runtime_error with the given message
-   *	@param	const String& message the message the runtime_error will have
+  /**
+   * @brief Throws a runtime error with the given message.
+   * @param message Exception message.
    */
   static void
   throwRuntimeError(const String& message) {
     throw::std::runtime_error(message.c_str());
   }
 
-  /*
-   *	@brief	Converts a String to a Wide String
-   *	@param	const String& str the string to transform
-   *  @return	WString copy of the String
+  /**
+   * @brief Converts UTF-8-ish narrow string to wide string.
+   * @param str Input narrow string.
+   * @return Converted wide string.
    */
   static WString
   toWide(const String& str) {
@@ -123,10 +131,10 @@ public:
 
   }
 
-  /*
-   *	@brief  Converts a string to lowercase
-   *	@param  const String& str the string to turn into lowercase
-   *  @return	a copy of the string but in lowercase
+  /**
+   * @brief Converts a string to lowercase.
+   * @param str Input string.
+   * @return Lowercased copy.
    */
   static String
   toLowerCase(const String& str) {
@@ -138,10 +146,10 @@ public:
     return copy;
   }
   
-  /*
-   *	@brief  Converts a string to lowercase
-   *	@param  const String& str the string to turn into lowercase
-   *  @return	a copy of the string but in lowercase
+  /**
+   * @brief Converts a string to uppercase.
+   * @param str Input string.
+   * @return Uppercased copy.
    */
   static String
   toUpperCase(const String& str) {
@@ -153,12 +161,13 @@ public:
     return copy;
   }
 
-
-  /*
-   *	@brief  Creates a pair with given parameters. This is a wrapper for std::make_pair
-   *	@param  T value1 value 1 from the pair
-   *	@param  T value2 value 2 from the pair
-   *  @return	a Pair<T, A> with the two given objects
+  /**
+   * @brief Creates a pair from two values.
+   * @tparam T First value type.
+   * @tparam A Second value type.
+   * @param value1 First value.
+   * @param value2 Second value.
+   * @return Pair containing both values.
    */
   template<typename T, typename A>
   static Pair<T, A>
@@ -166,6 +175,13 @@ public:
     return std::make_pair(value1, value2);
   }
 
+  /**
+   * @brief Converts an integer to hexadecimal string.
+   * @param toValue Integer value to convert.
+   * @param optionalPrefix If true, prepend `0x`.
+   * @param toFillWith Optional padding character.
+   * @return Uppercase hexadecimal string.
+   */
   static String 
   intToHex(const int32& toValue, bool optionalPrefix = false, char toFillWith = '\0') {
     StringStream stream;
@@ -182,24 +198,34 @@ public:
     return prefix + stream.str();
   }
 
+  /**
+   * @brief Checks whether a string contains only decimal digits.
+   * @param s Input string.
+   * @return True if the string is a valid non-empty number.
+   */
   static bool
   isStringNumber(const String& s) {
     return !s.empty() && std::find_if(s.begin(), s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
   }
 
+  /**
+   * @brief Stream manipulator wrapper that inserts `std::endl`.
+   * @tparam CharT Character type.
+   * @tparam Traits Stream traits.
+   * @param os Output stream.
+   * @return Output stream reference.
+   */
   template <typename CharT, typename Traits>
   std::basic_ostream<CharT, Traits>&
   endLine(std::basic_ostream<CharT, Traits>& os) {
     return std::endl(os);
   }
 
-
   /**
-   * A blank string
+   * @brief Shared blank string constant.
    */
   static const String BLANKSTRING;
 };
-
 
 // 
 // // helper that replicates std::forward semantics (safe to call as forwardArg<Args>(args)...)
@@ -215,3 +241,4 @@ public:
 // }
 
 }
+

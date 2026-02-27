@@ -1,3 +1,10 @@
+/**
+ * @file cySmartPointers.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for SmartPointers.
+ */
+
 #pragma once
 
 #include "cyStdHeaders.h"
@@ -8,87 +15,150 @@
 namespace CYLLENE_SDK
 {
 
+/**
+ * @class ManagedPtr
+ * @brief Base managed pointer state containing shared reference counter.
+ */
 class ManagedPtr {
 public:
+  /**
+   * @brief Virtual destructor.
+   */
   virtual ~ManagedPtr() = default;
   
+  /**
+   * @brief Returns reference counter storage.
+   * @return Reference counter reference.
+   */
   uint32& 
   getCounter();
   
   friend class SmartPointers;
 
 protected:
-  
+  /**
+   * @brief Reference counter for smart pointer wrappers.
+   */
   uint32 m_counter;
 };
 
 template <typename T>
 class SmartPtr;
 
+/**
+ * @class SmallPtr
+ * @brief Non-owning lightweight handle bound to a SmartPtr instance.
+ * @tparam T Managed object type.
+ */
 template <typename T>
 class SmallPtr {
 public:
 
+  /**
+   * @brief Constructs a non-owning handle from a SmartPtr.
+   * @param uniquePtr Source smart pointer.
+   */
   explicit SmallPtr(SmartPtr<T>& uniquePtr)
     : m_ref(uniquePtr) {
     ++uniquePtr->m_counter;
   }
 
+  /**
+   * @brief Destroys the non-owning handle.
+   */
   ~SmallPtr() { --m_ref.m_counter; }
 
+  /**
+   * @brief Rebinds this handle to another SmartPtr.
+   * @param other New smart pointer reference.
+   * @return Reference to this handle.
+   */
   SmallPtr& operator=(SmartPtr<T>& other)
   {
     --m_ref.m_counter;
     m_ref = other;
     ++m_ref.m_counter;
+    return *this;
   }
 
-  // Accessors to use the weak pointer safely
-  // T* get() const { return m_ptr; }
-
-  // Checks if the object still exists
+  /**
+   * @brief Checks whether referenced object is expired.
+   * @return True if object pointer is null.
+   */
   bool 
   expired() const { return m_ref.get() == nullptr; }
 
-  // Dereference operator for easy access
+  /**
+   * @brief Dereferences the referenced object.
+   * @return Reference to managed object.
+   */
   T& operator*() const { return *m_ref.get(); }
 
+  /**
+   * @brief Accesses the referenced object pointer.
+   * @return Pointer to managed object.
+   */
   T* operator->() const { return m_ref.get(); }
 
 private:
-
-  // T* m_ptr; // Raw pointer to the managed resource, without ownership
   
+  /**
+   * @brief Referenced smart pointer owner.
+   */
   SmartPtr<T> m_ref;
 };
 
+/**
+ * @class SmartPtr
+ * @brief Owning pointer wrapper with simple move semantics and ref count support.
+ * @tparam T Managed object type.
+ */
 template <typename T>
 class SmartPtr : public ManagedPtr {
 public:
 
+  /**
+   * @brief Constructs a smart pointer from a raw pointer.
+   * @param p Raw pointer to manage.
+   */
   explicit SmartPtr(T* p = nullptr) 
     : m_ptr(p) {
       m_counter = 1;
   }
   
+  /**
+   * @brief Destroys managed object.
+   */
   ~SmartPtr() { 
     m_counter = 0; 
     delete m_ptr; 
   }
 
-  // Disallow copy
+  /**
+   * @brief Copy constructor is disabled.
+   */
   SmartPtr(const SmartPtr&) = delete;
   
-  // Disallow copy
+  /**
+   * @brief Copy assignment is disabled.
+   */
   SmartPtr& operator=(const SmartPtr&) = delete;
 
-  // Move semantics
+  /**
+   * @brief Move constructor.
+   * @param other Source smart pointer.
+   */
   SmartPtr(SmartPtr&& other) noexcept 
     : m_ptr(other.m_ptr) {
     m_counter = other.getCounter();
     other.m_ptr = nullptr;
   }
 
+  /**
+   * @brief Move assignment.
+   * @param other Source smart pointer.
+   * @return Reference to this smart pointer.
+   */
   SmartPtr& operator=(SmartPtr&& other) noexcept {
     if (this != &other) {
       delete m_ptr;
@@ -98,12 +168,22 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Dereferences the managed object.
+   * @return Reference to managed object.
+   */
   T& operator*() const { return *m_ptr; }
 
+  /**
+   * @brief Accesses the managed object pointer.
+   * @return Raw managed pointer.
+   */
   T* operator->() const { return m_ptr; }
-  
-  // TODO: Check this as it should be restricted who can access this function
 
+  /**
+   * @brief Resets managed pointer.
+   * @param newPtr Replacement raw pointer.
+   */
   void 
   reset(T* newPtr = nullptr) {
     delete m_ptr;
@@ -111,6 +191,10 @@ public:
   }
 
   // Method to create a WeakPointer
+  /**
+   * @brief Creates a SmallPtr handle.
+   * @return SmallPtr linked to this SmartPtr.
+   */
   SmallPtr<T> 
   ptr() {
     return SmallPtr<T>(*this);
@@ -124,12 +208,25 @@ public:
 
 private:
   
+  /**
+   * @brief Gets raw managed pointer.
+   * @return Managed raw pointer.
+   */
   T* get() const { return m_ptr; }
 
+  /**
+   * @brief Raw managed pointer.
+   */
   T* m_ptr;
 };
 
-// reinterpret_pointer_cast function
+/**
+ * @brief Reinterprets one SmartPtr type as another.
+ * @tparam U Destination pointer type.
+ * @tparam T Source pointer type.
+ * @param uptr Source smart pointer.
+ * @return Reinterpreted smart pointer.
+ */
 template <typename U, typename T>
 SmartPtr<U> reinterpret_smart_cast(SmartPtr<T>&& uptr) {
   // U* castedPtr = reinterpret_cast<U*>(uptr.get());
@@ -139,17 +236,26 @@ SmartPtr<U> reinterpret_smart_cast(SmartPtr<T>&& uptr) {
   return *reinterpret_cast<SmartPtr<U>*>(&uptr);
 }
 
-
+/**
+ * @class SmartPointers
+ * @brief Manager module tracking allocated SmartPtr wrappers.
+ */
 class SmartPointers : public Module<SmartPointers> {
 
 public:
+  /**
+   * @brief Destructor that performs cleanup.
+   */
   ~SmartPointers() {
-    // Cleanup all pointers
     cleanup();
   }
 
-  // Store a UniquePointer and return the raw pointer
-  // Not really fond of this one but hey, the better way to store smart pointers the better
+  /**
+   * @brief Stores an external SmartPtr wrapper in the manager.
+   * @tparam T Managed object type.
+   * @param uniquePtr Smart pointer to store.
+   * @return Raw pointer to managed object.
+   */
   template <typename T>
   T* 
   store(SmartPtr<T>&& uniquePtr) {
@@ -158,7 +264,9 @@ public:
     return newPtr->get();
   }
 
-  // Garbage collection to clean up dangling pointers
+  /**
+   * @brief Removes tracked wrappers with low reference count.
+   */
   void 
   cleanup() {
     int32 size = 0;
@@ -168,12 +276,18 @@ public:
         ++size;
       }
     }
-    // All pointers stop being used
     if (size == pointers.size()) {
       pointers.clear();
     }
   }
 
+  /**
+   * @brief Creates and tracks a managed object.
+   * @tparam T Managed object type.
+   * @tparam Args Constructor argument types.
+   * @param args Constructor arguments.
+   * @return Created SmartPtr wrapper.
+   */
   template <typename T, typename... Args>
   SmartPtr<T> 
   create(Args ... args) {
@@ -183,7 +297,11 @@ public:
   }
   
     
-  // Optional: Remove a specific pointer if needed
+  /**
+   * @brief Removes a tracked wrapper by raw pointer.
+   * @tparam T Pointer type.
+   * @param rawPtr Pointer to tracked wrapper.
+   */
   template <typename T>
   void 
   remove(T* rawPtr) {
@@ -198,30 +316,57 @@ public:
 
 private:
 
-  // TODO: Check if this should be raw or unique
+  /**
+   * @brief Tracked managed-pointer wrappers.
+   */
   UnorderedSet<ManagedPtr*> pointers;
 
 };
 
-
-// FUNCTIONS
-
+/**
+ * @brief Creates a `std::unique_ptr`.
+ * @tparam T Managed type.
+ * @tparam Args Constructor argument types.
+ * @param args Constructor arguments.
+ * @return Created unique pointer.
+ */
 template <typename T, typename... Args>
 UPtr<T> makeUniquePtr(Args ... args) {
   return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
+/**
+ * @brief Creates a `std::shared_ptr`.
+ * @tparam T Managed type.
+ * @tparam Args Constructor argument types.
+ * @param args Constructor arguments.
+ * @return Created shared pointer.
+ */
 template <typename T, typename... Args>
 SPtr<T> makeSharedPtr(Args ... args) {
   return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+/**
+ * @brief Creates an engine SmartPtr via SmartPointers module.
+ * @tparam T Managed type.
+ * @tparam Args Constructor argument types.
+ * @param args Constructor arguments.
+ * @return Created smart pointer.
+ */
 template <typename T, typename... Args>
 SmartPtr<T> makeSmartPtr(Args ... args) {
   CY_ASSERT(!SmartPointers::isStarted() && "Smart Pointer Manager was not started");
   return SmartPointers::instance().create<T>(std::forward<Args>(args)...);
 }
 
+/**
+ * @brief Creates an object through SmartPointers and returns raw pointer.
+ * @tparam T Managed type.
+ * @tparam Args Constructor argument types.
+ * @param args Constructor arguments.
+ * @return Raw pointer to created object.
+ */
 template <typename T, typename... Args>
 T* makePtr(Args&&... args) {
   CY_ASSERT(!SmartPointers::isStarted() && "Smart Pointer Manager was not started");
@@ -245,3 +390,4 @@ T* makePtr(Args&&... args) {
 #define REINTERPRETSMART(T, ...) reinterpret_smart_cast<T>(__VA_ARGS__)
 
 }
+
