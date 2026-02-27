@@ -1,3 +1,9 @@
+/**
+ * @file cyMathPrerequisites.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for MathPrerequisites.
+ */
 #pragma once
 
 #include <cyUtilitiesPrerequisites.h>
@@ -38,4 +44,5 @@
 
 #define HANDSYSTEM HANDSYS_LH
 #define GAPI_MATHTYPE GAPI_DX
+
 

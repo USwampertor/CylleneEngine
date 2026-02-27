@@ -1,6 +1,10 @@
 /**
- * 
+ * @file cyWindows.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Windows.
  */
+
 #pragma once
 
 #ifdef _WINDOWS_
@@ -62,3 +66,4 @@
 namespace CYLLENE_SDK {
 
 }
+

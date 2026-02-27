@@ -393,31 +393,30 @@ Matrix4::orthogonal(const float& width,
                     const float& zFar) {
   (*this) = Matrix4::ZERO;
 
-  m[0][0] = 2.0f / width;
-  m[1][1] = 2.0f / height;
+  const float invW = 1.0f / width;
+  const float invH = 1.0f / height;
+  const float invFN = 1.0f / (zFar - zNear);
+
+  m[0][0] = 2.0f * invW;
+  m[1][1] = 2.0f * invH;
 
 #if GAPI_MATHTYPE == GAPI_GL
 #if HANDSYSTEM == HANDSYS_LH
-  m[2][2] = 2.0f / (zFar - zNear);
+  m[2][2] = 2.0f * invFN;
 #elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = -2.0f / (zNear - zFar);
 #endif
 
-  // TODO: Missing M[3][0] ???
-  // TODO: Missing M[3][1] ???
-
-  m[3][0] = 1; // -(right+left)/(right-left);
-  m[3][1] = 1; // -(top+bottom)/(top-bottom);
   m[3][2] = -(zFar + zNear) / (zFar - zNear);
 
 #elif GAPI_MATHTYPE == GAPI_DX
 #if HANDSYSTEM == HANDSYS_LH
-  m[2][2] = 1.0f / (zFar - zNear);
+  m[2][2] = invFN;
+  m[3][2] = -zNear * invFN;
 #elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
-#endif
-
   m[3][2] = -zNear / (zNear - zFar);
+#endif
 #endif
 
   m[3][3] = 1.0f;
@@ -435,8 +434,14 @@ Matrix4::orthogonal(const float& top,
   (*this) = Matrix4::ZERO;
   float width = right - left;
   float height = top - bottom;
-  m[0][0] = 2.0f / width;
-  m[1][1] = 2.0f / height;
+
+  const float invW = 1.0f / width;
+  const float invH = 1.0f / height;
+  const float invFN = 1.0f / (zFar - zNear);
+
+
+  m[0][0] = 2.0f * invW;
+  m[1][1] = 2.0f * invH;
 
 #if GAPI_MATHTYPE == GAPI_GL
 #if HANDSYSTEM == HANDSYS_LH
@@ -445,24 +450,23 @@ Matrix4::orthogonal(const float& top,
   m[2][2] = -2.0f / (zNear - zFar);
 #endif
 
-  // TODO: Missing M[3][0] ???
-  // TODO: Missing M[3][1] ???
-
   m[3][0] = -(right + left) / (right - left);
   m[3][1] = -(top + bottom) / (top - bottom);
   m[3][2] = -(zFar + zNear) / (zFar - zNear);
 
 #elif GAPI_MATHTYPE == GAPI_DX
 #if HANDSYSTEM == HANDSYS_LH
-  m[2][2] = 1.0f / (zFar - zNear);
+  m[2][2] = invFN;
+
+  m[3][0] = -(right + left) * invW;
+  m[3][1] = -(top + bottom) * invH;
+  m[3][2] = -zNear * invFN;
+  m[3][3] = 1.0f;
 #elif HANDSYSTEM == HANDSYS_RH
   m[2][2] = 1.0f / (zNear - zFar);
-#endif
-
   m[3][2] = -zNear / (zNear - zFar);
 #endif
-
-  m[3][3] = 1.0f;
+#endif
 
   return *this;
 }
@@ -480,20 +484,19 @@ Matrix4::perspective(const float width,
 
   const float rangeInv = 1.0f / (zFar - zNear);
 
+  const float f = 1.0f / Math::tan(halfFOVrads);
 #if GAPI_MATHTYPE == GAPI_GL
-  const float f = 1.0f / std::tanf(halfFOVrads);
 
-  *this = Matrix4(f / aspect,      0.0f,    0.0f,                              0.0f,
+  *this = Matrix4(f/ aspect,      0.0f,    0.0f,                              0.0f,
                   0.0f,            f,       0.0f,                              0.0f,
-                  0.0f,            0.0f,    (zFar + zNear) * rangeInv,        -1.0f,
-                  0.0f,            0.0f,    (2.0f * zFar * zNear) * rangeInv,  0.0f);
+                  0.0f,            0.0f,    -(zFar + zNear) * rangeInv,        1.0f,
+                  0.0f,            0.0f,   (2.0f * zFar * zNear) * rangeInv,   0.0f);
 #elif GAPI_MATHTYPE == GAPI_DX
-  const float f = 1.0f / std::tanf(halfFOVrads);
 
   *this = Matrix4(f / aspect,     0.0f,        0.0f,                       0.0f,
                   0.0f,           f,           0.0f,                       0.0f,
-                  0.0f,           0.0f,        zFar * rangeInv,            1.0f,
-                  0.0f,           0.0f,       -zNear * zFar * rangeInv,    0.0f);
+                  0.0f,           0.0f,        zFar * rangeInv,            -zNear * zFar * rangeInv,
+                  0.0f,           0.0f,        1.0f,                       0.0f);
 #endif
   return *this;
 //   float FOVrads = Math::DEG2RAD * FOVangle;

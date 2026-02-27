@@ -1,27 +1,29 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file cyDynamicLibrary.h
- * @author Marco "Swampy" Millan
- * @date 2019/07/28 2019
- * @brief
- *
+ * @file cyDLLLoader.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for DLLLoader.
  */
- /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
 
 namespace CYLLENE_SDK {
+/**
+ * @struct DLLLoader
+ * @brief Helper for loading DLL symbols at runtime.
+ */
 struct CY_UTILITY_EXPORT DLLLoader {
  public:
  
   /**
-   * Default constructor
+   * @brief Default constructor.
    */
   DLLLoader() = default;
 
   /**
-   * Default destructor
+   * @brief Default destructor.
    */
   ~DLLLoader() = default;
 
