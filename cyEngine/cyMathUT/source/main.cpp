@@ -636,9 +636,9 @@ TEST_SUITE("Matrix4 Tests") {
 
   TEST_CASE("Matrix Inversion") {
     Matrix4 m(1, 0, 0, 5,
-      0, 1, 0, 3,
-      0, 0, 1, 0,
-      0, 0, 0, 1);
+              0, 1, 0, 3,
+              0, 0, 1, 0,
+              0, 0, 0, 1);
 
     Matrix4 inv = m.inversed();
     Matrix4 identity = m * inv;
