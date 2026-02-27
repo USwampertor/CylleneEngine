@@ -4,7 +4,6 @@
  * @date 2026-02-26
  * @brief Contains declarations and definitions for AABB.
  */
-
 #pragma once
 
 #include "cyMathPrerequisites.h"
