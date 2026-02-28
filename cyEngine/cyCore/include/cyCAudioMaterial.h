@@ -8,21 +8,21 @@
 
 namespace CYLLENE_SDK {
 
-  // class AudioRay : public Ray
-  // {
-  //   AudioRay() : Ray() {}
-  // 
-  //   AudioRay(const Vector3f& origin, const Vector3f& direction)
-  //     : Ray() {
-  //     m_origin = origin;
-  //     m_direction = direction.normalized();
-  //   }
-  // 
-  // private:
-  // 
-  //   float m_energy[AUDIO_NUM_BANDS];
-  // 
-  // };
+  class AudioRay : public Ray
+  {
+    AudioRay() : Ray() {}
+  
+    AudioRay(const Vector3f& origin, const Vector3f& direction)
+      : Ray(origin, direction) {
+      m_origin = origin;
+      m_direction = direction.normalized();
+    }
+  
+  private:
+  
+    float m_energy[AUDIO_NUM_BANDS];
+  
+  };
 
 class CAudioMaterial : public CComponent {
 

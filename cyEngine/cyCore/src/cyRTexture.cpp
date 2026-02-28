@@ -105,8 +105,8 @@ RTexture::draw(SPtr<RImage>& img,
                       const TEXTUREMODE::E& mode /* = TEXTUREMODE::E::eCLAMP */, 
                       const BLENDMODE::E& blend /* = BLENDMODE::E::eALPHABLEND */,
                       const SAMPLERFILTER::E& filter) {
-  int32 realWidth = srcRect.width - srcRect.x;
-  int32 realHeight = srcRect.height - srcRect.y;
+  int32 realWidth = srcRect.getWidth() - srcRect.getX();
+  int32 realHeight = srcRect.getHeight() - srcRect.getY();
 
   if (realWidth < 0 || realHeight < 0) {
     return;
@@ -119,11 +119,11 @@ RTexture::draw(SPtr<RImage>& img,
     realHeight -= (y + realHeight) - img->m_metadata.m_height;
   }
 
-  for (int32_t dsty = 0; dsty < srcRect.height; ++dsty) {
-    for (int32_t dstx = 0; dstx < srcRect.width; ++dstx) {
+  for (int32_t dsty = 0; dsty < srcRect.getHeight(); ++dsty) {
+    for (int32_t dstx = 0; dstx < srcRect.getWidth(); ++dstx) {
 
-      float u = static_cast<float>(dstx) / srcRect.width;
-      float v = static_cast<float>(dsty) / srcRect.height;
+      float u = static_cast<float>(dstx) / srcRect.getWidth();
+      float v = static_cast<float>(dsty) / srcRect.getHeight();
       // TODO: Check on samplerFilter
       Color srcColor = sample(u, v, mode);
       Color dstColor(img->getPixel(x + dstx, y + dsty));
