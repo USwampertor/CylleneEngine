@@ -495,8 +495,8 @@ Matrix4::perspective(const float width,
 
   *this = Matrix4(f / aspect,     0.0f,        0.0f,                       0.0f,
                   0.0f,           f,           0.0f,                       0.0f,
-                  0.0f,           0.0f,        zFar * rangeInv,            -zNear * zFar * rangeInv,
-                  0.0f,           0.0f,        1.0f,                       0.0f);
+                  0.0f,           0.0f,        zFar * rangeInv,            1.0f,
+                  0.0f,           0.0f,        -zNear * zFar * rangeInv,   0.0f);
 #endif
   return *this;
 //   float FOVrads = Math::DEG2RAD * FOVangle;
