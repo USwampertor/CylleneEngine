@@ -1,13 +1,26 @@
 
 // Defining values for unit testing
 #include <cyCrashHandler.h>
+#include <cyAABB.h>
 #include <cyCapsule.h>
 #include <cyColor.h>
+#include <cyCone.h>
+#include <cyCylinder.h>
+#include <cyFrustum.h>
+#include <cyIntersections.h>
+#include <cyLine.h>
 #include <cyLogger.h>
 #include <cyMath.h>
+#include <cyMatrix2.h>
 #include <cyMatrix4.h>
 #include <cyMatrix3.h>
 #include <cyOBB.h>
+#include <cyPlane.h>
+#include <cyQuaternion.h>
+#include <cyRay.h>
+#include <cyRotor.h>
+#include <cySphere.h>
+#include <cyTensor.h>
 #include <cyTime.h>
 #include <cyUnitTesting.h>
 #include <cyVector2i.h>
@@ -22,6 +35,7 @@
 
 // Using namespace for ease of use
 using namespace CYLLENE_SDK;
+using namespace COLLISIONS;
 
 // Helper function to compare matrices
 bool matrixEquals(const Matrix4& a, const Matrix4& b) {
@@ -131,17 +145,20 @@ TEST_CASE("[math] Testing fast math functions") {
 }
 
 TEST_CASE("[vector2i] Testing vector2 functionality") {
-//   Vector2i v0(0, 0);
-//   CHECK(v0[0] == 0);
-//   v0 = { 2, 4 };
-//   
-//   v0.normalize();
-//   CHECK(v0.magnitude() == 0);
-// 
-// 
-//   Vector2i v1(-5, -6);
-//   float d = Vector2i::distance(v0, v1);
-//   CHECK(d == 3.61f);
+  Vector2i v0(3, 4);
+  CHECK(v0[0] == 3);
+  CHECK(v0[1] == 4);
+  CHECK(v0.sqrMagnitude() == 25);
+  CHECK(v0.magnitude() == 5);
+
+  Vector2i v1(1, 2);
+  Vector2i sum = v0 + v1;
+  CHECK(sum.x == 4);
+  CHECK(sum.y == 6);
+
+  CHECK(Vector2i::dot(v0, v1) == 11);
+  CHECK(Vector2i::distance(Vector2i::ZERO, v0) == 5);
+  CHECK(Vector2i::areSame(Vector2i::ONE, Vector2i(1, 1)));
 }
 
 TEST_CASE("[vector2f] Testing vector2 functionality") {
@@ -216,11 +233,47 @@ TEST_CASE("[vector3f] Testing vector3 functionality") {
 }
 
 TEST_CASE("[vector4f] Testing vector4 functionality") {
+  Vector4f v0(1.0f, 2.0f, 3.0f, 4.0f);
+  Vector4f v1(4.0f, 3.0f, 2.0f, 1.0f);
 
+  Vector4f sum = v0 + v1;
+  CHECK(sum == Vector4f(5.0f, 5.0f, 5.0f, 5.0f));
+
+  CHECK(Vector4f::dot(v0, v1) == doctest::Approx(20.0f));
+
+  Vector4f cross = Vector4f::cross(v0, v1);
+  CHECK(cross.x == doctest::Approx(-5.0f));
+  CHECK(cross.y == doctest::Approx(10.0f));
+  CHECK(cross.z == doctest::Approx(-5.0f));
+  CHECK(cross.w == doctest::Approx(0.0f));
+
+  Vector4f normalized = v0.normalized();
+  CHECK(normalized.magnitude() == doctest::Approx(1.0f).epsilon(0.0001f));
+  CHECK(Vector4f::distance(v0, v1) == doctest::Approx(4.47213595f).epsilon(0.0001f));
+  CHECK(v0.toVector3f() == Vector3f(1.0f, 2.0f, 3.0f));
 }
 
 TEST_CASE("[quaternion] Testing quaternion functionality") {
+  Quaternion q(1.0f, 2.0f, 3.0f, 4.0f);
 
+  CHECK(q.norm() == doctest::Approx(30.0f));
+  CHECK(q.magnitude() == doctest::Approx(Math::sqrt(30.0f)));
+
+  Quaternion conjugated = q.conjugated();
+  CHECK(conjugated.x == doctest::Approx(-1.0f));
+  CHECK(conjugated.y == doctest::Approx(-2.0f));
+  CHECK(conjugated.z == doctest::Approx(-3.0f));
+  CHECK(conjugated.w == doctest::Approx(4.0f));
+
+  Quaternion inv = q.inversed();
+  Quaternion identity = q * inv;
+  CHECK(identity.x == doctest::Approx(0.0f).epsilon(0.0001f));
+  CHECK(identity.y == doctest::Approx(0.0f).epsilon(0.0001f));
+  CHECK(identity.z == doctest::Approx(0.0f).epsilon(0.0001f));
+  CHECK(identity.w == doctest::Approx(1.0f).epsilon(0.0001f));
+
+  CHECK(Quaternion::IDENTITY.isReal());
+  CHECK_FALSE(Quaternion::IDENTITY.isPure());
 }
 
 TEST_CASE("[color] Testing color to hex") {
@@ -234,6 +287,39 @@ TEST_CASE("[color] Testing color to hex") {
   Color c2;
   c2.setFloat(0, 0, 0, 1);
   CHECK(c2.toHexValue() == 0x000000ff);
+}
+
+TEST_SUITE("Matrix2 Tests") {
+  TEST_CASE("Determinant and Inverse") {
+    Matrix2 m(1.0f, 3.0f,
+      2.0f, 4.0f);
+    CHECK(m.determinant() == doctest::Approx(-2.0f));
+
+    Matrix2 inv = m.inversed();
+    Matrix2 shouldBeIdentity = m * inv;
+
+    CHECK(shouldBeIdentity.m[0][0] == doctest::Approx(1.0f).epsilon(0.0001f));
+    CHECK(shouldBeIdentity.m[1][1] == doctest::Approx(1.0f).epsilon(0.0001f));
+    CHECK(shouldBeIdentity.m[0][1] == doctest::Approx(0.0f).epsilon(0.0001f));
+    CHECK(shouldBeIdentity.m[1][0] == doctest::Approx(0.0f).epsilon(0.0001f));
+  }
+}
+
+TEST_SUITE("Matrix3 Tests") {
+  TEST_CASE("Identity, Scale and Inverse") {
+    Matrix3 m = Matrix3::IDENTITY;
+    m.setScale(Vector3f(2.0f, 3.0f, 4.0f));
+    CHECK(m.getScale().x == doctest::Approx(2.0f));
+    CHECK(m.getScale().y == doctest::Approx(3.0f));
+    CHECK(m.getScale().z == doctest::Approx(4.0f));
+    CHECK(m.determinant() == doctest::Approx(24.0f));
+
+    Matrix3 inv = m.inversed();
+    Matrix3 shouldBeIdentity = m * inv;
+    CHECK(shouldBeIdentity.m[0][0] == doctest::Approx(1.0f).epsilon(0.0001f));
+    CHECK(shouldBeIdentity.m[1][1] == doctest::Approx(1.0f).epsilon(0.0001f));
+    CHECK(shouldBeIdentity.m[2][2] == doctest::Approx(1.0f).epsilon(0.0001f));
+  }
 }
 
 TEST_SUITE("Matrix4 Tests") {
@@ -446,10 +532,10 @@ TEST_SUITE("Matrix4 Tests") {
     SUBCASE("90-Degree Rotation Around Z") {
       CYLLENE_SDK::Matrix4 m;
       m.identity();
-      m.setRotation(Vector3f(0, 0, Math::DEG2RAD * 90.0f)); // Rotate 90� around Z
+      m.setRotation(Vector3f(0, 0, Math::DEG2RAD * 90.0f)); // Rotate 90째 around Z
 
       Quaternion q = m.getQuatRotation();
-      // Expected quaternion for 90� around Z: (0, 0, sin(45�), cos(45�))
+      // Expected quaternion for 90째 around Z: (0, 0, sin(45째), cos(45째))
       CHECK(q.w == doctest::Approx(std::cos(Math::DEG2RAD * 45.0f)));
       CHECK(q.x == doctest::Approx(0.0f));
       CHECK(q.y == doctest::Approx(0.0f));
@@ -513,30 +599,48 @@ TEST_SUITE("Matrix4 Tests") {
       Matrix4 ortho;
       ortho.orthogonal(800, 600, 0.1f, 100.0f);
 
-      // Should transform z from [0.1, 100] to [-1, 1] in GAPI_GL
+      // Validate NDC depth mapping for the active graphics API.
       Vector3f nearPoint = ortho.transformPosition(Vector3f(0, 0, 0.1f));
       Vector3f farPoint = ortho.transformPosition(Vector3f(0, 0, 100.0f));
 
+#if GAPI_MATHTYPE == GAPI_GL
       CHECK(nearPoint.z == doctest::Approx(-1.0f).epsilon(0.01f));
       CHECK(farPoint.z == doctest::Approx(1.0f).epsilon(0.01f));
+#elif GAPI_MATHTYPE == GAPI_DX
+      CHECK(nearPoint.z == doctest::Approx(0.0f).epsilon(0.01f));
+      CHECK(farPoint.z == doctest::Approx(1.0f).epsilon(0.01f));
+#endif
     }
 
     SUBCASE("Perspective") {
       Matrix4 persp;
       persp.perspective(800, 600, 0.1f, 100.0f, 45.0f);
 
-      // Should transform z properly with perspective divide
+      // Should transform z properly with perspective divide for active API depth range.
+#if GAPI_MATHTYPE == GAPI_GL
       Vector4f point = persp.transformPositionV4(Vector4f(0, 0, -5.0f, 1.0f));
+#else
+      Vector4f point = persp.transformPositionV4(Vector4f(0, 0, 5.0f, 1.0f));
+      Vector4f point2 = persp.transformPositionV4(Vector4f(1, 2, 5.0f, 1.0f));
+#endif
       point /= point.w; // Perspective divide
-      CHECK(point.z > 0.0f); // Should be in front of camera
+      point2 /= point2.w;
+
+#if GAPI_MATHTYPE == GAPI_GL
+      CHECK(point.z > -1.0f);
+      CHECK(point.z < 1.0f);
+#elif GAPI_MATHTYPE == GAPI_DX
+      CHECK(point.z > 0.0f);
+      CHECK(point.z < 1.0f);
+#endif
     }
   }
 
   TEST_CASE("Matrix Inversion") {
     Matrix4 m(1, 0, 0, 5,
-      0, 1, 0, 3,
-      0, 0, 1, 0,
-      0, 0, 0, 1);
+              0, 1, 0, 3,
+              0, 0, 1, 0,
+              0, 0, 0, 1);
 
     Matrix4 inv = m.inversed();
     Matrix4 identity = m * inv;
@@ -656,6 +760,40 @@ TEST_SUITE("Matrix4 Tests") {
 }
 
 TEST_SUITE("Primitive Tests") {
+  TEST_CASE("AABB Utilities") {
+    AABB aabb(Vector3f(-1.0f, -2.0f, -3.0f), Vector3f(4.0f, 5.0f, 6.0f));
+    Vector3f dims = aabb.getDimensions();
+    CHECK(dims == Vector3f(5.0f, 7.0f, 9.0f));
+
+    Vector3f center = aabb.getCenter();
+    CHECK(center == Vector3f(1.5f, 1.5f, 1.5f));
+
+    AABB overlap(Vector3f(3.0f, 4.0f, 5.0f), Vector3f(7.0f, 8.0f, 9.0f));
+    AABB separate(Vector3f(10.0f, 10.0f, 10.0f), Vector3f(11.0f, 11.0f, 11.0f));
+
+    CHECK(aabb.intersects(overlap));
+    CHECK_FALSE(aabb.intersects(separate));
+
+    aabb.expandTo(Vector3f(-3.0f, 0.0f, 10.0f));
+    CHECK(aabb.m_min.x == doctest::Approx(-3.0f));
+    CHECK(aabb.m_max.z == doctest::Approx(10.0f));
+  }
+
+  TEST_CASE("Line and Point Intersections") {
+    Point p0(1.0f, 2.0f, 3.0f);
+    Point p1(1.0f, 2.0f, 3.0f);
+    Point p2(2.0f, 2.0f, 3.0f);
+    CHECK(p0.intersects(p1));
+    CHECK_FALSE(p0.intersects(p2));
+
+    Line l1(Vector3f(0.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f));
+    Line l2(Vector3f(0.5f, -1.0f, 0.0f), Vector3f(0.5f, 1.0f, 0.0f));
+    Line l3(Vector3f(2.0f, -1.0f, 0.0f), Vector3f(2.0f, 1.0f, 0.0f));
+
+    CHECK(l1.intersects(l2));
+    CHECK_FALSE(l1.intersects(l3));
+  }
+
   TEST_CASE("OBB Collision Detection") {
     SUBCASE("Colliding OBBs (Overlapping)") {
       OBB a, b;
@@ -702,10 +840,10 @@ TEST_SUITE("Primitive Tests") {
       b.m_hExtents = Vector3f(0.5f, 0.5f, 0.5f);
       b.m_orientation = Quaternion(Euler(0, Math::DEG2RAD * 45.0f, 0, EulOrdXYZs));
       // 
-      //     // OBB B: Centered at (1.5, 0, 0), rotated 45� around Y (should intersect)
+      //     // OBB B: Centered at (1.5, 0, 0), rotated 45째 around Y (should intersect)
       //     b.center = Vector3f(1.5f, 0, 0);
       //     b.extents = Vector3f(0.5f, 0.5f, 0.5f);
-      //     float angle = 3.141592f / 4.0f;  // 45� in radians
+      //     float angle = 3.141592f / 4.0f;  // 45째 in radians
       //     b.orientation = Quaternion(std::cos(angle / 2), 0, std::sin(angle / 2), 0);
 
       CHECK(a.intersects(b) == true);  // Should collide
@@ -722,7 +860,7 @@ TEST_SUITE("Primitive Tests") {
 
     SUBCASE("Non-Colliding Capsules (Separated)") {
       Capsule cap1 = { Vector3f(0, 0, 0), Vector3f(2, 0, 0), 1.0f };
-      Capsule cap2 = { Vector3f(3, 0, 0), Vector3f(5, 0, 0), 1.0f };
+      Capsule cap2 = { Vector3f(5, 0, 0), Vector3f(7, 0, 0), 1.0f };
 
       CHECK(cap1.intersects(cap2) == false); // Should NOT collide
     }
@@ -736,6 +874,76 @@ TEST_SUITE("Primitive Tests") {
   }
 
   TEST_CASE("Rect-Rect Collision") {
-    Capsule r(Vector3f::ZERO, Vector3f::ZERO, 0);
+    Rect r0(0, 0, 10, 10);
+    Rect r1(5, 5, 10, 10);
+    CHECK(r0.getType() == +PRIMITIVE_TYPE::E::eRECT);
+    CHECK(r0.intersects(r1));
+  }
+
+  TEST_CASE("Cross Primitive Collision Smoke Tests") {
+    AABB box(Vector3f(-1.0f, -1.0f, -1.0f), Vector3f(1.0f, 1.0f, 1.0f));
+    Sphere sphere(Vector3f(0.0f, 0.0f, 0.0f), 0.5f);
+    Ray ray(Vector3f(-5.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f));
+    Plane plane(Vector3f::ZERO, Vector3f::ONEY);
+    Line line(Vector3f(-2.0f, 0.0f, 0.0f), Vector3f(2.0f, 0.0f, 0.0f));
+    Capsule capsule(Vector3f(-0.5f, 0.0f, 0.0f), Vector3f(0.5f, 0.0f, 0.0f), 0.25f);
+    Point point(1.0f, 1.0f, 0.0f);
+    Rect rect(0, 0, 2, 2);
+    Cone cone(1.0f, 2.0f);
+    Cylinder cylinder(1.0f, 2.0f);
+    Frustum frustum(0.1f, 10.0f, 60.0f, 1.0f);
+    OBB obb(Vector3f::ZERO, Vector3f::ONE, Quaternion::IDENTITY);
+
+    CHECK(COLLISIONS::intersects(box, sphere));
+    CHECK(COLLISIONS::intersects(sphere, box));
+
+    CHECK(COLLISIONS::intersects(ray, box));
+    CHECK(COLLISIONS::intersects(box, ray));
+
+    CHECK(COLLISIONS::intersects(plane, sphere));
+    CHECK(COLLISIONS::intersects(line, plane));
+    CHECK(COLLISIONS::intersects(capsule, line));
+    CHECK(COLLISIONS::intersects(point, rect));
+
+    CHECK(COLLISIONS::intersects(cone, sphere));
+    CHECK(COLLISIONS::intersects(cylinder, sphere));
+    CHECK(COLLISIONS::intersects(frustum, sphere));
+    CHECK(COLLISIONS::intersects(obb, sphere));
+
+    AABB obbOverlapBox(Vector3f(-0.25f, -0.25f, -0.25f), Vector3f(0.25f, 0.25f, 0.25f));
+    CHECK(COLLISIONS::intersects(obbOverlapBox, obb));
+
+    Plane planeX(Vector3f::ZERO, Vector3f::ONEX);
+    CHECK(COLLISIONS::intersects(planeX, obb));
+
+    Ray forwardRay(Vector3f(-2.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f));
+    CHECK(COLLISIONS::intersects(forwardRay, obb));
+
+    Capsule acrossPlane(Vector3f(-1.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f), 0.1f);
+    CHECK(COLLISIONS::intersects(acrossPlane, planeX));
   }
 }
+
+TEST_SUITE("Rotor and Tensor Tests") {
+  TEST_CASE("Rotor normalize and reverse") {
+    Rotor r(1.0f, 2.0f, 3.0f, 4.0f);
+    Rotor n = r.normalized();
+    float size = Math::sqrt(n.m_bivector.x * n.m_bivector.x +
+      n.m_bivector.y * n.m_bivector.y +
+      n.m_bivector.z * n.m_bivector.z +
+      n.m_bivector.w * n.m_bivector.w);
+    CHECK(size == doctest::Approx(1.0f));
+
+    Rotor rr = r.reverse();
+    CHECK(rr.m_bivector.x == doctest::Approx(-1.0f));
+    CHECK(rr.m_bivector.y == doctest::Approx(-2.0f));
+    CHECK(rr.m_bivector.z == doctest::Approx(-3.0f));
+    CHECK(rr.m_bivector.w == doctest::Approx(4.0f));
+  }
+
+  TEST_CASE("Tensor has concrete type") {
+    Tensor t;
+    CHECK(sizeof(t) >= 1);
+  }
+}
+

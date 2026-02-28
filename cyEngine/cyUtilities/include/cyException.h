@@ -1,4 +1,12 @@
+/**
+ * @file cyException.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Exception.
+ */
+
 #pragma once
+
 #include <iostream>
 #include <exception>
 #include <stdexcept>
@@ -8,7 +16,6 @@
 #include "cyCrashHandler.h"
 #include "cyStdHeaders.h"
 #include "cyUtilities.h"
-
 
 namespace CYLLENE_SDK {
 
@@ -21,9 +28,19 @@ using std::is_base_of;
 # pragma warning( disable : 4275 )
 #endif
 
+/**
+ * @class Exception
+ * @brief Base exception type for Cyllene utility systems.
+ */
 class Exception : public StdException
 {
  public:
+  /**
+   * @brief Constructs an exception with type, description, and source.
+   * @param type Exception type name.
+   * @param description Error description.
+   * @param source Source function or subsystem.
+   */
   Exception(const char* type, 
             const String& description, 
             const String& source)
@@ -31,6 +48,14 @@ class Exception : public StdException
       m_description(description),
       m_source(source) {}
 
+  /**
+   * @brief Constructs an exception with full source-location information.
+   * @param type Exception type name.
+   * @param description Error description.
+   * @param source Source function or subsystem.
+   * @param file Source file path.
+   * @param line Source line number.
+   */
   Exception(const char* type,
             const String& description,
             const String& source,
@@ -43,6 +68,10 @@ class Exception : public StdException
       m_file(file),
       m_fullDesc("") {}
 
+  /**
+   * @brief Copy-constructs an exception.
+   * @param rhs Exception to copy.
+   */
   Exception(const Exception& rhs)
     : m_line(rhs.m_line),
       m_typeName(rhs.m_typeName),
@@ -51,8 +80,16 @@ class Exception : public StdException
       m_file(rhs.m_file),
       m_fullDesc(rhs.m_fullDesc) {}
 
+  /**
+   * @brief Default destructor.
+   */
   ~Exception() _NOEXCEPT = default;
 
+  /**
+   * @brief Copy-assigns an exception.
+   * @param rhs Exception to copy from.
+   * @return Reference to this exception.
+   */
   Exception&
     operator=(const Exception& rhs) {
     m_description = rhs.m_description;
@@ -66,6 +103,7 @@ class Exception : public StdException
 
   /**
    * @brief Returns a string with the full description of the exception.
+   * @return the full description of the exception
    * @note  The description contains the error number, the description
    *        supplied by the thrower, what routine threw the exception, and
    *        will also supply extra platform-specific information where applicable.
@@ -87,117 +125,243 @@ class Exception : public StdException
     return m_fullDesc;
   }
 
+  /**
+   * @brief Returns the source that produced the exception.
+   * @return Source function or subsystem name.
+   */
   virtual const String&
     getSource() const {
     return m_source;
   }
 
+  /**
+   * @brief Returns source file path where exception was created.
+   * @return Source file path.
+   */
   virtual const String&
     getFile() const {
     return m_file;
   }
 
+  /**
+   * @brief Returns source line where exception was created.
+   * @return Source line number.
+   */
   virtual long
     getLine() const {
     return m_line;
   }
 
+  /**
+   * @brief Returns short error description.
+   * @return Error description string.
+   */
   virtual const String&
     getDescription(void) const {
     return m_description;
   }
 
+  /**
+   * @brief Standard exception message accessor.
+   * @return C-string of full exception description.
+   */
   const char*
     what() const _NOEXCEPT {
     return getFullDescription().c_str();
   }
 
 protected:
+  /**
+   * @brief Runtime line number for the exception source.
+   */
   long m_line = 0;
+  /**
+   * @brief Exception type name.
+   */
   String m_typeName;
+  /**
+   * @brief Human-readable error description.
+   */
   String m_description;
+  /**
+   * @brief Function or subsystem where exception originated.
+   */
   String m_source;
+  /**
+   * @brief Source file path where exception originated.
+   */
   String m_file;
+  /**
+   * @brief Cached full description string.
+   */
   mutable String m_fullDesc;
 };
 
+/**
+ * @class NotImplementedException
+ * @brief Exception for unimplemented functionality.
+ */
 class NotImplementedException : public Exception
 {
 public:
+  /**
+   * @brief Constructs a not-implemented exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   NotImplementedException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+                          const String& inSource,
+                          const char* inFile,
+                          long inLine)
     : Exception("NotImplementedException", inDescription, inSource, inFile, inLine) {}
 };
 
+/**
+ * @class FileNotFoundException
+ * @brief Exception for missing files.
+ */
 class FileNotFoundException : public Exception
 {
 public:
+  /**
+   * @brief Constructs a file-not-found exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   FileNotFoundException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+                        const String& inSource,
+                        const char* inFile,
+                        long inLine)
     : Exception("FileNotFoundException", inDescription, inSource, inFile, inLine) {}
 };
 
+/**
+ * @class IOException
+ * @brief Exception for I/O failures.
+ */
 class IOException : public Exception
 {
 public:
+  /**
+   * @brief Constructs an I/O exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   IOException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+              const String& inSource,
+              const char* inFile,
+              long inLine)
     : Exception("IOException", inDescription, inSource, inFile, inLine) {}
 };
 
+/**
+ * @class InvalidStateException
+ * @brief Exception for invalid runtime state.
+ */
 class InvalidStateException : public Exception
 {
 public:
+  /**
+   * @brief Constructs an invalid-state exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   InvalidStateException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+                        const String& inSource,
+                        const char* inFile,
+                        long inLine)
     : Exception("InvalidStateException", inDescription, inSource, inFile, inLine) {}
 };
 
+/**
+ * @class InvalidParametersException
+ * @brief Exception for invalid input parameters.
+ */
 class InvalidParametersException : public Exception
 {
 public:
+  /**
+   * @brief Constructs an invalid-parameters exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   InvalidParametersException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+                             const String& inSource,
+                             const char* inFile,
+                             long inLine)
     : Exception("InvalidParametersException", inDescription, inSource, inFile, inLine) {}
 };
 
+/**
+ * @class InternalErrorException
+ * @brief Exception for internal engine errors.
+ */
 class InternalErrorException : public Exception
 {
 public:
+  /**
+   * @brief Constructs an internal-error exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   InternalErrorException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+                         const String& inSource,
+                         const char* inFile,
+                         long inLine)
     : Exception("InternalErrorException", inDescription, inSource, inFile, inLine) {}
 };
 
+/**
+ * @class RenderingAPIException
+ * @brief Exception for rendering API failures.
+ */
 class RenderingAPIException : public Exception
 {
 public:
+  /**
+   * @brief Constructs a rendering-API exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   RenderingAPIException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+                        const String& inSource,
+                        const char* inFile,
+                        long inLine)
     : Exception("RenderingAPIException", inDescription, inSource, inFile, inLine) {}
 };
 
+/**
+ * @class UnitTestException
+ * @brief Exception used by unit testing utilities.
+ */
 class UnitTestException : public Exception
 {
 public:
+  /**
+   * @brief Constructs a unit-test exception.
+   * @param inDescription Error description.
+   * @param inSource Source function or subsystem.
+   * @param inFile Source file path.
+   * @param inLine Source line number.
+   */
   UnitTestException(const String& inDescription,
-    const String& inSource,
-    const char* inFile,
-    long inLine)
+                    const String& inSource,
+                    const char* inFile,
+                    long inLine)
     : Exception("UnitTestException", inDescription, inSource, inFile, inLine) {}
 };
 
@@ -221,3 +385,4 @@ public:
 # pragma warning( pop )
 #endif
 }
+

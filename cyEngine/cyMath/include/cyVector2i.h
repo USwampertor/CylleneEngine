@@ -1,3 +1,9 @@
+/**
+ * @file cyVector2i.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Vector2i.
+ */
 #pragma once
 
 #include "cyMathPrerequisites.h"
@@ -5,12 +11,15 @@
 
 namespace CYLLENE_SDK {
 
+// Forward declarations
 class Vector2f;
-
 class Vector3f;
-
 class Vector4f;
 
+/**
+ * @class Vector2i
+ * @brief a Vector with int32 x y components 
+ */
 class CY_MATH_EXPORT Vector2i
 {
 public:
@@ -32,493 +41,487 @@ public:
   ~Vector2i() = default;
 
   /**
-    * @brief () operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief () operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   *
+   */
   const int32&
   operator()(const int32& index) const;
     
   /**
-    * @brief () operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief () operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   *
+   */
   int32&
   operator()(const int32& index);
     
   /**
-    * @brief [] operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief [] operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   *
+   */
   const int32
   operator[](const int32& index) const;
 
   /**
-    * @brief [] operator overload
-    * @param index of the object we wanna get
-    * @return value at index
-    *
-    */
+   * @brief [] operator overload
+   * @param index of the object we wanna get
+   * @return value at index
+   *
+   */
   int32&
   operator[](const int32& index);
 
   /**
-    * @brief + operator overload
-    * @param b the other matrix to add
-    * @return a vector sum of *this and v
-    *
-    */
+   * @brief + operator overload
+   * @param b the other matrix to add
+   * @return a vector sum of *this and v
+   *
+   */
   Vector2i
   operator+(const Vector2i& v) const;
 
   /**
-    * @brief - operator overload
-    * @param b the other matrix to substract
-    * @return a vector difference of *this and v
-    *
-    */
+   * @brief - operator overload
+   * @param b the other matrix to substract
+   * @return a vector difference of *this and v
+   *
+   */
   Vector2i
   operator-(const Vector2i& v) const;
 
   /**
-    * @brief * operator overload
-    * @param b the other matrix to multiply
-    * @return a vector multiplication of *this times v
-    *
-    */
+   * @brief * operator overload
+   * @param b the other matrix to multiply
+   * @return a vector multiplication of *this times v
+   *
+   */
   Vector2i
   operator*(const Vector2i& v) const;
 
   /**
-    * @brief / operator overload
-    * @param b the other matrix to divide
-    * @return a vector division of *this divided by v
-    *
-    */
+   * @brief / operator overload
+   * @param b the other matrix to divide
+   * @return a vector division of *this divided by v
+   *
+   */
   Vector2i
   operator/(const Vector2i& v) const;
 
   /**
-    * @brief + operator overload
-    * @param plus the float to add to all vector
-    * @return a vector sum of *this + plus
-    *
-    */
+   * @brief + operator overload
+   * @param plus the float to add to all vector
+   * @return a vector sum of *this + plus
+   *
+   */
   Vector2i
   operator+(const int32& plus) const;
 
   /**
-    * @brief - operator overload
-    * @param minus the float to subtract to all vector
-    * @return a vector difference of *this - minus
-    *
-    */
+   * @brief - operator overload
+   * @param minus the float to subtract to all vector
+   * @return a vector difference of *this - minus
+   *
+   */
   Vector2i
   operator-(const int32& minus) const;
 
   /**
-    * @brief * operator overload
-    * @param times the float to multiply all vector
-    * @return a vector multiplication of *this times times
-    *
-    */
+   * @brief * operator overload
+   * @param times the float to multiply all vector
+   * @return a vector multiplication of *this times times
+   *
+   */
   Vector2i
   operator*(const int32& times) const;
 
   /**
-    * @brief / operator overload
-    * @param under the float to divide all vector
-    * @return a vector divided of *this divided by times
-    *
-    */
+   * @brief / operator overload
+   * @param under the float to divide all vector
+   * @return a vector divided of *this divided by times
+   *
+   */
   Vector2i
   operator/(const int32& under) const;
 
   /**
-    * @brief | operator overload for dot product
-    * @param the other vector
-    * @return dot product
-    *
-    */
+   * @brief | operator overload for dot product
+   * @param v Other vector.
+   * @return dot product
+   *
+   */
   int32
   operator|(const Vector2i& v) const;
 
   /**
-    * @brief ^ operator overload for cross product
-    * @param the other vector
-    * @return cross product
-    *
-    */
+   * @brief ^ operator overload for cross product
+   * @param v Other vector.
+   * @return cross product
+   *
+   */
   int32
   operator^(const Vector2i& v) const;
 
   /**
-    * @brief == operator overload
-    * @param the other vector to compare
-    * @return true if this components are == to v components
-    *
-    */
+   * @brief == operator overload
+   * @param v Vector to compare.
+   * @return true if this components are == to v components
+   *
+   */
   bool
   operator==(const Vector2i& v) const;
 
   /**
-    * @brief != operator overload
-    * @param the other vector to compare
-    * @return true if this components are != to v components
-    *
-    */
+   * @brief != operator overload
+   * @param v Vector to compare.
+   * @return true if this components are != to v components
+   *
+   */
   bool
   operator!=(const Vector2i& v) const;
 
   /**
-    * @brief < operator overload
-    * @param the other vector to compare
-    * @return true if this components are < to v components
-    *
-    */
+   * @brief < operator overload
+   * @param v Vector to compare.
+   * @return true if this components are < to v components
+   *
+   */
   bool
   operator<(const Vector2i& v) const;
 
   /**
-    * @brief > operator overload
-    * @param the other vector to compare
-    * @return true if this components are > to v components
-    *
-    */
+   * @brief > operator overload
+   * @param v Vector to compare.
+   * @return true if this components are > to v components
+   *
+   */
   bool
   operator>(const Vector2i& v) const;
 
   /**
-    * @brief <= operator overload
-    * @param the other vector to compare
-    * @return true if this components are <= to v components
-    *
-    */
+   * @brief <= operator overload
+   * @param v Vector to compare.
+   * @return true if this components are <= to v components
+   *
+   */
   bool
   operator<=(const Vector2i& v) const;
 
   /**
-    * @brief >= operator overload
-    * @param the other vector to compare
-    * @return true if this components are >= to v components
-    *
-    */
+   * @brief >= operator overload
+   * @param v Vector to compare.
+   * @return true if this components are >= to v components
+   *
+   */
   bool
   operator>=(const Vector2i& v) const;
 
   /**
-    * @brief - operator overload
-    * @param
-    * @return the negative of the vector
-    *
-    */
+   * @brief - operator overload
+   * @return the negative of the vector
+   *
+   */
   Vector2i
   operator-() const;
 
   /**
-    * @brief += operator overload
-    * @param the other vector to add
-    * @return *this + v components
-    *
-    */
+   * @brief += operator overload
+   * @param v Vector to add.
+   * @return *this + v components
+   *
+   */
   Vector2i&
   operator+=(const Vector2i& v);
 
   /**
-    * @brief -= operator overload
-    * @param the other vector to subtract
-    * @return *this - v components
-    *
-    */
+   * @brief -= operator overload
+   * @param v Vector to subtract.
+   * @return *this - v components
+   *
+   */
   Vector2i&
   operator-=(const Vector2i& v);
 
   /**
-    * @brief *= operator overload
-    * @param the other vector to multiply
-    * @return *this * v components
-    *
-    */
+   * @brief *= operator overload
+   * @param v Vector to multiply component-wise.
+   * @return *this * v components
+   *
+   */
   Vector2i&
   operator*=(const Vector2i& v);
 
   /**
-    * @brief /= operator overload
-    * @param the other vector to divide
-    * @return *this / v components
-    *
-    */
+   * @brief /= operator overload
+   * @param v Vector to divide component-wise.
+   * @return *this / v components
+   *
+   */
   Vector2i&
   operator/=(const Vector2i& v);
 
   /**
-    * @brief *= operator overload
-    * @param the float to multiply with
-    * @return *this * float
-    *
-    */
+   * @brief *= operator overload
+   * @param scale Scalar multiplier.
+   * @return *this * float
+   *
+   */
   Vector2i&
   operator*=(const int32& scale);
 
   /**
-    * @brief /= operator overload
-    * @param the float to divide the vector
-    * @return *this / float
-    *
-    */
+   * @brief /= operator overload
+   * @param scale Scalar divisor.
+   * @return *this / float
+   *
+   */
   Vector2i&
   operator/=(const int32& scale);
 
   /**
-    * @brief the dot product
-    * @param a nauVector2 and b nauVector2
-    * @return the dot product between a and b
-    *
-    */
+   * @brief the dot product
+   * @param a First vector.
+   * @param b Second vector.
+   * @return the dot product between a and b
+   *
+   */
   static int32
   dot(const Vector2i& a, const Vector2i& b);
 
   /**
-    * @brief the cross product
-    * @param a nauVector2 and b nauVector2
-    * @return the cross product between a and b
-    *
-    */
+   * @brief the cross product
+   * @param a First vector.
+   * @param b Second vector.
+   * @return the cross product between a and b
+   *
+   */
   static int32
   cross(const Vector2i& a, const Vector2i& b);
 
   /**
-    * @brief the scale of b over a
-    * @param Vector2 that is the reflection and b 
-    * @param Vector2 that reflects over
-    * @return scale of b in a
-    *
-    */
+   * @brief the scale of b over a
+   * @param a Projection axis.
+   * @param b Vector to project.
+   * @return scale of b in a
+   *
+   */
   static int32
   projection(const Vector2i& a, const Vector2i& b);
 
   /**
-    * @brief the square distance
-    * @param a nauVector2 and b nauVector2
-    * @return the square distance bewteen the two points
-    *
-    */
+   * @brief the square distance
+   * @param a First vector.
+   * @param b Second vector.
+   * @return the square distance bewteen the two points
+   *
+   */
   static int32
   sqrDistance(const Vector2i& a, const Vector2i& b);
 
   /**
-    * @brief the distance between two points in 2d space
-    * @param a nauVector2 and b nauVector2
-    * @return the distance bewteen the two points
-    *
-    */
+   * @brief the distance between two points in 2d space
+   * @param a First vector.
+   * @param b Second vector.
+   * @return the distance bewteen the two points
+   *
+   */
   static int32
   distance(const Vector2i& a, const Vector2i& b);
 
   /**
-    * @brief sets the value of a nauVector2
-    * @param float x and y
-    * @return
-    *
-    */
+   * @brief sets the value of a nauVector2
+   * @param newX New x component.
+   * @param newY New y component.
+   *
+   */
   void
   setValues(const int32& newX, const int32& newY);
 
   /**
-    * @brief gets the min between two vectors
-    * @param the other vector to compare
-    * @return
-    *
-    */
+   * @brief gets the min between two vectors
+   * @param v Other vector to compare.
+   *
+   */
   void
   min(const Vector2i& v);
 
   /**
-    * @brief gets the max between two vectors
-    * @param the other vector to compare
-    * @return
-    *
-    */
+   * @brief gets the max between two vectors
+   * @param v Other vector to compare.
+   *
+   */
   void
   max(const Vector2i& v);
     
   /**
-    * @brief gets the highest value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief gets the highest value of the vector
+   * @return Highest component value.
+   *
+   */
   int32
   getHighest() const;
 
   /**
-    * @brief gets the least value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief gets the least value of the vector
+   * @return Lowest component value.
+   *
+   */
   int32
   getLowest() const;
 
   /**
-    * @brief gets the magnitude value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief gets the magnitude value of the vector
+   * @return Vector magnitude.
+   *
+   */
   int32
   magnitude() const;
 
   /**
-    * @brief gets the squared magnitude value of the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief gets the squared magnitude value of the vector
+   * @return Squared vector magnitude.
+   *
+   */
   int32
   sqrMagnitude() const;
 
   /**
-    * @brief gets the normalized version of the vector
-    * @param
-    * @return the normalized vector
-    *
-    */
+   * @brief gets the normalized version of the vector
+   * @return the normalized vector
+   *
+   */
   Vector2i 
   normalized() const;
 
   /**
-    * @brief gets the QUICK normalized version of the vector with the Carmack Equation
-    * Use this if you don't have problems having a small error difference from the real value
-    * @param
-    * @return the QUICK normalized vector
-    *
-    */
+   * @brief gets the QUICK normalized version of the vector with the Carmack Equation
+   * Use this if you don't have problems having a small error difference from the real value
+   * @return the QUICK normalized vector
+   *
+   */
   Vector2i
   qNormalized() const;
 
   /**
-    * @brief normalizes the vector
-    * @param
-    * @return
-    *
-    */
+   * @brief normalizes the vector
+   *
+   */
   void
   normalize();
 
   /**
-    * @brief QUICK normalizes the vector using the Carmack Equation
-    * Use this if you don't have problems having a small error difference from the real value
-    * @param
-    * @return
-    *
-    */
+   * @brief QUICK normalizes the vector using the Carmack Equation
+   * Use this if you don't have problems having a small error difference from the real value
+   *
+   */
   void
   qNormalize();
 
   /**
-    * @brief Checks if the vector is empty (0s)
-    * @param
-    * @return true if it is empty
-    *
-    */
+   * @brief Checks if the vector is empty (0s)
+   * @return true if it is empty
+   *
+   */
   bool
   isZero() const;
 
   /**
-    * @brief Checks if one vector is the same as another vector
-    * @param Vector other
-    * @return true if based on the error is the same
-    *
-    */
+   * @brief Checks if one vector is the same as another vector
+   * @param a First vector to compare.
+   * @param b Second vector to compare.
+   * @return true if based on the error is the same
+   *
+   */
   static bool
   areSame(const Vector2i& a, const Vector2i& b);
 
   /**
-    * @brief Checks if one vector is near the same as another vector based in an error
-    * @param Vector other
-    * @return true if based on the error is the same
-    *
-    */
+   * @brief Checks if one vector is near the same as another vector based in an error
+   * @param a First vector to compare.
+   * @param b Second vector to compare.
+   * @param error Tolerance threshold for comparison.
+   * @return true if based on the error is the same
+   *
+   */
   static bool
   areNearlySame(const Vector2i& a, const Vector2i& b, const int32& error = 1);
 
   /**
-    * @brief Returns the vector as a printable string
-    * @param 
-    * @return 
-    *
-    */
+   * @brief Returns the vector as a printable string
+   * @return String representation of this vector.
+   *
+   */
   String
   toString();
 
   /**
-    * static const
-    */
+   * static const
+   */
 
   public:
 
   /**
-    * vauVector2 with all values 0
-    */
+   * @brief Vector constant with all components set to 0.
+   */
   static const Vector2i ZERO;
 
   /**
-    * vauVector2 with all values 1
-    */
+   * @brief Vector constant with all components set to 1.
+   */
   static const Vector2i ONE;
 
   /**
-    * vauVector2 with x value 1
-    */
+   * @brief Unit vector along +X.
+   */
   static const Vector2i ONEX;
 
   /**
-    * vauVector2 with y value 1
-    */
+   * @brief Unit vector along +Y.
+   */
   static const Vector2i ONEY;
 
   /**
-    * vauVector2 with y value 1. This is our right in our world
-    */
+   * @brief Up direction vector.
+   */
   static const Vector2i UP;
 
   /**
-    * vauVector2 with x value 1. This is our up in our world
-    */
+   * @brief Right direction vector.
+   */
   static const Vector2i RIGHT;
 
   /**
-    * vauVector2 with y value -1. This is our right in our world
-    */
+   * @brief Down direction vector.
+   */
   static const Vector2i DOWN;
 
   /**
-    * vauVector2 with x value -1. This is our up in our world
-    */
+   * @brief Left direction vector.
+   */
   static const Vector2i LEFT;
 
   /**
-    * Member declaration
-    */
+   * Member declaration
+   */
 
   public:
 
   /**
-    * x component
-    */
+   * @brief X component.
+   */
   int32 x;
 
   /**
-    * y component
-    */
+   * @brief Y component.
+   */
   int32 y;
 
 };
 
 }
+
+

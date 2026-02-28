@@ -1,12 +1,9 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyUtilitiesPrerequisites.h
- * @author Marco "Swampy" Millan
- * @date 8/4/2021
- * @brief 
- * 
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for UtilitiesPrerequisites.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #pragma once
 
@@ -20,3 +17,4 @@
 #include "cyPlatformTypes.h"
 #include "cyStdHeaders.h"
 #include "cyMemoryAllocator.h"
+

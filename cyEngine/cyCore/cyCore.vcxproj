@@ -32,6 +32,12 @@
     <ClInclude Include="include\assets\cyMissingTexture.h" />
     <ClInclude Include="include\assets\cyMoon.h" />
     <ClInclude Include="include\assets\cySAQ.h" />
+    <ClInclude Include="include\cyAudioBackend.h" />
+    <ClInclude Include="include\cyAudioManager.h" />
+    <ClInclude Include="include\cyCAudioListener.h" />
+    <ClInclude Include="include\cyCAudioMaterial.h" />
+    <ClInclude Include="include\cyCAudioMixer.h" />
+    <ClInclude Include="include\cyCAudioSource.h" />
     <ClInclude Include="include\cyRMaterialInstance.h" />
     <ClInclude Include="include\cyCMeshRenderer.h" />
     <ClInclude Include="include\cyCLight.h" />
@@ -39,7 +45,6 @@
     <ClInclude Include="include\cyGraphicsPipeline.h" />
     <ClInclude Include="include\cyRAsset.h" />
     <ClInclude Include="include\cyRAudio.h" />
-    <ClInclude Include="include\cyAudioAPI.h" />
     <ClInclude Include="include\cyBaseUI.h" />
     <ClInclude Include="include\cyBBeing.h" />
     <ClInclude Include="include\cyCCamera.h" />
@@ -79,7 +84,13 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cyAudioBackend.cpp" />
+    <ClCompile Include="src\cyAudioManager.cpp" />
     <ClCompile Include="src\cyBBeing.cpp" />
+    <ClCompile Include="src\cyCAudioListener.cpp" />
+    <ClCompile Include="src\cyCAudioMaterial.cpp" />
+    <ClCompile Include="src\cyCAudioMixer.cpp" />
+    <ClCompile Include="src\cyCAudioSource.cpp" />
     <ClCompile Include="src\cyCComponent.cpp" />
     <ClCompile Include="src\cyRMaterialInstance.cpp" />
     <ClCompile Include="src\cyCMeshRenderer.cpp" />
@@ -90,7 +101,6 @@
     <ClCompile Include="src\cyInput.cpp" />
     <ClCompile Include="src\cyRAsset.cpp" />
     <ClCompile Include="src\cyRAudio.cpp" />
-    <ClCompile Include="src\cyAudioAPI.cpp" />
     <ClCompile Include="src\cyBaseUI.cpp" />
     <ClCompile Include="src\cyCCamera.cpp" />
     <ClCompile Include="src\cyClassRegister.cpp" />
@@ -213,7 +223,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilitiesd.lib;cyMathd.lib;cyRandomd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL3d.lib;assimpd.lib;FreeImaged.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cyMathd.lib;cyRandomd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL3d.lib;assimpd.lib;FreeImaged.lib;OpenAL32d.lib;rtaudiod.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -239,7 +249,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilities.lib;cyMath.lib;cyRandom.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL3.lib;assimp.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cyMath.lib;cyRandom.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL3.lib;assimp.lib;FreeImage.lib;OpenAL32.lib;rtaudio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -261,7 +271,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilitiesd.lib;cyMathd.lib;cyRandomd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL3d.lib;assimpd.lib;FreeImaged.lib</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilitiesd.lib;cyMathd.lib;cyRandomd.lib;cppfsd.lib;cpplocated.lib;imguid.lib;SDL3d.lib;assimpd.lib;FreeImaged.lib;OpenAL32d.lib;rtaudiod.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -287,7 +297,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(PlatformTarget)/;$(CYLLENE_DEPENDENCIES)lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
       <ImportLibrary>$(SolutionDir)lib/$(PlatformTarget)/$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>cyUtilities.lib;cyMath.lib;cyRandom.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL3.lib;assimp.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cyUtilities.lib;cyMath.lib;cyRandom.lib;cppfs.lib;cpplocate.lib;imgui.lib;SDL3.lib;assimp.lib;FreeImage.lib;OpenAL32.lib;rtaudio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

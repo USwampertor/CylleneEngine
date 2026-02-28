@@ -1,3 +1,9 @@
+/**
+ * @file cyRandomPrerequisites.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Random Module
+ */
 #pragma once
 
 #include <cyUtilitiesPrerequisites.h>

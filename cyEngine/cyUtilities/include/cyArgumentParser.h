@@ -1,13 +1,10 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file    cyArgumentParser.h
- * @author 	Marco "Swampy" Millan
- * @date 	  2022/02/28
- * @brief 	An argument parser system so you can pass parameters at execution 
- *          and be able to check what to do with each one
- * 
+ * @file cyArgumentParser.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for ArgumentParser.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
@@ -16,22 +13,21 @@
 #include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
-/*
- *	@class  ArgumentParser
- *	@brief  An object that you can use to map parameters and actions and parse 
- *          execution parameters.
+/**
+ * @class ArgumentParser
+ * @brief Parses command-line style flags and their values.
  */
 class CY_UTILITY_EXPORT ArgumentParser
 {
  public:
 
   /**
-   * Default constructor
+   * @brief Default constructor.
    */
   ArgumentParser() = default;
 
   /**
-   * Default destructor
+   * @brief Default destructor.
    */
   ~ArgumentParser() = default;
 
@@ -75,7 +71,6 @@ class CY_UTILITY_EXPORT ArgumentParser
   void
   setFlagValue(const String& flag, const String& newParameter);
 
-
   /*
    *	@brief		returns the parameter binded to the argument keyWord
    *	@param	  const String& parameter the keyWord to find 
@@ -103,10 +98,11 @@ class CY_UTILITY_EXPORT ArgumentParser
   removeFlag(const String& flag);
 
   /**
-   * @brief the map that holds the keywords with the arguments passed
+   * @brief Map of parsed flags and associated values.
    */
   Map<String, Vector<String>> m_flagMap;
 
 };
 
 }
+

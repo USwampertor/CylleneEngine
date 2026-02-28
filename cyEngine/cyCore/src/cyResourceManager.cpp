@@ -24,6 +24,8 @@ ResourceManager::onStartUp() {
                                   makeSharedPtr<ShaderCodec>()));
   m_codecs.insert(Utils::makePair(MaterialCodec::staticType()._to_string(),   
                                   makeSharedPtr<MaterialCodec>()));
+  m_codecs.insert(Utils::makePair(AudioCodec::staticType()._to_string(),   
+                                  makeSharedPtr<AudioCodec>()));
 
   // Default resources (in-memory)
   {

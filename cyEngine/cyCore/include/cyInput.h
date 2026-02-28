@@ -649,7 +649,7 @@ struct InputValue
 
 struct InputDefinitions
 {
-  static const int MAX_GAMEPADS = 8;
+  static const int32 MAX_GAMEPADS = 8;
 };
 
 static const Map<uint32, INPUTCODE::E> SDLKeyCodetoINPUTCODE = {

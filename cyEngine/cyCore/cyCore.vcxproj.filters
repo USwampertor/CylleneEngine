@@ -87,9 +87,6 @@
     <ClInclude Include="include\cyRAudio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cyAudioAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cyRTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -192,6 +189,24 @@
     <ClInclude Include="include\assets\cyDefaultPBRShader.h">
       <Filter>engineAssets</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyCAudioSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyCAudioListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyCAudioMixer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyCAudioMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyAudioBackend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyAudioManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cyResourceManager.cpp">
@@ -231,9 +246,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyRAudio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cyAudioAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyRTexture.cpp">
@@ -312,6 +324,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cyRMaterialInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCAudioSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCAudioListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCAudioMixer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyCAudioMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyAudioManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cyAudioBackend.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

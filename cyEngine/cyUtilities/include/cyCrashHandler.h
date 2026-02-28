@@ -1,12 +1,9 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyCrashHandler.h
- * @author Marco "Swampy" Millan
- * @date 8/6/2021
- * @brief 
- * 
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for CrashHandler.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #pragma once
 
@@ -21,60 +18,136 @@
 
 namespace CYLLENE_SDK
 {
-  class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
-  {
-   public:
-    
-    CrashHandler();
+/**
+ * @class CrashHandler
+ * @brief Collects crash diagnostics and writes crash reports.
+ */
+class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
+{
+ public:
+  
+  CrashHandler();
 
-    ~CrashHandler();
+  ~CrashHandler();
 
-    void
-    init();
+  /**
+   * @brief Initializes crash handling resources.
+   */
+  void
+  init();
 
-    int32
-    createReport(void* exception) const;
+  /**
+   * @brief Creates a report from platform exception data.
+   * @param exception Platform exception pointer.
+   * @return Status code of report generation.
+   */
+  int32
+  createReport(void* exception) const;
 
-    void
-    createReport(const String& type, 
-                 const String& description, 
-                 const String& errorFunction, 
-                 const String& file,
-                 uint32 line = 0) const;
+  /**
+   * @brief Creates a report from explicit crash metadata.
+   * @param type Error type.
+   * @param description Error description.
+   * @param errorFunction Function where the error happened.
+   * @param file Source file where the error happened.
+   * @param line Source line number.
+   */
+  void
+  createReport(const String& type, 
+               const String& description, 
+               const String& errorFunction, 
+               const String& file,
+               uint32 line = 0) const;
 
-    static String
-    getStackTrace();
+  /**
+   * @brief Captures the current call stack.
+   * @return Formatted stack trace.
+   */
+  static String
+  getStackTrace();
 
-    void
-    logErrorAndStackTrace(const String& message, const String& stackTrace) const;
+  /**
+   * @brief Logs an error message with a provided stack trace.
+   * @param message Error message.
+   * @param stackTrace Stack trace text.
+   */
+  void
+  logErrorAndStackTrace(const String& message, 
+                        const String& stackTrace) const;
 
-    void
-    logErrorAndStackTrace(const String& type,
-                          const String& strDescription,
-                          const String& strFunction,
-                          const String& strFile,
-                          uint32 nLine) const;
+  /**
+   * @brief Logs fully detailed crash data and stack trace.
+   * @param type Error type.
+   * @param strDescription Error description.
+   * @param strFunction Function name.
+   * @param strFile Source file.
+   * @param nLine Source line.
+   */
+  void
+  logErrorAndStackTrace(const String& type,
+                        const String& strDescription,
+                        const String& strFunction,
+                        const String& strFile,
+                        uint32 nLine) const;
 
-    Path
-    getCrashFolder();
+  /**
+   * @brief Returns the folder used for crash artifacts.
+   * @return Crash output folder path.
+   */
+  Path
+  getCrashFolder();
 
-    Path
-    createDump(const String& message,
-               const String& stackTrace);
+  /**
+   * @brief Creates a dump/report artifact.
+   * @param message Crash message.
+   * @param stackTrace Crash stack trace.
+   * @return Generated dump path.
+   */
+  Path
+  createDump(const String& message,
+             const String& stackTrace);
 
-    void
-    openCrashHandlerApp(const String& params);
+  /**
+   * @brief Opens the external crash handler application.
+   * @param params Launch parameters.
+   */
+  void
+  openCrashHandlerApp(const String& params);
 
-    void
-    shutdown();
+  /**
+   * @brief Shuts down crash handling resources.
+   */
+  void
+  shutdown();
 
-  private:
-    static const String m_crashFolder;
-    static const String m_crashLog;
-    static const String m_errorMessage;
+private:
+
+  /**
+   * @brief Crash output folder name.
+   */
+  static const String m_crashFolder;
+
+  /**
+   * @brief Crash log file name.
+   */
+  static const String m_crashLog;
+
+  /**
+   * @brief Default crash message key.
+   */
+  static const String m_errorMessage;
 #if CY_PLATFORM == CY_PLATFORM_WIN32
-    struct Data;
-    Data* m_data;
+  /**
+   * @brief Platform-specific crash handler state.
+   */
+  struct Data;
+
+  /**
+   * @brief Platform-specific crash handler data pointer.
+   */
+  Data* m_data;
 #endif
-  };
+};
+
 }
+

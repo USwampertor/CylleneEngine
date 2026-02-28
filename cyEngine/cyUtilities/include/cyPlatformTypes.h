@@ -1,12 +1,9 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyPlatformTypes.h
- * @author Marco "Swampy" Millan
- * @date 8/4/2021
- * @brief 
- * 
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for PlatformTypes.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #pragma once
 
@@ -37,7 +34,6 @@ namespace CYLLENE_SDK {
   using uint16 = uint16_t;    // 16-bit unsigned
   using uint32 = uint32_t;    // 32-bit unsigned
   using uint64 = uint64_t;    // 64-bit unsigned
-
 
   /**
    * Basic Signed types

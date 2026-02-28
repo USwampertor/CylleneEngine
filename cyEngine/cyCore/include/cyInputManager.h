@@ -12,8 +12,8 @@ namespace CYLLENE_SDK {
 class InputManager : Module<InputManager>
 {
   virtual void onStartUp() override {
-
-    for (int i = 0; i < InputDefinitions::MAX_GAMEPADS; ++i) {
+    
+    for (int32 i = 0; i < InputDefinitions::MAX_GAMEPADS; ++i) {
       m_gamepad.push_back(Map<INPUTCODE::E, SPtr<InputValue>>());
     }
 
@@ -38,7 +38,7 @@ class InputManager : Module<InputManager>
       // m_values.try_emplace(i, Vector<SPtr<InputValue>>());
 
       if (+INPUTDEVICEID::E::eGAMEPAD == deviceType) {
-        for (int j = 0; j < InputDefinitions::MAX_GAMEPADS; ++j) {
+        for (int32 j = 0; j < InputDefinitions::MAX_GAMEPADS; ++j) {
           m_gamepad[j].try_emplace(i, makeSharedPtr<InputValue>());
           m_gamepad[j][i]->reset();
         }

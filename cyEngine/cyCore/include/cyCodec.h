@@ -313,9 +313,9 @@ public:
     m_fileExtensions = {
       "wav", 
       "mp3", 
-      "wma", 
+      // "wma", 
       "flac", 
-      "aac"
+      // "aac"
     };
   }
 

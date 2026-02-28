@@ -1,14 +1,9 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyEulerHelpers.h
- * @author Marco "Swampy" Millan
- * @date 9/8/2021
- * @brief Most of this stuff is defined in GPU Gems V, and Ken Shoemake's
- *        study on quaternions. This helpers are used to make
- *        quaternions a bit easier for me because I'm lazy tbh
- * 
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for EulerHelpers.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 #pragma once
 
 #include "cyMathPrerequisites.h"
@@ -94,10 +89,44 @@ typedef Quat EulerAngles;    /* (x,y,z)=ang 1,2,3, w=order code  */
 #define EulOrdXYZr    EulOrd(Z,EulParOdd,EulRepNo,EulFrmR)
 #define EulOrdZYZr    EulOrd(Z,EulParOdd,EulRepYes,EulFrmR)
 
+/**
+ * @brief Builds an Euler-angle tuple with the given order code.
+ * @param ai First Euler angle in radians.
+ * @param aj Second Euler angle in radians.
+ * @param ah Third Euler angle in radians.
+ * @param order Euler order code.
+ * @return Euler angle structure containing the input angles and order.
+ */
 EulerAngles Eul_(float ai, float aj, float ah, int32 order);
+
+/**
+ * @brief Converts Euler angles to a quaternion.
+ * @param ea Euler angles to convert.
+ * @return Quaternion equivalent of the input Euler angles.
+ */
 Quat Eul_ToQuat(EulerAngles ea);
+
+/**
+ * @brief Converts Euler angles to a homogeneous rotation matrix.
+ * @param ea Euler angles to convert.
+ * @param M Output homogeneous matrix.
+ */
 void Eul_ToHMatrix(EulerAngles ea, HMatrix& M);
+
+/**
+ * @brief Extracts Euler angles from a homogeneous rotation matrix.
+ * @param M Source homogeneous matrix.
+ * @param order Euler order code.
+ * @return Euler angles extracted from the matrix.
+ */
 EulerAngles Eul_FromHMatrix(const HMatrix& M, const int32& order);
+
+/**
+ * @brief Extracts Euler angles from a quaternion.
+ * @param q Source quaternion.
+ * @param order Euler order code.
+ * @return Euler angles extracted from the quaternion.
+ */
 EulerAngles Eul_FromQuat(const Quat& q, const int32& order);
 #endif
 

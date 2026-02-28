@@ -15,22 +15,22 @@
 
 namespace CYLLENE_SDK {
   const String&
-  Log::GetMessage() {
+  Log::getMsg() const {
     return m_message;
   }
 
   const LOG_VERBOSITY::E&
-  Log::GetVerbosity() {
+  Log::getVerbosity() const {
     return m_type;
   }
 
   const LOG_CHANNEL::E&
-  Log::GetChannel() {
+  Log::getChannel() const {
     return m_channel;
   }
 
   const String
-  Log::ToString() {
+  Log::toString() const {
     String toReturn = "";
     Date localTime = Time::scToDate(m_time);
     
@@ -40,6 +40,11 @@ namespace CYLLENE_SDK {
                                   m_channel._to_string(),
                                   m_message.c_str());
     return toReturn;
+  }
+
+  const Bitset<5>&
+  Log::getOutput() const {
+    return m_output;
   }
 
   void 
@@ -61,6 +66,7 @@ namespace CYLLENE_SDK {
   void 
   Logger::log(Log newLog) {
     m_logStack.push_back(newLog);
+    m_onLogAdded.invoke(newLog);
   }
 
   void 
@@ -68,34 +74,53 @@ namespace CYLLENE_SDK {
               const LOG_VERBOSITY::E& type, 
               const LOG_CHANNEL::E& channel,
               const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, type, channel, output));
+    Log newLog(message, type, channel, output);
+    m_logStack.push_back(newLog);
+    m_onLogAdded.invoke(newLog);
   }
 
   void
   Logger::logDebug(const String& message, 
                    const LOG_CHANNEL::E& channel,
                    const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eDEBUG, channel, output));
+    Log newLog(message, LOG_VERBOSITY::E::eDEBUG, channel, output);
+    m_logStack.push_back(newLog);
+    m_onLogAdded.invoke(newLog);
   }
 
   void
   Logger::logWarning(const String& message, 
                      const LOG_CHANNEL::E& channel,
                      const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eWARNING, channel, output));
+    Log newLog(message, LOG_VERBOSITY::E::eWARNING, channel, output);
+    m_logStack.push_back(newLog);
+    m_onLogAdded.invoke(newLog);
   }
 
   void
   Logger::logError(const String& message, 
                    const LOG_CHANNEL::E& channel,
                    const Bitset<5>& output) {
-    m_logStack.push_back(Log(message, LOG_VERBOSITY::E::eERROR, channel, output));
+    Log newLog(message, LOG_VERBOSITY::E::eERROR, channel, output);
+    m_logStack.push_back(newLog);
+    m_onLogAdded.invoke(newLog);
   }
 
   void
-  Logger::dump()
-  {
-    
+  Logger::dump() {
+    Path logPath = FileSystem::getExecutablePath().directoryPath() + "/logs/";
+    if (!FileSystem::exists(logPath.path())) {
+      FileSystem::createFolder(logPath.path());
+    }
+    logPath = logPath.path() + Utils::format("log_%s.txt", Utils::timeFormat(Time::now(), "%Y%m%d_%H%M%S").c_str());
+
+    File logFile = FileSystem::createFile(logPath.path());
+
+    String data = "----- Log Dump -----\n";
+    for (const Log& logEntry : m_logStack) {
+      data += logEntry.toString() + "\n";
+    }
+    logFile.writeFile(data);
   }
 
 }

@@ -1,12 +1,9 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file h
- * @author Marco "Swampy" Millan
- * @date 2018/10/17 2018
- * @brief the std headers for the container used in the engine, USE USING_EASTL
- * for EA standard library containers
+ * @file cyStdHeaders.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for StdHeaders.
  */
- /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #pragma once
 
@@ -17,6 +14,7 @@
 #include <ctime>
 #include <chrono>
 #include <fstream>
+#include <future>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -26,7 +24,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <type_traits>
-
 
 //#define USING_EASTL
 
@@ -133,6 +130,9 @@ namespace CYLLENE_SDK {
 
   using RunTimeError  = std::runtime_error;
 
+  template<typename T>
+  using ResultOf = std::result_of<T>;
+
   template<typename T, typename A>
   using Pair = std::pair<T, A>;
 
@@ -140,6 +140,8 @@ namespace CYLLENE_SDK {
   using Tuple = std::tuple<T, A>;
 
   using Thread = std::thread;
+
+  using ThreadID = std::thread::id;
 
   template<class Key,
            class Hash = std::hash<Key>,
@@ -156,8 +158,12 @@ namespace CYLLENE_SDK {
 
   template<typename T>
   using WPtr = std::weak_ptr<T>;
-}
 
+  using ConditionVariable = std::condition_variable;
+
+  template<typename T>
+  using Future = std::future<T>;
+}
 
 namespace CYLLENE_SDK {
 #ifndef USING_EASTL

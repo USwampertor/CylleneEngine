@@ -11,7 +11,7 @@ void
 CMeshRenderer::setModel(const SPtr<RModel>& newModel) {
   // TODO: THIS SHOULD BE A DESTROY, NOT A CLEAR
   m_owner.lock()->/*getTransform()->m_children*/getChildren().clear();
-  for (int i = 0; i < newModel->m_meshes.size(); ++i) {
+  for (int32 i = 0; i < newModel->m_meshes.size(); ++i) {
     String childName = Utils::format("%s_mesh_%d", m_owner.lock()->getName().c_str(), i);
     SPtr<BBeing> child = makeSharedPtr<BBeing>(childName);
     // child->createComponent<CTransform>(Vector3f::ZERO, 

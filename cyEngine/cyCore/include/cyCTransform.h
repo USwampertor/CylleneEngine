@@ -37,6 +37,7 @@ class CY_CORE_EXPORT CTransform : public CComponent
     else {
       setWorldTransform(other.m_worldMatrix);
     }
+
   }
 
   CTransform(const Vector3f&    position  = Vector3f::ZERO,
@@ -258,6 +259,9 @@ private:
 
   void
   UpdateChildren();
+
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) override;
 
 public:
 

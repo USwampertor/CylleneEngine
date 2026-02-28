@@ -21,6 +21,9 @@ public:
     return toReturn;
   }
 
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) override {}
+
   float m_amount;
 
   float m_unitLifeTime;

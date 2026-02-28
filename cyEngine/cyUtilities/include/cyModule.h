@@ -1,32 +1,31 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyModule.h
- * @author Marco "Swampy" Millan
- * @date 8/4/2021
- * @brief 
- * 
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Module.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #pragma once
+
 #include "cyUtilitiesPrerequisites.h"
 #include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
 
 /**
-  * @class cyModule
-  * @brief An Engine Module that can be started up and shut down manually
-  *        Its a nicely done singleton, (I CANT BELIEVE ITS NOT SINGLETON!)
-  */
+ * @class Module
+ * @brief Generic startup/shutdown singleton-style module wrapper.
+ * @tparam T Concrete module type.
+ */
 template <class T>
 class Module
 {
  public:
 
   /**
-    * Returns a reference to the instance
-    */
+   * @brief Returns a reference to the active module instance.
+   * @return Active module reference.
+   */
   static T&
   instance() {
     if (!isStartedUp()) {
@@ -41,8 +40,9 @@ class Module
   }
 
   /**
-    * Returns a pointer to the instance
-    */
+   * @brief Returns a pointer to the active module instance.
+   * @return Active module pointer.
+   */
   static T*
   instancePtr() {
     if (!isStartedUp()) {
@@ -56,7 +56,11 @@ class Module
     return _instance();
   }
 
-
+  /**
+   * @brief Starts the module using type `T`.
+   * @tparam Args Constructor argument types.
+   * @param args Constructor arguments.
+   */
   template<class... Args>
   static void
   startUp(Args&& ...args) {
@@ -70,6 +74,12 @@ class Module
     static_cast<Module*>(_instance())->onStartUp();
   }
 
+  /**
+   * @brief Starts the module with a `T`-derived subtype.
+   * @tparam SubType Concrete module subtype.
+   * @tparam Args Constructor argument types.
+   * @param args Constructor arguments.
+   */
   template<class SubType, class... Args>
   static void
   startUp(Args&& ...args) {
@@ -89,6 +99,9 @@ class Module
     static_cast<Module*>(_instance())->onStartUp();
   }
 
+  /**
+   * @brief Shuts down and destroys the module instance.
+   */
   static void
   shutDown() {
     if (isDestroyed()) {
@@ -105,11 +118,19 @@ class Module
     isDestroyed() = true;
   }
 
+  /**
+   * @brief Checks whether module is running.
+   * @return True if started and not destroyed.
+   */
   static bool
   isStarted() {
     return isStartedUp() && !isDestroyed();
   }
 
+  /**
+   * @brief Injects an already-created module instance.
+   * @param obj Module instance pointer.
+   */
   static void
   setModule(T* obj) {
     _instance() = obj;
@@ -122,13 +143,13 @@ class Module
 protected:
 
   /**
-    * Default constructor
-    */
+   * @brief Default constructor.
+   */
   Module() = default;
 
   /**
-    * Virtual destructor
-    */
+   * @brief Virtual destructor.
+   */
   virtual
   ~Module() = default;
 
@@ -142,24 +163,42 @@ protected:
   Module&
   operator=(const Module&) = delete;
 
+  /**
+   * @brief Called immediately after module startup.
+   */
   virtual void
   onStartUp() {}
 
+  /**
+   * @brief Called immediately before module shutdown.
+   */
   virtual void
   onShutDown() {}
 
+  /**
+   * @brief Internal storage for module instance pointer.
+   * @return Reference to static instance pointer.
+   */
   static T*&
   _instance() {
     static T* inst = nullptr;
     return inst;
   }
 
+  /**
+   * @brief Internal destroyed-state flag.
+   * @return Reference to destroyed-state flag.
+   */
   static bool&
   isDestroyed() {
     static bool inst = false;
     return inst;
   }
 
+  /**
+   * @brief Internal startup-state flag.
+   * @return Reference to startup-state flag.
+   */
   static bool&
   isStartedUp() {
     static bool inst = false;

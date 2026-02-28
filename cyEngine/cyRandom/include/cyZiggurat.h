@@ -1,3 +1,9 @@
+/**
+ * @file cyZiggurat.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Zigurrat class inherited from RNG.
+ */
 #pragma once
 
 #include "cyRandomPrerequisites.h"
@@ -10,9 +16,17 @@
 namespace CYLLENE_SDK
 {
 
+/**
+ * @class Ziggurat
+ * @brief A RNG that uses the Ziggurat algorithm
+ */
 class Ziggurat : public RNG
 {
 public:
+  /**
+   * @brief Generate the next random float using the configured generator.
+   * @return Pseudorandom float value.
+   */
   virtual float 
   next() override {
     uint32 seed = m_generator();
@@ -21,7 +35,11 @@ public:
     return static_cast<float>(congruent * r4Uni);
   }
 
-
+  /**
+   * @brief Congruential generator step.
+   * @param jcong Input/output seed for the congruential generator.
+   * @return Generated 32-bit value.
+   */
   uint32 cong_seeded(uint32& jcong) {
     uint32 value;
 
@@ -32,6 +50,14 @@ public:
     return value;
   }
     
+  /**
+   * @brief Combined KISS generator using multiple sub-generators.
+   * @param jcong Congruential seed (in/out).
+   * @param jsr Shift-register seed (in/out).
+   * @param w MWC parameter w (in/out).
+   * @param z MWC parameter z (in/out).
+   * @return Generated 32-bit value.
+   */
   uint32 kiss_seeded(uint32& jcong, uint32& jsr, uint32& w, uint32& z) {
     uint32 value;
 
@@ -40,6 +66,12 @@ public:
     return value;
   }
 
+  /**
+   * @brief Multiply-with-carry RNG step.
+   * @param w MWC parameter w (in/out).
+   * @param z MWC parameter z (in/out).
+   * @return Generated 32-bit value.
+   */
   uint32 mwc_seeded(uint32& w, uint32& z) {
     uint32 value;
 
@@ -51,6 +83,14 @@ public:
     return value;
   }
 
+  /**
+   * @brief Sample from exponential tail used by the Ziggurat algorithm.
+   * @param jsr Shift-register seed (in/out).
+   * @param ke Precomputed integer table for exponential setup.
+   * @param fe Precomputed float table for exponential setup.
+   * @param we Precomputed float table for exponential setup.
+   * @return Sampled exponential float.
+   */
   float r4_exp(uint32& jsr, uint32 ke[256], float fe[256], float we[256]) {
     uint32 iz;
     uint32 jz;
@@ -89,6 +129,12 @@ public:
     return value;
   }
 
+  /**
+   * @brief Setup tables for exponential Ziggurat sampling.
+   * @param ke Output integer table (size 256).
+   * @param fe Output float table (size 256).
+   * @param we Output float table (size 256).
+   */
   void r4_exp_setup(uint32 ke[256], float fe[256], float we[256]) {
     double de = 7.697117470131487;
     int i;
@@ -115,9 +161,16 @@ public:
       fe[i] = static_cast<float>(exp(-de));
       we[i] = static_cast<float>(de / m2);
     }
-    return;
   }
     
+  /**
+   * @brief Sample from normal distribution using Ziggurat tables.
+   * @param jsr Shift-register seed (in/out).
+   * @param kn Precomputed integer table for normal setup.
+   * @param fn Precomputed float table for normal setup.
+   * @param wn Precomputed float table for normal setup.
+   * @return Sampled normal float.
+   */
   float r4_nor(uint32& jsr, uint32 kn[128], float fn[128], float wn[128]) {
     int32 hz;
     uint32 iz;
@@ -173,6 +226,12 @@ public:
     return value;
   }
     
+  /**
+   * @brief Setup tables for normal Ziggurat sampling.
+   * @param kn Output integer table (size 128).
+   * @param fn Output float table (size 128).
+   * @param wn Output float table (size 128).
+   */
   void r4_nor_setup(uint32 kn[128], float fn[128], float wn[128]) {
     double dn = 3.442619855899;
     int i;
@@ -200,9 +259,13 @@ public:
       wn[i] = static_cast<float>(dn / m1);
     }
 
-    return;
   }
     
+  /**
+   * @brief Generate a uniform float in (0,1) using a shift-register RNG.
+   * @param jsr Shift-register seed (in/out).
+   * @return Uniform float in [0,1).
+   */
   float r4_uni(uint32& jsr) {
     uint32 jsr_input;
     float value;
@@ -219,6 +282,11 @@ public:
     return value;
   }
     
+  /**
+   * @brief Shift-register RNG (SHR3) step.
+   * @param jsr Shift-register seed (in/out).
+   * @return Generated 32-bit value.
+   */
   uint32 shr3_seeded(uint32& jsr) {
     uint32 jsr_input;
     uint32 value;
@@ -233,12 +301,15 @@ public:
 
     return value;
   }
-  std::mt19937 m_generator;
+  /** @brief Precomputed tables for normal sampling (fn, kn, wn). */
   float m_fn[128];
   uint32 m_kn[128];
   float m_wn[128];
-};
 
+
+  /** @brief Internal mersenne-twister generator used as entropy source. */
+  std::mt19937 m_generator;
+};
 
 
 

@@ -1,12 +1,10 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * @file 	cyDinamicLibrary.h
- * @author 	Marco "Swampy" Millan
- * @date 	2022/03/01
- * @brief 	An object to load libraries and get symbols from them
- * 
+ * @file cyDinamicLibrary.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for DinamicLibrary.
  */
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
+
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
@@ -15,38 +13,76 @@
 
 namespace CYLLENE_SDK {
 
-
   namespace DYNLIBRESULT {
-    BETTER_ENUM(E, uint32, eSUCCESS = 0, eALREADYLOADED, eFAIL )
+    BETTER_ENUM(E, uint32, 
+                eSUCCESS = 0, 
+                eALREADYLOADED, 
+                eFAIL );
   }
 
-  class CY_UTILITY_EXPORT DynamicLibrary {
-    DynamicLibrary(const String& libName) {
-      m_name = libName;
-      m_data = nullptr;
-      load();
-    }
-
-    ~DynamicLibrary() = default;
-
-    DYNLIBRESULT::E
+/**
+ * @class DynamicLibrary
+ * @brief Runtime wrapper for loading libraries and resolving symbols.
+ */
+class CY_UTILITY_EXPORT DynamicLibrary {
+public:
+  /**
+   * @brief Constructs and loads a dynamic library by name.
+   * @param libName Library name or path.
+   */
+  DynamicLibrary(const String& libName) {
+    m_name = libName;
+    m_data = nullptr;
     load();
+  }
 
-    DYNLIBRESULT::E
-    unload();
+  /**
+   * @brief Default destructor.
+   */
+  ~DynamicLibrary() = default;
 
-    void*
-    loadSymbol(const String& symbol);
+  /**
+   * @brief Loads the library.
+   * @return Load result.
+   */
+  DYNLIBRESULT::E
+  load();
 
-    const String&
-    getName() const {
-      return m_name;
-    }
+  /**
+   * @brief Unloads the library.
+   * @return Unload result.
+   */
+  DYNLIBRESULT::E
+  unload();
 
-  private:
-    String m_name;
+  /**
+   * @brief Resolves a symbol from the loaded library.
+   * @param symbol Symbol name.
+   * @return Pointer to resolved symbol, or null on failure.
+   */
+  void*
+  loadSymbol(const String& symbol);
 
-    void* m_data = nullptr;
+  /**
+   * @brief Returns the library name.
+   * @return Library name.
+   */
+  const String&
+  getName() const {
+    return m_name;
+  }
 
-  };
+private:
+  /**
+   * @brief Library identifier or path.
+   */
+  String m_name;
+
+  /**
+   * @brief Opaque platform library handle.
+   */
+  void* m_data = nullptr;
+
+};
 }
+

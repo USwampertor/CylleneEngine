@@ -1,3 +1,9 @@
+/**
+ * @file cyPlatformMath.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for PlatformMath.
+ */
 
 #pragma once
 
@@ -22,15 +28,15 @@ namespace CYLLENE_SDK {
 struct CY_MATH_EXPORT PlatformMath {
 public:
   /**
-    * Transformation functions
-    */
+   * Transformation functions
+   */
 
   /**
-    * @brief Changes from degrees to rads
-    * @param T the degree to translate
-    * @return the degree in rads
-    *
-    */
+   * @brief Changes from degrees to rads
+   * @param degree Value in degrees.
+   * @return the degree in rads
+   *
+   */
   template<typename T>
   static T
   degToRad(T degree) {
@@ -38,11 +44,11 @@ public:
   }
 
   /**
-    * @brief Changes from rads to degrees
-    * @param T the rad to translate
-    * @return the rads in degrees
-    *
-    */
+   * @brief Changes from rads to degrees
+   * @param rad Value in radians.
+   * @return the rads in degrees
+   *
+   */
   template<typename T>
   static T
   radToDeg(T rad) {
@@ -50,15 +56,15 @@ public:
   }
 
   /**
-    * Trigonometric functions
-    */
+   * Trigonometric functions
+   */
 
-    /**
-    * @brief sin function
-    * @param radian to get sin
-    * @return the sin of the radian
-    *
-    */
+  /**
+   * @brief sin function
+   * @param radian to get sin
+   * @return the sin of the radian
+   *
+   */
   template<typename T>
   static T
   sin(T rad) {
@@ -66,11 +72,11 @@ public:
   }
 
   /**
-    * @brief cos function
-    * @param radian to get cos
-    * @return the cos of the radian
-    *
-    */
+   * @brief cos function
+   * @param radian to get cos
+   * @return the cos of the radian
+   *
+   */
   template<typename T>
   static T
   cos(T rad) {
@@ -78,11 +84,11 @@ public:
   }
 
   /**
-    * @brief tan function
-    * @param radian to get tan
-    * @return the tan of the radian
-    *
-    */
+   * @brief tan function
+   * @param radian to get tan
+   * @return the tan of the radian
+   *
+   */
   template<typename T>
   static T
   tan(T rad) {
@@ -90,11 +96,11 @@ public:
   }
 
   /**
-    * @brief asin function
-    * @param radian to get asin
-    * @return the asin of the radian
-    *
-    */
+   * @brief asin function
+   * @param radian to get asin
+   * @return the asin of the radian
+   *
+   */
   template<typename T>
   static T
   asin(T rad) {
@@ -102,11 +108,11 @@ public:
   }
 
   /**
-    * @brief acos function
-    * @param radian to get acos
-    * @return the acos of the radian
-    *
-    */
+   * @brief acos function
+   * @param radian to get acos
+   * @return the acos of the radian
+   *
+   */
   template<typename T>
   static T
   acos(T rad) {
@@ -114,11 +120,11 @@ public:
   }
 
   /**
-    * @brief atan function
-    * @param radian to get atan
-    * @return the atan of the radian
-    *
-    */
+   * @brief atan function
+   * @param radian to get atan
+   * @return the atan of the radian
+   *
+   */
   template<typename T>
   static T
   atan(T rad) {
@@ -126,11 +132,11 @@ public:
   }
 
   /**
-    * @brief atan function
-    * @param radian to get atan
-    * @return the atan of the radian
-    *
-    */
+   * @brief atan function
+   * @param radian to get atan
+   * @return the atan of the radian
+   *
+   */
   template<typename T>
   static T
   atan2(T t1, T t2) {
@@ -138,11 +144,11 @@ public:
   }
 
   /**
-    * @brief sinh function
-    * @param radian to get sinh
-    * @return the sinh of the radian
-    *
-    */
+   * @brief sinh function
+   * @param radian to get sinh
+   * @return the sinh of the radian
+   *
+   */
   template<typename T>
   static T
   sinh(T rad) {
@@ -150,11 +156,11 @@ public:
   }
 
   /**
-    * @brief cosh function
-    * @param radian to get cosh
-    * @return the cosh of the radian
-    *
-    */
+   * @brief cosh function
+   * @param radian to get cosh
+   * @return the cosh of the radian
+   *
+   */
   template<typename T>
   static T
   cosh(T rad) {
@@ -162,11 +168,11 @@ public:
   }
 
   /**
-    * @brief tanh function
-    * @param radian to get tanh
-    * @return the tanh of the radian
-    *
-    */
+   * @brief tanh function
+   * @param radian to get tanh
+   * @return the tanh of the radian
+   *
+   */
   template<typename T>
   static T
   tanh(T rad) {
@@ -174,11 +180,11 @@ public:
   }
 
   /**
-    * @brief asin function
-    * @param radian to get asin
-    * @return the asin of the radian
-    *
-    */
+   * @brief asin function
+   * @param radian to get asin
+   * @return the asin of the radian
+   *
+   */
   template<typename T>
   static T
   asinh(T rad) {
@@ -186,11 +192,11 @@ public:
   }
 
   /**
-    * @brief acosh function
-    * @param radian to get acosh
-    * @return the acosh of the radian
-    *
-    */
+   * @brief acosh function
+   * @param radian to get acosh
+   * @return the acosh of the radian
+   *
+   */
   template<typename T>
   static T
   acosh(T rad) {
@@ -198,11 +204,11 @@ public:
   }
 
   /**
-    * @brief atanh function
-    * @param radian to get atanh
-    * @return the atanh of the radian
-    *
-    */
+   * @brief atanh function
+   * @param radian to get atanh
+   * @return the atanh of the radian
+   *
+   */
   template<typename T>
   static T
   atanh(T rad) {
@@ -211,15 +217,15 @@ public:
 
 
   /**
-    * Basic math library
-    */
+   * Basic math library
+   */
 
-    /**
-    * @brief computes e to the value given
-    * @param power of e
-    * @return e^power
-    *
-    */
+  /**
+   * @brief computes e to the value given
+   * @param power of e
+   * @return e^power
+   *
+   */
   template<typename T>
   static T
   exp(T power) {
@@ -227,11 +233,11 @@ public:
   }
 
   /**
-    * @brief computes value to the power given
-    * @param value and power of the evaluation
-    * @return value^power
-    *
-    */
+   * @brief computes value to the power given
+   * @param value and power of the evaluation
+   * @return value^power
+   *
+   */
   template<typename T>
   static T
   pow(T value, T power) {
@@ -239,11 +245,12 @@ public:
   }
 
   /**
-    * @brief computes T value to the power given
-    * @param T value and float power of the evaluation
-    * @return value^power
-    *
-    */
+   * @brief computes value to the power given
+   * @param value Base value.
+   * @param power Exponent value.
+   * @return value^power
+   *
+   */
   template<typename T>
   static T
   powf(T value, float power) {
@@ -251,11 +258,11 @@ public:
   }
 
   /**
-    * @brief computes absolute of value
-    * @param value to get absolute
-    * @return value with no signs
-    *
-    */
+   * @brief computes absolute of value
+   * @param value to get absolute
+   * @return value with no signs
+   *
+   */
   template<typename T>
   static T
   abs(T value) {
@@ -263,11 +270,11 @@ public:
   }
 
   /**
-    * @brief computes square of given value
-    * @param value to get square of
-    * @return value^2
-    *
-    */
+   * @brief computes square of given value
+   * @param value to get square of
+   * @return value^2
+   *
+   */
   template<typename T>
   static T
   sqr(T value) {
@@ -275,11 +282,11 @@ public:
   }
 
   /**
-    * @brief computes cubic of given value
-    * @param value to get cubic of
-    * @return value^3
-    *
-    */
+   * @brief computes cubic of given value
+   * @param value to get cubic of
+   * @return value^3
+   *
+   */
   template<typename T>
   static T
   cbc(T value) {
@@ -287,11 +294,11 @@ public:
   }
 
   /**
-    * @brief computes square root of given value
-    * @param value to get square root of
-    * @return value^(1/2)
-    *
-    */
+   * @brief computes square root of given value
+   * @param value to get square root of
+   * @return value^(1/2)
+   *
+   */
   template <typename T>
   static T
   sqrt(T value) {
@@ -299,11 +306,11 @@ public:
   }
 
   /**
-    * @brief computes inverse square root of given value
-    * @param value to get inverse square root of
-    * @return 1/(value^(1/2))
-    *
-    */
+   * @brief computes inverse square root of given value
+   * @param value to get inverse square root of
+   * @return 1/(value^(1/2))
+   *
+   */
   template<typename T>
   static T
   invSqrt(T value) {
@@ -311,12 +318,12 @@ public:
   }
 
   /**
-    * @brief computes inverse square root of given value in a quick and dirty way without 
-    * losing important value (k thx Carmack)
-    * @param value to get inverse square root of
-    * @return the old and always useful carmack equation
-    *
-    */
+   * @brief computes inverse square root of given value in a quick and dirty way without 
+   * losing important value (k thx Carmack)
+   * @param value to get inverse square root of
+   * @return the old and always useful carmack equation
+   *
+   */
   template<typename T>
   static T
   qInvSqrt(T value) {
@@ -336,11 +343,11 @@ public:
   }
 
   /**
-    * @brief computes cubic root of given value
-    * @param value to get cubic root of
-    * @return value^(1/3)
-    *
-    */
+   * @brief computes cubic root of given value
+   * @param value to get cubic root of
+   * @return value^(1/3)
+   *
+   */
   template <typename T>
   static T
   cbrt(T value) {
@@ -348,12 +355,12 @@ public:
   }
 
   /**
-    * @brief computes hypotenuse of given CA and CO
-    * @param Opposite leg
-    * @param Adjacent leg
-    * @return value^2
-    *
-    */
+   * @brief computes hypotenuse of given CA and CO
+   * @param Opposite leg
+   * @param Adjacent leg
+   * @return value^2
+   *
+   */
   template <typename T>
   static T
   hypot(T co, T ca) {
@@ -361,12 +368,12 @@ public:
   }
 
   /**
-    * @brief returns the value a with the sign of b
-    * @param A magnitude value
-    * @param B sign value
-    * @return magnitude of A with sign of B
-    *
-    */
+   * @brief returns the value a with the sign of b
+   * @param a Magnitude value.
+   * @param b Sign source value.
+   * @return magnitude of A with sign of B
+   *
+   */
   template <typename T>
   static T
   copySign(T a, T b) {
@@ -374,13 +381,13 @@ public:
   }
 
   /**
-    * @brief returns true if two values are almost the same, given a threshold
-    * @param A value
-    * @param B value
-    * @param threshold value to take as reference. Default is SMALLNUMBER
-    * @return True if the absolute difference is lesser than the threshold
-    *
-    */
+   * @brief returns true if two values are almost the same, given a threshold
+   * @param a First value.
+   * @param b Second value.
+   * @param threshold Comparison threshold. Default is EPSILONF.
+   * @return True if the absolute difference is lesser than the threshold
+   *
+   */
   template <typename T>
   static bool
   isNearSame(T a, T b, T threshold = EPSILONF) {
@@ -388,12 +395,12 @@ public:
   }
 
   /**
-    * @brief gets the mod of value as float
-    * @param float
-    * @param denominator
-    * @return a module
-    *
-    */
+   * @brief gets the mod of value as float
+   * @param number Numerator value.
+   * @param denom Denominator value.
+   * @return a module
+   *
+   */
   template<typename T>
   static T
   mod(T number, T denom) {
@@ -401,12 +408,12 @@ public:
   }
 
   /**
-    * @brief gets the float mod of value as float
-    * @param T number
-    * @param T denominator
-    * @return a module
-    *
-    */
+   * @brief gets the float mod of value as float
+   * @param number Numerator value.
+   * @param denom Denominator value.
+   * @return a module
+   *
+   */
   template<typename T>
   static T
   fmod(T number, T denom) {
@@ -414,11 +421,11 @@ public:
   }
 
   /**
-    * @brief floors the given value to the nearest integer
-    * @param value to floor
-    * @return floored value
-    *
-    */
+   * @brief floors the given value to the nearest integer
+   * @param value to floor
+   * @return floored value
+   *
+   */
   template<typename T>
   static T
   floor(T a) {
@@ -426,12 +433,12 @@ public:
   }
 
   /**
-    * @brief floors the given value to the nearest position given number
-    * @param the number to floor
-    * @param the decimal position to take (0) (0.0) (0.00) (0.000)
-    * @return the number floored
-    *
-    */
+   * @brief floors the given value to the nearest position given number
+   * @param a Value to floor.
+   * @param position Decimal position to keep.
+   * @return the number floored
+   *
+   */
   template<typename T>
   static T
   floorp(T a, uint32 position = 0) {
@@ -440,11 +447,11 @@ public:
   }
 
   /**
-    * @brief ceiling given value to the nearest integer
-    * @param value to ceiling
-    * @return ceiling value
-    *
-    */
+   * @brief ceiling given value to the nearest integer
+   * @param value to ceiling
+   * @return ceiling value
+   *
+   */
   template<typename T>
   static T
   ceil(T a) {
@@ -452,12 +459,12 @@ public:
   }
 
   /**
-    * @brief sends the value to the ceiling in a given position
-    * @param the value to roof
-    * @param the decimal position to take (0) (0.0) (0.00) (0.000)
-    * @return the number roofed
-    *
-    */
+   * @brief sends the value to the ceiling in a given position
+   * @param a Value to ceil.
+   * @param position Decimal position to keep.
+   * @return the number roofed
+   *
+   */
   template<typename T>
   static T
   ceilp(T a, uint32 position = 0) {
@@ -466,11 +473,11 @@ public:
   }
 
   /**
-    * @brief rounds values to the nearest integer or half number x.0 <- -> x.5 <- -> y.0
-    * @param value to round half
-    * @return rounded value
-    *
-    */
+   * @brief rounds values to the nearest integer or half number x.0 <- -> x.5 <- -> y.0
+   * @param value to round half
+   * @return rounded value
+   *
+   */
   template<typename T>
   static T
   roundHalf(T a) {
@@ -478,11 +485,11 @@ public:
   }
 
   /**
-    * @brief rounds values to the nearest integer x.0 <- -> y.0
-    * @param value to round
-    * @return rounded value
-    *
-    */
+   * @brief rounds values to the nearest integer x.0 <- -> y.0
+   * @param value to round
+   * @return rounded value
+   *
+   */
   template<typename T>
   static T
   round(T a) {
@@ -490,12 +497,12 @@ public:
   }
 
   /**
-    * @brief rounds values to the nearest value given a decimal position
-    * @param the value to round
-    * @param the decimal position to take in account
-    * @return the value rounded to the decimal position
-    *
-    */
+   * @brief rounds values to the nearest value given a decimal position
+   * @param a Value to round.
+   * @param position Decimal position to keep.
+   * @return the value rounded to the decimal position
+   *
+   */
   template<typename T>
   static T
   roundp(T a, uint32 position = 0) {
@@ -504,11 +511,12 @@ public:
   }
 
   /**
-    * @brief returns the max value between two numbers
-    * @param A value, B value
-    * @return highest value
-    *
-    */
+   * @brief returns the max value between two numbers
+   * @param a First value.
+   * @param b Second value.
+   * @return highest value
+   *
+   */
   template<typename T>
   static T
   max(T a, T b) {
@@ -518,11 +526,12 @@ public:
   }
 
   /**
-    * @brief returns the min value between two numbers
-    * @param A value, B value
-    * @return lowest value
-    *
-    */
+   * @brief returns the min value between two numbers
+   * @param a First value.
+   * @param b Second value.
+   * @return lowest value
+   *
+   */
   template<typename T>
   static T
   min(T a, T b) {
@@ -533,11 +542,13 @@ public:
   }
 
   /**
-    * @brief returns the max value between 3 numbers
-    * @param A value, B value, C value
-    * @return highest value
-    *
-    */
+   * @brief returns the max value between 3 numbers
+   * @param a First value.
+   * @param b Second value.
+   * @param c Third value.
+   * @return highest value
+   *
+   */
   template<typename T>
   static T
   max3(T a, T b, T c) {
@@ -545,11 +556,13 @@ public:
   }
 
   /**
-    * @brief returns the min value between 3 numbers
-    * @param A value, B value, C value
-    * @return lowest value
-    *
-    */
+   * @brief returns the min value between 3 numbers
+   * @param a First value.
+   * @param b Second value.
+   * @param c Third value.
+   * @return lowest value
+   *
+   */
   template<typename T>
   static T
   min3(T a, T b, T c) {
@@ -557,12 +570,12 @@ public:
   }
 
   /**
-    * @brief breaks A value into an integral and a fraction
-    * @param fracpart the fraction
-    * @param intPart where is going to store the integer
-    * @return highest value
-    *
-    */
+   * @brief breaks A value into an integral and a fraction
+   * @param fracpart the fraction
+   * @param intPart where is going to store the integer
+   * @return highest value
+   *
+   */
   template<typename T>
   static T
   frac(T fracpart, T* intpart) {
@@ -570,11 +583,11 @@ public:
   }
 
   /**
-    * @brief clamps the value between two given values
-    * @param value to clamp, top value, bottom value
-    * @return highest value
-    *
-    */
+   * @brief clamps the value between two given values
+   * @param value to clamp, top value, bottom value
+   * @return highest value
+   *
+   */
   template<typename T>
   static T
   clamp(T number, T bot, T top) {
@@ -583,15 +596,15 @@ public:
 
 
   /**
-  * Log functions
-  */
+   * Log functions
+   */
 
   /**
-    * @brief returns the power of given number ( base 10)
-    * @param value to get exponent
-    * @return exponent of log(10) value
-    *
-    */
+   * @brief returns the power of given number ( base 10)
+   * @param value to get exponent
+   * @return exponent of log(10) value
+   *
+   */
   template <typename T>
   static T
   log10(T value) {
@@ -599,11 +612,11 @@ public:
   }
 
   /**
-    * @brief returns the power of given number ( base 2)
-    * @param value to get exponent
-    * @return exponent of log(2) value
-    *
-    */
+   * @brief returns the power of given number ( base 2)
+   * @param value to get exponent
+   * @return exponent of log(2) value
+   *
+   */
   template <typename T>
   static T
   log2(T value) {
@@ -611,11 +624,11 @@ public:
   }
 
   /**
-    * @brief returns the power of given number ( base e)
-    * @param value to get exponent
-    * @return exponent of ln value
-    *
-    */
+   * @brief returns the power of given number ( base e)
+   * @param value to get exponent
+   * @return exponent of ln value
+   *
+   */
   template <typename T>
   static T
   logN(T value) {
@@ -623,11 +636,11 @@ public:
   }
 
   /**
-    * @brief returns the power of given number by given base
-    * @param value to get exponent, base of logarithm
-    * @return exponent of log(base) value
-    *
-    */
+   * @brief returns the power of given number by given base
+   * @param value to get exponent, base of logarithm
+   * @return exponent of log(base) value
+   *
+   */
   template <typename T>
   static T
   logX(T base, T value) {
@@ -636,11 +649,11 @@ public:
 
 
   /**
-    * @brief creates a lerp between to given values and a scale
-    * @param first point a, second point b, scale of lerp
-    * @return lerp value
-    *
-    */
+   * @brief creates a lerp between to given values and a scale
+   * @param first point a, second point b, scale of lerp
+   * @return lerp value
+   *
+   */
   template<typename T>
   static T
   lerp(T a, T b, float scale) {
@@ -650,11 +663,11 @@ public:
   }
 
   /**
-    * @brief returns the factorial of given number
-    * @param top of the factorial list
-    * @return the factorial of top
-    *
-    */
+   * @brief returns the factorial of given number
+   * @param top of the factorial list
+   * @return the factorial of top
+   *
+   */
   template<typename T>
   static T
   factorial(T top) {
@@ -662,11 +675,11 @@ public:
   }
 
   /**
-    * @brief fast cosine of given radian
-    * @param radian to get cos
-    * @return cosine(rad) with Taylor
-    *
-    */
+   * @brief fast cosine of given radian
+   * @param radian to get cos
+   * @return cosine(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fastcos(T rad) {
@@ -678,11 +691,11 @@ public:
   }
 
   /**
-    * @brief fast sin of given radian
-    * @param radian to get sin
-    * @return sin(rad) with Taylor
-    *
-    */
+   * @brief fast sin of given radian
+   * @param radian to get sin
+   * @return sin(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fastsin(T rad) {
@@ -702,19 +715,19 @@ public:
   }
 
   /**
-    * @brief fast tangent of given radian
-    * @param radian to get tan
-    * @return tan(rad) with Taylor
-    *
-    */
+   * @brief fast tangent of given radian
+   * @param radian to get tan
+   * @return tan(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fasttan(T rad) {
-    return (rad -
-            (std::pow(rad, 3) * 0.3333333333f ) +
-            (std::pow(rad, 5) * 0.1333333333f ) -
-            (std::pow(rad, 7) * 0.0539682539f ) +
-            (std::pow(rad, 9) * 0.0218694885f ));
+    return static_cast<T>((rad -
+                           (std::pow(rad, 3) * 0.3333333333f ) +
+                           (std::pow(rad, 5) * 0.1333333333f ) -
+                           (std::pow(rad, 7) * 0.0539682539f ) +
+                           (std::pow(rad, 9) * 0.0218694885f )));
 
 
 //       return (rad -
@@ -725,11 +738,11 @@ public:
   }
 
   /**
-    * @brief fast arcocosine of given radian
-    * @param radian to get acos
-    * @return arcocosine(rad) with Taylor
-    *
-    */
+   * @brief fast arcocosine of given radian
+   * @param radian to get acos
+   * @return arcocosine(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fastacos(T rad) {
@@ -746,11 +759,11 @@ public:
   }
 
   /**
-    * @brief fast arcsine of given radian
-    * @param radian to get asin
-    * @return arcsine(rad) with Taylor
-    *
-    */
+   * @brief fast arcsine of given radian
+   * @param radian to get asin
+   * @return arcsine(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fastasin(T rad) {
@@ -767,11 +780,11 @@ public:
   }
 
   /**
-    * @brief fast arctan of given radian
-    * @param radian to get atan
-    * @return arctan(rad) with Taylor
-    *
-    */
+   * @brief fast arctan of given radian
+   * @param radian to get atan
+   * @return arctan(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fastatan(T rad) {
@@ -784,11 +797,11 @@ public:
   }
 
   /**
-    * @brief fast hyperbolic cosine of given radian
-    * @param radian to get cosh
-    * @return hyperbolic cosine(rad) with Taylor
-    *
-    */
+   * @brief fast hyperbolic cosine of given radian
+   * @param radian to get cosh
+   * @return hyperbolic cosine(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fastcosh(T rad) {
@@ -800,11 +813,11 @@ public:
   }
 
   /**
-    * @brief fast hyperbolic cosine of given radian
-    * @param radian to get cosh
-    * @return hyperbolic cosine(rad) with Taylor
-    *
-    */
+   * @brief fast hyperbolic cosine of given radian
+   * @param radian to get cosh
+   * @return hyperbolic cosine(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fastsinh(T rad) {
@@ -816,11 +829,11 @@ public:
   }
 
   /**
-    * @brief fast hyperbolic tangent of given radian
-    * @param radian to get tanh
-    * @return hyperbolic tangent(rad) with Taylor
-    *
-    */
+   * @brief fast hyperbolic tangent of given radian
+   * @param radian to get tanh
+   * @return hyperbolic tangent(rad) with Taylor
+   *
+   */
   template<typename T>
   static T
   fasttanh(T rad) {
@@ -833,12 +846,20 @@ public:
       (62370.0f + PlatformMath::sqr(rad) * (3150.0f + PlatformMath::sqr(rad) * 28.0f));
   }
 
+  /**
+   * @brief checks if the T value is NaN
+   * @return true if its NaN
+   */
   template<typename T>
   static bool
   isNaN(T value) {
     return std::isnan(value);
   }
 
+  /**
+   * @brief checks if the T value is Infinite
+   * @return true if it's infinite
+   */
   template<typename T>
   static bool
   isInfinite(T value) {
@@ -847,53 +868,54 @@ public:
 
 
   /**
-    * Constants
-    */
+   * Constants
+   */
 
-    /**
-    * Constant PI 3.141592~
-    */
+  /**
+   * @brief Constant PI 3.141592~
+   */
   static const float PI;
 
   /**
-    * HALF of Constant PI 3.141592~
-    */
+   * @brief HALF of Constant PI 3.141592~
+   */
   static const float HALF_PI;
 
   /**
-    * Constant EULER 2.71828182
-    */
+   * @brief Constant EULER 2.71828182
+   */
   static const float EULER;
 
   /**
-    * Equivalent degrees of 1 rad
-    */
+   * @brief Equivalent degrees of 1 rad
+   */
   static const float DEG2RAD;
 
   /**
-    * Equivalent radians of 1 Degree
-    */
+   * @brief Equivalent radians of 1 Degree
+   */
   static const float RAD2DEG;
 
   /**
-    * A little number. Used for floating precision
-    */
+   * @brief A little number. Used for floating precision
+   */
   static const float SMALLNUMBER;
 
   /**
-    * A kinda small number. Used for floating precision, but not as precise as SMALLNUMBER
-    */
+   * @brief A kinda small number. Used for floating precision, but not as precise as SMALLNUMBER
+   */
   static const float KINDASMALLNUMBER;
 
   /**
-    * An epsilon for floats, using the b / 2 system
-    */
+   * @brief An epsilon for floats, using the b / 2 system
+   */
   static const float EPSILONF;
 
   /**
-    * An epsilon for doubles, using the b / 2 system
-    */
+   * @brief An epsilon for doubles, using the b / 2 system
+   */
   static const float EPSILOND;
 
 };
 }
+

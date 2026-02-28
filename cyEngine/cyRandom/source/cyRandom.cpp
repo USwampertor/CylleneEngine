@@ -28,7 +28,7 @@ Random::set(const uint32& newSeed) {
 //     m_seed[3] = newSeed * 0x912FF1AD + 1;
 
   m_ziggurat.m_generator = { newSeed };
-  m_mt.m_generator = { newSeed };
+  m_mt.m_generator = {newSeed};
 }
 
 float

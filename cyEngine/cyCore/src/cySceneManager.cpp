@@ -58,7 +58,7 @@ void SceneManager::saveScene()
 
 SPtr<Scene> SceneManager::findScene(const String& sceneToFind)
 {
-  for (int i = 0; i < m_scenes.size(); ++i)
+  for (int32 i = 0; i < m_scenes.size(); ++i)
   {
     if (m_scenes[i]->getName() == sceneToFind)
     {
@@ -76,7 +76,7 @@ void SceneManager::update(const float& delta)
   auto& toRemove = m_activeScene->m_toRemove;
   auto& nodes = m_activeScene->m_beingVector;
 
-  for (int i = 0; i < nodes.size(); ++i) {
+  for (int32 i = 0; i < nodes.size(); ++i) {
     if (SPtr<BBeing> being = nodes[i]) {
       if (being->m_markedToDestroy) {
       // Notify components
@@ -106,7 +106,7 @@ void SceneManager::update(const float& delta)
   // Delete Entities that are marked for delete
   // for (SPtr<BBeing> toDelete : m_activeScene->m_toRemove)
   // {
-  //   int i = 0;
+  //   int32 i = 0;
   // 
   //   for (SPtr<BBeing> e : m_activeScene->m_beings)
   //   {
@@ -123,7 +123,7 @@ void SceneManager::update(const float& delta)
   //   m_activeScene->m_toRemove.clear();
   // }
   // 
-  // for (int j = 0; j < m_activeScene->m_entities.size(); ++j)
+  // for (int32 j = 0; j < m_activeScene->m_entities.size(); ++j)
   // {
   //   // TODO: Check a better way of doing this
   //   if (!App::Instance().m_parser.HasFlag("editor"))
@@ -137,7 +137,7 @@ void SceneManager::update(const float& delta)
 // void SceneManager::updateRender(RenderWindow& w)
 // {
 //   // rmt_ScopedCPUSample(UpdateRender, 0);
-//   for (int i = 0; i < SceneManager::Instance().GetActiveScene()->m_entities.size(); ++i)
+//   for (int32 i = 0; i < SceneManager::Instance().GetActiveScene()->m_entities.size(); ++i)
 //   {
 // 
 //     if (m_activeScene->m_entities[i]->GetComponent<Sprite>())
@@ -175,7 +175,7 @@ JSONDocument SceneManager::serialize(const Vector<String>& names)
   //   obj.AddMember("gravity", gravity, allocator);
   // 
   //   JSONValue entitiesDoc(rapidjson::kArrayType);
-  //   for (int i = 0; i < sceneToSave->m_entities.size(); ++i)
+  //   for (int32 i = 0; i < sceneToSave->m_entities.size(); ++i)
   //   {
   //     JSONDocument entityDoc = sceneToSave->m_entities[i]->Serialize();
   //     entitiesDoc.PushBack(JSONValue(entityDoc, allocator), allocator);

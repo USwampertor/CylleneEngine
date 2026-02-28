@@ -64,7 +64,7 @@ SNode::addChildren(const Vector<WPtr<SNode>>& newChildren, bool keepWorldTransfo
 void
 SNode::removeChild(const String& name) {
 
-  for (int i = 0; i < m_childrenNodes.size(); ++i) {
+  for (int32 i = 0; i < m_childrenNodes.size(); ++i) {
     if (m_childrenNodes[i].lock()->getName() == name) {
       
       // Optionally preserve world transform
@@ -88,7 +88,7 @@ SNode::removeChild(const String& name) {
 void 
 SNode::removeChild(WPtr<SNode> child, bool recursive) {
   
-  for (int i = 0; i < m_childrenNodes.size(); ++i) {
+  for (int32 i = 0; i < m_childrenNodes.size(); ++i) {
     // If found the child node
     if (m_childrenNodes[i].lock().get() == child.lock().get()) {
       if (recursive) {

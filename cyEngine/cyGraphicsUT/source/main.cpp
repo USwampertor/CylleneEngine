@@ -758,7 +758,7 @@ main(int argc, char* argv[])
   // Create Default Camera
   SPtr<BBeing> camBeing = SceneManager::instance().createBeing<BBeing>("DefaultCamera").lock();
   auto camXform = camBeing->getTransform().lock();
-  camXform->setLocalTransform(Vector3f(0.0f, 2.0f, -6.0f), Vector3f::ONE, Quaternion::IDENTITY);
+  camXform->setLocalTransform(Vector3f(0.0f, 2.0f, 6.0f), Vector3f::ONE, Quaternion::IDENTITY);
   WPtr<CCamera> camera = camBeing->createComponent<CCamera>();
   camera.lock()->setPerspective(1280.0f, 720.0f, 0.1f, 100.0f, 60.0f);
   camera.lock()->setLookAt(Vector3f(0,0,0), Vector3f::UP);

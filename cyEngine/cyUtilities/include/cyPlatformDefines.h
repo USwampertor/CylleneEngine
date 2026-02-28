@@ -1,14 +1,11 @@
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
  * @file cyPlatformDefines.h
- * @author Marco "Swampy" Millan
- * @date 2021/08/04
- * @brief File defining the platform types
- *
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for PlatformDefines.
  */
- /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
-#pragma once
 
+#pragma once
 
 #define CY_PLATFORM_WIN32      1             //Windows Platform
 #define CY_PLATFORM_LINUX      2             //Linux Platform
@@ -35,11 +32,9 @@
 //Define if on a crash we want to report warnings or uNknown symbols
 #define CY_DEBUG_DETAILED_SYMBOLS 1
 
-/*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 /**
- * Compiler type and version
+ * @brief Compiler type and version macros.
  */
- /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #if defined(_clang__)
 # define CY_COMPILER CY_COMPILER_CLANG
@@ -82,8 +77,8 @@
 #endif
 
 /**
-* See if we can use __forceinline or if we need to use __inline instead
-*/
+ * See if we can use __forceinline or if we need to use __inline instead
+ */
 
 #if CY_COMPILER == CY_COMPILER_MSVC         //If we are compiling on Visual Studio
 # if CY_COMP_VER >= 1200                     //If we are on Visual Studio 6 or higher
@@ -107,8 +102,8 @@
 #endif
 
 /**
-* Finds the current platform
-*/
+ * Finds the current platform
+ */
 #if defined(__WIN32__) || defined(_WIN32)     //If its a windows platform
 # define CY_PLATFORM CY_PLATFORM_WIN32
 #elif defined(__APPLE_CC__)                   //...or is an Apple platform
@@ -120,8 +115,8 @@
 #endif
 
 /**
-* Finds the architecture type
-*/
+ * Finds the architecture type
+ */
 #if defined(__x86_64__)||defined(_M_X64)      //If this is a x64 compile
 # define CY_ARCH_TYPE CY_ARCHITECTURE_x86_64
 #else //If its a x86 compile
@@ -129,8 +124,8 @@
 #endif
 
 /**
-* Memory alignment macros
-*/
+ * Memory alignment macros
+ */
 #if CY_COMPILER == CY_COMPILER_MSVC         //If we are compiling on visual studio
 # define MS_ALIGN(n) __declspec(align(n))
 # ifndef GCC_PACK
@@ -150,9 +145,9 @@
 #endif
 
 /**
-* For throw override (deprecated on c++11 but visual studio does not have handle
-* no exception)
-*/
+ * For throw override (deprecated on c++11 but visual studio does not have handle
+ * no exception)
+ */
 # if CY_COMPILER == CY_COMPILER_MSVC
 # define _NOEXCEPT noexcept
 # elif CY_COMPILER == CY_COMPILER_INTEL
@@ -164,8 +159,8 @@
 # endif
 
 /**
-* Library export specifics
-*/
+ * Library export specifics
+ */
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # if CY_COMPILER == CY_COMPILER_MSVC
 #   if defined( CY_STATIC_LIB )
@@ -207,8 +202,8 @@
 #endif
 
 /**
-* Windows Specific Settings
-*/
+ * Windows Specific Settings
+ */
 //Win32 compilers use _DEBUG for specifying debug builds. For MinGW we set DEBUG
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # if defined(_DEBUG)||defined(DEBUG)
@@ -222,8 +217,8 @@
 #endif  //CY_PLATFORM == CY_PLATFORM_WIN32
 
 /**
-* Linux/Apple Specific Settings
-*/
+ * Linux/Apple Specific Settings
+ */
 #if CY_PLATFORM == CY_PLATFORM_LINUX || CY_PLATFORM == CY_PLATFORM_OSX
 # define stricmp strcasecmp
 
@@ -239,8 +234,8 @@
 #endif  //CY_PLATFORM == CY_PLATFORM_LINUX || CY_PLATFORM == CY_PLATFORM_OSX
 
 /**
-* PS4 Specific Settings
-*/
+ * PS4 Specific Settings
+ */
 #if CY_PLATFORM == CY_PLATFORM_PS4
 //If we are on a DEBUG build
 # if defined(_DEBUG)||defined(DEBUG)
@@ -251,8 +246,8 @@
 #endif  //CY_PLATFORM == CY_PLATFORM_PS4
 
 /**
-* Definition of Debug macros
-*/
+ * Definition of Debug macros
+ */
 #if CY_DEBUG_MODE
 # define CY_DEBUG_ONLY(x) x
 # define CY_ASSERT(x) assert(x)
@@ -262,8 +257,8 @@
 #endif
 
 /**
-* Disable some compiler warnings
-*/
+ * Disable some compiler warnings
+ */
 //If we are compiling with Visual Studio
 #if CY_COMPILER == CY_COMPILER_MSVC
   /**
@@ -289,14 +284,4 @@
     * Happens when a keyboard was used that is not in the C++
     */
 #endif
-
-
-
-
-
-
-
-
-
-
 

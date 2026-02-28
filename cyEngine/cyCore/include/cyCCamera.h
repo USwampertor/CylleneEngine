@@ -63,6 +63,9 @@ public:
   void
   changeCameraType(const CAMERA_TYPE::E& type);
 
+  virtual void
+  applyTransformChanges(const Matrix4& newTransform) override;
+
 public:
 
 

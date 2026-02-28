@@ -335,7 +335,7 @@ CTransform::updateWorld() {
   else {
     m_worldMatrix = m_localMatrix;
   }
-
+  applyTransformChanges(m_worldMatrix);
   UpdateChildren();
 }
 
@@ -355,6 +355,21 @@ CTransform::UpdateChildren() {
       if (SPtr<CTransform> childTransform = child->getTransform().lock()) {
         childTransform->updateWorld();
       }
+    }
+  }
+}
+
+void
+CTransform::applyTransformChanges(const Matrix4& newTransform) {
+  auto owner = m_owner.lock();
+  
+  if (!owner) {
+    return;
+  }
+
+  for (auto& componentPair : owner->getAllComponents()) {
+    if (componentPair.second->getType() != +COMPONENT_TYPE::E::eTRANSFORM) {
+      componentPair.second->applyTransformChanges(newTransform);
     }
   }
 }

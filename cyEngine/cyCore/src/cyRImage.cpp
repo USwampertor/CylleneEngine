@@ -45,51 +45,51 @@ RImage::bitBlt(const SPtr<RImage>& srcImg,
                       const Rect& srcRect, 
                       const Rect& dstRect, 
                       const TEXTUREMODE::E& format) {
-  for (uint32 desty = 0; desty < dstRect.height; ++desty) {
-    for (uint32 destx = 0; destx < dstRect.width; ++destx) {
+  for (uint32 desty = 0; desty < dstRect.getHeight(); ++desty) {
+    for (uint32 destx = 0; destx < dstRect.getWidth(); ++destx) {
 
       uint32 srcx = 0;
       uint32 srcy = 0;
       uint32 desx = 0;
       uint32 desy = 0;
 
-      desx = dstRect.x + destx;
-      desy = dstRect.y + desty;
+      desx = dstRect.getX() + destx;
+      desy = dstRect.getY() + desty;
 
       if (desx < 0 || desx >= m_metadata.m_width || desy < 0 || desy >= m_metadata.m_height) {
         continue;
       }
 
       if (+TEXTUREMODE::E::eNONE == format) {
-        srcx = srcRect.x + destx;
-        srcy = srcRect.y + desty;
+        srcx = srcRect.getX() + destx;
+        srcy = srcRect.getY() + desty;
       }
       else if (+TEXTUREMODE::E::eWRAP == format  || +TEXTUREMODE::E::eREPEAT == format) {
-        srcx = (srcRect.x + destx % srcImg->m_metadata.m_width + srcRect.width) % 
-               (srcRect.width);
-        srcy = (srcRect.y + desty % srcImg->m_metadata.m_height + srcRect.height) % 
-               (srcRect.height);
+        srcx = (srcRect.getX() + destx % srcImg->m_metadata.m_width + srcRect.getWidth()) %
+               (srcRect.getWidth());
+        srcy = (srcRect.getY() + desty % srcImg->m_metadata.m_height + srcRect.getHeight()) %
+               (srcRect.getHeight());
       }
       else if (+TEXTUREMODE::E::eCLAMP == format) {
-        srcx = Math::clamp(srcRect.x + destx, uint32(0), 
+        srcx = Math::clamp(srcRect.getX() + destx, uint32(0),
                            static_cast<uint32>(srcImg->m_metadata.m_width - 1));
-        srcy = Math::clamp(srcRect.y + desty, uint32(0), 
+        srcy = Math::clamp(srcRect.getY() + desty, uint32(0),
                            static_cast<uint32>(srcImg->m_metadata.m_height - 1));
       }
       else if (+TEXTUREMODE::E::eMIRROR == format) {
-        srcx = mirrorCoord(srcRect.x + destx, srcImg->m_metadata.m_width);
-        srcy = mirrorCoord(srcRect.y + desty, srcImg->m_metadata.m_height);
+        srcx = mirrorCoord(srcRect.getX() + destx, srcImg->m_metadata.m_width);
+        srcy = mirrorCoord(srcRect.getY() + desty, srcImg->m_metadata.m_height);
       }
       else if (+TEXTUREMODE::E::eSTRETCH == format) {
-        float u = static_cast<float>(destx) / dstRect.width;
-        float v = static_cast<float>(desty) / dstRect.height;
+        float u = static_cast<float>(destx) / dstRect.getWidth();
+        float v = static_cast<float>(desty) / dstRect.getHeight();
 
-        srcx = Math::clamp(srcRect.x + static_cast<uint32>(u * srcRect.width - 1), uint32(0), 
+        srcx = Math::clamp(srcRect.getX() + static_cast<uint32>(u * srcRect.getWidth() - 1), uint32(0),
                            srcImg->m_metadata.m_width - 1);
-        srcy = Math::clamp(srcRect.y + static_cast<uint32>(v * srcRect.height - 1), uint32(0), 
+        srcy = Math::clamp(srcRect.getY() + static_cast<uint32>(v * srcRect.getHeight() - 1), uint32(0),
                            srcImg->m_metadata.m_height - 1);
       }
-      int32_t pos = (srcy * srcRect.width) + (srcx);
+      int32_t pos = (srcy * srcRect.getWidth()) + (srcx);
       Pixel srcPixel = srcImg->m_pixels[pos];
       m_pixels[(desy * m_metadata.m_width) + (desx)] = srcPixel;
     }
@@ -124,18 +124,18 @@ RImage::setPixel(const Vector2i& pos, const Pixel& color /*= Pixel::CLEAR */) {
 
 void
 RImage::filterPixel(const Rect& rect, const Pixel& color, const uint32& tolerance) {
-  for (uint32 desty = 0; desty < rect.height; ++desty) {
-    for (uint32 destx = 0; destx < rect.width; ++destx) {
+  for (uint32 desty = 0; desty < rect.getHeight(); ++desty) {
+    for (uint32 destx = 0; destx < rect.getWidth(); ++destx) {
 
       uint32 srcx = 0;
       uint32 srcy = 0;
 
-      srcx = rect.x + destx;
-      srcy = rect.y + desty;
+      srcx = rect.getX() + destx;
+      srcy = rect.getY() + desty;
 
-      Pixel srcPixel = m_pixels[(srcy * rect.width) + (srcx)];
+      Pixel srcPixel = m_pixels[(srcy * rect.getWidth()) + (srcx)];
       if (srcPixel == color) {
-        m_pixels[(srcy * rect.width) + (srcx)] = Color::CLEAR;
+        m_pixels[(srcy * rect.getWidth()) + (srcx)] = Color::CLEAR;
       }
     }
   }

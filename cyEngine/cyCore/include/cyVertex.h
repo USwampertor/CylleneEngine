@@ -57,7 +57,7 @@ public:
       m_tangent(normal),
       m_binormal(normal),
       m_uv(uv) {
-        for (int i = 0; i < 4; ++i) {
+        for (int32 i = 0; i < 4; ++i) {
           m_boneIDs[i]      = boneIDs[i];
           m_boneWeights[i]  = boneweights[i];
           m_customData[i]   = -1;

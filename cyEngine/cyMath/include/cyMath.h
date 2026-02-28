@@ -1,3 +1,9 @@
+/**
+ * @file cyMath.h
+ * @author Cyllene Engine Team
+ * @date 2026-02-26
+ * @brief Contains declarations and definitions for Math.
+ */
 #pragma once
 
 #include "cyMathPrerequisites.h"
