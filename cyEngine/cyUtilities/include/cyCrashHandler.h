@@ -10,14 +10,17 @@
 #include "cyUtilitiesPrerequisites.h"
 
 #include "cyException.h"
+#include "cyEvent.h"
 #include "cyFileSystem.h"
 #include "cyModule.h"
 
-#define CY_MAX_STACKTRACE_DEPTH 200
-#define CY_MAX_STACKTRACE_NAME_BYTES 1024
-
 namespace CYLLENE_SDK
 {
+// @brief max stack depth
+constexpr uint32 CY_MAX_STACKTRACE_DEPTH      = 200;
+// @brief Max size in bytes
+constexpr uint32 CY_MAX_STACKTRACE_NAME_BYTES = 1024;
+
 /**
  * @class CrashHandler
  * @brief Collects crash diagnostics and writes crash reports.
@@ -26,8 +29,9 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
 {
  public:
   
+  // @brief OS Default Constructor
   CrashHandler();
-
+  // @brief OS defined destructor
   ~CrashHandler();
 
   /**
@@ -108,13 +112,6 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
              Stringview stackTrace);
 
   /**
-   * @brief Opens the external crash handler application.
-   * @param params Launch parameters.
-   */
-  void
-  openCrashHandlerApp(Stringview params);
-
-  /**
    * @brief Shuts down crash handling resources.
    */
   void
@@ -122,31 +119,21 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
 
 private:
 
-  /**
-   * @brief Crash output folder name.
-   */
+  // @brief Crash output folder name.
   static const String m_crashFolder;
 
-  /**
-   * @brief Crash log file name.
-   */
+  // @brief Crash log file name.
   static const String m_crashLog;
 
-  /**
-   * @brief Default crash message key.
-   */
+  // @brief Default crash message key.
   static const String m_errorMessage;
-#if CY_PLATFORM == CY_PLATFORM_WIN32
-  /**
-   * @brief Platform-specific crash handler state.
-   */
+  // @brief Platform-specific crash handler state.
   struct Data;
-
-  /**
-   * @brief Platform-specific crash handler data pointer.
-   */
+  
+  // @brief Platform-specific crash handler data pointer.
   Data* m_data;
-#endif
+
+  Event<void> onLogCreated;
 };
 
 }

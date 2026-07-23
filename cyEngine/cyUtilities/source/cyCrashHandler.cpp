@@ -96,17 +96,6 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::openCrashHandlerApp(Stringview params) {
-    Utils::open(Stringview(FileSystem::getWorkingDirectory().fullPath() + 
-#if _DEBUG
-      String("/cyCrashHandler.exe")),
-#else
-      String("/cyCrashHandlerd.exe")),
-#endif
-                params);
-  }
-
-  void
   CrashHandler::shutdown() {
 
   }

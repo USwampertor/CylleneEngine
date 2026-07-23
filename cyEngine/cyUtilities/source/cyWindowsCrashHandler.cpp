@@ -5,10 +5,9 @@
 
 //Disable warning in VS2015 that's not under my control
 // Thanks Prince
-#pragma warning(disable : 4091)
-#	include <DbgHelp.h>
-#pragma warning(default : 4091)
-
+# pragma warning(disable : 4091)
+# include <DbgHelp.h>
+# pragma warning(default : 4091)
 #endif
 
 #include "cyUtilitiesPrerequisites.h"
@@ -506,7 +505,6 @@ namespace CYLLENE_SDK {
                     folder.fullPath());
     auto response = MessageBox(nullptr, errorMessage.c_str(), "Cyllene Engine Error!", MB_YESNO);
     if (response == IDYES) {
-      CrashHandler::instance().openCrashHandlerApp(Utils::format("-p %s", dumpFile.fullPath()));
     }
   }
 
