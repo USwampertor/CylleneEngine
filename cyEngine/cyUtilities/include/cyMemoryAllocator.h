@@ -513,7 +513,7 @@ cy_free_aligned16(void* ptr) {
  * @tparam T Value type.
  * @tparam Alloc Allocator tag type.
  */
-template <class T, class Alloc = GenAlloc>
+template <class T, class Alloc> // = GenAlloc>
 class StdAlloc
 {
  public:
@@ -645,5 +645,20 @@ class StdAlloc
     new(p) T(forward<Args>(args)...);
   }
 };
+
+/**
+ * @struct CyDeleter
+ * @brief Custom deleter for std::unique_ptr that uses cy_delete.
+ * @tparam T Type to delete.
+ */
+template<typename T>
+struct CyDeleter {
+  void operator()(T* ptr) const {
+    if (ptr) {
+      cy_delete(ptr);
+    }
+  }
+};
+
 }
 

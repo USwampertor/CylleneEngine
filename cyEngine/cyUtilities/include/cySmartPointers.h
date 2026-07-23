@@ -259,7 +259,7 @@ public:
   template <typename T>
   T* 
   store(SmartPtr<T>&& uniquePtr) {
-    SmartPtr<T>* newPtr = new SmartPtr<T>(std::move(uniquePtr));
+    SmartPtr<T>* newPtr = cy_new<SmartPtr<T>>(std::move(uniquePtr));
     pointers.insert(newPtr);
     return newPtr->get();
   }
@@ -272,7 +272,7 @@ public:
     int32 size = 0;
     for (auto ptr : pointers) {
       if (ptr->m_counter <= 1) {
-        delete ptr;
+        cy_delete(ptr);
         ++size;
       }
     }
@@ -291,7 +291,7 @@ public:
   template <typename T, typename... Args>
   SmartPtr<T> 
   create(Args ... args) {
-    SmartPtr<T>* newPtr = new SmartPtr<T>(std::forward<Args>(args)...);
+    SmartPtr<T>* newPtr = cy_new<SmartPtr<T>>(std::forward<Args>(args)...);
     pointers.insert(newPtr);
     return *newPtr;
   }
@@ -307,7 +307,7 @@ public:
   remove(T* rawPtr) {
     for (auto it = pointers.begin(); it != pointers.end(); ++it) {
       if (*it == rawPtr) {
-        delete* it;
+        cy_delete(*it);
         pointers.erase(it);
         break;
       }

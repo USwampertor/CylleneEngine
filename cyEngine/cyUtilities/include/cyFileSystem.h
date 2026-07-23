@@ -43,19 +43,21 @@ struct CY_UTILITY_EXPORT FileSystem
   }
 
   /**
-   * @brief Loads an entire file as a binary buffer.
-   * @param fileName File path.
-   * @return Heap-allocated binary data buffer.
-   */
+    * @brief Loads an entire file as a binary buffer.
+    * @param fileName File path.
+    * @param outFileSize Receives the number of bytes loaded.
+    * @return Heap-allocated binary data buffer (free with cy_deleteN).
+    */
   static unsigned char*
-  openBinary(Stringview fileName) {
+  openBinary(Stringview fileName, size_t& outFileSize) {
     IfStream file;
     file.open(fileName.data(), IfStream::binary | IfStream::in | IfStream::ate);
-    const int32 file_length = static_cast<const int>(file.tellg());
+    const size_t file_length = static_cast<size_t>(file.tellg());
 
-    unsigned char* data = new unsigned char[file_length];
+    unsigned char* data = cy_newN<unsigned char>(file_length);
     file.seekg(file.beg);
-    file.read(reinterpret_cast<char*>(data), file_length); // error PBYTE is incompatibe with char*
+    file.read(reinterpret_cast<char*>(data), static_cast<std::streamsize>(file_length));
+    outFileSize = file_length;
     return data;
   }
 

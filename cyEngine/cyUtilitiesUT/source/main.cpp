@@ -361,9 +361,11 @@ TEST_SUITE("File System") {
     CHECK(FileSystem::exists(file.path()) == true);
     CHECK(file.writeFile("hello utilities") == true);
 
-    unsigned char* data = FileSystem::openBinary(filePath);
+    size_t fileSize = 0;
+    unsigned char* data = FileSystem::openBinary(filePath, fileSize);
     CHECK(data != nullptr);
-    delete[] data;
+    CHECK(fileSize > 0);
+    cy_deleteN(data, fileSize);
 
     FileSystem::deleteFolder(basePath);
     CHECK(FileSystem::exists(basePath) == false);

@@ -3,6 +3,7 @@
 #include <new>
 #include "cyStdHeaders.h"
 #include "cyPlatformTypes.h"
+#include "cyMemoryAllocator.h"
 
 namespace CYLLENE_SDK
 {
@@ -58,12 +59,12 @@ public:
     m_freeElements = static_cast<uint32>(poolSize);
 
     // Raw, suitably-aligned storage; elements are placement-constructed later.
-    m_elements = static_cast<T*>(::operator new(poolSize * sizeof(T),
-      std::align_val_t{ alignof(T) }));
+    m_elements = static_cast<T*>(cy_alloc_aligned(poolSize * sizeof(T),
+      alignof(T)));
 
     // One bit per element, packed 8 elements per byte; round up.
     const size_t flagBytes = flagByteCount(poolSize);
-    m_allocatedBitFlags = new uint8[flagBytes];
+    m_allocatedBitFlags = cy_newN<uint8>(flagBytes);
     for (size_t i = 0; i < flagBytes; ++i) {
       m_allocatedBitFlags[i] = 0;
     }
@@ -142,11 +143,12 @@ public:
           m_elements[i].~T();
         }
       }
-      ::operator delete(static_cast<void*>(m_elements),
-        std::align_val_t{ alignof(T) });
+      cy_free_aligned(static_cast<void*>(m_elements));
     }
 
-    delete[] m_allocatedBitFlags;
+    if (m_allocatedBitFlags) {
+      cy_deleteN(m_allocatedBitFlags, flagByteCount(m_poolSize));
+    }
     m_elements = nullptr;
     m_allocatedBitFlags = nullptr;
     m_poolSize = 0;
