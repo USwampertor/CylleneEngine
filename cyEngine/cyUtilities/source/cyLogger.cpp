@@ -9,6 +9,7 @@
 /*0***0***0***0***0***0***0***0***0***0***0***0***0***0***0***0*/
 
 #include "cyLogger.h"
+#include "cyFileSystem.h"
 #include "cyUtilities.h"
 #include "cyTime.h"
 
@@ -49,7 +50,7 @@ namespace CYLLENE_SDK {
 
   void 
   Logger::onStartUp() {
-    Logger::instance().init();
+    this->init();
   }
 
   void

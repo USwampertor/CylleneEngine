@@ -107,7 +107,7 @@ public:
    */
   static void 
   throwException(Stringview message) {
-    throw::std::exception(message.data());
+    throw std::runtime_error(message.data());
   }
 
   /**
@@ -116,7 +116,7 @@ public:
    */
   static void
   throwRuntimeError(Stringview message) {
-    throw::std::runtime_error(message.data());
+    throw std::runtime_error(message.data());
   }
 
   /**

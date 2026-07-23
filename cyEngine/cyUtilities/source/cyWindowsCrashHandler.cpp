@@ -1,4 +1,6 @@
 
+#include "cyUtilitiesPrerequisites.h"
+
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # include "cyWindows.h"
 # include <Psapi.h>
@@ -9,8 +11,6 @@
 # include <DbgHelp.h>
 # pragma warning(default : 4091)
 #endif
-
-#include "cyUtilitiesPrerequisites.h"
 
 #include "cyCrashHandler.h"
 #include "cyDLLLoader.h"

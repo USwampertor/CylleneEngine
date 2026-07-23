@@ -30,7 +30,7 @@ public:
    * @brief Returns reference counter storage.
    * @return Reference counter reference.
    */
-  FORCEINLINE NODISCARD uint32& 
+  NODISCARD FORCEINLINE uint32& 
   getCounter() { return m_counter; }
   
   friend class SmartPointers;

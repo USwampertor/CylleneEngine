@@ -35,6 +35,12 @@ namespace CYLLENE_SDK {
   const String CrashHandler::m_crashFolder  = "Crash Reports";
   const String CrashHandler::m_crashLog     = "CylleneEngine_crashlog";
   const String CrashHandler::m_errorMessage = "A fatal error has occurred comrade!";
+  
+  void
+  CrashHandler::onStartUp() {
+    this->init();
+  }
+
   void
   CrashHandler::init() {
 

@@ -74,11 +74,11 @@
 //#define NOWH                // SetWindowsHook and WH_*
 //#define NOWINOFFSETS        // GWL_*, GCL_*, associated routines
   
-# endif // CY_PLATFORM == CY_PLATFORM_WIN32
-
-#include <Windows.h>
+# include <Windows.h>
 
 namespace CYLLENE_SDK {
 
 }
+
+#endif // CY_PLATFORM == CY_PLATFORM_WIN32
 

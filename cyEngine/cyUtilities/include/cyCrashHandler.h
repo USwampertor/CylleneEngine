@@ -34,6 +34,9 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
   // @brief OS defined destructor
   ~CrashHandler();
 
+  virtual void
+  onStartUp() override;
+
   /**
    * @brief Initializes crash handling resources.
    */

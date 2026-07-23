@@ -70,6 +70,7 @@ class Module
 
     _instance() = cy_new<T>(std::forward<Args>(args)...);
     isStartedUp() = true;
+    isDestroyed() = false;
 
     static_cast<Module*>(_instance())->onStartUp();
   }
@@ -95,6 +96,7 @@ class Module
       Utils::throwException("Instance failed to initialize");
     }
     isStartedUp() = true;
+    isDestroyed() = false;
 
     static_cast<Module*>(_instance())->onStartUp();
   }
