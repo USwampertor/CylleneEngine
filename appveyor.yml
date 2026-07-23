@@ -1,8 +1,39 @@
 version: 1.0.{build}
 image: Visual Studio 2019
+platform: x64
 environment:
-  CYLLENE_DEPENDENCIES: $(SolutionDir)CylleneDependencies/
+  CYLLENE_DEPENDENCIES: c:/projects/CylleneDependencies/
+  CYLLENE_EXE_PATH: c:/projects/CylleneEngine/cyEngine/bin/x64/
+  WEBHOOK_URL: https://discord.com/api/webhooks/1372635747869528144/8xsxSvmnZRTB3GdkEPbCqtMlmlh3PE5pJoEz2IZOzsUNSqpdhMAdasobPT38kKcHrS0E
 install:
-  - git submodule update --init --recursive
+- cmd: >-
+    git clone https://github.com/USwampertor/CylleneDependencies.git c:/projects/CylleneDependencies
 build:
   verbosity: minimal
+test_script:
+- ps: >-
+    Copy-Item -Path "c:\projects\CylleneDependencies\bin\x64\*" -Destination "C:\projects\cylleneengine\cyEngine\bin\x64\" -Recurse
+
+    if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
+      echo "main Unit Test"
+      . "C:\projects\cylleneengine\cyEngine\bin\x64\cyCoreUTd.exe"
+    } elseif ($env:APPVEYOR_REPO_BRANCH -eq "utilities") {
+      echo "Core Unit Test"
+      . "C:\projects\cylleneengine\cyEngine\bin\x64\cyUtilitiesUTd.exe"
+    } elseif ($env:APPVEYOR_REPO_BRANCH -eq "core") {
+      echo "Utilities Unit Test"
+      . "C:\projects\cylleneengine\cyEngine\bin\x64\cyCoreUTd.exe"
+    }  elseif ($env:APPVEYOR_REPO_BRANCH -eq "math") {
+      echo "Math Unit Test"
+      . "C:\projects\cylleneengine\cyEngine\bin\x64\cyMathd.exe"
+    }  elseif ($env:APPVEYOR_REPO_BRANCH -eq "random") {
+      echo "Random Unit Test"
+      . "C:\projects\cylleneengine\cyEngine\bin\x64\cyRandomd.exe"
+    }
+notifications:
+- provider: Webhook
+  url: https://discord.com/api/webhooks/1372635747869528144/8xsxSvmnZRTB3GdkEPbCqtMlmlh3PE5pJoEz2IZOzsUNSqpdhMAdasobPT38kKcHrS0E
+  method: POST
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true

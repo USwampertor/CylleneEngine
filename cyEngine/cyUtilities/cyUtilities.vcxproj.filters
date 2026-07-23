@@ -93,6 +93,15 @@
     <ClInclude Include="include\cyUUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyMemoryPoolHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyMemoryPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cyTypeTraits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">

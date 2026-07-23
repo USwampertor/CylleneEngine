@@ -29,6 +29,9 @@
 #include <cyTime.h>
 #include <cyUUID.h>
 #include <cyUtilities.h>
+#include <cyMemoryPool.h>
+#include <cyMemoryPoolHandler.h>
+#include <cyTypeTraits.h>
 
 using namespace CYLLENE_SDK;
 
@@ -61,7 +64,14 @@ public:
   }
 };
 
+struct PoolTestType { int value; PoolTestType() : value(0) {} PoolTestType(int v) : value(v) {} };
+struct AnotherPoolType { float f; AnotherPoolType() : f(0.0f) {} };
+struct UndeclaredType { char c; };
+
 } // namespace
+
+DECLARE_TYPE_TRAITS(PoolTestType)
+DECLARE_TYPE_TRAITS(AnotherPoolType)
 
 int32
 main(int argc, char* argv[])
@@ -663,5 +673,202 @@ TEST_SUITE("Crash Handler") {
 
     CrashHandler::shutDown();
     CHECK(CrashHandler::isStarted() == false);
+  }
+}
+
+TEST_SUITE("Memory Pool") {
+  TEST_CASE("Default state") {
+    MemoryPool<int> pool;
+    CHECK(pool.getCapacity() == 0);
+    CHECK(pool.getAllocatedCount() == 0);
+    CHECK(pool.isFull());  // 0-capacity pool has 0 free slots
+  }
+
+  TEST_CASE("Initialize and allocate") {
+    MemoryPool<int> pool;
+    pool.initialize(5);
+    CHECK(pool.getCapacity() == 5);
+    CHECK(pool.getAllocatedCount() == 0);
+
+    int* a = pool.allocate(42);
+    CHECK(a != nullptr);
+    CHECK(*a == 42);
+    CHECK(pool.getAllocatedCount() == 1);
+    CHECK_FALSE(pool.isFull());
+
+    (void)pool.allocate(100);
+    (void)pool.allocate(200);
+    (void)pool.allocate(300);
+    (void)pool.allocate(400);
+    CHECK(pool.isFull());
+    CHECK(pool.getAllocatedCount() == 5);
+
+    // Full pool returns nullptr
+    int* f = pool.allocate(500);
+    CHECK(f == nullptr);
+
+    // Deallocate and allocate again
+    pool.deallocate(a);
+    CHECK(pool.getAllocatedCount() == 4);
+    CHECK_FALSE(pool.isFull());
+
+    int* g = pool.allocate(999);
+    CHECK(g != nullptr);
+    CHECK(*g == 999);
+    CHECK(pool.isFull());
+
+    pool.freePool();
+  }
+
+  TEST_CASE("Safe deallocate edge cases") {
+    MemoryPool<int> pool;
+    pool.initialize(3);
+
+    // nullptr deallocate is safe
+    pool.deallocate(nullptr);
+
+    // Out-of-pool pointer is ignored
+    int standalone = 0;
+    pool.deallocate(&standalone);
+
+    // Double deallocate is safe
+    int* p = pool.allocate(1);
+    pool.deallocate(p);
+    pool.deallocate(p);
+    CHECK(pool.getAllocatedCount() == 0);
+
+    pool.freePool();
+  }
+
+  TEST_CASE("Clear keeps capacity") {
+    MemoryPool<int> pool;
+    pool.initialize(5);
+
+    (void)pool.allocate(1);
+    (void)pool.allocate(2);
+    CHECK(pool.getAllocatedCount() == 2);
+
+    pool.clear();
+    CHECK(pool.getAllocatedCount() == 0);
+    CHECK(pool.getCapacity() == 5);
+
+    // Can allocate after clear
+    int* p = pool.allocate(3);
+    CHECK(p != nullptr);
+    CHECK(*p == 3);
+
+    pool.freePool();
+  }
+
+  TEST_CASE("getNextElement") {
+    MemoryPool<int> pool;
+    pool.initialize(3);
+
+    int* next = pool.getNextElement();
+    CHECK(next != nullptr);
+
+    (void)pool.allocate();
+    CHECK(pool.getNextElement() != nullptr);
+
+    (void)pool.allocate();
+    (void)pool.allocate();
+    CHECK(pool.getNextElement() == nullptr);  // full
+
+    pool.freePool();
+  }
+
+  TEST_CASE("getMemoryUsage") {
+    MemoryPool<int> pool;
+    pool.initialize(10);
+    CHECK(pool.getMemoryUsage() > 0);
+    pool.freePool();
+  }
+
+  TEST_CASE("Initialize zero size") {
+    MemoryPool<int> pool;
+    pool.initialize(0);
+    CHECK(pool.getCapacity() == 0);
+    CHECK(pool.getAllocatedCount() == 0);
+    CHECK(pool.isFull());
+    CHECK(pool.getNextElement() == nullptr);
+    pool.freePool();
+  }
+}
+
+TEST_SUITE("Memory Pool Handler") {
+  TEST_CASE("Full lifecycle with pools") {
+    MemoryPoolHandler::startUp(32);
+
+    MemoryPoolHandler::instance().registerPool<PoolTestType>(4);
+    CHECK(MemoryPoolHandler::instance().hasPool<PoolTestType>());
+    CHECK_FALSE(MemoryPoolHandler::instance().hasPool<AnotherPoolType>());
+
+    MemoryPoolHandler::instance().registerPool<AnotherPoolType>(8);
+    CHECK(MemoryPoolHandler::instance().hasPool<AnotherPoolType>());
+
+    CHECK(MemoryPoolHandler::instance().getCapacity<PoolTestType>() == 4);
+    CHECK(MemoryPoolHandler::instance().getCapacity<AnotherPoolType>() == 8);
+    CHECK(MemoryPoolHandler::instance().getDefaultCapacity() == 32);
+
+    MemoryPool<PoolTestType>& pool = MemoryPoolHandler::instance().pool<PoolTestType>();
+    PoolTestType* p1 = pool.allocate(42);
+    CHECK(p1 != nullptr);
+    CHECK(p1->value == 42);
+    CHECK(MemoryPoolHandler::instance().getAllocatedCount<PoolTestType>() == 1);
+
+    PoolTestType* p2 = pool.allocate(100);
+    CHECK(p2 != nullptr);
+    CHECK(MemoryPoolHandler::instance().getAllocatedCount<PoolTestType>() == 2);
+
+    CHECK(MemoryPoolHandler::instance().getMemoryUsage<PoolTestType>() > 0);
+    CHECK(MemoryPoolHandler::instance().getTotalMemoryUsage() > 0);
+
+    MemoryPoolHandler::instance().clear<PoolTestType>();
+    CHECK(MemoryPoolHandler::instance().getAllocatedCount<PoolTestType>() == 0);
+
+    PoolTestType* p3 = pool.allocate(77);
+    UUID fooId = TypeTraits<PoolTestType>::getTypeId();
+    MemoryPoolHandler::instance().deallocate(fooId, p3);
+    CHECK(MemoryPoolHandler::instance().getAllocatedCount<PoolTestType>() == 0);
+
+    MemoryPoolHandler::instance().reset();
+    CHECK(MemoryPoolHandler::instance().getAllocatedCount<PoolTestType>() == 0);
+    CHECK(MemoryPoolHandler::instance().getAllocatedCount<AnotherPoolType>() == 0);
+
+    MemoryPoolHandler::shutDown();
+  }
+}
+
+TEST_SUITE("Windows Utilities") {
+  TEST_CASE("Platform type exists") {
+#if CY_PLATFORM == CY_PLATFORM_WIN32
+    CHECK(std::is_base_of<PlatformUtils, WindowsUtils>::value);
+    CHECK(sizeof(WindowsUtils) > 0);
+#endif
+    CHECK(true);
+  }
+}
+
+TEST_SUITE("Type Traits") {
+  TEST_CASE("Default trait for undeclared type") {
+    CHECK(String(TypeTraits<UndeclaredType>::getTypeName()) == "Unknown");
+    CHECK(TypeTraits<UndeclaredType>::getTypeId().isNull());
+  }
+
+  TEST_CASE("Declared trait properties") {
+    CHECK(String(TypeTraits<PoolTestType>::getTypeName()) == "PoolTestType");
+    CHECK_FALSE(TypeTraits<PoolTestType>::getTypeId().isNull());
+  }
+
+  TEST_CASE("Different types get different UUIDs") {
+    const UUID& id1 = TypeTraits<PoolTestType>::getTypeId();
+    const UUID& id2 = TypeTraits<AnotherPoolType>::getTypeId();
+    CHECK(id1 != id2);
+  }
+
+  TEST_CASE("UUID is deterministic") {
+    const UUID& id1 = TypeTraits<PoolTestType>::getTypeId();
+    const UUID& id2 = TypeTraits<PoolTestType>::getTypeId();
+    CHECK(id1 == id2);
   }
 }

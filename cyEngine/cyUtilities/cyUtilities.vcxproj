@@ -197,6 +197,8 @@
     <ClInclude Include="include\cyException.h" />
     <ClInclude Include="include\cyFileSystem.h" />
     <ClInclude Include="include\cyJSON.h" />
+    <ClInclude Include="include\cyMemoryPool.h" />
+    <ClInclude Include="include\cyMemoryPoolHandler.h" />
     <ClInclude Include="include\cyPlatformUtilities.h" />
     <ClInclude Include="include\cyRegex.h" />
     <ClInclude Include="include\cySmartPointers.h" />
@@ -208,6 +210,7 @@
     <ClInclude Include="include\cyPlatformDefines.h" />
     <ClInclude Include="include\cyPlatformTypes.h" />
     <ClInclude Include="include\cyStdHeaders.h" />
+    <ClInclude Include="include\cyTypeTraits.h" />
     <ClInclude Include="include\cyUnitTesting.h" />
     <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
     <ClInclude Include="include\cyUtilities.h" />
