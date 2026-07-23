@@ -12,6 +12,8 @@
 #include <cyUnitTesting.h>
 
 #include <cyArgumentParser.h>
+#include <cyCrashHandler.h>
+#include <cyDinamicLibrary.h>
 #include <cyDLLLoader.h>
 #include <cyEvent.h>
 #include <cyException.h>
@@ -25,6 +27,7 @@
 #include <cySmartPointers.h>
 #include <cyThread.h>
 #include <cyTime.h>
+#include <cyUUID.h>
 #include <cyUtilities.h>
 
 using namespace CYLLENE_SDK;
@@ -80,6 +83,33 @@ TEST_SUITE("Platform Types") {
     QWord q(static_cast<uint64>(42));
     CHECK(static_cast<int64>(q) == 42);
   }
+
+  TEST_CASE("QWord default construction is zero") {
+    QWord q;
+    CHECK(static_cast<int64>(q) == 0);
+  }
+
+  TEST_CASE("QWord from int32") {
+    QWord q(static_cast<int32>(-7));
+    CHECK(static_cast<int64>(q) == static_cast<uint64>(static_cast<int64>(-7)));
+  }
+
+  TEST_CASE("QWord from float truncates") {
+    QWord q(3.99f);
+    CHECK(static_cast<int64>(q) == 3);
+  }
+
+  TEST_CASE("QWord from double truncates") {
+    QWord q(3.99);
+    CHECK(static_cast<int64>(q) == 3);
+  }
+
+  TEST_CASE("QWord from bool") {
+    QWord t(true);
+    QWord f(false);
+    CHECK(static_cast<int64>(t) == 1);
+    CHECK(static_cast<int64>(f) == 0);
+  }
 }
 
 TEST_SUITE("Platform Utilities") {
@@ -110,15 +140,62 @@ TEST_SUITE("Logger") {
     if (!Logger::isStarted()) {
       Logger::startUp();
     }
+    Logger::instance().onLogAdded().removeAllListeners();
 
     std::atomic<int> callbackCount { 0 };
-    Logger::instance().onLogAdded().addListener([&callbackCount](const Log& newLog) {
+    uint64 conn = Logger::instance().onLogAdded().addListener([&callbackCount](const Log& newLog) {
       CHECK(newLog.getMsg().empty() == false);
       ++callbackCount;
     });
 
     Logger::instance().log("Utility logger test", LOG_VERBOSITY::E::eDEBUG, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eDEFAULT);
     CHECK(callbackCount.load() >= 1);
+
+    Logger::instance().onLogAdded().removeListener(conn);
+  }
+
+  TEST_CASE("Log getters") {
+    Log entry("test msg", LOG_VERBOSITY::E::eWARNING, LOG_CHANNEL::E::eSYSTEM, LOG_OUTPUT::E::eCONSOLE);
+    CHECK(String(entry.getMsg()) == "test msg");
+    CHECK(entry.getVerbosity() == LOG_VERBOSITY::E::eWARNING);
+    CHECK(entry.getChannel() == LOG_CHANNEL::E::eSYSTEM);
+  }
+
+  TEST_CASE("Log toString with active Time") {
+    if (!Time::isStarted()) {
+      Time::startUp();
+    }
+    Log entry("msg", LOG_VERBOSITY::E::eDEBUG, LOG_CHANNEL::E::eSYSTEM);
+    String str = entry.toString();
+    CHECK(str.find("msg") != String::npos);
+  }
+
+  TEST_CASE("logDebug, logWarning, logError helpers") {
+    if (!Logger::isStarted()) {
+      Logger::startUp();
+    }
+    Logger::instance().onLogAdded().removeAllListeners();
+
+    int count = 0;
+    uint64 conn = Logger::instance().onLogAdded().addListener([&count](const Log&) {
+      ++count;
+    });
+
+    Logger::instance().logDebug("debug msg", LOG_CHANNEL::E::eSYSTEM);
+    Logger::instance().logWarning("warning msg", LOG_CHANNEL::E::eSYSTEM);
+    Logger::instance().logError("error msg", LOG_CHANNEL::E::eSYSTEM);
+
+    CHECK(count >= 3);
+
+    Logger::instance().onLogAdded().removeListener(conn);
+  }
+
+  TEST_CASE("Logger init and clear") {
+    if (!Logger::isStarted()) {
+      Logger::startUp();
+    }
+    Logger::instance().clear();
+    Logger::instance().log("after clear");
   }
 }
 
@@ -163,6 +240,17 @@ TEST_SUITE("Argument Parser") {
     CHECK(parser.removeFlag("mode") == true);
     CHECK(parser.hasFlag("mode") == false);
   }
+
+  TEST_CASE("addFlag and setFlagValue") {
+    ArgumentParser parser;
+    parser.addFlag("custom");
+    CHECK(parser.hasFlag("custom") == true);
+    CHECK(parser.getFlagValues("custom").size() == 0);
+
+    parser.setFlagValue("custom", "value1");
+    CHECK(parser.getFlagValues("custom").size() == 1);
+    CHECK(parser.getFlagValues("custom")[0] == "value1");
+  }
 }
 
 TEST_SUITE("Events") {
@@ -180,6 +268,38 @@ TEST_SUITE("Events") {
 
     e.removeAllListeners();
   }
+
+  TEST_CASE("removeListener stops specific callback") {
+    Event<void> e;
+    int count1 = 0;
+    int count2 = 0;
+    Callback<void> cb1 = [&count1] { ++count1; };
+    Callback<void> cb2 = [&count2] { ++count2; };
+
+    uint64 id1 = e.addListener(cb1);
+    e.addListener(cb2);
+    e.invoke();
+    CHECK(count1 == 1);
+    CHECK(count2 == 1);
+
+    e -= id1;
+    e.invoke();
+    CHECK(count1 == 1);
+    CHECK(count2 == 2);
+  }
+
+  TEST_CASE("removeAllListeners clears all") {
+    Event<void> e;
+    int calls = 0;
+    e += [&calls] { ++calls; };
+    e += [&calls] { ++calls; };
+    e.invoke();
+    CHECK(calls == 2);
+
+    e.removeAllListeners();
+    e.invoke();
+    CHECK(calls == 2);
+  }
 }
 
 TEST_SUITE("Regex") {
@@ -189,6 +309,15 @@ TEST_SUITE("Regex") {
     Regex r(R"(value=(\d+))");
     CHECK(regexSearch(input, match, r) == true);
     CHECK(match[1].str() == "123");
+  }
+
+  TEST_CASE("regexSearch no match returns false") {
+    StringMatch match;
+    String noMatchInput("no digits here!");
+    Regex r(R"(\d+)");
+    bool result = regexSearch(noMatchInput, match, r);
+    CHECK(!result);
+    CHECK(match.size() == 0);
   }
 }
 
@@ -229,6 +358,35 @@ TEST_SUITE("File System") {
     FileSystem::deleteFolder(basePath);
     CHECK(FileSystem::exists(basePath) == false);
   }
+
+  TEST_CASE("Directory paths return non-empty") {
+    Path home = FileSystem::homeDir();
+    CHECK(home.fullPath().empty() == false);
+
+    Path tmp = FileSystem::tempDir();
+    CHECK(tmp.fullPath().empty() == false);
+
+    Path exe = FileSystem::getExecutablePath();
+    CHECK(exe.fullPath().empty() == false);
+  }
+
+  TEST_CASE("Base64 encodes file content") {
+    const String basePath = FileSystem::getWorkingDirectory().fullPath() + "/cyutilitiesut_b64";
+    const String srcPath = basePath + "/source.txt";
+
+    if (!FileSystem::exists(basePath)) {
+      CHECK(FileSystem::createFolder(basePath) == true);
+    }
+
+    File src = FileSystem::createFile(srcPath);
+    CHECK(src.writeFile("hello") == true);
+
+    String encoded = FileSystem::toBase64(srcPath);
+    CHECK(encoded.empty() == false);
+
+    FileSystem::deleteFolder(basePath);
+    CHECK(FileSystem::exists(basePath) == false);
+  }
 }
 
 TEST_SUITE("Memory Allocator") {
@@ -251,6 +409,20 @@ TEST_SUITE("Memory Allocator") {
     CHECK(currentAllocs >= 0);
     CHECK(currentFrees >= 0);
   }
+
+  TEST_CASE("cy_alloc typed and array new/delete") {
+    int* raw = cy_alloc<int>();
+    CHECK(raw != nullptr);
+    cy_free(raw);
+
+    int* arr = cy_newN<int, GenAlloc>(5);
+    CHECK(arr != nullptr);
+    for (int i = 0; i < 5; ++i) {
+      arr[i] = i * 2;
+    }
+    CHECK(arr[3] == 6);
+    cy_deleteN<int, GenAlloc>(arr, 5);
+  }
 }
 
 TEST_SUITE("Exceptions") {
@@ -264,6 +436,42 @@ TEST_SUITE("Exceptions") {
     CHECK(fex.getDescription() == "missing");
     CHECK(String(fex.what()).find("FileNotFoundException") != String::npos);
   }
+
+  TEST_CASE("getFile and getLine") {
+    Exception ex("Test", "err", "fn", "test.cpp", 42);
+    CHECK(String(ex.getFile()) == "test.cpp");
+    CHECK(ex.getLine() == 42);
+  }
+
+  TEST_CASE("Copy constructor preserves data") {
+    Exception orig("OrigType", "original desc", "src", "file.cpp", 10);
+    Exception copy(orig);
+    CHECK(String(copy.getDescription()) == "original desc");
+    CHECK(String(copy.getSource()) == "src");
+    CHECK(copy.getLine() == 10);
+  }
+
+  TEST_CASE("Copy assignment preserves data") {
+    Exception a("A", "first", "s1", "f1.cpp", 1);
+    Exception b("B", "second", "s2", "f2.cpp", 2);
+    b = a;
+    CHECK(String(b.getDescription()) == "first");
+    CHECK(String(b.getSource()) == "s1");
+  }
+
+  TEST_CASE("Named derived exception types") {
+    NotImplementedException nie("not impl", "test", __FILE__, __LINE__);
+    CHECK(String(nie.what()).find("NotImplementedException") != String::npos);
+
+    IOException ioe("io fail", "test", __FILE__, __LINE__);
+    CHECK(String(ioe.what()).find("IOException") != String::npos);
+
+    InvalidStateException ise("bad state", "test", __FILE__, __LINE__);
+    CHECK(String(ise.what()).find("InvalidStateException") != String::npos);
+
+    InvalidParametersException ipe("bad param", "test", __FILE__, __LINE__);
+    CHECK(String(ipe.what()).find("InvalidParametersException") != String::npos);
+  }
 }
 
 TEST_SUITE("Smart Pointers") {
@@ -275,6 +483,31 @@ TEST_SUITE("Smart Pointers") {
     auto sptr = makeSharedPtr<int>(11);
     CHECK(sptr != nullptr);
     CHECK(*sptr == 11);
+  }
+
+  TEST_CASE("SmartPtr construction, dereference and move") {
+    SmartPtr<int> sp1(new int(25));
+    CHECK(*sp1 == 25);
+
+    SmartPtr<int> sp2(std::move(sp1));
+    CHECK(*sp2 == 25);
+    CHECK_FALSE(sp2.operator->() == nullptr);
+  }
+
+  TEST_CASE("SmartPtr reset") {
+    SmartPtr<int> sp(new int(10));
+    CHECK(*sp == 10);
+    sp.reset(new int(20));
+    CHECK(*sp == 20);
+  }
+
+  TEST_CASE("SmallPtr via SmartPtr::ptr") {
+    SmartPtr<int> owner(new int(42));
+    {
+      SmallPtr<int> handle = owner.ptr();
+      CHECK_FALSE(handle.expired());
+      CHECK(*handle == 42);
+    }
   }
 }
 
@@ -310,5 +543,125 @@ TEST_SUITE("Threads") {
 
     ThreadManager::instance().stop();
     ThreadManager::shutDown();
+  }
+}
+
+TEST_SUITE("UUID") {
+  TEST_CASE("createRandom returns non-null UUID") {
+    UUID u = UUID::createRandom();
+    CHECK_FALSE(u.isNull());
+  }
+
+  TEST_CASE("toString format") {
+    UUID u = UUID::createRandom();
+    String str = u.toString();
+    CHECK(str.size() == 36);
+    CHECK(str.find('-') != String::npos);
+  }
+
+  TEST_CASE("null UUID properties") {
+    const UUID& n = UUID::null();
+    CHECK(n.isNull());
+    CHECK(n.toString() == "00000000-0000-0000-0000-000000000000");
+  }
+
+  TEST_CASE("toBytes and fromBytes round-trip") {
+    UUID original = UUID::createRandom();
+    auto bytes = original.toBytes();
+    UUID restored = UUID::fromBytes(bytes);
+    CHECK(original == restored);
+  }
+
+  TEST_CASE("createFromName deterministic") {
+    UUID u1 = UUID::createFromName("test-name");
+    UUID u2 = UUID::createFromName("test-name");
+    CHECK(u1 == u2);
+    CHECK_FALSE(u1.isNull());
+  }
+
+  TEST_CASE("createFromName different inputs differ") {
+    UUID u1 = UUID::createFromName("hello");
+    UUID u2 = UUID::createFromName("world");
+    CHECK(u1 != u2);
+  }
+
+  TEST_CASE("createFromName with custom namespace") {
+    UUID ns = UUID::createRandom();
+    UUID u1 = UUID::createFromName("data", ns);
+    UUID u2 = UUID::createFromName("data", ns);
+    CHECK(u1 == u2);
+  }
+
+  TEST_CASE("random UUIDs almost certainly differ") {
+    UUID a = UUID::createRandom();
+    UUID b = UUID::createRandom();
+    CHECK_FALSE(a == b);
+    CHECK(a != b);
+  }
+
+  TEST_CASE("std::hash is consistent") {
+    UUID a = UUID::createRandom();
+    UUID same = UUID::fromBytes(a.toBytes());
+    std::hash<UUID> hasher;
+    CHECK(hasher(a) == hasher(same));
+  }
+
+  TEST_CASE("ordering") {
+    UUID null = UUID::null();
+    UUID a = UUID::createRandom();
+    bool checker = (null < a) || (a < null);
+    CHECK(checker);
+  }
+}
+
+TEST_SUITE("Dynamic Library") {
+  TEST_CASE("Load system DLL and resolve symbol") {
+#if CY_PLATFORM == CY_PLATFORM_WIN32
+    DynamicLibrary lib("kernel32.dll");
+    CHECK(lib.getName() == "kernel32.dll");
+
+    void* symbol = lib.loadSymbol("GetCurrentProcessId");
+    CHECK(symbol != nullptr);
+
+    DYNLIBRESULT::E result = lib.unload();
+    CHECK(result == DYNLIBRESULT::E::eSUCCESS);
+#else
+    CHECK(true);
+#endif
+  }
+}
+
+TEST_SUITE("Crash Handler") {
+  TEST_CASE("lifecycle, stack trace, folder, dump and logging") {
+    if (!Logger::isStarted()) {
+      Logger::startUp();
+    }
+    if (!Time::isStarted()) {
+      Time::startUp();
+    }
+
+    CHECK(CrashHandler::isStarted() == false);
+    CrashHandler::startUp();
+    CHECK(CrashHandler::isStarted() == true);
+
+    String trace = CrashHandler::getStackTrace();
+    CHECK(trace.empty() == false);
+
+    Path folder = CrashHandler::instance().getCrashFolder();
+    CHECK(folder.fullPath().empty() == false);
+    CHECK(FileSystem::exists(folder.fullPath()) == true);
+
+    Path dump = CrashHandler::instance().createDump("test message", "fake stack trace");
+    CHECK(dump.fullPath().empty() == false);
+    CHECK(FileSystem::exists(dump.fullPath()) == true);
+
+    CrashHandler::instance().logErrorAndStackTrace("test type", "test desc", "func", "file.cpp", 42);
+    CrashHandler::instance().logErrorAndStackTrace("simple message", "stack content");
+
+    FileSystem::deleteFile(dump.fullPath());
+    FileSystem::deleteFolder(folder.fullPath());
+
+    CrashHandler::shutDown();
+    CHECK(CrashHandler::isStarted() == false);
   }
 }

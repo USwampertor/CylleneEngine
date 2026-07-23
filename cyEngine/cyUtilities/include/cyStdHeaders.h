@@ -31,6 +31,7 @@
 //STD objects
 # include <algorithm>
 # include <string>
+# include <string_view>
 //STD Containers
 # include <array>
 # include <vector>
@@ -42,21 +43,7 @@
 # include <set>
 # include <map>
 #else
-//STD objects
-# include <EASTL/algorithm.h>
-# include <EASTL/allocator.h>
-# include <EASTL/string.h>
 
-//STD Containers
-# include <EASTL/array.h>
-# include <EASTL/vector.h>
-# include <EASTL/deque.h>
-# include <EASTL/list.h>
-# include <EASTL/stack.h>
-# include <EASTL/queue.h>
-# include <EASTL/priority_queue.h>
-# include <EASTL/set.h>
-# include <EASTL/map.h>
 #endif
 
 namespace CYLLENE_SDK {
@@ -212,6 +199,8 @@ namespace CYLLENE_SDK {
   using String = std::string;
 
   using WString = std::wstring;
+
+  using Stringview = std::string_view;
 #else
   template<typename T, size_t N = 1>
   using Array = eastl::array<T, N>;

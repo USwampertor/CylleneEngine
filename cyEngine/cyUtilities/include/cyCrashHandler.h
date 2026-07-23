@@ -53,10 +53,10 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
    * @param line Source line number.
    */
   void
-  createReport(const String& type, 
-               const String& description, 
-               const String& errorFunction, 
-               const String& file,
+  createReport(Stringview type, 
+               Stringview description, 
+               Stringview errorFunction, 
+               Stringview file,
                uint32 line = 0) const;
 
   /**
@@ -72,8 +72,8 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
    * @param stackTrace Stack trace text.
    */
   void
-  logErrorAndStackTrace(const String& message, 
-                        const String& stackTrace) const;
+  logErrorAndStackTrace(Stringview message, 
+                        Stringview stackTrace) const;
 
   /**
    * @brief Logs fully detailed crash data and stack trace.
@@ -84,10 +84,10 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
    * @param nLine Source line.
    */
   void
-  logErrorAndStackTrace(const String& type,
-                        const String& strDescription,
-                        const String& strFunction,
-                        const String& strFile,
+  logErrorAndStackTrace(Stringview type,
+                        Stringview strDescription,
+                        Stringview strFunction,
+                        Stringview strFile,
                         uint32 nLine) const;
 
   /**
@@ -104,15 +104,15 @@ class CY_UTILITY_EXPORT CrashHandler : public Module<CrashHandler>
    * @return Generated dump path.
    */
   Path
-  createDump(const String& message,
-             const String& stackTrace);
+  createDump(Stringview message,
+             Stringview stackTrace);
 
   /**
    * @brief Opens the external crash handler application.
    * @param params Launch parameters.
    */
   void
-  openCrashHandlerApp(const String& params);
+  openCrashHandlerApp(Stringview params);
 
   /**
    * @brief Shuts down crash handling resources.

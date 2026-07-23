@@ -32,7 +32,7 @@ using CRegexIterator = std::cregex_iterator;
  * @return the object
  */
 template <typename... Args>
-decltype(auto) regexSearch(Args&&... args) {
+bool regexSearch(Args&&... args) {
   return std::regex_search(std::forward<Args>(args)...);
 }
 

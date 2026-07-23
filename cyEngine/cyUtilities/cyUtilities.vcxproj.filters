@@ -90,6 +90,9 @@
     <ClInclude Include="include\cyUnitTesting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cyUUID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyCrashHandler.cpp">
@@ -135,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cyThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cyUUID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

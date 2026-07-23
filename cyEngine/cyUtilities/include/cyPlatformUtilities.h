@@ -48,8 +48,8 @@ public:
    * @param commandLine Command to execute.
    */
   static void
-  runCommand(const String& commandLine) {
-    system(commandLine.c_str());
+  runCommand(Stringview commandLine) {
+    system(commandLine.data());
   }
 
   /**
@@ -60,9 +60,9 @@ public:
    * @return Formatted string.
    */
   template<typename ... Args>
-  static String format(const String& formatStr, Args ... args) {
+  static String format(Stringview formatStr, Args ... args) {
 
-    const char* formatCstr = formatStr.c_str();
+    const char* formatCstr = formatStr.data();
 
     int32 size_s = std::snprintf(nullptr, 
                                  0, 
@@ -83,9 +83,9 @@ public:
    * @return Formatted time string.
    */
   static String
-  timeFormat(const TM& toformat, const String& format) {
+  timeFormat(const TM& toformat, Stringview format) {
     char buffer[128];
-    std::strftime(buffer, sizeof(buffer), format.c_str(), &toformat);
+    std::strftime(buffer, sizeof(buffer), format.data(), &toformat);
     return String(buffer);
   }
 
@@ -106,8 +106,8 @@ public:
    * @param message Exception message.
    */
   static void 
-  throwException(const String& message) {
-    throw::std::exception(message.c_str());
+  throwException(Stringview message) {
+    throw::std::exception(message.data());
   }
 
   /**
@@ -115,8 +115,8 @@ public:
    * @param message Exception message.
    */
   static void
-  throwRuntimeError(const String& message) {
-    throw::std::runtime_error(message.c_str());
+  throwRuntimeError(Stringview message) {
+    throw::std::runtime_error(message.data());
   }
 
   /**
@@ -125,7 +125,7 @@ public:
    * @return Converted wide string.
    */
   static WString
-  toWide(const String& str) {
+  toWide(Stringview str) {
     WString stemp = WString(str.begin(), str.end());
     return stemp;
 
@@ -137,8 +137,8 @@ public:
    * @return Lowercased copy.
    */
   static String
-  toLowerCase(const String& str) {
-    String copy = str;
+  toLowerCase(Stringview str) {
+    String copy(str);
     std::transform(copy.begin(), 
                    copy.end(), 
                    copy.begin(),
@@ -152,8 +152,8 @@ public:
    * @return Uppercased copy.
    */
   static String
-  toUpperCase(const String& str) {
-    String copy = str;
+  toUpperCase(Stringview str) {
+    String copy(str);
     std::transform(copy.begin(), 
                    copy.end(), 
                    copy.begin(),
@@ -204,7 +204,7 @@ public:
    * @return True if the string is a valid non-empty number.
    */
   static bool
-  isStringNumber(const String& s) {
+  isStringNumber(Stringview s) {
     return !s.empty() && std::find_if(s.begin(), s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
   }
 

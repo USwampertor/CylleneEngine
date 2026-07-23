@@ -29,7 +29,11 @@ class Event
 {
 public:
 
-  Event() = default;
+  Event() 
+    : m_events()
+  {
+    m_nextID = 0;
+  }
 
   ~Event() = default;
 
@@ -37,9 +41,12 @@ public:
    * @brief Adds a listener callback.
    * @param newFunction Callback to register.
    */
-  void
+  uint64
   addListener(const Callback<ReturnType, Args...>& newFunction) {
-    m_events.push_back(newFunction);
+    uint64 id = m_nextID++;
+    m_events[id] = newFunction;
+    return id;
+    // m_events.push_back(newFunction);
   }
 
   /**
@@ -49,7 +56,7 @@ public:
   void 
   invoke(Args&&... args) {
     for (auto& e : m_events) {
-      e(std::forward<Args>(args)...);
+      e.second(std::forward<Args>(args)...);
     }
   }
 
@@ -57,9 +64,10 @@ public:
    * @brief Removes a specific listener callback.
    * @param newFunction Callback to remove.
    */
-  void
-  removeListener(const Callback<ReturnType, Args...>& newFunction) {
-    m_events.erase(std::remove(m_events.begin(), m_events.end(), newFunction), m_events.end());
+  bool
+  removeListener(uint64 id) { // const Callback<ReturnType, Args...>& newFunction) {
+    return m_events.erase(id) > 0;
+    // m_events.erase(std::remove(m_events.begin(), m_events.end(), newFunction), m_events.end());
   }
 
   /**
@@ -83,16 +91,17 @@ public:
    * @brief Removes a listener using operator syntax.
    * @param newFunction Callback to remove.
    */
-  void
-  operator-=(const Callback<ReturnType, Args...>& newFunction) {
-    removeListener(newFunction);
+  bool
+  operator-=(uint64 id ) {//const Callback<ReturnType, Args...>& newFunction) {
+    return removeListener(id);
   }
 
 private:
   /**
    * @brief Registered listeners.
    */
-  Vector<Callback<ReturnType, Args...>> m_events;
-
+  // Vector<Callback<ReturnType, Args...>> m_events;
+  Map<uint64, Callback<ReturnType, Args...>> m_events;
+  uint64 m_nextID = 0;
 };
 }

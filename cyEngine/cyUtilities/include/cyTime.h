@@ -64,7 +64,7 @@ public:
    * @return Formatted date string.
    */
   String 
-  toString(const String& format)
+  toString(Stringview format)
   {
     return Utils::timeFormat(*this, format);
   }

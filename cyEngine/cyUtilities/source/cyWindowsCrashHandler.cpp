@@ -499,10 +499,11 @@ namespace CYLLENE_SDK {
   }
 
   void
-  popupErrorMessage(const String& msg, const Path& folder, const Path& dumpFile) {
-    const String errorMessage = msg +
-      "\n\nFor more information check the crash report located at:\n " +
-      folder.fullPath();
+  popupErrorMessage(Stringview msg, const Path& folder, const Path& dumpFile) {
+    const String errorMessage = 
+      Utils::format("%s \n\nFor more information check the crash report located at:\n %s", 
+                    msg.data(), 
+                    folder.fullPath());
     auto response = MessageBox(nullptr, errorMessage.c_str(), "Cyllene Engine Error!", MB_YESNO);
     if (response == IDYES) {
       CrashHandler::instance().openCrashHandlerApp(Utils::format("-p %s", dumpFile.fullPath()));
@@ -523,10 +524,10 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::createReport(const String& type,
-                             const String& strDescription,
-                             const String& strFunction,
-                             const String& strFile,
+  CrashHandler::createReport(Stringview type,
+                             Stringview strDescription,
+                             Stringview strFunction,
+                             Stringview strFile,
                              uint32 nLine) const {
     //Win32 debug methods are not thread safe
     MULock lock(m_data->mutex);

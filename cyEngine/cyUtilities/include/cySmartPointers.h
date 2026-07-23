@@ -30,8 +30,8 @@ public:
    * @brief Returns reference counter storage.
    * @return Reference counter reference.
    */
-  uint32& 
-  getCounter();
+  FORCEINLINE NODISCARD uint32& 
+  getCounter() { return m_counter; }
   
   friend class SmartPointers;
 
@@ -59,14 +59,14 @@ public:
    * @param uniquePtr Source smart pointer.
    */
   explicit SmallPtr(SmartPtr<T>& uniquePtr)
-    : m_ref(uniquePtr) {
-    ++uniquePtr->m_counter;
+    : m_ref(&uniquePtr) {
+    ++uniquePtr.m_counter;
   }
 
   /**
    * @brief Destroys the non-owning handle.
    */
-  ~SmallPtr() { --m_ref.m_counter; }
+  ~SmallPtr() { --m_ref->m_counter; }
 
   /**
    * @brief Rebinds this handle to another SmartPtr.
@@ -75,9 +75,9 @@ public:
    */
   SmallPtr& operator=(SmartPtr<T>& other)
   {
-    --m_ref.m_counter;
-    m_ref = other;
-    ++m_ref.m_counter;
+    --m_ref->m_counter;
+    m_ref = &other;
+    ++m_ref->m_counter;
     return *this;
   }
 
@@ -86,26 +86,26 @@ public:
    * @return True if object pointer is null.
    */
   bool 
-  expired() const { return m_ref.get() == nullptr; }
+  expired() const { return m_ref->get() == nullptr; }
 
   /**
    * @brief Dereferences the referenced object.
    * @return Reference to managed object.
    */
-  T& operator*() const { return *m_ref.get(); }
+  T& operator*() const { return *m_ref->get(); }
 
   /**
    * @brief Accesses the referenced object pointer.
    * @return Pointer to managed object.
    */
-  T* operator->() const { return m_ref.get(); }
+  T* operator->() const { return m_ref->get(); }
 
 private:
   
   /**
    * @brief Referenced smart pointer owner.
    */
-  SmartPtr<T> m_ref;
+  SmartPtr<T>* m_ref;
 };
 
 /**
@@ -162,7 +162,7 @@ public:
   SmartPtr& operator=(SmartPtr&& other) noexcept {
     if (this != &other) {
       delete m_ptr;
-      m_ptr = other.getCounter();
+      m_ptr = other.m_ptr;
       other.m_ptr = nullptr;
     }
     return *this;

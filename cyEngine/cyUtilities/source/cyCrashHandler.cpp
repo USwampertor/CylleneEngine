@@ -51,8 +51,8 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::logErrorAndStackTrace(const String& message, 
-                                      const String& stackTrace) const {
+  CrashHandler::logErrorAndStackTrace(Stringview message, 
+                                      Stringview stackTrace) const {
     StringStream msg;
     msg << m_errorMessage << std::endl << std::endl;
     msg << message << std::endl;
@@ -63,10 +63,10 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::logErrorAndStackTrace(const String& type, 
-                                      const String& strDescription, 
-                                      const String& strFunction, 
-                                      const String& strFile, 
+  CrashHandler::logErrorAndStackTrace(Stringview type, 
+                                      Stringview strDescription, 
+                                      Stringview strFunction, 
+                                      Stringview strFile, 
                                       uint32 nLine) const {
     StringStream errorMessage;
     errorMessage << "  - Error: " << type << std::endl;
@@ -77,8 +77,8 @@ namespace CYLLENE_SDK {
   }
 
   Path
-  CrashHandler::createDump(const String& message,
-                           const String& stackTrace) {
+  CrashHandler::createDump(Stringview message,
+                           Stringview stackTrace) {
     StringStream msg;
     msg << m_errorMessage << std::endl << std::endl;
     msg << message << std::endl;
@@ -96,8 +96,8 @@ namespace CYLLENE_SDK {
   }
 
   void
-  CrashHandler::openCrashHandlerApp(const String& params) {
-    Utils::open(String(FileSystem::getWorkingDirectory().fullPath() + 
+  CrashHandler::openCrashHandlerApp(Stringview params) {
+    Utils::open(Stringview(FileSystem::getWorkingDirectory().fullPath() + 
 #if _DEBUG
       String("/cyCrashHandler.exe")),
 #else

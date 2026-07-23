@@ -9,7 +9,7 @@ namespace CYLLENE_SDK {
 
 // Rethrow (creates a std::nested_exception) an exception, using the Exception class
 // which contains file and line info. The original exception is preserved...
-void rethrow(const String& message, const char* file, unsigned int32 line)
+void rethrow(Stringview message, const char* file, unsigned int32 line)
 try
 {
   rethrow_exception(current_exception());
@@ -32,7 +32,7 @@ catch (const StdException& nested_ex)
 }
 
 // General Exception handler
-void Handle_Exception(const StdException& ex, const String& function)
+void Handle_Exception(const StdException& ex, Stringview function)
   try
 {
   if (function != "") {

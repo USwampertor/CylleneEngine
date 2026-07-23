@@ -14,7 +14,7 @@
 
 
 namespace CYLLENE_SDK {
-  const String&
+  Stringview
   Log::getMsg() const {
     return m_message;
   }
@@ -70,7 +70,7 @@ namespace CYLLENE_SDK {
   }
 
   void 
-  Logger::log(const String& message, 
+  Logger::log(Stringview message, 
               const LOG_VERBOSITY::E& type, 
               const LOG_CHANNEL::E& channel,
               const Bitset<5>& output) {
@@ -80,7 +80,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Logger::logDebug(const String& message, 
+  Logger::logDebug(Stringview message, 
                    const LOG_CHANNEL::E& channel,
                    const Bitset<5>& output) {
     Log newLog(message, LOG_VERBOSITY::E::eDEBUG, channel, output);
@@ -89,7 +89,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Logger::logWarning(const String& message, 
+  Logger::logWarning(Stringview message, 
                      const LOG_CHANNEL::E& channel,
                      const Bitset<5>& output) {
     Log newLog(message, LOG_VERBOSITY::E::eWARNING, channel, output);
@@ -98,7 +98,7 @@ namespace CYLLENE_SDK {
   }
 
   void
-  Logger::logError(const String& message, 
+  Logger::logError(Stringview message, 
                    const LOG_CHANNEL::E& channel,
                    const Bitset<5>& output) {
     Log newLog(message, LOG_VERBOSITY::E::eERROR, channel, output);

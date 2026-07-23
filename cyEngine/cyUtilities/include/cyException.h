@@ -42,8 +42,8 @@ class Exception : public StdException
    * @param source Source function or subsystem.
    */
   Exception(const char* type, 
-            const String& description, 
-            const String& source)
+            Stringview description, 
+            Stringview source)
     : m_typeName(type),
       m_description(description),
       m_source(source) {}
@@ -57,8 +57,8 @@ class Exception : public StdException
    * @param line Source line number.
    */
   Exception(const char* type,
-            const String& description,
-            const String& source,
+            Stringview description,
+            Stringview source,
             const char* file,
             long line)
     : m_line(line),
@@ -108,7 +108,7 @@ class Exception : public StdException
    *        supplied by the thrower, what routine threw the exception, and
    *        will also supply extra platform-specific information where applicable.
    */
-  virtual const String&
+  virtual Stringview
   getFullDescription() const {
     if (m_fullDesc.empty()) {
       StringStream desc;
@@ -129,7 +129,7 @@ class Exception : public StdException
    * @brief Returns the source that produced the exception.
    * @return Source function or subsystem name.
    */
-  virtual const String&
+  virtual Stringview
     getSource() const {
     return m_source;
   }
@@ -138,7 +138,7 @@ class Exception : public StdException
    * @brief Returns source file path where exception was created.
    * @return Source file path.
    */
-  virtual const String&
+  virtual Stringview
     getFile() const {
     return m_file;
   }
@@ -156,7 +156,7 @@ class Exception : public StdException
    * @brief Returns short error description.
    * @return Error description string.
    */
-  virtual const String&
+  virtual Stringview
     getDescription(void) const {
     return m_description;
   }
@@ -167,7 +167,7 @@ class Exception : public StdException
    */
   const char*
     what() const _NOEXCEPT {
-    return getFullDescription().c_str();
+    return getFullDescription().data();
   }
 
 protected:
@@ -211,8 +211,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  NotImplementedException(const String& inDescription,
-                          const String& inSource,
+  NotImplementedException(Stringview inDescription,
+                          Stringview inSource,
                           const char* inFile,
                           long inLine)
     : Exception("NotImplementedException", inDescription, inSource, inFile, inLine) {}
@@ -232,8 +232,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  FileNotFoundException(const String& inDescription,
-                        const String& inSource,
+  FileNotFoundException(Stringview inDescription,
+                        Stringview inSource,
                         const char* inFile,
                         long inLine)
     : Exception("FileNotFoundException", inDescription, inSource, inFile, inLine) {}
@@ -253,8 +253,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  IOException(const String& inDescription,
-              const String& inSource,
+  IOException(Stringview inDescription,
+              Stringview inSource,
               const char* inFile,
               long inLine)
     : Exception("IOException", inDescription, inSource, inFile, inLine) {}
@@ -274,8 +274,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  InvalidStateException(const String& inDescription,
-                        const String& inSource,
+  InvalidStateException(Stringview inDescription,
+                        Stringview inSource,
                         const char* inFile,
                         long inLine)
     : Exception("InvalidStateException", inDescription, inSource, inFile, inLine) {}
@@ -295,8 +295,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  InvalidParametersException(const String& inDescription,
-                             const String& inSource,
+  InvalidParametersException(Stringview inDescription,
+                             Stringview inSource,
                              const char* inFile,
                              long inLine)
     : Exception("InvalidParametersException", inDescription, inSource, inFile, inLine) {}
@@ -316,8 +316,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  InternalErrorException(const String& inDescription,
-                         const String& inSource,
+  InternalErrorException(Stringview inDescription,
+                         Stringview inSource,
                          const char* inFile,
                          long inLine)
     : Exception("InternalErrorException", inDescription, inSource, inFile, inLine) {}
@@ -337,8 +337,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  RenderingAPIException(const String& inDescription,
-                        const String& inSource,
+  RenderingAPIException(Stringview inDescription,
+                        Stringview inSource,
                         const char* inFile,
                         long inLine)
     : Exception("RenderingAPIException", inDescription, inSource, inFile, inLine) {}
@@ -358,8 +358,8 @@ public:
    * @param inFile Source file path.
    * @param inLine Source line number.
    */
-  UnitTestException(const String& inDescription,
-                    const String& inSource,
+  UnitTestException(Stringview inDescription,
+                    Stringview inSource,
                     const char* inFile,
                     long inLine)
     : Exception("UnitTestException", inDescription, inSource, inFile, inLine) {}

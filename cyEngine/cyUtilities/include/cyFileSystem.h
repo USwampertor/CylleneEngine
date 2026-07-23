@@ -38,8 +38,8 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return Opened file handle.
    */
   static File
-  open(const String& fileName) {
-    return cppfs::fs::open(fileName);
+  open(Stringview fileName) {
+    return cppfs::fs::open(fileName.data());
   }
 
   /**
@@ -48,9 +48,9 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return Heap-allocated binary data buffer.
    */
   static unsigned char*
-  openBinary(const String& fileName) {
+  openBinary(Stringview fileName) {
     IfStream file;
-    file.open(fileName, IfStream::binary | IfStream::in | IfStream::ate);
+    file.open(fileName.data(), IfStream::binary | IfStream::in | IfStream::ate);
     const int32 file_length = static_cast<const int>(file.tellg());
 
     unsigned char* data = new unsigned char[file_length];
@@ -65,8 +65,8 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return True if path exists.
    */
   static bool
-  exists(const String& filePath) {
-    return cppfs::fs::open(filePath).exists();
+  exists(Stringview filePath) {
+    return cppfs::fs::open(filePath.data()).exists();
   }
 
   /**
@@ -75,11 +75,11 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return File handle for created file.
    */
   static File
-  createFile(const String& filePath) {
+  createFile(Stringview filePath) {
     std::fstream newFile;
-    newFile.open(filePath, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+    newFile.open(filePath.data(), std::fstream::binary | std::fstream::trunc | std::fstream::out);
     newFile.close();
-    return cppfs::fs::open(filePath);
+    return cppfs::fs::open(filePath.data());
   }
 
   /**
@@ -88,8 +88,8 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return True if folder was created.
    */
   static bool
-  createFolder(const String& folderPath) {
-    File f = cppfs::fs::open(folderPath);
+  createFolder(Stringview folderPath) {
+    File f = cppfs::fs::open(folderPath.data());
     if (!f.exists()) {
       return f.createDirectory();
     }
@@ -101,10 +101,22 @@ struct CY_UTILITY_EXPORT FileSystem
    * @param folderPath Directory path.
    */
   static void
-  deleteFolder(const String& folderPath) {
-    File f = cppfs::fs::open(folderPath);
+  deleteFolder(Stringview folderPath) {
+    File f = cppfs::fs::open(folderPath.data());
     if (f.isDirectory()) {
       f.removeDirectoryRec();
+    }
+  }
+
+  /**
+   * @brief Deletes a directory recursively.
+   * @param folderPath Directory path.
+   */
+  static void
+  deleteFile(Stringview filePath) {
+    File f = cppfs::fs::open(filePath.data());
+    if (f.isFile()) {
+      f.remove();
     }
   }
 
@@ -114,8 +126,8 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return Base64 string.
    */
   static String
-  toBase64(const String& fileName) {
-    return cppfs::fs::base64(fileName);
+  toBase64(Stringview fileName) {
+    return cppfs::fs::base64(fileName.data());
   }
 
   /**
@@ -124,8 +136,8 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return Decoded string.
    */
   static String
-  fromBase64(const String& fileName) {
-    return cppfs::fs::fromBase64(fileName);
+  fromBase64(Stringview fileName) {
+    return cppfs::fs::fromBase64(fileName.data());
   }
 
   /**
@@ -144,8 +156,8 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return SHA1 hash.
    */
   static String
-  stringToHash(const String& fileName) {
-    return cppfs::fs::sha1(fileName);
+  stringToHash(Stringview fileName) {
+    return cppfs::fs::sha1(fileName.data());
   }
 
   /**
@@ -193,8 +205,8 @@ struct CY_UTILITY_EXPORT FileSystem
    * @return Resolved path.
    */
   static Path
-  locatePath(const String& relPath, const String& systemDir, void* symbol) {
-    return Path(cpplocate::locatePath(relPath, systemDir, symbol));
+  locatePath(Stringview relPath, Stringview systemDir, void* symbol) {
+    return Path(cpplocate::locatePath(relPath.data(), systemDir.data(), symbol));
   }
 
   /**

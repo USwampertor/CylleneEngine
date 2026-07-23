@@ -101,6 +101,16 @@
 # endif
 #endif
 
+#if CY_COMPILER == CY_COMPILER_MSVC         //If we are compiling on Visual Studio
+# if CY_COMP_VER >= 1920                     //If we are on Visual Studio 6 or higher
+#  define NODISCARD [[nodiscard]]
+# else
+#  define NODISCARD
+# endif
+#else                                      //Any other compiler
+#  define NODISCARD [[nodiscard]]
+#endif
+
 /**
  * Finds the current platform
  */

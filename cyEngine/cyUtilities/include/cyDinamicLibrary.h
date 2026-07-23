@@ -30,7 +30,7 @@ public:
    * @brief Constructs and loads a dynamic library by name.
    * @param libName Library name or path.
    */
-  DynamicLibrary(const String& libName) {
+  DynamicLibrary(Stringview libName) {
     m_name = libName;
     m_data = nullptr;
     load();
@@ -61,13 +61,13 @@ public:
    * @return Pointer to resolved symbol, or null on failure.
    */
   void*
-  loadSymbol(const String& symbol);
+  loadSymbol(Stringview symbol);
 
   /**
    * @brief Returns the library name.
    * @return Library name.
    */
-  const String&
+  Stringview
   getName() const {
     return m_name;
   }

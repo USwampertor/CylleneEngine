@@ -50,7 +50,7 @@ ArgumentParser::parse(const int& argc, const char* argv[])
 }
 
 void
-ArgumentParser::parse(const String& parameters) {
+ArgumentParser::parse(Stringview parameters) {
 //   String currentFlag;
 // 
 //   for (int i = 1; i < parameters.size(); ++i) {
@@ -64,7 +64,7 @@ ArgumentParser::parse(const String& parameters) {
 //       setFlagValue(currentFlag, token);  // Store value under current flag
 //     }
 //   }
-  String input = parameters;
+  String input(parameters);
   Regex flagRegex(R"(-\w+)");
   Regex paramRegex(R"delim("([^"]+)"|\b(?!-)\S+\b)delim");
   StringMatch match;
@@ -95,39 +95,44 @@ ArgumentParser::parse(const String& parameters) {
 }
 
 bool
-ArgumentParser::addFlag(const String& newFlag) {
-  if (m_flagMap.find(newFlag) == m_flagMap.end()) {
-    m_flagMap[newFlag] = {};
+ArgumentParser::addFlag(Stringview newFlag) {
+  String toFind(newFlag);
+  if (m_flagMap.find(toFind) == m_flagMap.end()) {
+    m_flagMap[toFind] = {};
     return true;
   }
   return false;
 }
 
 void
-ArgumentParser::setFlagValue(const String& flag, const String& newParameter) {
-  if (m_flagMap.find(flag) != m_flagMap.end())
-  {
-    m_flagMap[flag].push_back(newParameter);
+ArgumentParser::setFlagValue(Stringview flag, Stringview newParameter) {
+  String toFind(flag);
+  String param(newParameter);
+  if (m_flagMap.find(toFind) != m_flagMap.end()) {
+    m_flagMap[toFind].push_back(param);
   }
 }
 
 const Vector<String>
-ArgumentParser::getFlagValues(const String& flag) {
-  if (m_flagMap.find(flag) != m_flagMap.end()) {
-    return m_flagMap[flag];
+ArgumentParser::getFlagValues(Stringview flag) {
+  String toFind(flag);
+  if (m_flagMap.find(toFind) != m_flagMap.end()) {
+    return m_flagMap[toFind];
   }
   return {};
 }
 
 bool
-ArgumentParser::hasFlag(const String& flag) {
-  return m_flagMap.find(flag) != m_flagMap.end();
+ArgumentParser::hasFlag(Stringview flag) {
+  String toFind(flag);
+  return (m_flagMap.find(toFind) != m_flagMap.end());
 }
 
 bool
-ArgumentParser::removeFlag(const String& flag) {
-  if (m_flagMap.find(flag) != m_flagMap.end()) {
-    m_flagMap.erase(m_flagMap.find(flag));
+ArgumentParser::removeFlag(Stringview flag) {
+  String toFind(flag);
+  if (m_flagMap.find(toFind) != m_flagMap.end()) {
+    m_flagMap.erase(m_flagMap.find(toFind));
     return true;
   }
   return false;

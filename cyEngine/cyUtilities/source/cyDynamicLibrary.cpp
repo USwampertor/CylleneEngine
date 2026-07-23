@@ -43,13 +43,13 @@ namespace CYLLENE_SDK {
   }
 
   void*
-  DynamicLibrary::loadSymbol(const String& symbol) {
+  DynamicLibrary::loadSymbol(Stringview symbol) {
 #if CY_PLATFORM == CY_PLATFORM_WIN32
-    auto t_api = /*(PLUGIN_FUNCTION)*/GetProcAddress(static_cast<HINSTANCE>(m_data), symbol.c_str());
+    auto t_api = /*(PLUGIN_FUNCTION)*/GetProcAddress(static_cast<HINSTANCE>(m_data), symbol.data());
     if (!t_api) {
 
       CY_ASSERT(t_api == nullptr && 
-                Utils::format("THE LIBRARY DOES NOT CONTAIN THE SYMBOL %s", symbol).c_str());
+                Utils::format("THE LIBRARY DOES NOT CONTAIN THE SYMBOL %s", symbol.data()).c_str());
 
       return nullptr;
     }

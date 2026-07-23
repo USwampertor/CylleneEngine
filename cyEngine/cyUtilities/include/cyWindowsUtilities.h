@@ -50,8 +50,8 @@ struct CY_UTILITY_EXPORT WindowsUtils : public PlatformUtils
    * @param showOption Window show option.
    */
   static void
-  open(const String& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
-    ShellExecuteA(nullptr, LPCSTR("open"), path.c_str(), parameters.c_str(), nullptr, showOption);
+  open(Stringview path, Stringview parameters = "", const int32& showOption = SW_SHOWNORMAL) {
+    ShellExecuteA(nullptr, LPCSTR("open"), path.data(), parameters.data(), nullptr, showOption);
   }
   
   /**
@@ -61,8 +61,8 @@ struct CY_UTILITY_EXPORT WindowsUtils : public PlatformUtils
    * @param showOption Window show option.
    */
   static void
-  open(const Path& path, const String& parameters = "", const int32& showOption = SW_SHOWNORMAL) {
-    ShellExecuteA(nullptr, LPCSTR("open"), path.fullPath().c_str(), parameters.c_str(), nullptr, showOption);
+  open(const Path& path, Stringview parameters = "", const int32& showOption = SW_SHOWNORMAL) {
+    ShellExecuteA(nullptr, LPCSTR("open"), path.fullPath().c_str(), parameters.data(), nullptr, showOption);
   }
 
 };

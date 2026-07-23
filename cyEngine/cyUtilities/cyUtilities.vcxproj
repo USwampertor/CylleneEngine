@@ -98,7 +98,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -122,7 +122,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -146,7 +146,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -170,7 +170,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>CY_UTILITY_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(CYLLENE_DEPENDENCIES)include/;$(SolutionDir)$(Projectname)/include/</AdditionalIncludeDirectories>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -211,6 +211,7 @@
     <ClInclude Include="include\cyUnitTesting.h" />
     <ClInclude Include="include\cyUtilitiesPrerequisites.h" />
     <ClInclude Include="include\cyUtilities.h" />
+    <ClInclude Include="include\cyUUID.h" />
     <ClInclude Include="include\cyWindows.h" />
     <ClInclude Include="include\cyWindowsUtilities.h" />
   </ItemGroup>
@@ -223,6 +224,7 @@
     <ClCompile Include="source\cyFileSystem.cpp" />
     <ClCompile Include="source\cyRegex.cpp" />
     <ClCompile Include="source\cyThread.cpp" />
+    <ClCompile Include="source\cyUUID.cpp" />
     <ClCompile Include="source\cyWindowsCrashHandler.cpp" />
     <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyException.cpp" />

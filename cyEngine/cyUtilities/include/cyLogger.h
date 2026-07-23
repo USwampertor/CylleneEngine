@@ -57,7 +57,7 @@ class CY_UTILITY_EXPORT Log
 
   ~Log() = default;
 
-  Log(const String& message, 
+  Log(Stringview message, 
       const LOG_VERBOSITY::E& type      = LOG_VERBOSITY::E::eDEFAULT, 
       const LOG_CHANNEL::E& channel     = LOG_CHANNEL::E::eDEFAULT,
       const Bitset<5>& output           = LOG_OUTPUT::E::eDEFAULT)
@@ -85,7 +85,7 @@ class CY_UTILITY_EXPORT Log
    * @brief Gets stored message text.
    * @return Message text.
    */
-  const String&
+  Stringview
   getMsg() const;
 
   /**
@@ -176,7 +176,7 @@ public:
    * @param output Output destinations.
    */
   void
-  log(const String& message, 
+  log(Stringview message, 
       const LOG_VERBOSITY::E& type  = LOG_VERBOSITY::E::eDEFAULT, 
       const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT,
       const Bitset<5>& output       = LOG_OUTPUT::E::eDEFAULT);
@@ -188,7 +188,7 @@ public:
    * @param output Output destinations.
    */
   void
-  logDebug(const String& message, 
+  logDebug(Stringview message, 
            const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT,
            const Bitset<5>& output       = LOG_OUTPUT::E::eDEFAULT);
 
@@ -199,7 +199,7 @@ public:
    * @param output Output destinations.
    */
   void 
-  logWarning(const String& message, 
+  logWarning(Stringview message, 
              const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT,
              const Bitset<5>& output       = LOG_OUTPUT::E::eDEFAULT);
 
@@ -210,7 +210,7 @@ public:
    * @param output Output destinations.
    */
   void
-  logError(const String& message, 
+  logError(Stringview message, 
            const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT,
            const Bitset<5>& output       = LOG_OUTPUT::E::eDEFAULT);
 
@@ -221,7 +221,7 @@ public:
    * @param channel Log channel.
    */
   void 
-  toConsole(const String& message,
+  toConsole(Stringview message,
             const LOG_VERBOSITY::E& type = LOG_VERBOSITY::E::eDEFAULT,
             const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
 
@@ -232,7 +232,7 @@ public:
    * @param channel Log channel.
    */
   void 
-  toSplash(const String& message,
+  toSplash(Stringview message,
            const LOG_VERBOSITY::E& type = LOG_VERBOSITY::E::eDEFAULT,
            const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
 
@@ -243,7 +243,7 @@ public:
    * @param channel Log channel.
    */
   void 
-  toDebugger(const String& message,
+  toDebugger(Stringview message,
              const LOG_VERBOSITY::E& type = LOG_VERBOSITY::E::eDEFAULT,
              const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
 
@@ -254,7 +254,7 @@ public:
    * @param channel Log channel.
    */
   void 
-  toScreen(const String& message,
+  toScreen(Stringview message,
            const LOG_VERBOSITY::E& type = LOG_VERBOSITY::E::eDEFAULT,
            const LOG_CHANNEL::E& channel = LOG_CHANNEL::E::eDEFAULT);
 
