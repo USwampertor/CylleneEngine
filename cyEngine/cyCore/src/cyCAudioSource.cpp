@@ -114,7 +114,7 @@ CAudioSource::playCallback(void* outputBuffer,
 
 CAudioSource::CAudioSource() : CComponent(CAudioSource::staticType()) {
   // AudioBackend::ensureOpenAL();
-  m_onClipLoaded += [this]() {
+  m_onClipLoadedInternal += [this]() {
     setClipBuffer();
   };
   if (AudioManager::isStarted()) {
@@ -149,26 +149,22 @@ CAudioSource::~CAudioSource() {
 void
 CAudioSource::play() {
   SPtr<RAudio> clip = m_clip.lock();
+
   if (!clip) {
     Logger::instance().logWarning("CAudioSource::play called without an assigned audio clip");
     return;
   }
-#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
+
   if (!AudioManager::instance().ensureIsInit()) {
     Logger::instance().logError("Error handling playback: OpenAL was not ensured");
   }
 
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
   alSourcePlay(m_sourceId);
 #elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
 #endif // AUDIO_BACKEND
-  if (!m_isPlaying) {
-    m_frameIndex = 0;
-    m_isPlaying = true;
-    m_isPaused = false;
-  }
-  else {
-    m_isPaused = false;
-  }
+  m_isPlaying.store(true, std::memory_order_release);
+  m_isPaused.store(false, std::memory_order_release);
 }
 
 void
@@ -250,9 +246,10 @@ CAudioSource::stop() {
 #elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
 
 #endif // AUDIO_BACKEND
-  m_isPlaying = false;
-  m_isPaused = false;
-  m_frameIndex = 0;
+
+  m_isPlaying.store(false, std::memory_order_release);
+  m_isPaused.store(false, std::memory_order_release);
+  m_frameIndex.store(0, std::memory_order_release);
 }
 
 void
@@ -266,7 +263,8 @@ CAudioSource::pause() {
 
 #endif // AUDIO_BACKEND
 
-  m_isPaused = true;
+  m_isPlaying.store(false, std::memory_order_release);
+  m_isPaused.store(true, std::memory_order_release);
 }
 
 void

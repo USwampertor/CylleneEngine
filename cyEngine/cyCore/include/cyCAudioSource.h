@@ -8,7 +8,25 @@
 
 #include <cyEvent.h>
 
+#include <atomic>
+
 namespace CYLLENE_SDK {
+
+template<typename T>
+using Atomic = std::atomic<T>;
+
+
+/**
+ * @struct AudioPath
+ * @brief Represents the propagation data path
+ */
+// struct AudioPath {
+//   float delay; // seconds
+//   float attenuation[AUDIO_NUM_BANDS]; 
+//   Vector3f direction; // incoming direction for spatialization
+// 
+//   float dopplerFactor = 1.0f; // for doppler effect
+// };
 
 /*
  *	@class	CAudioSource
@@ -57,10 +75,26 @@ public:
     m_volume = Math::clamp(volume, 0.0f, 1.0f);
   }
 
+  const float&
+  getMinDistance() const { return m_minDistance; }
+
+  const float&
+  getMaxDistance() const { return m_maxDistance; }
+
+  void
+  setMinDistance(float minDistance) {
+    m_minDistance = Math::max(0.0f, minDistance);
+  } 
+
+  void
+  setMaxDistance(float maxDistance) {
+    m_maxDistance = Math::max(0.0f, maxDistance);
+  }
+
   void
   setClip(WPtr<RAudio> clip) {
     m_clip = clip;
-    m_onClipLoaded.invoke();
+    m_onClipLoadedInternal.invoke();
   }
 
   WPtr<RAudio>
@@ -86,12 +120,12 @@ private:
 
 #if AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
   int32
-    playCallback(void* outputBuffer,
-      void* inputBuffer,
-      unsigned int nFrames,
-      double streamTime,
-      int32 status,
-      void* userData);
+  playCallback(void* outputBuffer,
+               void* inputBuffer,
+               unsigned int nFrames,
+               double streamTime,
+               int32 status,
+               void* userData);
 #endif // AUDIO_BACKEND
 
 public:
@@ -99,7 +133,7 @@ public:
   float 
   m_volume = 1.0f;
 
-  bool 
+  Atomic<bool>
   m_loop = false;
 
   bool 
@@ -108,10 +142,10 @@ public:
   int32 
   m_priority;
 
-  bool 
+  Atomic<bool>
   m_isPlaying = false;
 
-  bool
+  Atomic<bool>
   m_isPaused = false;
 
   bool 
@@ -132,7 +166,26 @@ public:
   float
   m_gain = 1.0f;
 
-  Vector<PathContribution> m_pathContributions;
+  float
+  m_minDistance = 1.0f;
+
+  float 
+  m_maxDistance = 100.0f;
+
+  Vector<PathContribution> 
+  m_pathContributions[2];
+  
+  Atomic<uint32>
+  m_activePathBufferIndex = 0;
+
+  Event<void>
+  m_onAudioPlay;
+
+  Event<void>
+  m_onAudioStop;
+
+  Event<void>
+  m_onClipLoad;
 
 private:
 
@@ -145,11 +198,12 @@ private:
   uint32 
   m_bufferId = 0;
 
-  uint64
+  Atomic<uint64>
   m_frameIndex = 0;
 
+
   Event<void> 
-  m_onClipLoaded;
+  m_onClipLoadedInternal;
 
   APIAudio 
   m_apiAudio;

@@ -27,6 +27,9 @@ public:
   void
   setGain(float gain);
 
+  float
+  getGain() const { return m_gain; }
+
   void
   applyTransformChanges(const Matrix4& newTransform) override;
 

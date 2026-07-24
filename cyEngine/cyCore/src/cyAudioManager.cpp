@@ -41,7 +41,13 @@ AudioManager::onStartUp() {
     deviceName = alcGetString(device, ALC_DEVICE_SPECIFIER);
   }
 #elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
-  m_currentDevice = getDefaultDevice();
+  auto defaultDevice = getDefaultDevice();
+  if (defaultDevice.id == -1) {
+    Logger::instance().logError("Could not find a default audio device!");
+
+    return;
+  }
+  m_currentDevice = defaultDevice;
   deviceName = m_currentDevice.name;
 #endif // AUDIO_BACKEND
 
@@ -85,10 +91,13 @@ AudioManager::getAvailableDevices() {
 
   APIAudio audio;
 
-  int32 deviceCount = audio.getDeviceCount();
+  // int32 deviceCount = audio.getDeviceCount();
 
-  for (int32 i = 0; i < deviceCount; ++i) {
-    auto deviceInfo = audio.getDeviceInfo(i);
+  Vector<uint32> deviceIds = audio.getDeviceIds();
+  uint32 deviceCount = static_cast<uint32>(deviceIds.size());
+
+  for (uint32 i = 0; i < deviceCount; ++i) {
+    auto deviceInfo = audio.getDeviceInfo(deviceIds[i]);
 
     AudioDevice audioDevice;
     audioDevice.name = deviceInfo.name;
@@ -130,6 +139,11 @@ AudioManager::getCurrentDevice() {
 
   device = m_currentDevice;
 
+  if (device.id == -1) {
+    String msg = "Device has not been set. This should be an error as initialization sets a default device";
+    Logger::instance().logError(msg);
+  }
+  
 #endif // AUDIO_BACKEND
   return device;
 }
@@ -172,6 +186,46 @@ AudioManager::setCurrentDevice(const String& deviceName) {
   }
 #endif // AUDIO_BACKEND
   Logger::instance().log("Switched to audio device: " + deviceName);
+}
+
+void
+AudioManager::setCurrentDevice(int32 deviceID) {
+
+#if AUDIO_BACKEND == AUDIO_BACKEND_OPENAL
+  // Shut down current context and device
+  onShutDown();
+  // Open new device
+  ALCdevice* device = alcOpenDevice(deviceName.c_str());
+  if (!device) {
+    Logger::instance().logError("Could not open audio device: " + deviceName);
+    return;
+  }
+  // Create new context
+  ALCcontext* ctx = alcCreateContext(device, nullptr);
+  if (ctx == nullptr || alcMakeContextCurrent(ctx) == ALC_FALSE) {
+    if (ctx != nullptr) {
+      alcDestroyContext(ctx);
+    }
+    alcCloseDevice(device);
+    Logger::instance().logError("Could not set audio context for device: " + deviceName);
+    return;
+  }
+#elif AUDIO_BACKEND == AUDIO_BACKEND_RTAUDIO
+
+  auto devices = getAvailableDevices();
+
+  auto it = std::find_if(devices.begin(), devices.end(), [&deviceID](const AudioDevice& device) {
+    return device.id == deviceID;
+    });
+
+  if (it == devices.end()) {
+    Logger::instance().logError("Could not find audio device: " + deviceID);
+  }
+  else {
+    m_currentDevice = *it;
+  }
+#endif // AUDIO_BACKEND
+  Logger::instance().log("Switched to audio device: " + m_currentDevice.name);
 }
 
 AudioDevice

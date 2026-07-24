@@ -165,6 +165,8 @@ struct PathContribution
   float delay;                          // seconds
   float attenuation[AUDIO_NUM_BANDS];   // spectral attenuation
   Vector3f direction;                   // for spatialization
+  float dopplerFactor = 1.0f;           // for doppler effect
+
 };
 
 } // namespace CYLLENE_SDK

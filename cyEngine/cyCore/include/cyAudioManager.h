@@ -1,3 +1,4 @@
+
 #pragma once
 #include "cyCorePrerequisites.h"
 
@@ -8,13 +9,17 @@
 
 namespace CYLLENE_SDK {
 
+class CAudioSource;
+
+class CAudioListener;
+
 struct AudioDevice
 {
   String 
   name;
 
   int32 
-  id;
+  id = -1;
 
   bool
   probed;
@@ -54,7 +59,8 @@ struct AudioParameters
 
 class CY_CORE_EXPORT AudioManager : public Module<AudioManager>
 {
-  public:
+ 
+ public:
 
   AudioManager() = default;
 
@@ -90,13 +96,30 @@ class CY_CORE_EXPORT AudioManager : public Module<AudioManager>
   uint32
   getBufferFrames() const { return m_bufferFrames; }
 
-  AudioDevice 
+ private:
+
+  int32
+  soundCallback(void* outputBuffer,
+                void* inputBuffer,
+                unsigned int nFrames,
+                double streamTime,
+                int32 status,
+                void* userData);
+  
+ public:
+
+  AudioDevice
   m_currentDevice;
 
   uint32 
   m_bufferFrames = 512;
 
+ private:
 
+
+  Vector<SPtr<CAudioSource>> m_audioSources;
+
+  Vector<SPtr<CAudioListener>> m_audioListeners;
 
 }; 
 
