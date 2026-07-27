@@ -348,8 +348,8 @@ TEST_SUITE("JSON") {
 
 TEST_SUITE("File System") {
   TEST_CASE("Create, write, read, delete temporary files") {
-    const String basePath = FileSystem::getWorkingDirectory().fullPath() + "/cyutilitiesut_tmp";
-    const String filePath = basePath + "/tmp.txt";
+    const Path basePath = FileSystem::getWorkingDirectory() / "cyutilitiesut_tmp";
+    const Path filePath = basePath / "tmp.txt";
 
     if (!FileSystem::exists(basePath)) {
       CHECK(FileSystem::createFolder(basePath) == true);
@@ -358,7 +358,7 @@ TEST_SUITE("File System") {
     CHECK(FileSystem::exists(basePath) == true);
 
     File file = FileSystem::createFile(filePath);
-    CHECK(FileSystem::exists(file.path()) == true);
+    CHECK(FileSystem::exists(Path(file.path())) == true);
     CHECK(file.writeFile("hello utilities") == true);
 
     size_t fileSize = 0;
@@ -373,18 +373,18 @@ TEST_SUITE("File System") {
 
   TEST_CASE("Directory paths return non-empty") {
     Path home = FileSystem::homeDir();
-    CHECK(home.fullPath().empty() == false);
+    CHECK(home.empty() == false);
 
     Path tmp = FileSystem::tempDir();
-    CHECK(tmp.fullPath().empty() == false);
+    CHECK(tmp.empty() == false);
 
     Path exe = FileSystem::getExecutablePath();
-    CHECK(exe.fullPath().empty() == false);
+    CHECK(exe.empty() == false);
   }
 
   TEST_CASE("Base64 encodes file content") {
-    const String basePath = FileSystem::getWorkingDirectory().fullPath() + "/cyutilitiesut_b64";
-    const String srcPath = basePath + "/source.txt";
+    const Path basePath = FileSystem::getWorkingDirectory() / "cyutilitiesut_b64";
+    const Path srcPath = basePath / "source.txt";
 
     if (!FileSystem::exists(basePath)) {
       CHECK(FileSystem::createFolder(basePath) == true);
@@ -393,7 +393,7 @@ TEST_SUITE("File System") {
     File src = FileSystem::createFile(srcPath);
     CHECK(src.writeFile("hello") == true);
 
-    String encoded = FileSystem::toBase64(srcPath);
+    String encoded = FileSystem::toBase64(srcPath.string());
     CHECK(encoded.empty() == false);
 
     FileSystem::deleteFolder(basePath);
@@ -660,18 +660,18 @@ TEST_SUITE("Crash Handler") {
     CHECK(trace.empty() == false);
 
     Path folder = CrashHandler::instance().getCrashFolder();
-    CHECK(folder.fullPath().empty() == false);
-    CHECK(FileSystem::exists(folder.fullPath()) == true);
+    CHECK(folder.empty() == false);
+    CHECK(FileSystem::exists(folder) == true);
 
     Path dump = CrashHandler::instance().createDump("test message", "fake stack trace");
-    CHECK(dump.fullPath().empty() == false);
-    CHECK(FileSystem::exists(dump.fullPath()) == true);
+    CHECK(dump.empty() == false);
+    CHECK(FileSystem::exists(dump) == true);
 
     CrashHandler::instance().logErrorAndStackTrace("test type", "test desc", "func", "file.cpp", 42);
     CrashHandler::instance().logErrorAndStackTrace("simple message", "stack content");
 
-    FileSystem::deleteFile(dump.fullPath());
-    FileSystem::deleteFolder(folder.fullPath());
+    FileSystem::deleteFile(dump);
+    FileSystem::deleteFolder(folder);
 
     CrashHandler::shutDown();
     CHECK(CrashHandler::isStarted() == false);

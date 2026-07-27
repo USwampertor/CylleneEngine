@@ -16,10 +16,10 @@ DLLLoader::load(Stringview path, Stringview functionName, bool isOSDll) {
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 
-  String libPath = isOSDll ? "" : FileSystem::getWorkingDirectory().fullPath() + "/";
+  Path libPath = isOSDll ? "" : FileSystem::getWorkingDirectory();
   libPath += path;
   Path p(libPath);
-  HINSTANCE myDll = LoadLibrary(p.fullPath().c_str());
+  HINSTANCE myDll = LoadLibrary(p.string().c_str());
   if (!myDll) {
     uint64 err = GetLastError();
     String errorString = Utils::format("Could not find dll at given path: %s \nError code: %d", path.data(), err);

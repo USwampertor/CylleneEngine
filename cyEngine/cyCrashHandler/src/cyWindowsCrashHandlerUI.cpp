@@ -48,7 +48,7 @@ namespace CYLLENE_SDK {
                     ("Cyllene Engine Crash Handler"), 
                     nullptr };
   m_wc.hIcon = static_cast<HICON>(LoadImage(nullptr,
-                                (FileSystem::getWorkingDirectory().fullPath() + "/ch.ico").c_str(),
+                                (FileSystem::getWorkingDirectory() / "ch.ico").string().c_str(),
                                 IMAGE_ICON,
                                 0,
                                 0,

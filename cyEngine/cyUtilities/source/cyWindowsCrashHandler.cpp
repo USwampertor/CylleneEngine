@@ -119,7 +119,7 @@ namespace CYLLENE_SDK {
         Path filePath = lineData.FileName;
         outputStream << Utils::format("0x%llx File[%s:%u (%u)]",
           addressString,
-          filePath.fileName(),
+          filePath.string().c_str(),
           static_cast<uint32>(lineData.LineNumber),
           static_cast<uint32>(column));
       }
@@ -133,7 +133,7 @@ namespace CYLLENE_SDK {
 
       if (SymGetModuleInfo64(hProcess, funcAddress, &moduleData)) {
         Path filePath = moduleData.ImageName;
-        outputStream << Utils::format(" Module[%s]", filePath.fileName());
+        outputStream << Utils::format(" Module[%s]", filePath.string().c_str());
       }
     }
 
@@ -452,7 +452,7 @@ namespace CYLLENE_SDK {
   CALLBACK createPlatformDumpWorker(void* data) {
     MiniDumpParams* params = static_cast<MiniDumpParams*>(data);
 
-    const String cStr = params->filePath.fullPath();
+    const String cStr = params->filePath.string();
     HANDLE hFile = CreateFile(cStr.c_str(),
                               GENERIC_WRITE,
                               0,
@@ -502,7 +502,7 @@ namespace CYLLENE_SDK {
     const String errorMessage = 
       Utils::format("%s \n\nFor more information check the crash report located at:\n %s", 
                     msg.data(), 
-                    folder.fullPath());
+                    folder.string().c_str());
     auto response = MessageBox(nullptr, errorMessage.c_str(), "Cyllene Engine Error!", MB_YESNO);
     if (response == IDYES) {
     }
@@ -540,7 +540,7 @@ namespace CYLLENE_SDK {
     errorMessage << "  - In function: " << strFunction << std::endl;
     errorMessage << "  - In file: " << strFile << ":" << nLine;
 
-    createPlatformDump(folderPath.path() + "/" + String(s_MiniDumpName), nullptr);
+    createPlatformDump(folderPath / String(s_MiniDumpName), nullptr);
     Path p = CrashHandler::instance().createDump(errorMessage.str(), getStackTrace());
 
     popupErrorMessage(m_errorMessage, folderPath, p);
@@ -561,7 +561,7 @@ namespace CYLLENE_SDK {
 
     Logger::instance().dump();
     Path folderPath = CrashHandler::instance().getCrashFolder();
-    createPlatformDump(folderPath.path() + "/" + String(s_MiniDumpName), nullptr);
+    createPlatformDump(folderPath / String(s_MiniDumpName), nullptr);
     Path p = CrashHandler::instance().createDump(getWindowsExceptionMessage(exceptionData->ExceptionRecord),
                                                  getWindowsStackTrace(*exceptionData->ContextRecord, 0));
 

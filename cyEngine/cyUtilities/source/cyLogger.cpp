@@ -109,13 +109,13 @@ namespace CYLLENE_SDK {
 
   void
   Logger::dump() {
-    Path logPath = FileSystem::getExecutablePath().directoryPath() + "/logs/";
-    if (!FileSystem::exists(logPath.path())) {
-      FileSystem::createFolder(logPath.path());
+    Path logPath = FileSystem::getExecutablePath().parent_path() / "logs";
+    if (!FileSystem::exists(logPath)) {
+      FileSystem::createFolder(logPath);
     }
-    logPath = logPath.path() + Utils::format("log_%s.txt", Utils::timeFormat(Time::now(), "%Y%m%d_%H%M%S").c_str());
+    logPath += Utils::format("log_%s.txt", Utils::timeFormat(Time::now(), "%Y%m%d_%H%M%S").c_str());
 
-    File logFile = FileSystem::createFile(logPath.path());
+    File logFile = FileSystem::createFile(logPath);
 
     String data = "----- Log Dump -----\n";
     for (const Log& logEntry : m_logStack) {

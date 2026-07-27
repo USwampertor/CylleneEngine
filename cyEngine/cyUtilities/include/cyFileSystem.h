@@ -9,9 +9,6 @@
 
 
 #include <cppfs/FileHandle.h>
-#include <cppfs/FileIterator.h>
-#include <cppfs/FilePath.h>
-#include <cppfs/LoginCredentials.h>
 #include <cppfs/fs.h>
 
 #include <cpplocate/cpplocate.h>
@@ -24,10 +21,16 @@ namespace CYLLENE_SDK
 {
 // Redefinition
 using File          = cppfs::FileHandle;
-using Path          = cppfs::FilePath;
-using FileIterator  = cppfs::FileIterator;
-using Credentials   = cppfs::LoginCredentials;
-using FileEvent     = cppfs::FileEvent;
+// using Path          = cppfs::FilePath;
+// using FileIterator  = cppfs::FileIterator;
+// using Credentials   = cppfs::LoginCredentials;
+// using FileEvent     = cppfs::FileEvent;
+
+using Path = std::filesystem::path;
+using FileEntry = std::filesystem::directory_entry;
+using FileIterator = std::filesystem::directory_iterator;
+
+
 
 /**
  * @struct FileSystem
@@ -46,6 +49,11 @@ struct CY_UTILITY_EXPORT FileSystem
     return cppfs::fs::open(fileName.data());
   }
 
+  static File
+  open(Path fileName) {
+    return cppfs::fs::open(fileName.string());
+  }
+
   /**
     * @brief Loads an entire file as a binary buffer.
     * @param fileName File path.
@@ -54,8 +62,21 @@ struct CY_UTILITY_EXPORT FileSystem
     */
   static unsigned char*
   openBinary(Stringview fileName, size_t& outFileSize) {
-    IfStream file;
+    std::fstream file;
     file.open(fileName.data(), IfStream::binary | IfStream::in | IfStream::ate);
+    const size_t file_length = static_cast<size_t>(file.tellg());
+
+    unsigned char* data = cy_newN<unsigned char>(file_length);
+    file.seekg(file.beg);
+    file.read(reinterpret_cast<char*>(data), static_cast<std::streamsize>(file_length));
+    outFileSize = file_length;
+    return data;
+  }
+
+  static unsigned char*
+  openBinary(const Path& fileName, size_t& outFileSize) {
+    std::fstream file;
+    file.open(fileName.string(), IfStream::binary | IfStream::in | IfStream::ate);
     const size_t file_length = static_cast<size_t>(file.tellg());
 
     unsigned char* data = cy_newN<unsigned char>(file_length);
@@ -72,7 +93,12 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static bool
   exists(Stringview filePath) {
-    return cppfs::fs::open(filePath.data()).exists();
+    return std::filesystem::exists(filePath);
+  }
+
+  static bool
+  exists(const Path& filePath) {
+    return std::filesystem::exists(filePath);
   }
 
   /**
@@ -82,10 +108,18 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static File
   createFile(Stringview filePath) {
-    std::fstream newFile;
+    IfStream newFile;
     newFile.open(filePath.data(), std::fstream::binary | std::fstream::trunc | std::fstream::out);
     newFile.close();
     return cppfs::fs::open(filePath.data());
+  }
+
+  static File
+  createFile(const Path& filePath) {
+    IfStream newFile;
+    newFile.open(filePath, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+    newFile.close();
+    return cppfs::fs::open(filePath.string());
   }
 
   /**
@@ -95,7 +129,16 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static bool
   createFolder(Stringview folderPath) {
-    File f = cppfs::fs::open(folderPath.data());
+    File f = FileSystem::open(folderPath);
+    if (!f.exists()) {
+      return f.createDirectory();
+    }
+    return false;
+  }
+
+  static bool
+  createFolder(const Path& folderPath) {
+    File f = FileSystem::open(folderPath);
     if (!f.exists()) {
       return f.createDirectory();
     }
@@ -108,7 +151,16 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static void
   deleteFolder(Stringview folderPath) {
-    File f = cppfs::fs::open(folderPath.data());
+    File f = FileSystem::open(folderPath);
+    if (f.isDirectory()) {
+      f.removeDirectoryRec();
+    }
+  }
+
+  // @see deleteFolder
+  static void
+  deleteFolder(const Path& folderPath) {
+    File f = FileSystem::open(folderPath);
     if (f.isDirectory()) {
       f.removeDirectoryRec();
     }
@@ -120,7 +172,15 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static void
   deleteFile(Stringview filePath) {
-    File f = cppfs::fs::open(filePath.data());
+    File f = FileSystem::open(filePath);
+    if (f.isFile()) {
+      f.remove();
+    }
+  }
+
+  static void
+  deleteFile(const Path& filePath) {
+    File f = FileSystem::open(filePath);
     if (f.isFile()) {
       f.remove();
     }
@@ -248,7 +308,7 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static Path
   tempDir() {
-    return Path(cpplocate::tempDir(getExecutablePath().baseName()));
+    return Path(cpplocate::tempDir(getExecutablePath().stem().string()));
   }
 
   /**
@@ -257,7 +317,7 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static Path
   configDir() {
-    return Path(cpplocate::configDir(getExecutablePath().baseName()));
+    return Path(cpplocate::configDir(getExecutablePath().stem().string()));
   }
 
   /**
@@ -266,7 +326,7 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static Path
   localDir() {
-    return Path(cpplocate::localDir(getExecutablePath().baseName()));
+    return Path(cpplocate::localDir(getExecutablePath().stem().string()));
   }
 
   /**
@@ -275,7 +335,7 @@ struct CY_UTILITY_EXPORT FileSystem
    */
   static Path
   roamingDir() {
-    return Path(cpplocate::roamingDir(getExecutablePath().baseName()));
+    return Path(cpplocate::roamingDir(getExecutablePath().stem().string()));
   }
 };
 

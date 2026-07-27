@@ -119,10 +119,10 @@ namespace CYLLENE_SDK {
     }
 #endif
 
-    String fontPath = FileSystem::getWorkingDirectory().fullPath() + "/Buran USSR.ttf";
-    ImFont* tinyUSSRfont = m_io->Fonts->AddFontFromFileTTF(fontPath.c_str(), 10.0f);
-    ImFont* smallUSSRfont = m_io->Fonts->AddFontFromFileTTF(fontPath.c_str(), 16.0f);
-    ImFont* bigUSSRfont = m_io->Fonts->AddFontFromFileTTF(fontPath.c_str(), 30.0f);
+    Path fontPath = FileSystem::getWorkingDirectory() / "Buran USSR.ttf";
+    ImFont* tinyUSSRfont = m_io->Fonts->AddFontFromFileTTF(fontPath.string().c_str(), 10.0f);
+    ImFont* smallUSSRfont = m_io->Fonts->AddFontFromFileTTF(fontPath.string().c_str(), 16.0f);
+    ImFont* bigUSSRfont = m_io->Fonts->AddFontFromFileTTF(fontPath.string().c_str(), 30.0f);
 
     m_fontMap.insert(std::make_pair("tinyUSSR", tinyUSSRfont));
     m_fontMap.insert(std::make_pair("smallUSSR", smallUSSRfont));

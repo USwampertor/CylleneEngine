@@ -62,7 +62,7 @@ struct CY_UTILITY_EXPORT WindowsUtils : public PlatformUtils
    */
   static void
   open(const Path& path, Stringview parameters = "", const int32& showOption = SW_SHOWNORMAL) {
-    ShellExecuteA(nullptr, LPCSTR("open"), path.fullPath().c_str(), parameters.data(), nullptr, showOption);
+    ShellExecuteA(nullptr, LPCSTR("open"), path.string().c_str(), parameters.data(), nullptr, showOption);
   }
 
 };
