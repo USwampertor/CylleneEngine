@@ -7,12 +7,16 @@
 
 #pragma once
 
+
 #include <cppfs/FileHandle.h>
 #include <cppfs/FileIterator.h>
 #include <cppfs/FilePath.h>
 #include <cppfs/LoginCredentials.h>
 #include <cppfs/fs.h>
+
 #include <cpplocate/cpplocate.h>
+
+#include <filesystem>
 
 #include "cyUtilitiesPrerequisites.h"
 

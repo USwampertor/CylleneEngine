@@ -874,3 +874,231 @@ TEST_SUITE("Type Traits") {
     CHECK(id1 == id2);
   }
 }
+
+TEST_SUITE("Memory Allocator Benchmarks") {
+  static constexpr int32 BENCH_ITERATIONS = 10000;
+
+  TEST_CASE("Small alloc/free (16 bytes)") {
+    BENCHMARKEPOCHS("malloc/free 16B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = malloc(16);
+        DONOTOPTIMIZE(p);
+        free(p);
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_alloc/cy_free 16B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = cy_alloc(16);
+        DONOTOPTIMIZE(p);
+        cy_free(p);
+      }
+    });
+  }
+
+  TEST_CASE("Medium alloc/free (256 bytes)") {
+    BENCHMARKEPOCHS("malloc/free 256B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = malloc(256);
+        DONOTOPTIMIZE(p);
+        free(p);
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_alloc/cy_free 256B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = cy_alloc(256);
+        DONOTOPTIMIZE(p);
+        cy_free(p);
+      }
+    });
+  }
+
+  TEST_CASE("Large alloc/free (4096 bytes)") {
+    BENCHMARKEPOCHS("malloc/free 4096B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = malloc(4096);
+        DONOTOPTIMIZE(p);
+        free(p);
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_alloc/cy_free 4096B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = cy_alloc(4096);
+        DONOTOPTIMIZE(p);
+        cy_free(p);
+      }
+    });
+  }
+
+  TEST_CASE("Aligned alloc/free (256B, 64-byte align)") {
+    BENCHMARKEPOCHS("_aligned_malloc/_aligned_free 256B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = platformAlignedAlloc(256, 64);
+        DONOTOPTIMIZE(p);
+        platformAlignedFree(p);
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_alloc_aligned/cy_free_aligned 256B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = cy_alloc_aligned(256, 64);
+        DONOTOPTIMIZE(p);
+        cy_free_aligned(p);
+      }
+    });
+  }
+
+  TEST_CASE("Aligned16 alloc/free (1024 bytes)") {
+    BENCHMARKEPOCHS("platformAlignedAlloc16/Free16 1024B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = platformAlignedAlloc16(1024);
+        DONOTOPTIMIZE(p);
+        platformAlignedFree16(p);
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_alloc_aligned16/cy_free_aligned16 1024B", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        void* p = cy_alloc_aligned16(1024);
+        DONOTOPTIMIZE(p);
+        cy_free_aligned16(p);
+      }
+    });
+  }
+
+  TEST_CASE("New/delete single object (int)") {
+    BENCHMARKEPOCHS("new/delete int", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        int* p = new int(i);
+        DONOTOPTIMIZE(p);
+        delete p;
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_new/cy_delete int", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        int* p = cy_new<int>(i);
+        DONOTOPTIMIZE(p);
+        cy_delete<int>(p);
+      }
+    });
+  }
+
+  TEST_CASE("New/delete struct (PoolTestType, 8 bytes)") {
+    BENCHMARKEPOCHS("new/delete PoolTestType", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        PoolTestType* p = new PoolTestType(i);
+        DONOTOPTIMIZE(p);
+        delete p;
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_new/cy_delete PoolTestType", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        PoolTestType* p = cy_new<PoolTestType>(i);
+        DONOTOPTIMIZE(p);
+        cy_delete<PoolTestType>(p);
+      }
+    });
+  }
+
+  TEST_CASE("Array new/delete (100 ints)") {
+    static constexpr int32 ARRAY_SIZE = 100;
+
+    BENCHMARKEPOCHS("new[]/delete[] int[100]", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        int* p = new int[ARRAY_SIZE];
+        DONOTOPTIMIZE(p);
+        delete[] p;
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_newN/cy_deleteN int[100]", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        int* p = cy_newN<int, GenAlloc>(ARRAY_SIZE);
+        DONOTOPTIMIZE(p);
+        cy_deleteN<int, GenAlloc>(p, ARRAY_SIZE);
+      }
+    });
+  }
+
+  TEST_CASE("Array new/delete (1000 PoolTestType)") {
+    static constexpr int32 ARRAY_SIZE = 1000;
+
+    BENCHMARKEPOCHS("new[]/delete[] PoolTestType[1000]", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        PoolTestType* p = new PoolTestType[ARRAY_SIZE];
+        DONOTOPTIMIZE(p);
+        delete[] p;
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_newN/cy_deleteN PoolTestType[1000]", 100, [&]() {
+      for (int32 i = 0; i < BENCH_ITERATIONS; ++i) {
+        PoolTestType* p = cy_newN<PoolTestType, GenAlloc>(ARRAY_SIZE);
+        DONOTOPTIMIZE(p);
+        cy_deleteN<PoolTestType, GenAlloc>(p, ARRAY_SIZE);
+      }
+    });
+  }
+
+  TEST_CASE("Burst alloc/free pattern (allocate all, then free all)") {
+    static constexpr int32 BURST_SIZE = 1000;
+
+    BENCHMARKEPOCHS("malloc burst 1000x16B", 100, [&]() {
+      void* ptrs[BURST_SIZE];
+      for (int32 i = 0; i < BURST_SIZE; ++i) {
+        ptrs[i] = malloc(16);
+      }
+      for (int32 i = 0; i < BURST_SIZE; ++i) {
+        free(ptrs[i]);
+      }
+    });
+
+    BENCHMARKEPOCHS("cy_alloc burst 1000x16B", 100, [&]() {
+      void* ptrs[BURST_SIZE];
+      for (int32 i = 0; i < BURST_SIZE; ++i) {
+        ptrs[i] = cy_alloc(16);
+      }
+      for (int32 i = 0; i < BURST_SIZE; ++i) {
+        cy_free(ptrs[i]);
+      }
+    });
+  }
+
+  TEST_CASE("MemoryPool vs malloc/free (PoolTestType)") {
+    static constexpr int32 POOL_BENCH_SIZE = 1000;
+    static constexpr int32 POOL_BENCH_COUNT = 100;
+
+    BENCHMARKEPOCHS("malloc/free PoolTestType alloc+dealloc", 50, [&]() {
+      for (int32 i = 0; i < POOL_BENCH_COUNT; ++i) {
+        PoolTestType* ptrs[POOL_BENCH_SIZE];
+        for (int32 j = 0; j < POOL_BENCH_SIZE; ++j) {
+          ptrs[j] = static_cast<PoolTestType*>(malloc(sizeof(PoolTestType)));
+          new (ptrs[j]) PoolTestType(j);
+        }
+        for (int32 j = 0; j < POOL_BENCH_SIZE; ++j) {
+          ptrs[j]->~PoolTestType();
+          free(ptrs[j]);
+        }
+      }
+    });
+
+    BENCHMARKEPOCHS("MemoryPool allocate+deallocate PoolTestType", 50, [&]() {
+      MemoryPool<PoolTestType> pool;
+      pool.initialize(POOL_BENCH_SIZE);
+      for (int32 i = 0; i < POOL_BENCH_COUNT; ++i) {
+        for (int32 j = 0; j < POOL_BENCH_SIZE; ++j) {
+          DONOTOPTIMIZE(pool.allocate(j));
+        }
+        for (int32 j = 0; j < POOL_BENCH_SIZE; ++j) {
+          // Deallocate in order by iterating the pool's raw storage
+        }
+        pool.clear();
+      }
+      pool.freePool();
+    });
+  }
+}
