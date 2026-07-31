@@ -12,7 +12,7 @@
 
 namespace CYLLENE_SDK {
 
-struct CrashHandler::Data
+struct Data
 {
   Mutex mutex;
 };

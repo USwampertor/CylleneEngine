@@ -18,8 +18,6 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-#include "cyUtilitiesPrerequisites.h"
-
 #include "cyStdHeaders.h"
 
 namespace CYLLENE_SDK {

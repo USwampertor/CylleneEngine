@@ -9,14 +9,13 @@
 
 #include "cyUtilitiesPrerequisites.h"
 
-#include "cyFileSystem.h"
-
 namespace CYLLENE_SDK {
 
   namespace DYNLIBRESULT {
     BETTER_ENUM(E, uint32, 
-                eSUCCESS = 0, 
-                eALREADYLOADED, 
+                eSUCCESS = 0,
+                eLOADING,
+                eLOADED, 
                 eFAIL );
   }
 

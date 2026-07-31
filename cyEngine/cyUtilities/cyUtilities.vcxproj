@@ -195,6 +195,7 @@
     <ClInclude Include="include\cyEvent.h" />
     <ClInclude Include="include\cyException.h" />
     <ClInclude Include="include\cyFileSystem.h" />
+    <ClInclude Include="include\cyFlags.h" />
     <ClInclude Include="include\cyJSON.h" />
     <ClInclude Include="include\cyMemoryPool.h" />
     <ClInclude Include="include\cyMemoryPoolHandler.h" />
@@ -227,7 +228,7 @@
     <ClCompile Include="source\cyRegex.cpp" />
     <ClCompile Include="source\cyThread.cpp" />
     <ClCompile Include="source\cyUUID.cpp" />
-    <ClCompile Include="source\cyWindowsCrashHandler.cpp" />
+    <ClCompile Include="source\cyCrashHandlerWindows.cpp" />
     <ClCompile Include="source\cyDLLLoader.cpp" />
     <ClCompile Include="source\cyException.cpp" />
     <ClCompile Include="source\cyLogger.cpp" />

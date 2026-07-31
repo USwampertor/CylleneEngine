@@ -1,6 +1,8 @@
 #include "cyDinamicLibrary.h"
 #include "cyLogger.h"
 #include "cyUtilities.h"
+#include "cyFileSystem.h"
+
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # include "cyWindows.h"
 #elif CY_PLATFORM == CY_PLATFORM_LINUX
@@ -34,7 +36,7 @@ namespace CYLLENE_SDK {
 #else
       dlclose(newData);
 #endif
-      return DYNLIBRESULT::E::eALREADYLOADED;
+      return DYNLIBRESULT::E::eLOADED;
     }
     m_data = newData;
 #if CY_PLATFORM == CY_PLATFORM_WIN32

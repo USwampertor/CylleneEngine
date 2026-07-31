@@ -18,8 +18,13 @@ namespace CYLLENE_SDK
 {
 // @brief max stack depth
 constexpr uint32 CY_MAX_STACKTRACE_DEPTH      = 200;
+
 // @brief Max size in bytes
 constexpr uint32 CY_MAX_STACKTRACE_NAME_BYTES = 1024;
+
+// Forward declaration
+// @brief Platform-specific crash handler state.
+struct Data;
 
 /**
  * @class CrashHandler
@@ -130,12 +135,11 @@ private:
 
   // @brief Default crash message key.
   static const String m_errorMessage;
-  // @brief Platform-specific crash handler state.
-  struct Data;
   
   // @brief Platform-specific crash handler data pointer.
   Data* m_data;
 
+  // @brief When a log is generated, what should happen
   Event<void> onLogCreated;
 };
 
