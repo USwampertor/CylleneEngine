@@ -189,6 +189,8 @@
   <ItemGroup>
     <ClInclude Include="include\cyAllocatorFwd.h" />
     <ClInclude Include="include\cyArgumentParser.h" />
+    <ClInclude Include="include\cyAssert.h" />
+    <ClInclude Include="include\cyChronos.h" />
     <ClInclude Include="include\cyCrashHandler.h" />
     <ClInclude Include="include\cyDinamicLibrary.h" />
     <ClInclude Include="include\cyDLLLoader.h" />
@@ -199,9 +201,11 @@
     <ClInclude Include="include\cyJSON.h" />
     <ClInclude Include="include\cyMemoryPool.h" />
     <ClInclude Include="include\cyMemoryPoolHandler.h" />
+    <ClInclude Include="include\cyNumber.h" />
     <ClInclude Include="include\cyPlatformUtilities.h" />
     <ClInclude Include="include\cyRegex.h" />
     <ClInclude Include="include\cySmartPointers.h" />
+    <ClInclude Include="include\cyString.h" />
     <ClInclude Include="include\cyThread.h" />
     <ClInclude Include="include\cyTime.h" />
     <ClInclude Include="include\cyLogger.h" />
@@ -217,6 +221,7 @@
     <ClInclude Include="include\cyUUID.h" />
     <ClInclude Include="include\cyWindows.h" />
     <ClInclude Include="include\cyWindowsUtilities.h" />
+    <ClInclude Include="include\cyFileDataStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\cyArgumentParser.cpp" />

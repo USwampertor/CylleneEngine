@@ -1,25 +1,13 @@
 
 #include "cyArgumentParser.h"
 
-namespace CYLLENE_SDK {
+#include "cyRegex.h"
 
+namespace CYLLENE_SDK {
 
 void
 ArgumentParser::parse(const int& argc, const char* argv[])
 {
-//   String currentFlag;
-// 
-//   for (int i = 1; i < argc; ++i) {
-//     String token = argv[i];
-// 
-//     if (token[0] == '-') {  // If the token is a flag
-//       currentFlag = token.substr(1);  // Remove the leading '-'
-//       addFlag(currentFlag);  // Initialize with an empty vector
-//     }
-//     else if (!currentFlag.empty()) {
-//       setFlagValue(currentFlag, token);  // Store value under current flag
-//     }
-//   }
 
   String currentFlag;
   Regex flagRegex(R"(-\w+)");

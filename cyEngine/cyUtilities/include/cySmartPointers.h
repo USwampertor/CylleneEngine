@@ -11,9 +11,19 @@
 #include "cyMemoryAllocator.h"
 #include "cyModule.h"
 #include "cyPlatformDefines.h"
+#include "cyAssert.h"
 
 namespace CYLLENE_SDK
 {
+
+template<typename T>
+using SPtr = std::shared_ptr<T>;
+
+template<typename T>
+using UPtr = std::unique_ptr<T>;
+
+template<typename T>
+using WPtr = std::weak_ptr<T>;
 
 /**
  * @class ManagedPtr

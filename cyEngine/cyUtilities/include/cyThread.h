@@ -12,9 +12,36 @@
 #include "cyModule.h"
 #include "cySmartPointers.h"
 #include "cyEvent.h"
+#include "cyChronos.h"
+#include <thread>
+#include <mutex>
+#include <future>
 
 namespace CYLLENE_SDK
 {
+
+using Mutex         = std::mutex;
+
+template<typename T>
+using ULock    = std::unique_lock<T>;
+
+using MULock     = ULock<Mutex>;
+
+using RMutex = std::recursive_mutex;
+
+using RMULock = ULock<RMutex>;
+
+using Thread = std::thread;
+
+using ThreadID = std::thread::id;
+
+using ConditionVariable = std::condition_variable;
+
+template<typename T>
+using Future = std::future<T>;
+
+template<typename T>
+using ResultOf = std::result_of<T>;
 
 namespace THREAD_TYPE
 {

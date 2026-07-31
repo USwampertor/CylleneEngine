@@ -2,6 +2,7 @@
 
 #include "cyFileSystem.h"
 #include "cyLogger.h"
+#include "cyAssert.h"
 
 #if CY_PLATFORM == CY_PLATFORM_WIN32
 # include "cyWindows.h"

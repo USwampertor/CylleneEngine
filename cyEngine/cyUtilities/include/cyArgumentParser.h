@@ -8,9 +8,7 @@
 #pragma once
 
 #include "cyUtilitiesPrerequisites.h"
-
-#include "cyRegex.h"
-#include "cyUtilities.h"
+#include "cyString.h"
 
 namespace CYLLENE_SDK {
 /**

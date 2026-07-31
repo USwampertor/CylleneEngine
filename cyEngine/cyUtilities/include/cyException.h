@@ -10,18 +10,22 @@
 #include <iostream>
 #include <exception>
 #include <stdexcept>
+#include "cyAssert.h"
 
 #include "cyUtilitiesPrerequisites.h"
 
 #include "cyCrashHandler.h"
-#include "cyStdHeaders.h"
 #include "cyUtilities.h"
 
 namespace CYLLENE_SDK {
 
 // Using namespaces
-using std::runtime_error;
 using std::is_base_of;
+
+// Exception
+using StdException = std::exception;
+
+using RunTimeError = std::runtime_error;
 
 #if CY_COMPILER == CY_COMPILER_MSVC
 # pragma warning( push )

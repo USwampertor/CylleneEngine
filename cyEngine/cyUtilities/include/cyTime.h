@@ -10,6 +10,8 @@
 #include "cyUtilitiesPrerequisites.h"
 #include "cyUtilities.h"
 #include "cyModule.h"
+#include "cyChronos.h"
+
 
 namespace CYLLENE_SDK {
 

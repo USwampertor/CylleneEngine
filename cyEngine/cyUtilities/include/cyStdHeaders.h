@@ -8,255 +8,109 @@
 #pragma once
 
 #include <bitset>
-#include <cassert>
-#include <cmath>
-#include <cstring>
-#include <ctime>
-#include <chrono>
-#include <fstream>
-#include <future>
-#include <iostream>
-#include <limits>
-#include <memory>
-#include <mutex>
-#include <sstream>
-#include <thread>
-#include <unordered_set>
-#include <unordered_map>
+// #include <cassert>
+// #include <cmath>
+// #include <cstring>
+// #include <ctime>
+// #include <chrono>
+// #include <future>
+// #include <limits>
+// #include <memory>
+// #include <mutex>
+// #include <thread>
 #include <type_traits>
 
 //#define USING_EASTL
 
-#ifndef  USING_EASTL
 //STD objects
-# include <algorithm>
-# include <string>
-# include <string_view>
+#include <algorithm>
 //STD Containers
-# include <array>
-# include <vector>
-# include <deque>
-# include <forward_list>
-# include <list>
-# include <stack>
-# include <queue>
-# include <set>
-# include <map>
-#else
-
-#endif
+#include <array>
+#include <deque>
+#include <forward_list>
+#include <list>
+#include <map>
+#include <queue>
+#include <stack>
+#include <set>
+#include <unordered_set>
+#include <unordered_map>
+#include <vector>
 
 #include "cyAllocatorFwd.h"
 
+// TODO: See where this should go
 namespace CYLLENE_SDK {
 
-  template<std::size_t N>
-  using Bitset = std::bitset<N>;
+template<std::size_t N>
+using Bitset = std::bitset<N>;
 
-  using StringStream  = std::stringstream;
+template<typename T>
+using Hash   = std::hash<T>;
 
-  using IStringStream = std::istringstream;
-
-  using OStringStream = std::ostringstream;
-
-  using IfStream = std::ifstream;
-
-  using OfStream = std::ofstream;
-
-  using FileBuffer = std::filebuf;
-
-  template<typename T>
-  using SPtr = std::shared_ptr<T>;
-
-  template<typename T>
-  using UPtr = std::unique_ptr<T>;
-
-  using Mutex         = std::mutex;
-
-  template<typename T>
-  using ULock    = std::unique_lock<T>;
-
-  using MULock     = ULock<Mutex>;
-
-  template<typename T>
-  using Hash          = std::hash<T>;
-
-  using HighClock     = std::chrono::high_resolution_clock;
-
-  using RMutex = std::recursive_mutex;
-
-  using RMULock = ULock<RMutex>;
-
-  using SteadyClock   = std::chrono::steady_clock;
-
-  using StreamSize    = std::streamsize;
-
-  using SystemClock   = std::chrono::system_clock;
-
-  using TimeType      = std::time_t;
-
-  using TM            = std::tm;
-
-  template<typename T>
-  using TimePoint     = std::chrono::time_point<T>;
-
-  using Nanoseconds   = std::chrono::nanoseconds;
-
-  using Miliseconds   = std::chrono::milliseconds;
-
-  using Microseconds  = std::chrono::microseconds;
-
-  using Seconds       = std::chrono::seconds;
-
-  using Minutes       = std::chrono::minutes;
-
-  using Hours         = std::chrono::hours;
-
-  template<typename T>
-  using NumericLimits = std::numeric_limits<T>;
-
-  using StdException  = std::exception;
-
-  using RunTimeError  = std::runtime_error;
-
-  template<typename T>
-  using ResultOf = std::result_of<T>;
-
-  template<typename T, typename A>
-  using Pair = std::pair<T, A>;
-
-  template<typename T, typename A>
-  using Tuple = std::tuple<T, A>;
-
-  using Thread = std::thread;
-
-  using ThreadID = std::thread::id;
-
-  template<class Key,
-           class H = Hash<Key>,
-           class KeyEqual = std::equal_to<Key>,
-           class Allocator = StdAlloc<Key>>
-  using UnorderedSet = std::unordered_set<Key, H, KeyEqual, Allocator>;
-
-  template<typename Key, 
-           typename Value, 
-           typename H = Hash<Key>,
-           typename KeyEqual = std::equal_to<Key>,
-           typename Allocator = StdAlloc<std::pair<const Key, Value>>>
-  using UnorderedMap = std::unordered_map<Key, Value, H, KeyEqual, Allocator>;
-
-  template<typename T>
-  using WPtr = std::weak_ptr<T>;
-
-  using ConditionVariable = std::condition_variable;
-
-  template<typename T>
-  using Future = std::future<T>;
 }
 
 namespace CYLLENE_SDK {
-#ifndef USING_EASTL
-  template<typename T, size_t A>
-  using Array = std::array<T, A>;
 
-  template<typename T, typename A = StdAlloc<T>>
-  using Vector = std::vector<T, A>;
+template<typename T, size_t A>
+using Array = std::array<T, A>;
 
-  template<typename T, typename A = StdAlloc<T>>
-  using Deque = std::deque<T, A>;
+template<typename T, typename A = StdAlloc<T>>
+using Vector = std::vector<T, A>;
 
-  template<typename T, typename A = StdAlloc<T>>
-  using ForwardList = std::forward_list<T, A>;
+template<typename T, typename A = StdAlloc<T>>
+using Deque = std::deque<T, A>;
 
-  template<typename T, typename A = StdAlloc<T>>
-  using List = std::list<T, A>;
+template<typename T, typename A = StdAlloc<T>>
+using ForwardList = std::forward_list<T, A>;
 
-  template<typename T, typename A = std::deque<T>>
-  using Stack = std::stack<T, A>;
+template<typename T, typename A = StdAlloc<T>>
+using List = std::list<T, A>;
 
-  template<typename T, typename A = std::deque<T>>
-  using Queue = std::queue<T, A>;
+template<typename T, typename A = std::deque<T>>
+using Stack = std::stack<T, A>;
 
-  template<typename T, typename A = std::vector<T>>
-  using PriorityQueue = std::priority_queue<T, A>;
+template<typename T, typename A = std::deque<T>>
+using Queue = std::queue<T, A>;
 
-  template<typename T, typename B = std::less<T>, typename A = StdAlloc<T>>
-  using Set = std::set<T, B, A>;
+template<typename T, typename A = std::vector<T>>
+using PriorityQueue = std::priority_queue<T, A>;
 
-  template<typename T, typename B = std::less<T>, typename A = StdAlloc<T>>
-  using MultiSet = std::multiset< T, B, A >;
+template<typename T, typename B = std::less<T>, typename A = StdAlloc<T>>
+using Set = std::set<T, B, A>;
 
-  template< typename KEY,
-    typename T,
-    typename B = std::less<KEY>,
-    typename A = StdAlloc<std::pair<const KEY, T>>>
-    using Map = std::map<KEY, T, B, A>;
+template<typename T, typename B = std::less<T>, typename A = StdAlloc<T>>
+using MultiSet = std::multiset< T, B, A >;
 
-  template< typename KEY,
-    typename T,
-    typename B = std::less<KEY>,
-    typename A = StdAlloc<std::pair<const KEY, T>>>
-    using MultiMap = std::multimap<KEY, T, B, A>;
+template<typename KEY,
+         typename T,
+         typename B = std::less<KEY>,
+         typename A = StdAlloc<std::pair<const KEY, T>>>
+using Map = std::map<KEY, T, B, A>;
 
-  using String = std::string;
+template<typename KEY,
+         typename T,
+         typename B = std::less<KEY>,
+         typename A = StdAlloc<std::pair<const KEY, T>>>
+using MultiMap = std::multimap<KEY, T, B, A>;
 
-  using WString = std::wstring;
+template<typename T, typename A>
+using Pair = std::pair<T, A>;
 
-  using Stringview = std::string_view;
-#else
-  template<typename T, size_t N = 1>
-  using Array = eastl::array<T, N>;
+template<typename T, typename A>
+using Tuple = std::tuple<T, A>;
 
-  template<typename T, typename A = EASTLAllocatorType>
-  using Vector = eastl::vector<T, A>;
+template<class Key,
+         class H = Hash<Key>,
+         class KeyEqual = std::equal_to<Key>,
+         class Allocator = StdAlloc<Key>>
+using UnorderedSet = std::unordered_set<Key, H, KeyEqual, Allocator>;
 
-  template<typename T,
-    typename A = EASTLAllocatorType,
-    unsigned kDequeSubarraySize = DEQUE_DEFAULT_SUBARRAY_SIZE(T)>
-    using Deque = eastl::deque<T, A, kDequeSubarraySize>;
-
-  template<typename T, typename A = EASTLAllocatorType>
-  using ForwardList = eastl::list<T, A>;
-
-  template<typename T, typename A = EASTLAllocatorType>
-  using List = eastl::list<T, A>;
-
-  template<typename T, typename A = eastl::vector<T>>
-  using Stack = eastl::stack<T, A>;
-
-  template<typename T,
-    typename A = eastl::deque<T, EASTLAllocatorType, DEQUE_DEFAULT_SUBARRAY_SIZE(T)>>
-    using Queue = eastl::queue<T, A>;
-
-  template<typename T,
-    typename B = eastl::vector<T>,
-    typename A = eastl::less<typename B::value_type> >
-    using PriorityQueue = eastl::priority_queue<T, B, A>;
-
-  template<typename KEY,
-           typename B = eastl::less<KEY>,
-           typename A = EASTLAllocatorType>
-  using Set = eastl::set<KEY, B, A>;
-
-  template<typename KEY,
-           typename B = eastl::less<KEY>,
-           typename A = EASTLAllocatorType>
-  using MultiSet = eastl::multiset<KEY, B, A>;
-
-  template<typename KEY, typename T,
-           typename B = eastl::less<KEY>,
-           typename A = EASTLAllocatorType>
-   using Map = eastl::map<KEY, B, A>;
-
-  template<typename KEY, typename T,
-           typename B = eastl::less<KEY>,
-           typename A = EASTLAllocatorType>
-  using MultiMap = eastl::multimap<KEY, B, A>;
-
-  using String = eastl::string;
-
-  using WString = eastl::wstring;
-
-#endif
+template<typename Key, 
+         typename Value, 
+         typename H = Hash<Key>,
+         typename KeyEqual = std::equal_to<Key>,
+         typename Allocator = StdAlloc<std::pair<const Key, Value>>>
+using UnorderedMap = std::unordered_map<Key, Value, H, KeyEqual, Allocator>;
 
 }

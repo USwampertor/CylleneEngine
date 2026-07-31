@@ -17,6 +17,8 @@
 #include "cyException.h"
 #include "cyFileSystem.h"
 #include "cyLogger.h"
+#include "cyThread.h"
+#include "cyFileDataStream.h"
 
 namespace CYLLENE_SDK {
 

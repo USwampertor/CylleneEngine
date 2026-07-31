@@ -13,6 +13,7 @@
 #include "cyUtilities.h"
 #include "cyLogger.h"
 #include "cyTime.h"
+#include "cyFileDataStream.h"
 
 #include <stdexcept>
 

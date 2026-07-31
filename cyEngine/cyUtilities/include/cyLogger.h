@@ -11,6 +11,7 @@
 
 #include "cyModule.h"
 #include "cyEvent.h"
+#include "cyChronos.h"
 
 namespace CYLLENE_SDK {
 

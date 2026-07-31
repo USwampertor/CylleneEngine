@@ -21,6 +21,7 @@
 #include "cyPlatformTypes.h"
 #include "cyPlatformDefines.h"
 #include "cyStdHeaders.h"
+#include "cyNumber.h"
 
 namespace CYLLENE_SDK {
 

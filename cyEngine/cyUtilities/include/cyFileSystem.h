@@ -16,6 +16,8 @@
 #include <filesystem>
 
 #include "cyUtilitiesPrerequisites.h"
+#include "cyString.h"
+#include "cyFileDataStream.h"
 
 namespace CYLLENE_SDK
 {

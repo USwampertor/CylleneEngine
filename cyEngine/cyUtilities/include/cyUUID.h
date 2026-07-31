@@ -2,6 +2,7 @@
 #include "cyPlatformDefines.h"
 #include "cyStdHeaders.h"
 #include "cyPlatformTypes.h"
+#include "cyString.h"
 
 #include <stduuid/uuid.h>
 namespace CYLLENE_SDK
